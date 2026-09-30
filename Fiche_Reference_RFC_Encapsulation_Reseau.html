@@ -1,0 +1,620 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="utf-8" />
+  <meta name="generator" content="BTS CIEL - Vincent Hilaire" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes" />
+  <title>Fiche Référence — Structure des Trames et Encapsulation (Style RFC) - BTS CIEL</title>
+  
+  <style>
+    @page {
+      margin: 1.5cm;
+      size: A4;
+    }
+    
+    html {
+      color: #1a1a1a;
+      background-color: #fdfdfd;
+      -webkit-text-size-adjust: 100%;
+    }
+    
+    body {
+      font-family: 'Segoe UI', -apple-system, BlinkMacSystemFont, Roboto, Helvetica, Arial, sans-serif;
+      line-height: 1.55;
+      color: #1a1a1a;
+      max-width: 920px;
+      margin: 0 auto;
+      padding: 25px 30px;
+      hyphens: auto;
+      overflow-wrap: break-word;
+      text-rendering: optimizeLegibility;
+      font-kerning: normal;
+    }
+    
+    @media (max-width: 768px) {
+      body {
+        font-size: 0.95em;
+        padding: 15px;
+      }
+      h1 {
+        font-size: 1.55em !important;
+      }
+    }
+    
+    @media print {
+      html { background-color: white; }
+      body { background-color: transparent; color: black; font-size: 9.8pt; max-width: 100%; padding: 0; }
+      p, h2, h3 { orphans: 3; widows: 3; }
+      h2, h3, h4 { page-break-after: avoid; }
+      pre, blockquote, table { page-break-inside: avoid; }
+      .no-print { display: none; }
+    }
+    
+    header {
+      margin-bottom: 2.2em;
+      text-align: center;
+      border-bottom: 3px solid #0b3c5d;
+      padding-bottom: 15px;
+    }
+    
+    .meta-badge {
+      display: inline-block;
+      background: #e1ecf4;
+      color: #0b3c5d;
+      font-size: 0.85em;
+      font-weight: 600;
+      padding: 4px 10px;
+      border-radius: 20px;
+      margin: 3px 6px;
+      border: 1px solid #7aa7c7;
+    }
+    
+    .badge-primary { background: #0b3c5d; color: #ffffff; border: 1px solid #0b3c5d; }
+    .badge-alert { background: #fee2e2; color: #991b1b; border: 1px solid #f87171; }
+    .badge-success { background: #dcfce7; color: #166534; border: 1px solid #86efac; }
+    .badge-warning { background: #fef3c7; color: #92400e; border: 1px solid #fcd34d; }
+    .badge-purple { background: #f3e8ff; color: #6b21a8; border: 1px solid #d8b4fe; }
+    
+    h1, h2, h3, h4 {
+      color: #0b3c5d;
+      font-weight: 700;
+    }
+    
+    h1 {
+      font-size: 19.5pt;
+      margin-top: 0.6em;
+      margin-bottom: 0.3em;
+      letter-spacing: -0.5px;
+    }
+    
+    h2 {
+      font-size: 14pt;
+      margin-top: 24px;
+      margin-bottom: 12px;
+      border-bottom: 1.5px solid #d0d7de;
+      padding-bottom: 6px;
+    }
+    
+    h3 {
+      font-size: 11.5pt;
+      margin-top: 18px;
+      margin-bottom: 8px;
+      border-left: 4.5px solid #328cc1;
+      padding-left: 10px;
+    }
+    
+    h4 {
+      font-size: 10.5pt;
+      margin-top: 14px;
+      color: #1d5f8a;
+    }
+    
+    p {
+      margin: 0.8em 0;
+    }
+    
+    a {
+      color: #0969da;
+      text-decoration: none;
+    }
+    
+    a:hover {
+      text-decoration: underline;
+    }
+    
+    ul, ol {
+      padding-left: 1.6em;
+      margin: 0.8em 0;
+    }
+    
+    li {
+      margin-bottom: 0.35em;
+    }
+    
+    hr {
+      border: 0;
+      border-top: 1px solid #d0d7de;
+      margin: 22px 0;
+    }
+    
+    /* Callout & Notes */
+    .callout {
+      border-radius: 6px;
+      padding: 12px 16px;
+      margin: 16px 0;
+      font-size: 9.5pt;
+      border-left: 5px solid;
+    }
+    
+    .callout-info {
+      background-color: #f0f7fc;
+      border-color: #328cc1;
+      color: #1a446c;
+    }
+    
+    .callout-warning {
+      background-color: #fffbeb;
+      border-color: #f59e0b;
+      color: #78350f;
+    }
+    
+    .callout-danger {
+      background-color: #fef2f2;
+      border-color: #ef4444;
+      color: #7f1d1d;
+    }
+    
+    .callout-success {
+      background-color: #f0fdf4;
+      border-color: #22c55e;
+      color: #14532d;
+    }
+    
+    .callout-title {
+      font-weight: 700;
+      margin-bottom: 4px;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+    
+    /* Tables */
+    table {
+      border-collapse: collapse;
+      width: 100%;
+      margin: 14px 0;
+      font-size: 9.2pt;
+      background-color: #ffffff;
+      box-shadow: 0 1px 3px rgba(0,0,0,0.05);
+    }
+    
+    th, td {
+      border: 1px solid #d0d7de;
+      padding: 8px 10px;
+      text-align: left;
+      vertical-align: middle;
+    }
+    
+    th {
+      background-color: #f0f4f8;
+      color: #0b3c5d;
+      font-weight: 700;
+    }
+    
+    tr:nth-child(even) {
+      background-color: #f8fafc;
+    }
+    
+    tr:hover {
+      background-color: #f1f5f9;
+    }
+    
+    /* RFC Diagrams & Code blocks */
+    pre {
+      background-color: #f6f8fa;
+      border: 1px solid #d0d7de;
+      border-radius: 6px;
+      padding: 12px 14px;
+      font-size: 8.8pt;
+      line-height: 1.42;
+      overflow-x: auto;
+      font-family: Consolas, 'Courier New', Monaco, monospace;
+      color: #24292f;
+      margin: 14px 0;
+    }
+    
+    pre.rfc-diagram {
+      background-color: #1e293b;
+      color: #e2e8f0;
+      border: 1px solid #0f172a;
+      box-shadow: 0 2px 6px rgba(0,0,0,0.12);
+    }
+    
+    pre.rfc-diagram code {
+      color: #38bdf8;
+      background: transparent;
+      font-weight: 600;
+    }
+    
+    code {
+      background-color: #eff1f3;
+      padding: 2px 5px;
+      border-radius: 4px;
+      font-size: 88%;
+      font-family: Consolas, 'Courier New', Monaco, monospace;
+      color: #0969da;
+    }
+    
+    pre code {
+      background-color: transparent;
+      padding: 0;
+      border-radius: 0;
+      font-size: inherit;
+      color: inherit;
+    }
+    
+    .hex-box {
+      background: #f1f5f9;
+      border: 1px solid #cbd5e1;
+      border-radius: 6px;
+      padding: 10px 14px;
+      font-family: Consolas, monospace;
+      font-size: 9pt;
+      margin: 10px 0;
+    }
+    
+    .hex-highlight {
+      color: #b91c1c;
+      font-weight: bold;
+      background: #fee2e2;
+      padding: 1px 4px;
+      border-radius: 3px;
+    }
+    
+    .ascii-highlight {
+      color: #15803d;
+      font-weight: bold;
+      background: #dcfce7;
+      padding: 1px 4px;
+      border-radius: 3px;
+    }
+  </style>
+</head>
+<body>
+
+<header id="title-block-header">
+  <div style="text-transform: uppercase; font-size: 0.9em; font-weight: 700; letter-spacing: 1px; color: #328cc1; margin-bottom: 4px;">
+    BTS CIEL — Systèmes Numériques & Réseaux • Option A (IR) & Option B (ER)
+  </div>
+  <h1 class="title">FICHE RÉFÉRENCE — STRUCTURE DES TRAMES ET ENCAPSULATION (STYLE RFC)</h1>
+  <div style="margin-top: 10px;">
+    <span class="meta-badge badge-primary">📖 Document Ressource Technique</span>
+    <span class="meta-badge badge-purple">RFC 791 (IPv4) • RFC 793 (TCP) • RFC 768 (UDP)</span>
+    <span class="meta-badge badge-success">🔬 Analyse Wireshark Bit à Bit</span>
+    <span class="meta-badge badge-warning">🎯 Épreuves E4 & E6 BTS CIEL</span>
+  </div>
+</header>
+
+<div class="callout callout-info">
+  <div class="callout-title">🎯 Objectif Pédagogique de cette Fiche de Référence</div>
+  <p>Cette fiche ressource fournit le <strong>mémento technique indispensable</strong> pour repérer la structure bit à bit et octet par octet des en-têtes réseau lors de l'analyse de trames sous <strong>Wireshark</strong> et lors des épreuves de conception / validation du <strong>BTS CIEL</strong>.</p>
+</div>
+
+<hr />
+
+<!-- ========================================================================= -->
+<!-- 1. VUE D'ENSEMBLE DE L'ENCAPSULATION                                      -->
+<!-- ========================================================================= -->
+
+<h2>1. Vue d'Ensemble de l'Encapsulation</h2>
+
+<p>Lorsqu'une commande HTTP (ex: <code>GET /led/on</code>) est émise depuis un navigateur ou un client vers l'ESP32 / Pico W, la donnée applicative descend l'ensemble de la pile de protocoles du <strong>Modèle OSI</strong>. Chaque couche entoure le message de son propre en-tête (<em>Header</em>) :</p>
+
+<pre class="rfc-diagram"><code>+---------------------------------------------------------------------------------------------------+
+| Trame Ethernet II (Couche 2 - Liaison de données)                                                 |
+| +---------------------------------------------------------------------------------------------+   |
+| | Paquet IPv4 (Couche 3 - Réseau)                                                             |   |
+| | +---------------------------------------------------------------------------------------+   |   |
+| | | Segment TCP / UDP (Couche 4 - Transport)                                              |   |   |
+| | | +---------------------------------------------------------------------------------+   |   |   |
+| | | | Message HTTP / Données Utiles (Couche 7 - Application)                          |   |   |   |
+| | | | "GET /led/on HTTP/1.1\r\nHost: 192.168.1.50..."                                 |   |   |   |
+| | | +---------------------------------------------------------------------------------+   |   |   |
+| | +---------------------------------------------------------------------------------------+   |   |
+| +---------------------------------------------------------------------------------------------+   |
++---------------------------------------------------------------------------------------------------+</code></pre>
+
+<hr />
+
+<!-- ========================================================================= -->
+<!-- 2. STRUCTURE DETAILLEE DES EN-TETES (FORMAT RFC)                          -->
+<!-- ========================================================================= -->
+
+<h2>2. Structure Détaillée des En-Têtes (Format RFC)</h2>
+
+<h3>2.1. Trame Ethernet II (Couche 2 — Liaison de données)</h3>
+
+<p>La trame Ethernet II (standard IEEE 802.3 / DIX) n'utilise pas la grille de 32 bits classique du monde IP car ses champs d'adresses physiques (adresses MAC) s'alignent sur <strong>6 octets (48 bits)</strong> :</p>
+
+<pre class="rfc-diagram"><code>    OCTET 0         OCTET 1         OCTET 2         OCTET 3     
+ 0 1 2 3 4 5 6 7 0 1 2 3 4 5 6 7 0 1 2 3 4 5 6 7 0 1 2 3 4 5 6 7
++-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
+|                       MAC Destination                         |
+|                          (6 octets)                           |
++-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
+|                          MAC Source                           |
+|                          (6 octets)                           |
++-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
+|     EtherType (2 octets)      |                               |
++-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+                               |
+|                                                               |
+|                  Payload / Donnée IPv4 (L3)                   |
+|                      (46 à 1500 octets)                       |
+|                                                               |
++-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
+|                          FCS / CRC32                          |
+|                           (4 octets)                          |
++-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+</code></pre>
+
+<p><strong>Valeurs clés à observer dans Wireshark :</strong></p>
+<ul>
+  <li><strong>MAC Destination :</strong> Adresse physique de la carte réseau cible (ex: <code>68:B6:B3:45:12:34</code> pour l'ESP32 ou la passerelle).</li>
+  <li><strong>MAC Source :</strong> Adresse physique de la carte réseau de l'ordinateur émetteur.</li>
+  <li><strong>EtherType (Type de protocole encapsulé) :</strong>
+    <ul>
+      <li><code>0x0800</code> = <strong>IPv4</strong> (Valeur standard observée dans les TP Web/MQTT)</li>
+      <li><code>0x86DD</code> = <strong>IPv6</strong></li>
+      <li><code>0x0806</code> = <strong>ARP</strong> (Address Resolution Protocol)</li>
+    </ul>
+  </li>
+  <li><strong>FCS (Frame Check Sequence) :</strong> Somme de contrôle cyclique CRC32 (souvent vérifiée et retirée par la carte réseau matérielle avant la capture logicielle).</li>
+</ul>
+
+<hr />
+
+<h3>2.2. En-tête IPv4 (Couche 3 — Réseau)</h3>
+
+<p>Conforme au standard <strong>RFC 791</strong>. Chaque ligne horizontale du diagramme représente exactement <strong>32 bits (4 octets)</strong> :</p>
+
+<pre class="rfc-diagram"><code>    OCTET 0         OCTET 1         OCTET 2         OCTET 3     
+ 0 1 2 3 4 5 6 7 0 1 2 3 4 5 6 7 0 1 2 3 4 5 6 7 0 1 2 3 4 5 6 7
++-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
+|Version|  IHL  |Type of Service|          Total Length         |
++-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
+|         Identification        |Flags|      Fragment Offset    |
++-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
+|  Time to Live |    Protocol   |        Header Checksum        |
++-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
+|                       Source IP Address                       |
++-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
+|                    Destination IP Address                     |
++-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
+|                    Options (si IHL &gt; 5)       |    Padding    |
++-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+</code></pre>
+
+<p><strong>Champs prioritaires pour l'analyse sous Wireshark :</strong></p>
+<ul>
+  <li><strong>Version (4 bits) :</strong> Toujours <code>4</code> pour IPv4 (valeur hexadécimale du premier quartet = <code>0x4</code>).</li>
+  <li><strong>IHL (Internet Header Length - 4 bits) :</strong> Nombre de mots de 32 bits de l'en-tête (généralement <code>5</code>, soit $5 \times 4 = 20\text{ octets}$). La combinaison <em>Version + IHL</em> donne souvent l'octet <code>0x45</code>.</li>
+  <li><strong>Total Length (16 bits) :</strong> Taille totale du paquet IP en octets (En-tête IP + Données L4).</li>
+  <li><strong>Time to Live - TTL (8 bits) :</strong> Nombre maximal de routeurs traversables (décrémenté à chaque saut pour éviter les boucles infinies).</li>
+  <li><strong>Protocol (8 bits - Offset 0x17) :</strong> Identifie le protocole de couche supérieure transporté :
+    <ul>
+      <li><code>6 (0x06)</code> = <strong>TCP</strong> (Utilisé par HTTP, HTTPS, MQTT, SSH)</li>
+      <li><code>17 (0x11)</code> = <strong>UDP</strong> (Utilisé par DNS, DHCP, NTP, CoAP)</li>
+      <li><code>1 (0x01)</code> = <strong>ICMP</strong> (Ping, messages d'erreurs)</li>
+    </ul>
+  </li>
+  <li><strong>Source IP Address (32 bits) :</strong> Adresse IP du PC client (ex: <code>192.168.1.20</code> ou <code>C0 A8 01 14</code>).</li>
+  <li><strong>Destination IP Address (32 bits) :</strong> Adresse IP du serveur ESP32 (ex: <code>192.168.1.50</code> ou <code>C0 A8 01 32</code>).</li>
+</ul>
+
+<hr />
+
+<h3>2.3. En-tête TCP (Couche 4 — Transport pour HTTP)</h3>
+
+<p>Le protocole HTTP s'appuie sur <strong>TCP (RFC 793 / RFC 9293)</strong>, qui garantit une communication fiable, ordonnée et bidirectionnelle :</p>
+
+<pre class="rfc-diagram"><code>    OCTET 0         OCTET 1         OCTET 2         OCTET 3     
+ 0 1 2 3 4 5 6 7 0 1 2 3 4 5 6 7 0 1 2 3 4 5 6 7 0 1 2 3 4 5 6 7
++-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
+|          Source Port          |       Destination Port        |
++-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
+|                        Sequence Number                        |
++-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
+|                    Acknowledgment Number                      |
++-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
+|  Data |           |U|A|P|R|S|F|                               |
+| Offset| Reserved  |R|C|S|S|Y|I|            Window             |
+|       |           |G|K|H|T|N|N|                               |
++-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
+|           Checksum            |        Urgent Pointer         |
++-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
+|                    Options (si nécessaire)    |    Padding    |
++-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
+|                             Data                              |
+|                  (Requête HTTP Applicative)                   |
++-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+</code></pre>
+
+<p><strong>Champs prioritaires pour l'analyse sous Wireshark :</strong></p>
+<ul>
+  <li><strong>Source Port (16 bits) :</strong> Port dynamique temporaire (éphémère) alloué par le système d'exploitation du client (ex: <code>54321</code>).</li>
+  <li><strong>Destination Port (16 bits) :</strong>
+    <ul>
+      <li><code>80 (0x0050)</code> = <strong>HTTP</strong> (Serveur Web en clair)</li>
+      <li><code>443 (0x01BB)</code> = <strong>HTTPS</strong> (Serveur Web sécurisé par TLS)</li>
+      <li><code>1883 (0x075B)</code> = <strong>MQTT</strong> (Broker Mosquitto)</li>
+    </ul>
+  </li>
+  <li><strong>Sequence Number (32 bits) :</strong> Numérote le premier octet de données envoyé dans le segment.</li>
+  <li><strong>Acknowledgment Number (32 bits) :</strong> Numéro du prochain octet que le récepteur s'attend à recevoir.</li>
+  <li><strong>Flags (Drapeaux de contrôle) :</strong>
+    <ul>
+      <li><code>SYN (0x02)</code> : Demande initiale de synchronisation et d'établissement de connexion.</li>
+      <li><code>ACK (0x10)</code> : Confirmation de bonne réception des octets précédents.</li>
+      <li><code>PSH (0x08)</code> : Demande de transmission immédiate des données à l'application sans mise en tampon.</li>
+      <li><code>FIN (0x01)</code> : Demande formelle de fermeture de session TCP.</li>
+      <li><code>RST (0x04)</code> : Réinitialisation immédiate en cas d'erreur de connexion.</li>
+    </ul>
+  </li>
+</ul>
+
+<hr />
+
+<h3>2.4. Comparatif : En-tête UDP (Couche 4 — Transport alternatif)</h3>
+
+<p>À titre comparatif, <strong>UDP (RFC 768)</strong> est un protocole minimaliste sans connexion, sans poignée de main et sans acquittement, privilégié pour les flux temps réel et les capteurs IoT contraints :</p>
+
+<pre class="rfc-diagram"><code>    OCTET 0         OCTET 1         OCTET 2         OCTET 3     
+ 0 1 2 3 4 5 6 7 0 1 2 3 4 5 6 7 0 1 2 3 4 5 6 7 0 1 2 3 4 5 6 7
++-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
+|          Source Port          |       Destination Port        |
++-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
+|            Length             |           Checksum            |
++-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
+|                             Data                              |
+|                   (Payload applicatif UDP)                    |
++-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+</code></pre>
+
+<div class="callout callout-success">
+  <div class="callout-title">⚡ Comparaison d'Overhead Couche 4 (TCP vs UDP)</div>
+  <p>L'en-tête standard <strong>UDP ne pèse que 8 octets</strong>, contre <strong>20 octets au minimum pour TCP</strong> (sans options). UDP n'effectue aucun 3-Way Handshake préalable, ce qui permet d'émettre une commande en <strong>une seule trame réseau</strong>.</p>
+</div>
+
+<hr />
+
+<!-- ========================================================================= -->
+<!-- 3. PAYLOAD APPLICATION : CONTENU DU MESSAGE HTTP (COUCHE 7)               -->
+<!-- ========================================================================= -->
+
+<h2>3. Payload Application : Contenu du Message HTTP (Couche 7)</h2>
+
+<p>Le payload transporté au sein du segment TCP contient les données brutes sous forme de texte ASCII en clair (<em>cleartext</em>).</p>
+
+<h3>3.1. Structure d'une Requête HTTP GET (Commande de la LED)</h3>
+
+<pre><code>+---------------------------------------------------------------------------------+
+| GET /led/on HTTP/1.1\r\n                                                        |
+| Host: 192.168.1.50\r\n                                                          |
+| User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64)\r\n                       |
+| Accept: text/html,application/xhtml+xml,application/xml\r\n                    |
+| Referer: http://192.168.1.50/\r\n                                               |
+| \r\n                                                                            |
++---------------------------------------------------------------------------------+</code></pre>
+
+<div class="callout callout-info">
+  <div class="callout-title">💡 Règle de Fin d'En-tête HTTP</div>
+  <p>En HTTP/1.1, la fin de la section des en-têtes est impérativement marquée par une ligne vide, soit la séquence de caractères de contrôle <code>\r\n\r\n</code> (en hexadécimal : <code>0D 0A 0D 0A</code>).</p>
+</div>
+
+<h3>3.2. Repérage Hexadécimal dans Wireshark (Panneau des Octets)</h3>
+
+<p>Dans la vue hexadécimale de Wireshark (panneau inférieur), vous pouvez retrouver directement la séquence d'octets ASCII correspondant au chemin d'URL demandé :</p>
+
+<h4>A. Commande "Allumer la LED" (<code>/led/on</code>)</h4>
+<div class="hex-box">
+  <strong>Hexadécimal :</strong> <span class="hex-highlight">2F</span> <span class="hex-highlight">6C</span> <span class="hex-highlight">65</span> <span class="hex-highlight">64</span> <span class="hex-highlight">2F</span> <span class="hex-highlight">6F</span> <span class="hex-highlight">6E</span><br>
+  <strong>ASCII &nbsp; &nbsp; &nbsp; :</strong> <span class="ascii-highlight">&nbsp;/</span> <span class="ascii-highlight">&nbsp;l</span> <span class="ascii-highlight">&nbsp;e</span> <span class="ascii-highlight">&nbsp;d</span> <span class="ascii-highlight">&nbsp;/</span> <span class="ascii-highlight">&nbsp;o</span> <span class="ascii-highlight">&nbsp;n</span>
+</div>
+
+<h4>B. Commande "Éteindre la LED" (<code>/led/off</code>)</h4>
+<div class="hex-box">
+  <strong>Hexadécimal :</strong> <span class="hex-highlight">2F</span> <span class="hex-highlight">6C</span> <span class="hex-highlight">65</span> <span class="hex-highlight">64</span> <span class="hex-highlight">2F</span> <span class="hex-highlight">6F</span> <span class="hex-highlight">66</span> <span class="hex-highlight">66</span><br>
+  <strong>ASCII &nbsp; &nbsp; &nbsp; :</strong> <span class="ascii-highlight">&nbsp;/</span> <span class="ascii-highlight">&nbsp;l</span> <span class="ascii-highlight">&nbsp;e</span> <span class="ascii-highlight">&nbsp;d</span> <span class="ascii-highlight">&nbsp;/</span> <span class="ascii-highlight">&nbsp;o</span> <span class="ascii-highlight">&nbsp;f</span> <span class="ascii-highlight">&nbsp;f</span>
+</div>
+
+<hr />
+
+<!-- ========================================================================= -->
+<!-- 4. TABLEAU RECAPITULATIF POUR L'ANALYSE WIRESHARK                         -->
+<!-- ========================================================================= -->
+
+<h2>4. Tableau Récapitulatif pour l'Analyse Wireshark</h2>
+
+<p>Ce tableau résume les champs clés à vérifier dans l'arborescence des protocoles de Wireshark lors des manipulations de laboratoire :</p>
+
+<table>
+  <thead>
+    <tr>
+      <th style="width: 15%;">Niveau OSI</th>
+      <th style="width: 18%;">Protocole</th>
+      <th style="width: 27%;">Champ à observer dans Wireshark</th>
+      <th style="width: 40%;">Valeur attendue dans les TP CIEL</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td><strong>L2 (Liaison)</strong></td>
+      <td>Ethernet II</td>
+      <td><code>EtherType</code></td>
+      <td><code>0x0800</code> (IPv4)</td>
+    </tr>
+    <tr>
+      <td><strong>L3 (Réseau)</strong></td>
+      <td>IPv4</td>
+      <td><code>Protocol</code></td>
+      <td><code>6</code> (TCP) ou <code>17</code> (UDP)</td>
+    </tr>
+    <tr>
+      <td><strong>L3 (Réseau)</strong></td>
+      <td>IPv4</td>
+      <td><code>Source / Destination</code></td>
+      <td>IP Client (PC) / IP Serveur (ESP32 / Pico W)</td>
+    </tr>
+    <tr>
+      <td><strong>L4 (Transport)</strong></td>
+      <td>TCP</td>
+      <td><code>Destination Port</code></td>
+      <td><code>80</code> (HTTP en clair) / <code>443</code> (HTTPS / TLS)</td>
+    </tr>
+    <tr>
+      <td><strong>L4 (Transport)</strong></td>
+      <td>TCP</td>
+      <td><code>Flags</code></td>
+      <td><code>0x02</code> (SYN), <code>0x10</code> (ACK), <code>0x18</code> (PSH + ACK)</td>
+    </tr>
+    <tr>
+      <td><strong>L4 (Transport)</strong></td>
+      <td>UDP (Alternatif)</td>
+      <td><code>Destination Port</code></td>
+      <td><code>4210</code> (Port d'écoute direct sans connexion)</td>
+    </tr>
+    <tr>
+      <td><strong>L7 (Application)</strong></td>
+      <td>HTTP</td>
+      <td><code>Request Method</code></td>
+      <td><code>GET</code> ou <code>POST</code></td>
+    </tr>
+    <tr>
+      <td><strong>L7 (Application)</strong></td>
+      <td>HTTP</td>
+      <td><code>Request URI</code></td>
+      <td><code>/led/on</code> ou <code>/led/off</code></td>
+    </tr>
+    <tr>
+      <td><strong>L7 (Application)</strong></td>
+      <td>HTTP</td>
+      <td><code>Response Code</code></td>
+      <td><code>303 See Other</code> (Redirection) ou <code>200 OK</code></td>
+    </tr>
+  </tbody>
+</table>
+
+<div class="callout callout-warning">
+  <div class="callout-title">🔍 Astuces de Filtrage Rapide sous Wireshark</div>
+  <ul>
+    <li>Filtrer uniquement le trafic de votre carte : <code>ip.addr == 192.168.1.50</code></li>
+    <li>Filtrer les requêtes HTTP : <code>http.request.method == "GET"</code></li>
+    <li>Filtrer le port HTTP : <code>tcp.port == 80</code></li>
+    <li>Filtrer le port HTTPS / TLS : <code>tcp.port == 443 || tls</code></li>
+    <li>Filtrer le port UDP de commande : <code>udp.port == 4210</code></li>
+    <li>Reconstruire le dialogue complet : Clic droit sur un paquet &gt; <em>Suivre &gt; Flux TCP (Follow TCP Stream)</em>.</li>
+  </ul>
+</div>
+
+<footer style="margin-top: 35px; padding-top: 12px; border-top: 1px solid #d0d7de; font-size: 8.5pt; color: #64748b; text-align: center;">
+  BTS CIEL (Cybersécurité, Informatique et Réseaux, Électronique) • Fiche Référence Technique • Encapsulation Réseau & Standards RFC
+</footer>
+
+</body>
+</html>
