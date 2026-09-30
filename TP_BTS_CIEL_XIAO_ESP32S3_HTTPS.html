@@ -1,0 +1,826 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="utf-8" />
+  <meta name="generator" content="BTS CIEL - Vincent Hilaire" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes" />
+  <title>TP : Déploiement, Sécurisation (HTTPS) et Analyse Réseau de la Caméra XIAO ESP32S3 - BTS CIEL</title>
+  
+  <style>
+    @page {
+      margin: 1.5cm;
+      size: A4;
+    }
+    
+    html {
+      color: #1a1a1a;
+      background-color: #fdfdfd;
+      -webkit-text-size-adjust: 100%;
+    }
+    
+    body {
+      font-family: 'Segoe UI', -apple-system, BlinkMacSystemFont, Roboto, Helvetica, Arial, sans-serif;
+      line-height: 1.55;
+      color: #1a1a1a;
+      max-width: 920px;
+      margin: 0 auto;
+      padding: 25px 30px;
+      hyphens: auto;
+      overflow-wrap: break-word;
+      text-rendering: optimizeLegibility;
+      font-kerning: normal;
+    }
+    
+    @media (max-width: 768px) {
+      body {
+        font-size: 0.95em;
+        padding: 15px;
+      }
+      h1 {
+        font-size: 1.55em !important;
+      }
+    }
+    
+    @media print {
+      html { background-color: white; }
+      body { background-color: transparent; color: black; font-size: 10pt; max-width: 100%; padding: 0; }
+      p, h2, h3 { orphans: 3; widows: 3; }
+      h2, h3, h4 { page-break-after: avoid; }
+      pre, blockquote, table { page-break-inside: avoid; }
+      .no-print { display: none; }
+    }
+    
+    header {
+      margin-bottom: 2.2em;
+      text-align: center;
+      border-bottom: 3px solid #0b3c5d;
+      padding-bottom: 15px;
+    }
+    
+    .meta-badge {
+      display: inline-block;
+      background: #e1ecf4;
+      color: #0b3c5d;
+      font-size: 0.85em;
+      font-weight: 600;
+      padding: 4px 10px;
+      border-radius: 20px;
+      margin: 3px 6px;
+      border: 1px solid #7aa7c7;
+    }
+    
+    .badge-primary { background: #0b3c5d; color: #ffffff; border: 1px solid #0b3c5d; }
+    .badge-alert { background: #fee2e2; color: #991b1b; border: 1px solid #f87171; }
+    .badge-success { background: #dcfce7; color: #166534; border: 1px solid #86efac; }
+    .badge-warning { background: #fef3c7; color: #92400e; border: 1px solid #fcd34d; }
+    .badge-purple { background: #f3e8ff; color: #6b21a8; border: 1px solid #d8b4fe; }
+    
+    h1, h2, h3, h4 {
+      color: #0b3c5d;
+      font-weight: 700;
+    }
+    
+    h1 {
+      font-size: 19pt;
+      margin-top: 0.6em;
+      margin-bottom: 0.3em;
+      letter-spacing: -0.5px;
+    }
+    
+    h2 {
+      font-size: 14pt;
+      margin-top: 24px;
+      margin-bottom: 12px;
+      border-bottom: 1.5px solid #d0d7de;
+      padding-bottom: 6px;
+    }
+    
+    h3 {
+      font-size: 11.5pt;
+      margin-top: 18px;
+      margin-bottom: 8px;
+      border-left: 4.5px solid #328cc1;
+      padding-left: 10px;
+    }
+    
+    h4 {
+      font-size: 10.5pt;
+      margin-top: 14px;
+      color: #1d5f8a;
+    }
+    
+    p {
+      margin: 0.8em 0;
+    }
+    
+    a {
+      color: #0969da;
+      text-decoration: none;
+    }
+    
+    a:hover {
+      text-decoration: underline;
+    }
+    
+    ul, ol {
+      padding-left: 1.6em;
+      margin: 0.8em 0;
+    }
+    
+    li {
+      margin-bottom: 0.35em;
+    }
+    
+    hr {
+      border: 0;
+      border-top: 1px solid #d0d7de;
+      margin: 22px 0;
+    }
+    
+    /* Callout & Notes */
+    .callout {
+      border-radius: 6px;
+      padding: 12px 16px;
+      margin: 16px 0;
+      font-size: 9.5pt;
+      border-left: 5px solid;
+    }
+    
+    .callout-info {
+      background-color: #f0f7fc;
+      border-color: #328cc1;
+      color: #1a446c;
+    }
+    
+    .callout-warning {
+      background-color: #fffbeb;
+      border-color: #f59e0b;
+      color: #78350f;
+    }
+    
+    .callout-danger {
+      background-color: #fef2f2;
+      border-color: #ef4444;
+      color: #7f1d1d;
+    }
+    
+    .callout-success {
+      background-color: #f0fdf4;
+      border-color: #22c55e;
+      color: #14532d;
+    }
+    
+    .callout-title {
+      font-weight: 700;
+      margin-bottom: 4px;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+    
+    /* Tables */
+    table {
+      border-collapse: collapse;
+      width: 100%;
+      margin: 14px 0;
+      font-size: 9.2pt;
+      background-color: #ffffff;
+      box-shadow: 0 1px 3px rgba(0,0,0,0.05);
+    }
+    
+    th, td {
+      border: 1px solid #d0d7de;
+      padding: 7px 10px;
+      text-align: left;
+      vertical-align: middle;
+    }
+    
+    th {
+      background-color: #f0f4f8;
+      color: #0b3c5d;
+      font-weight: 700;
+    }
+    
+    tr:nth-child(even) {
+      background-color: #f8fafc;
+    }
+    
+    tr:hover {
+      background-color: #f1f5f9;
+    }
+    
+    /* Code and Pre blocks */
+    pre {
+      background-color: #f6f8fa;
+      border: 1px solid #d0d7de;
+      border-radius: 6px;
+      padding: 12px 14px;
+      font-size: 8.9pt;
+      line-height: 1.45;
+      overflow-x: auto;
+      font-family: Consolas, 'Courier New', Monaco, monospace;
+      color: #24292f;
+      margin: 14px 0;
+    }
+    
+    code {
+      background-color: #eff1f3;
+      padding: 2px 5px;
+      border-radius: 4px;
+      font-size: 88%;
+      font-family: Consolas, 'Courier New', Monaco, monospace;
+      color: #0969da;
+    }
+    
+    pre code {
+      background-color: transparent;
+      padding: 0;
+      border-radius: 0;
+      font-size: inherit;
+      color: inherit;
+    }
+    
+    /* Syntax highlighting */
+    .kw { color: #cf222e; font-weight: bold; } /* Keyword */
+    .dt { color: #0550ae; font-weight: 600; } /* Data Type */
+    .st { color: #0a3069; } /* String */
+    .co { color: #6e7781; font-style: italic; } /* Comment */
+    .pp { color: #953800; font-weight: 600; } /* Preprocessor */
+    .fu { color: #8250df; } /* Function */
+    .va { color: #953800; } /* Variable */
+    .dv { color: #0550ae; } /* Number */
+    
+    /* Zones de saisie / questions élève */
+    .student-response {
+      background: #fafbfc;
+      border: 1.5px dashed #7aa7c7;
+      border-radius: 6px;
+      padding: 12px 16px;
+      margin: 14px 0 18px 0;
+      color: #334155;
+    }
+    
+    .dotted-line {
+      border-bottom: 1px dotted #94a3b8;
+      height: 22px;
+      margin-bottom: 5px;
+    }
+    
+    .step-box {
+      background: #ffffff;
+      border: 1px solid #cbd5e1;
+      border-radius: 8px;
+      padding: 14px 18px;
+      margin: 18px 0;
+      box-shadow: 0 2px 4px rgba(0,0,0,0.03);
+    }
+    
+    .step-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      border-bottom: 1px solid #e2e8f0;
+      padding-bottom: 8px;
+      margin-bottom: 12px;
+    }
+    
+    .step-title {
+      font-weight: 700;
+      font-size: 11pt;
+      color: #0b3c5d;
+    }
+    
+    .timing-badge {
+      background: #e2e8f0;
+      color: #334155;
+      font-size: 8pt;
+      padding: 3px 8px;
+      border-radius: 12px;
+      font-weight: 600;
+    }
+    
+    .img-center {
+      text-align: center;
+      margin: 16px 0;
+    }
+    
+    .img-center img {
+      max-width: 90%;
+      height: auto;
+      border-radius: 8px;
+      border: 1px solid #d0d7de;
+      box-shadow: 0 3px 8px rgba(0,0,0,0.08);
+    }
+  </style>
+</head>
+<body>
+
+<header id="title-block-header">
+  <div style="text-transform: uppercase; font-size: 0.9em; font-weight: 700; letter-spacing: 1px; color: #328cc1; margin-bottom: 4px;">
+    BTS CIEL — 1<sup>re</sup> / 2<sup>e</sup> Année • Option A (IR) & Option B (ER)
+  </div>
+  <h1 class="title">TP : Déploiement, Sécurisation (HTTPS) et Analyse Réseau de la Caméra XIAO ESP32S3</h1>
+  <div style="margin-top: 10px;">
+    <span class="meta-badge badge-primary">⏱ Durée : 2h45 (TP complet avec extension HTTPS)</span>
+    <span class="meta-badge badge-purple">🎯 Cible : Seeed Studio XIAO ESP32S3 Sense</span>
+    <span class="meta-badge badge-success">👥 Matières : Cybersécurité, Réseaux, Électronique</span>
+    <span class="meta-badge badge-warning">🛡 Wireshark & Outils F12</span>
+  </div>
+</header>
+
+<div class="callout callout-info">
+  <div class="callout-title">📋 Contexte & Objectifs du TP</div>
+  <p>Ce travail pratique aborde le cycle complet de mise en service d'un objet connecté industriel sur microcontrôleur <strong>Seeed Studio XIAO ESP32S3 Sense</strong> : depuis son raccordement dynamique au réseau Wi-Fi par <strong>portail captif</strong>, jusqu'à l'audit de vulnérabilité sous <strong>Wireshark</strong> et sa <strong>sécurisation par chiffrement TLS/HTTPS (port 443)</strong>.</p>
+</div>
+
+<hr />
+
+<!-- ========================================================================= -->
+<!-- 1. OBJECTIFS PEDAGOGIQUES ET MATERIEL                                     -->
+<!-- ========================================================================= -->
+
+<h2>1. Objectifs Pédagogiques et Matériel</h2>
+
+<h3>1.1. Objectifs du TP</h3>
+<ul>
+  <li><strong>1. Réseau & Provisionnement :</strong> Provisionnement automatique d'un système embarqué IoT via un portail captif (basculement dynamique du Mode Point d'Accès <code>AP</code> vers le Mode Station <code>STA</code> avec la bibliothèque <em>WiFiManager</em>).</li>
+  <li><strong>2. Serveur Web Embarqué :</strong> Hébergement d'un serveur Web HTTP délivrant une interface de commande et le contrôle d'actionneurs (LED intégrée).</li>
+  <li><strong>3. Analyse de Trafic HTTP :</strong> Interception de trames, filtrage de paquets sous Wireshark et outils de développement navigateur (F12), décodage des couches du modèle OSI.</li>
+  <li><strong>4. Cybersécurité & HTTPS :</strong> Implémentation d'un serveur sécurisé (TLS/SSL) avec certificat X.509 et clé privée au format PEM, mise en évidence de la résistance au reniflage réseau (sniffing).</li>
+</ul>
+
+<h3>1.2. Matériel et Logiciels</h3>
+<ul>
+  <li><strong>Matériel :</strong> Module Seeed Studio XIAO ESP32S3 Sense avec module caméra OV2640/OV3660 + câble USB-C.</li>
+  <li><strong>Poste de travail :</strong> PC sous Windows ou Linux disposant d'une carte réseau Wi-Fi.</li>
+  <li><strong>Environnement de dev :</strong> Arduino IDE (avec BSP ESP32 v3.x installé) et bibliothèque <code>WiFiManager</code> (par tzapu).</li>
+  <li><strong>Logiciel d'analyse :</strong> <strong>Wireshark</strong> (analyseur de protocole réseau) et navigateur Web (Chrome, Edge ou Firefox).</li>
+</ul>
+
+<div class="callout callout-warning">
+  <div class="callout-title">🔗 Documentation Constructeur & Prise en Main</div>
+  <p>Pour la configuration initiale de l'Arduino IDE pour la carte XIAO ESP32S3, référez-vous au guide officiel :<br>
+  👉 <a href="https://wiki.seeedstudio.com/xiao_esp32s3_getting_started/" target="_blank">https://wiki.seeedstudio.com/xiao_esp32s3_getting_started/</a></p>
+</div>
+
+<hr />
+
+<!-- ========================================================================= -->
+<!-- 2. PARTIE 1 : PROVISIONNEMENT WI-FI DYNAMIQUE (HTTP)                      -->
+<!-- ========================================================================= -->
+
+<h2>2. PARTIE 1 : Provisionnement Wi-Fi Dynamique (HTTP)</h2>
+
+<p>Le système embarqué doit pouvoir s'intégrer à n'importe quel réseau Wi-Fi sans nécessiter la recompilation du code source. Lors du premier démarrage (ou en cas d'échec de connexion), l'ESP32 bascule automatiquement en mode <strong>Point d'Accès (AP)</strong> sous le nom <code>AutoConnectAP</code>. L'utilisateur s'y connecte depuis son smartphone ou PC pour sélectionner le réseau local et saisir la clé de sécurité via un <strong>portail captif</strong>.</p>
+
+<div class="img-center">
+  <img src="img_captive_portal_xiao.png" alt="Portail captif WiFiManager XIAO ESP32S3" />
+  <p style="font-size: 8.5pt; color: #64748b; margin-top: 4px;">Figure 1 : Interface du portail captif WiFiManager généré par l'ESP32</p>
+</div>
+
+<div class="callout callout-info">
+  <div class="callout-title">📌 Configuration Requise dans Arduino IDE</div>
+  <ul>
+    <li><strong>Carte sélectionnée :</strong> <code>XIAO_ESP32S3</code> dans le menu <em>Outils &gt; Type de carte &gt; esp32</em>.</li>
+    <li><strong>PSRAM activée :</strong> <code>OPI PSRAM</code> (Obligatoire pour l'allocation de la mémoire vidéo et des buffers SSL).</li>
+    <li><strong>Bibliothèque requise :</strong> <code>WiFiManager</code> by <em>tzapu</em> (à installer via le <em>Gestionnaire de bibliothèques</em>).</li>
+  </ul>
+</div>
+
+<h3>2.1. Code Source Arduino — Initialisation WiFiManager</h3>
+
+<div class="step-box">
+  <div class="step-header">
+    <span class="step-title">Fichier Arduino : <code>01_wifimanager_portal.ino</code></span>
+    <span class="timing-badge">Partie 1.1</span>
+  </div>
+
+<pre><code class="sourceCode cpp"><span class="pp">#include &lt;WiFiManager.h&gt;</span> <span class="co">// https://github.com/tzapu/WiFiManager</span>
+
+<span class="dt">void</span> <span class="fu">setup</span>() {
+  Serial.<span class="fu">begin</span>(<span class="dv">115200</span>);
+  <span class="kw">while</span> (!Serial &amp;&amp; <span class="fu">millis</span>() &lt; <span class="dv">2000</span>);
+
+  <span class="co">// Initialisation locale de WiFiManager</span>
+  WiFiManager wm;
+
+  <span class="co">// Ligne à décommenter pour réinitialiser les identifiants en mémoire Flash pour les tests :</span>
+  <span class="co">// wm.resetSettings();</span>
+
+  <span class="co">// Connexion automatique à l'aide des identifiants sauvegardés en mémoire non volatile (NVS).</span>
+  <span class="co">// En cas d'échec, bascule en Point d'Accès autonome (AP) avec portail captif :</span>
+  <span class="dt">bool</span> res;
+  res = wm.<span class="fu">autoConnect</span>(<span class="st">"AutoConnectAP"</span>, <span class="st">"password"</span>); <span class="co">// AP protégé par mot de passe</span>
+
+  <span class="kw">if</span> (!res) {
+    Serial.<span class="fu">println</span>(<span class="st">"[ERREUR] Échec de connexion au Wi-Fi"</span>);
+    <span class="co">// ESP.restart();</span>
+  } <span class="kw">else</span> {
+    Serial.<span class="fu">println</span>(<span class="st">"[OK] Connecté au réseau Wi-Fi avec succès !"</span>);
+    Serial.<span class="fu">print</span>(<span class="st">"Adresse IP attribuée : "</span>);
+    Serial.<span class="fu">println</span>(WiFi.<span class="fu">localIP</span>());
+  }
+}
+
+<span class="dt">void</span> <span class="fu">loop</span>() {
+  <span class="co">// Code applicatif principal</span>
+}</code></pre>
+</div>
+
+<h3>2.2. Travail Pratique & Manipulation du Portail Captif</h3>
+<ol>
+  <li><strong>Connexion au Point d'Accès :</strong> Depuis votre poste, scannez les réseaux Wi-Fi et connectez-vous au réseau généré par votre module (SSID : <code>AutoConnectAP</code>, mot de passe : <code>password</code>). <em>Adaptez le SSID pour le différencier de celui de vos camarades !</em></li>
+  <li><strong>Saisie des Identifiants :</strong> Le portail captif s'ouvre automatiquement dans votre navigateur (sinon naviguez vers <code>http://192.168.4.1</code>). Cliquez sur <em>Configure WiFi</em>, sélectionnez le réseau Wi-Fi de la salle et saisissez la clé de sécurité.</li>
+  <li><strong>Validation :</strong> Observez dans le moniteur série le basculement en mode Station (STA) et <strong>relevez l'adresse IP attribuée par le serveur DHCP</strong>.</li>
+</ol>
+
+<h3>2.3. Déploiement du Serveur Web HTTP de Contrôle de la LED</h3>
+
+<div class="step-box">
+  <div class="step-header">
+    <span class="step-title">Fichier Arduino : <code>02_xiao_webserver_led.ino</code> (Code Complet WebServer)</span>
+    <span class="timing-badge">Partie 1.2</span>
+  </div>
+
+<pre><code class="sourceCode cpp"><span class="pp">#include &lt;WiFi.h&gt;</span>
+<span class="pp">#include &lt;WebServer.h&gt;</span>
+<span class="pp">#include &lt;WiFiManager.h&gt;</span>
+
+<span class="co">// Instanciation du serveur Web HTTP sur le port standard 80</span>
+WebServer server(<span class="dv">80</span>);
+
+<span class="co">// Définition de la LED intégrée sur XIAO ESP32-S3 (Pin 21, Active LOW / Anode commune)</span>
+<span class="dt">const int</span> PIN_LED = <span class="dv">21</span>;
+
+<span class="co">// --- 1. Fonction qui génère la page d'accueil HTML ---</span>
+<span class="dt">void</span> <span class="fu">handleRoot</span>() {
+  String html = <span class="st">"&lt;!DOCTYPE html&gt;&lt;html&gt;&lt;head&gt;&lt;meta charset='utf-8'&gt;"</span>;
+  html += <span class="st">"&lt;meta name='viewport' content='width=device-width, initial-scale=1.0'&gt;"</span>;
+  html += <span class="st">"&lt;title&gt;Contrôle LED - XIAO ESP32S3&lt;/title&gt;"</span>;
+  html += <span class="st">"&lt;style&gt;"</span>;
+  html += <span class="st">"body { font-family: Arial, sans-serif; text-align: center; margin-top: 50px; background-color: #f7f9fa; }"</span>;
+  html += <span class="st">".btn { display: inline-block; padding: 15px 25px; font-size: 18px; color: white; border: none; border-radius: 8px; text-decoration: none; margin: 10px; cursor: pointer; }"</span>;
+  html += <span class="st">".btn-on { background-color: #4CAF50; }"</span>;
+  html += <span class="st">".btn-off { background-color: #f44336; }"</span>;
+  html += <span class="st">"&lt;/style&gt;&lt;/head&gt;&lt;body&gt;"</span>;
+  html += <span class="st">"&lt;h1&gt;Contrôle de la LED (XIAO ESP32S3)&lt;/h1&gt;"</span>;
+  html += <span class="st">"&lt;a href='/led/on'&gt;&lt;button class='btn btn-on'&gt;Allumer&lt;/button&gt;&lt;/a&gt;"</span>;
+  html += <span class="st">"&lt;a href='/led/off'&gt;&lt;button class='btn btn-off'&gt;Éteindre&lt;/button&gt;&lt;/a&gt;"</span>;
+  html += <span class="st">"&lt;/body&gt;&lt;/html&gt;"</span>;
+
+  server.<span class="fu">send</span>(<span class="dv">200</span>, <span class="st">"text/html"</span>, html);
+}
+
+<span class="co">// --- 2. Action pour allumer la LED (Pin 21 à LOW) ---</span>
+<span class="dt">void</span> <span class="fu">handleLedOn</span>() {
+  <span class="fu">digitalWrite</span>(PIN_LED, LOW);
+  server.<span class="fu">sendHeader</span>(<span class="st">"Location"</span>, <span class="st">"/"</span>);
+  server.<span class="fu">send</span>(<span class="dv">303</span>); <span class="co">// Redirection HTTP</span>
+}
+
+<span class="co">// --- 3. Action pour éteindre la LED (Pin 21 à HIGH) ---</span>
+<span class="dt">void</span> <span class="fu">handleLedOff</span>() {
+  <span class="fu">digitalWrite</span>(PIN_LED, HIGH);
+  server.<span class="fu">sendHeader</span>(<span class="st">"Location"</span>, <span class="st">"/"</span>);
+  server.<span class="fu">send</span>(<span class="dv">303</span>);
+}
+
+<span class="dt">void</span> <span class="fu">setup</span>() {
+  Serial.<span class="fu">begin</span>(<span class="dv">115200</span>);
+
+  <span class="co">// Configuration de la LED</span>
+  <span class="fu">pinMode</span>(PIN_LED, OUTPUT);
+  <span class="fu">digitalWrite</span>(PIN_LED, HIGH); <span class="co">// Éteinte au démarrage</span>
+
+  <span class="co">// Connexion Wi-Fi dynamique</span>
+  WiFiManager wm;
+  wm.<span class="fu">autoConnect</span>(<span class="st">"XIAO-SETUP-AP"</span>, <span class="st">"password"</span>);
+
+  Serial.<span class="fu">println</span>(<span class="st">"[OK] Wi-Fi Connecté."</span>);
+  Serial.<span class="fu">print</span>(<span class="st">"Serveur Web accessible à l'adresse : http://"</span>);
+  Serial.<span class="fu">println</span>(WiFi.<span class="fu">localIP</span>());
+
+  <span class="co">// Définition des routes du serveur Web</span>
+  server.<span class="fu">on</span>(<span class="st">"/"</span>, handleRoot);
+  server.<span class="fu">on</span>(<span class="st">"/led/on"</span>, handleLedOn);
+  server.<span class="fu">on</span>(<span class="st">"/led/off"</span>, handleLedOff);
+
+  <span class="co">// Démarrage du serveur</span>
+  server.<span class="fu">begin</span>();
+  Serial.<span class="fu">println</span>(<span class="st">"[OK] Serveur Web HTTP démarré sur port 80."</span>);
+}
+
+<span class="dt">void</span> <span class="fu">loop</span>() {
+  <span class="co">// Écoute permanente des requêtes clientes entrantes</span>
+  server.<span class="fu">handleClient</span>();
+}</code></pre>
+</div>
+
+<hr />
+
+<!-- ========================================================================= -->
+<!-- 3. PARTIE 2 : ANALYSE DE TRAME HTTP ET EXTRACTION                         -->
+<!-- ========================================================================= -->
+
+<h2>3. PARTIE 2 : Analyse de Trame HTTP et Extraction d'une Requête</h2>
+
+<div class="callout callout-info">
+  <div class="callout-title">🎯 Objectif de la Partie 2</div>
+  <p>Intercepter, analyser et décoder les requêtes HTTP envoyées au microcontrôleur XIAO ESP32-S3 lors de l'activation/désactivation de la LED intégrée via l'interface web.</p>
+</div>
+
+<h3>3.1. Analyse via l'Outil de Développement du Navigateur (Touche F12)</h3>
+<p>Cette méthode permet une observation rapide des requêtes HTTP échangées au niveau de la couche applicative sans installer de logiciel tiers :</p>
+<ol>
+  <li>Ouvrir le navigateur web (Google Chrome, Firefox ou Microsoft Edge).</li>
+  <li>Accéder à l'adresse IP du XIAO ESP32-S3 (ex: <code>http://192.168.1.50</code>).</li>
+  <li>Ouvrir les outils de développement en appuyant sur <strong>F12</strong> (ou <em>Clic droit &gt; Inspecter</em>).</li>
+  <li>Sélectionner l'onglet <strong>Réseau (Network)</strong>.</li>
+  <li>Vérifier que l'enregistrement du trafic est actif (voyant rouge présent).</li>
+  <li>Cliquer sur le bouton <strong>Allumer</strong> ou <strong>Éteindre</strong> sur la page Web.</li>
+  <li>Sélectionner la requête interceptée (<code>on</code> ou <code>off</code>) dans la liste pour en examiner le détail.</li>
+</ol>
+
+<p><strong>Structure de la trame HTTP interceptée :</strong></p>
+<pre><code>Requête HTTP envoyée par le Client (Navigateur) :
+GET /led/on HTTP/1.1
+Host: 192.168.1.50
+User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36
+Accept: text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8
+Referer: http://192.168.1.50/
+
+Réponse HTTP renvoyée par le Serveur (ESP32-S3) :
+HTTP/1.1 303 See Other
+Location: /
+Content-Type: text/plain</code></pre>
+
+<h3>3.2. Analyse Approfondie avec Wireshark</h3>
+<p>Wireshark permet d'analyser l'intégralité du paquet réseau, en détaillant les différentes couches du <strong>Modèle OSI</strong> (Ethernet, IP, TCP, HTTP) :</p>
+<ol>
+  <li>Lancer l'application <strong>Wireshark</strong> sur votre poste.</li>
+  <li>Sélectionner l'interface réseau active (Wi-Fi).</li>
+  <li>Démarrer la capture de trames.</li>
+  <li>Appliquer le filtre d'affichage suivant (en remplaçant l'IP par celle de votre XIAO) :<br>
+  <code>http && ip.addr == 192.168.1.50</code></li>
+  <li>Effectuer une action sur la page Web (cliquer sur <em>Allumer</em> ou <em>Éteindre</em>).</li>
+  <li>Interrompre la capture et analyser les paquets filtrés.</li>
+</ol>
+
+<p><strong>Tableau de décodage de la trame selon le Modèle OSI :</strong></p>
+
+<table>
+  <thead>
+    <tr>
+      <th style="width: 25%;">Couche / Champ</th>
+      <th style="width: 25%;">Valeur observée</th>
+      <th style="width: 50%;">Explication & Rôle</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td><strong>Couche 3 (Réseau)</strong></td>
+      <td>IP Source / IP Destination</td>
+      <td>Identifie l'adresse IP de l'ordinateur client et celle du XIAO ESP32-S3 sur le réseau local.</td>
+    </tr>
+    <tr>
+      <td><strong>Couche 4 (Transport)</strong></td>
+      <td>Port Destination = <code>80</code></td>
+      <td>Port de service standard réservé au protocole HTTP non sécurisé.</td>
+    </tr>
+    <tr>
+      <td><strong>Méthode HTTP</strong></td>
+      <td><code>GET</code></td>
+      <td>Type de requête HTTP demandant une action ou une ressource au serveur.</td>
+    </tr>
+    <tr>
+      <td><strong>URI demandée</strong></td>
+      <td><code>/led/on</code> ou <code>/led/off</code></td>
+      <td>Point d'accès (route) spécifiquement ciblé pour exécuter l'action sur le GPIO 21.</td>
+    </tr>
+    <tr>
+      <td><strong>Code de réponse</strong></td>
+      <td><code>303 See Other</code></td>
+      <td>Code d'état indiquant une redirection HTTP (<code>Location: /</code>) pour recharger l'interface.</td>
+    </tr>
+  </tbody>
+</table>
+
+<div class="student-response">
+  <div style="font-weight: 700; color: #0b3c5d; margin-bottom: 8px;">✍️ Fiche de Travail Élève (Questions Partie 2) :</div>
+  
+  <p><strong>Q1.</strong> Quel est le protocole de couche application (niveau 7) utilisé pour échanger ces données ?</p>
+  <div class="dotted-line"></div>
+  
+  <p><strong>Q2.</strong> Quelle est la méthode HTTP générée lorsque l'utilisateur clique sur le bouton "Allumer" ?</p>
+  <div class="dotted-line"></div>
+  
+  <p><strong>Q3.</strong> Quel est le numéro de port réseau de destination utilisé par le serveur web embarqué ?</p>
+  <div class="dotted-line"></div>
+  
+  <p><strong>Q4.</strong> Expliquer pourquoi le serveur ESP32 répond avec un code HTTP <code>303 See Other</code> au lieu d'un code standard <code>200 OK</code> :</p>
+  <div class="dotted-line"></div>
+  <div class="dotted-line"></div>
+</div>
+
+<hr />
+
+<!-- ========================================================================= -->
+<!-- 4. PARTIE 3 : EXTENSION HTTPS (TLS/SSL) & RESISTANCE AU SNIFFING          -->
+<!-- ========================================================================= -->
+
+<h2>4. PARTIE 3 : Extension HTTPS (TLS/SSL) & Résistance au Sniffing</h2>
+
+<p>Afin de corriger la vulnérabilité majeure de fuite de données observée en HTTP clair, cette section met en œuvre une couche de chiffrement <strong>TLS v1.2 / v1.3</strong> sur l'ESP32.</p>
+
+<div class="callout callout-danger">
+  <div class="callout-title">🛡️ Objectif de la Sécurisation HTTPS</div>
+  <p>Modifier votre programme HTTP existant pour mettre en œuvre un <strong>serveur HTTPS chiffré</strong>, puis comparer la visibilité des données entre l'outil de développement du navigateur (F12) et l'analyseur de paquets Wireshark.</p>
+</div>
+
+<h3>4.1. Pistes de Modification du Code Arduino</h3>
+<p>Conservez votre code fonctionnel précédent. Vous devez y apporter <strong>4 modifications ciblées</strong> :</p>
+
+<ol>
+  <li><strong>Changement de bibliothèque réseau :</strong> Remplacer <code>&lt;WebServer.h&gt;</code> par la bibliothèque gérant le chiffrement TLS/SSL : <code>&lt;WiFiClientSecure.h&gt;</code>.
+<pre><code class="sourceCode cpp"><span class="pp">#include &lt;WiFi.h&gt;</span>
+<span class="pp">#include &lt;WiFiClientSecure.h&gt;</span> <span class="co">// Remplace WebServer.h pour gérer le TLS/SSL</span>
+<span class="pp">#include &lt;WiFiManager.h&gt;</span></code></pre>
+  </li>
+
+  <li><strong>Déclaration du certificat X.509 et de la clé privée :</strong> Ajouter en haut du sketch (au-dessus du <code>setup</code>) les variables contenant le certificat auto-signé et la clé privée au format PEM :
+<pre><code class="sourceCode cpp"><span class="co">// -------------------------------------------------------------------</span>
+<span class="co">// 1. Certificat X.509 auto-signé et clé privée (Format PEM)</span>
+<span class="co">// -------------------------------------------------------------------</span>
+<span class="dt">const char</span>* server_cert = 
+<span class="st">"-----BEGIN CERTIFICATE-----\n"</span>
+<span class="st">"MIIDATCCAe2gAwIBAgIUYR1234567890ABCDEFGHIJKLMNOP\n"</span>
+<span class="st">"-----END CERTIFICATE-----\n"</span>;
+
+<span class="dt">const char</span>* server_key = 
+<span class="st">"-----BEGIN PRIVATE KEY-----\n"</span>
+<span class="st">"MIIEvgIBADANBgkqhkiG9w0BAQEFAASCBKgwggSkAgEAAoI\n"</span>
+<span class="st">"-----END PRIVATE KEY-----\n"</span>;</code></pre>
+  </li>
+
+  <li><strong>Changement de port et instanciation du serveur :</strong> Déclarer le serveur sécurisé sur le port standard HTTPS (<strong>443</strong>) en utilisant l'objet <code>WiFiServerSecure</code> au lieu de <code>WebServer</code> :
+<pre><code class="sourceCode cpp"><span class="co">// Le serveur écoute désormais sur le port sécurisé 443 (HTTPS)</span>
+WiFiServerSecure secureServer(<span class="dv">443</span>);</code></pre>
+  </li>
+
+  <li><strong>Configuration du chiffrement dans la fonction <code>setup()</code> :</strong> Avant d'appeler <code>begin()</code>, associer les clés de chiffrement au serveur sécurisé :
+<pre><code class="sourceCode cpp">secureServer.<span class="fu">setCertificate</span>(server_cert);
+secureServer.<span class="fu">setPrivateKey</span>(server_key);
+secureServer.<span class="fu">begin</span>();</code></pre>
+  </li>
+</ol>
+
+<h3>4.2. Protocole de Test & Manipulations Comparées</h3>
+
+<p><strong>Étape A — Accès à l'application sécurisée :</strong></p>
+<ol>
+  <li>Saisir la nouvelle adresse dans votre navigateur : <code>https://&lt;IP_DU_XIAO&gt;</code> (remarquer l'ajout du <strong>s</strong>).</li>
+  <li><strong>Observation :</strong> Un avertissement de sécurité concernant le certificat auto-signé s'affiche. Cliquez sur <em>Paramètres avancés</em> puis <em>Continuer vers le site (non sécurisé)</em>.</li>
+</ol>
+
+<p><strong>Étape B — Inspection via le navigateur (Touche F12) :</strong></p>
+<ol>
+  <li>Ouvrir l'outil de développement (<strong>F12</strong>) &gt; Onglet <strong>Réseau (Network)</strong>.</li>
+  <li>Actionner les boutons <em>Allumer</em> et <em>Éteindre</em>.</li>
+  <li>Observer la liste des requêtes HTTP interceptées.</li>
+</ol>
+
+<p><strong>Étape C — Capture sous Wireshark :</strong></p>
+<ol>
+  <li>Lancer Wireshark avec le filtre : <code>tcp.port == 443 && ip.addr == &lt;IP_DU_XIAO&gt;</code></li>
+  <li>Actionner à nouveau la LED depuis la page Web.</li>
+  <li>Chercher si les requêtes <code>/led/on</code> ou <code>/led/off</code> apparaissent en clair dans la liste des paquets.</li>
+</ol>
+
+<div class="student-response">
+  <div style="font-weight: 700; color: #0b3c5d; margin-bottom: 8px;">📊 Fiche d'Analyse Comparative (À compléter par l'élève) :</div>
+  
+  <table>
+    <thead>
+      <tr>
+        <th style="width: 25%;">Outil d'analyse</th>
+        <th style="width: 30%;">La requête <code>/led/on</code> est-elle lisible en clair ? (Oui / Non)</th>
+        <th style="width: 45%;">Explication technique du résultat</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><strong>Navigateur Web (F12)</strong></td>
+        <td>[ . . . . . . . . . . . . . . . ]</td>
+        <td>....................................................................................................</td>
+      </tr>
+      <tr>
+        <td><strong>Wireshark</strong></td>
+        <td>[ . . . . . . . . . . . . . . . ]</td>
+        <td>....................................................................................................</td>
+      </tr>
+    </tbody>
+  </table>
+
+  <p><strong>Questions de Synthèse :</strong></p>
+  
+  <p><strong>1.</strong> Pourquoi le navigateur web (F12) parvient-il toujours à afficher la requête <code>/led/on</code> en clair alors que la liaison est chiffrée ?</p>
+  <div class="dotted-line"></div>
+  
+  <p><strong>2.</strong> Sous quel nom / type de données apparaissent les paquets contenant les clics sur les boutons lors de la capture sous Wireshark ?</p>
+  <div class="dotted-line"></div>
+  
+  <p><strong>3.</strong> Expliquer pourquoi le filtre <code>http</code> utilisé dans la partie précédente ne renvoie plus aucun paquet sous Wireshark :</p>
+  <div class="dotted-line"></div>
+  <div class="dotted-line"></div>
+</div>
+
+<div class="callout callout-warning">
+  <div class="callout-title">📌 Constatation de Sécurité & Cryptographie</div>
+  <p>Le filtre <code>http</code> ne renvoie plus aucun résultat car l'intégralité des en-têtes et du payload HTTP est chiffrée au sein de la couche <strong>TLS Record Layer</strong>. La recherche des octets magiques (ex: <code>FF D8 FF</code> pour les images JPEG) dans le flux TLS échoue : les données présentent une entropie élevée assimilable à un bruit aléatoire. Le menu <em>Fichier &gt; Exporter des objets &gt; HTTP</em> sous Wireshark n'extrait aucun objet.</p>
+</div>
+
+<hr />
+
+<!-- ========================================================================= -->
+<!-- 5. QUESTIONS DE SYNTHESE & EVALUATION BTS CIEL                            -->
+<!-- ========================================================================= -->
+
+<h2>5. Questions de Synthèse & Évaluation</h2>
+
+<div class="student-response">
+  <p><strong>Q1 (Réseau & Architecture Matérielle) :</strong> Dans quelle mémoire non volatile de l'ESP32 les identifiants Wi-Fi sont-ils sauvegardés par la bibliothèque WiFiManager ? Expliquez pourquoi ils ne sont pas perdus lors d'un redémarrage.</p>
+  <div class="dotted-line"></div>
+  <div class="dotted-line"></div>
+
+  <p><strong>Q2 (Cybersécurité & Certificats) :</strong> Pourquoi le navigateur affiche-t-il un avertissement de sécurité lors du premier accès au serveur HTTPS de l'ESP32 ? Qu'est-ce qui différencie ce certificat d'un certificat émis par une Autorité de Certification (CA) commerciale ?</p>
+  <div class="dotted-line"></div>
+  <div class="dotted-line"></div>
+
+  <p><strong>Q3 (Analyse SOC & Déchiffrement) :</strong> En tant qu'analyste dans un centre de sécurité opérationnel (SOC), comment pourrait-on déchiffrer ce flux HTTPS dans Wireshark si l'on a le contrôle total du poste client (navigateur) ? (Piste : variable d'environnement <code>SSLKEYLOGFILE</code>).</p>
+  <div class="dotted-line"></div>
+  <div class="dotted-line"></div>
+
+  <p><strong>Q4 (Performances & Systèmes Embarqués) :</strong> Quel est l'impact de l'activation du protocole HTTPS/TLS sur la mémoire RAM et les ressources processeur du microcontrôleur XIAO ESP32S3 ? (Rôle de la mémoire PSRAM externe OPI).</p>
+  <div class="dotted-line"></div>
+  <div class="dotted-line"></div>
+</div>
+
+<hr />
+
+<h2>📊 Grille d'Évaluation Sommative & Formative (sur 20 points)</h2>
+
+<table>
+  <thead>
+    <tr>
+      <th style="width: 25%;">Critère d'Évaluation</th>
+      <th style="width: 45%;">Indicateurs de réussite & compétences BTS CIEL</th>
+      <th style="width: 15%; text-align: center;">Barème</th>
+      <th style="width: 15%; text-align: center;">Note</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td><strong>1. Provisionnement Wi-Fi & AP (C05)</strong></td>
+      <td>Configuration correcte de l'Arduino IDE, téléversement de WiFiManager, connexion au portail captif et basculement réussi en mode STA.</td>
+      <td style="text-align: center;"><strong>4 pts</strong></td>
+      <td style="text-align: center;">...... / 4</td>
+    </tr>
+    <tr>
+      <td><strong>2. Serveur Web Embarqué & LED (C05)</strong></td>
+      <td>Programmation des routes <code>/</code>, <code>/led/on</code>, <code>/led/off</code>, commande fonctionnelle de la LED intégrée via l'interface HTML.</td>
+      <td style="text-align: center;"><strong>4 pts</strong></td>
+      <td style="text-align: center;">...... / 4</td>
+    </tr>
+    <tr>
+      <td><strong>3. Analyse HTTP F12 & Wireshark (C04 & C07)</strong></td>
+      <td>Interception exacte des requêtes GET, identification des champs du modèle OSI (L3 IP, L4 port 80, L7 HTTP 303), réponses aux questions Q1-Q4.</td>
+      <td style="text-align: center;"><strong>4 pts</strong></td>
+      <td style="text-align: center;">...... / 4</td>
+    </tr>
+    <tr>
+      <td><strong>4. Sécurisation HTTPS & Résistance (C05 & C07)</strong></td>
+      <td>Intégration du certificat X.509 et clé privée, bascule sur port 443, constatation sous Wireshark de l'opacité des paquets (Application Data).</td>
+      <td style="text-align: center;"><strong>4 pts</strong></td>
+      <td style="text-align: center;">...... / 4</td>
+    </tr>
+    <tr>
+      <td><strong>5. Questions de Synthèse & Cybersécurité (C04)</strong></td>
+      <td>Qualité technique des réponses sur la mémoire NVS, les certificats X.509, le déchiffrement SSLKEYLOGFILE et l'impact RAM/PSRAM.</td>
+      <td style="text-align: center;"><strong>4 pts</strong></td>
+      <td style="text-align: center;">...... / 4</td>
+    </tr>
+    <tr>
+      <td><strong>NOTE TOTALE</strong></td>
+      <td><strong>Évaluation globale des compétences Réseaux, Web & Cybersécurité</strong></td>
+      <td style="text-align: center;"><strong>/ 20</strong></td>
+      <td style="text-align: center;"><strong>...... / 20</strong></td>
+    </tr>
+  </tbody>
+</table>
+
+<footer style="margin-top: 35px; padding-top: 12px; border-top: 1px solid #d0d7de; font-size: 8.5pt; color: #64748b; text-align: center;">
+  BTS CIEL (Cybersécurité, Informatique et Réseaux, Électronique) • Option A (IR) & Option B (ER) • Document ressource TP Réseaux Embarqués & Sécurité
+</footer>
+
+</body>
+</html>
