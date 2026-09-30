@@ -1,0 +1,948 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="utf-8" />
+  <meta name="generator" content="BTS CIEL - Vincent Hilaire" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes" />
+  <title>TP / Activité : Décodage Trame Ethernet Brute, Handshake TCP & Mise en Œuvre Étudiante UDP sans Connexion - BTS CIEL</title>
+  
+  <style>
+    @page {
+      margin: 1.5cm;
+      size: A4;
+    }
+    
+    html {
+      color: #1a1a1a;
+      background-color: #fdfdfd;
+      -webkit-text-size-adjust: 100%;
+    }
+    
+    body {
+      font-family: 'Segoe UI', -apple-system, BlinkMacSystemFont, Roboto, Helvetica, Arial, sans-serif;
+      line-height: 1.55;
+      color: #1a1a1a;
+      max-width: 920px;
+      margin: 0 auto;
+      padding: 25px 30px;
+      hyphens: auto;
+      overflow-wrap: break-word;
+      text-rendering: optimizeLegibility;
+      font-kerning: normal;
+    }
+    
+    @media (max-width: 768px) {
+      body {
+        font-size: 0.95em;
+        padding: 15px;
+      }
+      h1 {
+        font-size: 1.55em !important;
+      }
+    }
+    
+    @media print {
+      html { background-color: white; }
+      body { background-color: transparent; color: black; font-size: 10pt; max-width: 100%; padding: 0; }
+      p, h2, h3 { orphans: 3; widows: 3; }
+      h2, h3, h4 { page-break-after: avoid; }
+      pre, blockquote, table { page-break-inside: avoid; }
+      .no-print { display: none; }
+    }
+    
+    header {
+      margin-bottom: 2.2em;
+      text-align: center;
+      border-bottom: 3px solid #0b3c5d;
+      padding-bottom: 15px;
+    }
+    
+    .meta-badge {
+      display: inline-block;
+      background: #e1ecf4;
+      color: #0b3c5d;
+      font-size: 0.85em;
+      font-weight: 600;
+      padding: 4px 10px;
+      border-radius: 20px;
+      margin: 3px 6px;
+      border: 1px solid #7aa7c7;
+    }
+    
+    .badge-primary { background: #0b3c5d; color: #ffffff; border: 1px solid #0b3c5d; }
+    .badge-alert { background: #fee2e2; color: #991b1b; border: 1px solid #f87171; }
+    .badge-success { background: #dcfce7; color: #166534; border: 1px solid #86efac; }
+    .badge-warning { background: #fef3c7; color: #92400e; border: 1px solid #fcd34d; }
+    .badge-purple { background: #f3e8ff; color: #6b21a8; border: 1px solid #d8b4fe; }
+    
+    h1, h2, h3, h4 {
+      color: #0b3c5d;
+      font-weight: 700;
+    }
+    
+    h1 {
+      font-size: 19.5pt;
+      margin-top: 0.6em;
+      margin-bottom: 0.3em;
+      letter-spacing: -0.5px;
+    }
+    
+    h2 {
+      font-size: 14pt;
+      margin-top: 24px;
+      margin-bottom: 12px;
+      border-bottom: 1.5px solid #d0d7de;
+      padding-bottom: 6px;
+    }
+    
+    h3 {
+      font-size: 11.5pt;
+      margin-top: 18px;
+      margin-bottom: 8px;
+      border-left: 4.5px solid #328cc1;
+      padding-left: 10px;
+    }
+    
+    h4 {
+      font-size: 10.5pt;
+      margin-top: 14px;
+      color: #1d5f8a;
+    }
+    
+    p {
+      margin: 0.8em 0;
+    }
+    
+    a {
+      color: #0969da;
+      text-decoration: none;
+    }
+    
+    ul, ol {
+      padding-left: 1.6em;
+      margin: 0.8em 0;
+    }
+    
+    li {
+      margin-bottom: 0.35em;
+    }
+    
+    hr {
+      border: 0;
+      border-top: 1px solid #d0d7de;
+      margin: 22px 0;
+    }
+    
+    /* Callout & Notes */
+    .callout {
+      border-radius: 6px;
+      padding: 12px 16px;
+      margin: 16px 0;
+      font-size: 9.5pt;
+      border-left: 5px solid;
+    }
+    
+    .callout-info {
+      background-color: #f0f7fc;
+      border-color: #328cc1;
+      color: #1a446c;
+    }
+    
+    .callout-warning {
+      background-color: #fffbeb;
+      border-color: #f59e0b;
+      color: #78350f;
+    }
+    
+    .callout-danger {
+      background-color: #fef2f2;
+      border-color: #ef4444;
+      color: #7f1d1d;
+    }
+    
+    .callout-success {
+      background-color: #f0fdf4;
+      border-color: #22c55e;
+      color: #14532d;
+    }
+    
+    .callout-title {
+      font-weight: 700;
+      margin-bottom: 4px;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+    
+    /* Tables */
+    table {
+      border-collapse: collapse;
+      width: 100%;
+      margin: 14px 0;
+      font-size: 9.2pt;
+      background-color: #ffffff;
+      box-shadow: 0 1px 3px rgba(0,0,0,0.05);
+    }
+    
+    th, td {
+      border: 1px solid #d0d7de;
+      padding: 7px 10px;
+      text-align: left;
+      vertical-align: middle;
+    }
+    
+    th {
+      background-color: #f0f4f8;
+      color: #0b3c5d;
+      font-weight: 700;
+    }
+    
+    tr:nth-child(even) {
+      background-color: #f8fafc;
+    }
+    
+    /* Code and Pre blocks */
+    pre {
+      background-color: #f6f8fa;
+      border: 1px solid #d0d7de;
+      border-radius: 6px;
+      padding: 12px 14px;
+      font-size: 8.9pt;
+      line-height: 1.45;
+      overflow-x: auto;
+      font-family: Consolas, 'Courier New', Monaco, monospace;
+      color: #24292f;
+      margin: 14px 0;
+    }
+    
+    code {
+      background-color: #eff1f3;
+      padding: 2px 5px;
+      border-radius: 4px;
+      font-size: 88%;
+      font-family: Consolas, 'Courier New', Monaco, monospace;
+      color: #0969da;
+    }
+    
+    pre code {
+      background-color: transparent;
+      padding: 0;
+      border-radius: 0;
+      font-size: inherit;
+      color: inherit;
+    }
+    
+    /* Zones de saisie / questions élève */
+    .student-response {
+      background: #fafbfc;
+      border: 1.5px dashed #7aa7c7;
+      border-radius: 6px;
+      padding: 12px 16px;
+      margin: 14px 0 18px 0;
+      color: #334155;
+    }
+    
+    .dotted-line {
+      border-bottom: 1px dotted #94a3b8;
+      height: 22px;
+      margin-bottom: 5px;
+    }
+    
+    /* Hex dump dissection styles */
+    .hexdump-container {
+      background: #1e1e1e;
+      color: #d4d4d4;
+      padding: 14px;
+      border-radius: 6px;
+      font-family: Consolas, 'Courier New', monospace;
+      font-size: 8.8pt;
+      line-height: 1.5;
+      overflow-x: auto;
+      margin: 14px 0;
+    }
+    
+    .hex-eth   { color: #4ec9b0; font-weight: bold; background: rgba(78, 201, 176, 0.15); padding: 1px 3px; border-radius: 3px; }
+    .hex-ip    { color: #569cd6; font-weight: bold; background: rgba(86, 156, 214, 0.15); padding: 1px 3px; border-radius: 3px; }
+    .hex-tcp   { color: #ce9178; font-weight: bold; background: rgba(206, 145, 120, 0.15); padding: 1px 3px; border-radius: 3px; }
+    .hex-http  { color: #dcdcaa; font-weight: bold; background: rgba(220, 220, 170, 0.15); padding: 1px 3px; border-radius: 3px; }
+    .hex-offset{ color: #858585; }
+    
+    .legend-box {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+      margin: 8px 0 14px 0;
+      font-size: 8.8pt;
+    }
+    .legend-item {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      font-weight: 600;
+    }
+    .legend-color {
+      width: 14px;
+      height: 14px;
+      border-radius: 3px;
+    }
+    
+    .doc-resource-box {
+      background-color: #fdfefe;
+      border: 1px solid #b6d4e8;
+      border-left: 5px solid #0b3c5d;
+      border-radius: 6px;
+      padding: 12px 16px;
+      margin: 14px 0;
+      box-shadow: 0 1px 3px rgba(0,0,0,0.04);
+    }
+    
+    .doc-title {
+      font-weight: 700;
+      color: #0b3c5d;
+      font-size: 10pt;
+      margin-bottom: 6px;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+    
+    .bit-table {
+      text-align: center;
+      font-family: Consolas, monospace;
+      margin: 10px 0;
+      font-size: 8.8pt;
+    }
+    .bit-table th {
+      background: #e2e8f0;
+      text-align: center;
+      padding: 5px;
+    }
+    .bit-table td {
+      text-align: center;
+      padding: 5px;
+    }
+    
+    .step-box {
+      background: #ffffff;
+      border: 1px solid #cbd5e1;
+      border-radius: 8px;
+      padding: 14px 18px;
+      margin: 18px 0;
+      box-shadow: 0 2px 4px rgba(0,0,0,0.03);
+    }
+    
+    .step-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      border-bottom: 1px solid #e2e8f0;
+      padding-bottom: 8px;
+      margin-bottom: 12px;
+    }
+    
+    .step-title {
+      font-weight: 700;
+      font-size: 11pt;
+      color: #0b3c5d;
+    }
+    
+    .timing-badge {
+      background: #e2e8f0;
+      color: #334155;
+      font-size: 8pt;
+      padding: 3px 8px;
+      border-radius: 12px;
+      font-weight: 600;
+    }
+  </style>
+</head>
+<body>
+
+<header id="title-block-header">
+  <div style="text-transform: uppercase; font-size: 0.9em; font-weight: 700; letter-spacing: 1px; color: #328cc1; margin-bottom: 4px;">
+    BTS CIEL — 2<sup>e</sup> Année • Option A (IR) & Option B (ER)
+  </div>
+  <h1 class="title">Activité : Décodage d'une Trame Ethernet Brute, Handshake TCP & Mise en Œuvre Étudiante UDP sans Connexion</h1>
+  <div style="margin-top: 10px;">
+    <span class="meta-badge badge-primary">⏱ Durée : 2h00 (30 min démo/cours + 1h30 manipulation binôme)</span>
+    <span class="meta-badge badge-purple">🔬 Décodage Hexadécimal & Documents Ressources</span>
+    <span class="meta-badge badge-success">👥 Phase Pratique Réalisée par les Étudiants</span>
+    <span class="meta-badge badge-warning">⚡ Comparatif TCP vs UDP sous Wireshark</span>
+  </div>
+</header>
+
+<div class="callout callout-info">
+  <div class="callout-title">📋 Organisation Pédagogique de la Séance</div>
+  <p>Cette activité s'organise en deux phases complémentaires :</p>
+  <ul>
+    <li><strong>Phase 1 (30 min - Démonstration & Analyse Dirigée) :</strong> L'enseignant projette la capture Wireshark du clic <em>"Allumer"</em> (HTTP) et explique le mécanisme du <strong>TCP 3-Way Handshake</strong>. Les étudiants étudient ensuite l'anatomie d'une trame brute en hexadécimal à l'aide des <strong>documents ressources techniques fournis</strong> et résolvent l'exercice d'analyse.</li>
+    <li><strong>Phase 2 (1h30 - Travail Pratique Étudiant en Binôme) :</strong> Les étudiants prennent la main ! Ils téléversent sur leur propre carte (XIAO ESP32 ou Pico W) le firmware à <strong>double écoute (HTTP TCP 80 + UDP 4210)</strong>, mettent en œuvre le contrôle de la LED en UDP direct, effectuent leurs propres captures Wireshark et caractérisent le gain de réactivité et d'overhead.</li>
+  </ul>
+</div>
+
+<hr />
+
+<!-- ========================================================================= -->
+<!-- PHASE 1 : DEMONSTRATION & DECODAGE TRAME BRUTE                            -->
+<!-- ========================================================================= -->
+
+<h2>PHASE 1 : Démonstration Enseignant & Décodage d'une Trame Brute (30 min)</h2>
+
+<h3>1.1. Les Trames Échangées lors du Clic "Allumer" (<code>GET /led/on</code>)</h3>
+
+<p>Dans le TP WebServer, lorsque l'utilisateur clique sur le bouton <strong>"Allumer"</strong> (URL : <code>http://192.168.1.100/led/on</code>), le navigateur et le microcontrôleur échangent une suite précise de segments TCP :</p>
+
+<pre><code>   NAVIGATEUR CLIENT (PC)                                    SERVEUR EMBARQUÉ (XIAO / Pico W)
+       IP: 192.168.1.50                                              IP: 192.168.1.100
+       Port: 54321 (Éphémère)                                        Port: 80 (HTTP)
+              |                                                             |
+              | ================= PHASE A : 3-WAY HANDSHAKE =============== |
+   [Trame 1]  | ------------ [SYN] Seq=0 ---------------------------------> |  1. Demande d'ouverture de session
+   [Trame 2]  | <----------- [SYN, ACK] Seq=0, Ack=1 ---------------------- |  2. Acceptation & Synchronisation
+   [Trame 3]  | ------------ [ACK] Seq=1, Ack=1 --------------------------> |  3. Acquittement final du client
+              |                                                             |
+              | ================= PHASE B : TRANSACTION HTTP ============== |
+   [Trame 4]  | ------------ [PSH, ACK] GET /led/on HTTP/1.1 -------------> |  4. Requête Applicative (Clic)
+   [Trame 5]  | <----------- [ACK] Seq=1, Ack=450 ------------------------- |  5. Acquittement TCP de réception
+   [Trame 6]  | <----------- [PSH, ACK] HTTP/1.1 303 See Other ------------ |  6. Réponse serveur (Redirection '/')
+   [Trame 7]  | ------------ [ACK] Seq=450, Ack=185 -----------------------> |  7. Acquittement client de la réponse
+              |                                                             |</code></pre>
+
+<div class="callout callout-warning">
+  <div class="callout-title">💡 Pourquoi 4 trames (ou 7 trames) selon le cas sous Wireshark ?</div>
+  <ul>
+    <li><strong>Cas A — Connexion persistante HTTP/1.1 (Keep-Alive) :</strong> Si la connexion TCP est déjà ouverte depuis le chargement de la page, la phase A (Handshake) est économisée. On observe alors <strong>exactement 4 trames</strong> : la requête <code>[PSH, ACK]</code>, son <code>[ACK]</code>, la réponse <code>303 See Other</code> et son <code>[ACK]</code>.</li>
+    <li><strong>Cas B — Nouvelle connexion (fermeture après chaque requête) :</strong> Le <strong>3-Way Handshake</strong> complet s'exécute obligatoirement avant d'acheminer la requête applicative HTTP, totalisant 7 trames.</li>
+  </ul>
+</div>
+
+<h3>1.2. Document Technique de Référence : Anatomie d'une Trame Ethernet Brute</h3>
+
+<p>Une trame réseau est constituée d'enveloppes emboîtées selon le principe d'<strong>encapsulation OSI</strong> :</p>
+
+<pre><code>+---------------------------------------------------------------------------------------------------------+
+|                                    TRAME ETHERNET II (Couche 2 - Liaison)                                |
++-----------------------------------+---------------------------------------------------------------------+
+| En-tête Ethernet (14 octets)     | Données Ethernet (Charge utile : Paquet IPv4)                       |
+| [MAC Dest] [MAC Src] [Type=0800]  |                                                                     |
++-----------------------------------+---------------------------------------------------------------------+
+                                    |                       PAQUET IPv4 (Couche 3 - Réseau)               |
+                                    +-----------------------------------+---------------------------------+
+                                    | En-tête IPv4 (20 octets)          | Données IP (Segment TCP)        |
+                                    | [Ver/IHL] [Proto=06] [IP Src/Dst] |                                 |
+                                    +-----------------------------------+---------------------------------+
+                                                                        |       SEGMENT TCP (Couche 4)    |
+                                                                        +-------------------+-------------+
+                                                                        | En-tête TCP (20o) | Payload L7  |
+                                                                        | [Ports] [Flags]   | "GET ..."   |
+                                                                        +-------------------+-------------+</code></pre>
+
+<p>Voici la capture hexadécimale brute (Hex Dump) de la <strong>Trame 4</strong> transportant la requête <code>GET /led/on</code> :</p>
+
+<div class="legend-box">
+  <div class="legend-item"><span class="legend-color" style="background:#4ec9b0;"></span> En-tête Ethernet (14 octets)</div>
+  <div class="legend-item"><span class="legend-color" style="background:#569cd6;"></span> En-tête IPv4 (20 octets)</div>
+  <div class="legend-item"><span class="legend-color" style="background:#ce9178;"></span> En-tête TCP (20 octets)</div>
+  <div class="legend-item"><span class="legend-color" style="background:#dcdcaa;"></span> Payload HTTP (Données applicatives)</div>
+</div>
+
+<div class="hexdump-container">
+<span class="hex-offset">0000 </span> <span class="hex-eth">68 b6 b3 45 12 34</span> <span class="hex-eth">00 e0 4c 68 11 22</span> <span class="hex-eth">08 00</span> <span class="hex-ip">45 00</span>  <span style="color:#aaa;">h..E.4..Lh..E.</span><br>
+<span class="hex-offset">0010 </span> <span class="hex-ip">00 48 3a 1c 40 00 40 06 b5 3a c0 a8 01 32 c0 a8</span>  <span style="color:#aaa;">.H:.@.@..:...2..</span><br>
+<span class="hex-offset">0020 </span> <span class="hex-ip">01 64</span> <span class="hex-tcp">d4 31 00 50 14 a2 8b 01 0c 45 77 12 50 18</span>  <span style="color:#aaa;">.d.1.P...Ew.P.</span><br>
+<span class="hex-offset">0030 </span> <span class="hex-tcp">0f a0 7b 42 00 00</span> <span class="hex-http">47 45 54 20 2f 6c 65 64 2f 6f</span>  <span style="color:#aaa;">..{B..</span><span style="color:#ffcc66; font-weight:bold;">GET /led/o</span><br>
+<span class="hex-offset">0040 </span> <span class="hex-http">6e 20 48 54 54 50 2f 31 2e 31 0d 0a 48 6f 73 74</span>  <span style="color:#ffcc66; font-weight:bold;">n HTTP/1.1..Host</span><br>
+<span class="hex-offset">0050 </span> <span class="hex-http">3a 20 31 39 32 2e 31 36 38 2e 31 2e 31 30 30 0d</span>  <span style="color:#ffcc66; font-weight:bold;">: 192.168.1.100.</span><br>
+<span class="hex-offset">0060 </span> <span class="hex-http">0a 0d 0a</span>                                         <span style="color:#ffcc66; font-weight:bold;">...</span>
+</div>
+
+<hr />
+
+<!-- ========================================================================= -->
+<!-- DOCUMENTS TECHNIQUES RESSOURCES POUR L'ETUDIANT                           -->
+<!-- ========================================================================= -->
+
+<h3>1.3. Documents Techniques Ressources pour l'Étudiant</h3>
+
+<div class="doc-resource-box">
+  <div class="doc-title">📖 Document Ressource A : Extrait RFC 791 / IANA — Table des Protocoles IPv4 (Offset 0x17)</div>
+  <p>Dans l'en-tête IPv4, l'octet situé à l'offset <code>0x17</code> (23 en décimal) indique à quel protocole de couche transport (L4) les données doivent être délivrées :</p>
+  
+  <table>
+    <thead>
+      <tr>
+        <th style="width: 15%; text-align: center;">Valeur Décimale</th>
+        <th style="width: 15%; text-align: center;">Valeur Hexa</th>
+        <th style="width: 20%;">Sigle Protocole</th>
+        <th style="width: 50%;">Nom & Rôle Applicatif usuel</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td style="text-align: center;">1</td>
+        <td style="text-align: center;"><code>0x01</code></td>
+        <td><strong>ICMP</strong></td>
+        <td>Internet Control Message Protocol (Commandes <em>Ping</em>, messages d'erreurs réseau)</td>
+      </tr>
+      <tr>
+        <td style="text-align: center;">2</td>
+        <td style="text-align: center;"><code>0x02</code></td>
+        <td><strong>IGMP</strong></td>
+        <td>Internet Group Management Protocol (Gestion des groupes Multicast)</td>
+      </tr>
+      <tr>
+        <td style="text-align: center;"><strong>6</strong></td>
+        <td style="text-align: center;"><strong><code>0x06</code></strong></td>
+        <td><strong>TCP</strong></td>
+        <td><strong>Transmission Control Protocol (Mode connecté, fiable : HTTP, HTTPS, SSH, MQTT)</strong></td>
+      </tr>
+      <tr>
+        <td style="text-align: center;"><strong>17</strong></td>
+        <td style="text-align: center;"><strong><code>0x11</code></strong></td>
+        <td><strong>UDP</strong></td>
+        <td><strong>User Datagram Protocol (Mode non connecté, rapide : DNS, DHCP, NTP, Télémétrie)</strong></td>
+      </tr>
+      <tr>
+        <td style="text-align: center;">41</td>
+        <td style="text-align: center;"><code>0x29</code></td>
+        <td><strong>IPv6</strong></td>
+        <td>Encapsulation de paquets IPv6 dans IPv4 (Tunnel 6in4)</td>
+      </tr>
+      <tr>
+        <td style="text-align: center;">89</td>
+        <td style="text-align: center;"><code>0x59</code></td>
+        <td><strong>OSPF</strong></td>
+        <td>Open Shortest Path First (Protocole de routage dynamique)</td>
+      </tr>
+    </tbody>
+  </table>
+  <p style="font-size: 8.8pt; color: #555;"><em>Note de conversion :</em> 17 en base 10 = (1 × 16) + 1 = <code>0x11</code> en hexadécimal. 6 en base 10 = <code>0x06</code>.</p>
+</div>
+
+<div class="doc-resource-box">
+  <div class="doc-title">📖 Document Ressource B : Extrait RFC 793 / 9293 — Registre des Drapeaux TCP (Offset 0x2F)</div>
+  <p>L'octet situé à l'offset <code>0x2F</code> (47 en décimal) contient les 8 bits de contrôle gouvernant le cycle de vie de la session TCP :</p>
+  
+  <table class="bit-table">
+    <thead>
+      <tr>
+        <th>Bit 7</th>
+        <th>Bit 6</th>
+        <th>Bit 5</th>
+        <th>Bit 4</th>
+        <th>Bit 3</th>
+        <th>Bit 2</th>
+        <th>Bit 1</th>
+        <th>Bit 0</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><strong>CWR</strong></td>
+        <td><strong>ECE</strong></td>
+        <td><strong>URG</strong></td>
+        <td><strong>ACK</strong></td>
+        <td><strong>PSH</strong></td>
+        <td><strong>RST</strong></td>
+        <td><strong>SYN</strong></td>
+        <td><strong>FIN</strong></td>
+      </tr>
+      <tr>
+        <td>Congestion Reduced</td>
+        <td>ECN Echo</td>
+        <td>Pointeur Urgent</td>
+        <td><strong>Acquittement</strong></td>
+        <td><strong>Push Function</strong></td>
+        <td>Reset Connexion</td>
+        <td>Synchronisation</td>
+        <td>Fin de session</td>
+      </tr>
+      <tr>
+        <td>Poids : 128 (<code>0x80</code>)</td>
+        <td>Poids : 64 (<code>0x40</code>)</td>
+        <td>Poids : 32 (<code>0x20</code>)</td>
+        <td><strong>Poids : 16 (<code>0x10</code>)</strong></td>
+        <td><strong>Poids : 8 (<code>0x08</code>)</strong></td>
+        <td>Poids : 4 (<code>0x04</code>)</td>
+        <td>Poids : 2 (<code>0x02</code>)</td>
+        <td>Poids : 1 (<code>0x01</code>)</td>
+      </tr>
+    </tbody>
+  </table>
+
+  <p><strong>Rôle technique des principaux drapeaux :</strong></p>
+  <ul>
+    <li><strong>SYN (<code>0x02</code>) :</strong> Utilisé lors du handshake pour synchroniser les numéros de séquence initiaux.</li>
+    <li><strong>ACK (<code>0x10</code>) :</strong> Indique que le champ <em>Acknowledgment Number</em> est valide et confirme la réception d'octets.</li>
+    <li><strong>PSH (Push - <code>0x08</code>) :</strong> <em>Indicateur de vidage forcé.</em> Par défaut, pour optimiser la bande passante (algorithme de Nagle), la couche TCP peut temporiser et agréger plusieurs octets dans son tampon avant de les transmettre. <strong>Le drapeau PSH ordonne à la pile réceptrice de transmettre immédiatement les données à l'application sans attendre le remplissage complet du tampon (MSS).</strong> Pour une commande HTTP <code>GET /led/on</code>, c'est indispensable pour déclencher l'action sans latence !</li>
+    <li><strong>FIN (<code>0x01</code>) :</strong> Indique que l'émetteur a terminé de transmettre ses données et demande la fermeture de session.</li>
+  </ul>
+</div>
+
+<div class="student-response">
+  <div style="font-weight: 700; color: #0b3c5d; margin-bottom: 8px;">✍️ Exercice d'Analyse Rapide (À compléter individuellement par l'étudiant) :</div>
+  
+  <p><strong>1. Analyse du Protocole de Couche 3 (Réseau) :</strong></p>
+  <p>a) Repérez dans le Hex Dump la valeur de l'octet situé à l'offset <code>0x17</code> : <code>0x......</code></p>
+  <p>b) À l'aide du <strong>Document Ressource A</strong>, identifiez le protocole de couche 4 correspondant : ................................................................</p>
+  <p>c) Que vaudrait cet octet si le microcontrôleur recevait un paquet <strong>UDP</strong> ? Donnez la valeur en décimal et en hexadécimal : ..................................</p>
+  <div class="dotted-line"></div>
+
+  <p><strong>2. Décodage du Registre des Drapeaux TCP (Couche 4 Transport) :</strong></p>
+  <p>a) Dans le Hex Dump, relevez la valeur de l'octet des flags situé à l'offset <code>0x2F</code> : <code>0x......</code></p>
+  <p>b) Convertissez cette valeur hexadécimale en binaire sur 8 bits : <code>[ ...... ...... ...... ...... | ...... ...... ...... ...... ]</code></p>
+  <p>c) À l'aide du <strong>Document Ressource B</strong>, identifiez quels sont les deux drapeaux activés (mis à <code>1</code>) :</p>
+  <p>• Drapeau 1 : ................................................................ (Poids hexadécimal : <code>0x......</code>)</p>
+  <p>• Drapeau 2 : ................................................................ (Poids hexadécimal : <code>0x......</code>)</p>
+  <p>Vérification de la somme : <code>0x......</code> + <code>0x......</code> = <code>0x18</code>.</p>
+  <p>d) Expliquez pourquoi le drapeau <strong>PSH (Push)</strong> est impérativement positionné à 1 lors de l'émission de la requête HTTP <code>GET /led/on</code> vers le serveur :</p>
+  <div class="dotted-line"></div>
+  <div class="dotted-line"></div>
+</div>
+
+<hr />
+
+<!-- ========================================================================= -->
+<!-- PHASE 2 : TRAVAIL PRATIQUE ETUDIANT EN BINOME                             -->
+<!-- ========================================================================= -->
+
+<h2>PHASE 2 : Travail Pratique Étudiant en Binôme : Pilotage UDP sans Connexion & Analyse Comparée (1h30)</h2>
+
+<div class="callout callout-info">
+  <div class="callout-title">🎯 Votre Mission de Technicien Supérieur</div>
+  <p>Vous travaillez en binôme. Votre objectif est de mettre en œuvre et d'analyser expérimentalement une alternative au protocole HTTP/TCP : <strong>le pilotage direct en UDP sur le port 4210</strong>.</p>
+  <p>Vous devez démontrer la différence fondamentale entre les deux modes en termes de <strong>nombre de trames réseau</strong>, de <strong>poignée de main</strong> et de <strong>consommation de bande passante</strong>.</p>
+</div>
+
+<h3>2.1. Étude Préalable : Pourquoi un Navigateur Web ne peut-il pas envoyer du UDP ?</h3>
+
+<div class="student-response">
+  <p><strong>Question P2.1 (Cybersécurité & Sandbox W3C) :</strong></p>
+  <p>Dans un navigateur classique (Chrome, Firefox, Edge), un script JavaScript sur une page web ne dispose pas d'API pour ouvrir un socket UDP brut vers une IP locale. Pourquoi le modèle de sécurité du W3C interdit-il aux navigateurs d'émettre des datagrammes UDP arbitraires ? (Pensez aux attaques par usurpation d'IP / spoofing, amplification DDoS et balayage de ports sur le réseau interne) :</p>
+  <div class="dotted-line"></div>
+  <div class="dotted-line"></div>
+  <div class="dotted-line"></div>
+</div>
+
+<h3>2.2. Téléversement du Firmware Double Écoute sur votre Microcontrôleur</h3>
+
+<div class="step-box">
+  <div class="step-header">
+    <span class="step-title">Fichier Arduino : <code>xiao_dual_http_udp_led.ino</code> (À flasher par le binôme)</span>
+    <span class="timing-badge">Étape Pratique 1</span>
+  </div>
+
+<pre><code class="sourceCode cpp"><span class="co">/* ====================================================================</span>
+<span class="co">   BTS CIEL - TP Communications Wi-Fi Avancées</span>
+<span class="co">   Firmware à Double Écoute : Serveur Web HTTP (TCP 80) & Socket UDP (4210)</span>
+<span class="co">   Compatible : Seeed Studio XIAO ESP32-S3 / C3 & Raspberry Pi Pico W</span>
+<span class="co">   ==================================================================== */</span>
+<span class="pp">#include &lt;WiFi.h&gt;</span>
+<span class="pp">#include &lt;WiFiUdp.h&gt;</span>
+<span class="pp">#include &lt;WebServer.h&gt;</span>
+
+<span class="pp">#if defined(ARDUINO_ARCH_RP2040)</span>
+  <span class="dt">const int</span> PIN_LED = LED_BUILTIN;
+<span class="pp">#elif defined(ESP32)</span>
+  <span class="dt">const int</span> PIN_LED = <span class="dv">21</span>; <span class="co">// XIAO ESP32-S3 (Active LOW)</span>
+<span class="pp">#endif</span>
+
+<span class="co">// Renseignez le SSID et mot de passe de la salle de TP :</span>
+<span class="dt">const char</span>* SSID     = <span class="st">"WIFI_SALLE_CIEL"</span>;
+<span class="dt">const char</span>* PASSWORD = <span class="st">"SuperSecretCIEL2026"</span>;
+
+WebServer server(<span class="dv">80</span>);          <span class="co">// Serveur Web HTTP sur TCP Port 80</span>
+WiFiUDP udp;                   <span class="co">// Socket UDP</span>
+<span class="dt">const uint16_t</span> UDP_PORT = <span class="dv">4210</span>;<span class="co">// Écoute UDP sur Port 4210</span>
+
+<span class="dt">char</span> udpBuffer[<span class="dv">64</span>];
+
+<span class="dt">void</span> <span class="fu">allumerLED</span>() {
+<span class="pp">#if defined(ESP32)</span>
+  <span class="fu">digitalWrite</span>(PIN_LED, LOW);  <span class="co">// Allumé pour XIAO ESP32-S3</span>
+<span class="pp">#else</span>
+  <span class="fu">digitalWrite</span>(PIN_LED, HIGH); <span class="co">// Allumé pour Pico W</span>
+<span class="pp">#endif</span>
+}
+
+<span class="dt">void</span> <span class="fu">eteindreLED</span>() {
+<span class="pp">#if defined(ESP32)</span>
+  <span class="fu">digitalWrite</span>(PIN_LED, HIGH); <span class="co">// Éteint</span>
+<span class="pp">#else</span>
+  <span class="fu">digitalWrite</span>(PIN_LED, LOW);  <span class="co">// Éteint</span>
+<span class="pp">#endif</span>
+}
+
+<span class="co">// --- Gestionnaires de routes HTTP (Voie TCP 80) ---</span>
+<span class="dt">void</span> <span class="fu">handleRoot</span>() {
+  String html = <span class="st">"&lt;!DOCTYPE html&gt;&lt;html&gt;&lt;head&gt;&lt;meta charset='utf-8'&gt;"</span>;
+  html += <span class="st">"&lt;title&gt;Test TCP vs UDP - BTS CIEL&lt;/title&gt;&lt;style&gt;"</span>;
+  html += <span class="st">"body{font-family:Arial;text-align:center;margin-top:40px;background:#f0f4f8;}"</span>;
+  html += <span class="st">".btn{padding:14px 28px;font-size:18px;margin:10px;border-radius:6px;border:none;color:white;cursor:pointer;}"</span>;
+  html += <span class="st">".on{background:#22c55e;} .off{background:#ef4444;}&lt;/style&gt;&lt;/head&gt;&lt;body&gt;"</span>;
+  html += <span class="st">"&lt;h1&gt;Contr&ocirc;le LED (Voie Web HTTP - Port TCP 80)&lt;/h1&gt;"</span>;
+  html += <span class="st">"&lt;p&gt;Chaque clic g&eacute;n&egrave;re un Handshake TCP + Requ&ecirc;te + R&eacute;ponse&lt;/p&gt;"</span>;
+  html += <span class="st">"&lt;a href='/led/on'&gt;&lt;button class='btn on'&gt;Allumer (HTTP / TCP)&lt;/button&gt;&lt;/a&gt;"</span>;
+  html += <span class="st">"&lt;a href='/led/off'&gt;&lt;button class='btn off'&gt;&Eacute;teindre (HTTP / TCP)&lt;/button&gt;&lt;/a&gt;"</span>;
+  html += <span class="st">"&lt;/body&gt;&lt;/html&gt;"</span>;
+  server.<span class="fu">send</span>(<span class="dv">200</span>, <span class="st">"text/html"</span>, html);
+}
+
+<span class="dt">void</span> <span class="fu">handleLedOn</span>() {
+  <span class="fu">allumerLED</span>();
+  Serial.<span class="fu">println</span>(<span class="st">"[TCP/HTTP] Requête reçue : /led/on -> LED ALLUMEE"</span>);
+  server.<span class="fu">sendHeader</span>(<span class="st">"Location"</span>, <span class="st">"/"</span>);
+  server.<span class="fu">send</span>(<span class="dv">303</span>); <span class="co">// Redirection HTTP</span>
+}
+
+<span class="dt">void</span> <span class="fu">handleLedOff</span>() {
+  <span class="fu">eteindreLED</span>();
+  Serial.<span class="fu">println</span>(<span class="st">"[TCP/HTTP] Requête reçue : /led/off -> LED ETEINTE"</span>);
+  server.<span class="fu">sendHeader</span>(<span class="st">"Location"</span>, <span class="st">"/"</span>);
+  server.<span class="fu">send</span>(<span class="dv">303</span>);
+}
+
+<span class="dt">void</span> <span class="fu">setup</span>() {
+  Serial.<span class="fu">begin</span>(<span class="dv">115200</span>);
+  <span class="fu">pinMode</span>(PIN_LED, OUTPUT);
+  <span class="fu">eteindreLED</span>();
+
+  WiFi.<span class="fu">mode</span>(WIFI_STA);
+  WiFi.<span class="fu">begin</span>(SSID, PASSWORD);
+  <span class="kw">while</span> (WiFi.<span class="fu">status</span>() != WL_CONNECTED) { <span class="fu">delay</span>(<span class="dv">200</span>); Serial.<span class="fu">print</span>(<span class="st">"."</span>); }
+
+  Serial.<span class="fu">println</span>(<span class="st">"\n[OK] Connecté au Wi-Fi."</span>);
+  Serial.<span class="fu">print</span>(<span class="st">"Adresse IP de votre carte : "</span>); Serial.<span class="fu">println</span>(WiFi.<span class="fu">localIP</span>());
+
+  <span class="co">// Démarrage Serveur HTTP (TCP)</span>
+  server.<span class="fu">on</span>(<span class="st">"/"</span>, handleRoot);
+  server.<span class="fu">on</span>(<span class="st">"/led/on"</span>, handleLedOn);
+  server.<span class="fu">on</span>(<span class="st">"/led/off"</span>, handleLedOff);
+  server.<span class="fu">begin</span>();
+  Serial.<span class="fu">println</span>(<span class="st">"[OK] Serveur Web HTTP actif sur Port 80 (TCP)"</span>);
+
+  <span class="co">// Démarrage Écoute UDP</span>
+  udp.<span class="fu">begin</span>(UDP_PORT);
+  Serial.<span class="fu">print</span>(<span class="st">"[OK] Serveur UDP à l'écoute sur Port "</span>); Serial.<span class="fu">println</span>(UDP_PORT);
+}
+
+<span class="dt">void</span> <span class="fu">loop</span>() {
+  <span class="co">// 1. Écoute client Web HTTP (TCP)</span>
+  server.<span class="fu">handleClient</span>();
+
+  <span class="co">// 2. Écoute datagrammes UDP directs</span>
+  <span class="dt">int</span> packetSize = udp.<span class="fu">parsePacket</span>();
+  <span class="kw">if</span> (packetSize &gt; <span class="dv">0</span>) {
+    <span class="dt">int</span> len = udp.<span class="fu">read</span>(udpBuffer, <span class="kw">sizeof</span>(udpBuffer) - <span class="dv">1</span>);
+    <span class="kw">if</span> (len &gt; <span class="dv">0</span>) udpBuffer[len] = <span class="st">'\0'</span>;
+
+    Serial.<span class="fu">print</span>(<span class="st">"[UDP Datagramme REÇU] Message : "</span>);
+    Serial.<span class="fu">print</span>(udpBuffer);
+    Serial.<span class="fu">print</span>(<span class="st">" | Taille : "</span>); Serial.<span class="fu">print</span>(packetSize); Serial.<span class="fu">println</span>(<span class="st">" octets"</span>);
+
+    <span class="kw">if</span> (<span class="fu">strstr</span>(udpBuffer, <span class="st">"ON"</span>) != NULL) {
+      <span class="fu">allumerLED</span>();
+    } <span class="kw">else if</span> (<span class="fu">strstr</span>(udpBuffer, <span class="st">"OFF"</span>) != NULL) {
+      <span class="fu">eteindreLED</span>();
+    }
+  }
+}</code></pre>
+</div>
+
+<p><strong>Consignes de mise en route :</strong></p>
+<ol>
+  <li>Ouvrez l'Arduino IDE, créez un nouveau sketch et collez le code ci-dessus.</li>
+  <li>Sélectionnez votre type de carte (<em>XIAO_ESP32S3</em> ou <em>Raspberry Pi Pico W</em>) et le port COM associé.</li>
+  <li>Renseignez le SSID et le mot de passe Wi-Fi. Téléversez le programme.</li>
+  <li>Ouvrez le moniteur série (115200 bauds) et <strong>notez l'adresse IP attribuée</strong> à votre carte.</li>
+</ol>
+
+<div class="student-response">
+  <p><strong>Relevé Binôme :</strong></p>
+  <p>• Adresse IP attribuée à notre carte : <code>192.168.1. ......</code></p>
+  <p>• Adresse MAC de notre carte : <code>...... : ...... : ...... : ...... : ...... : ......</code></p>
+</div>
+
+<h3>2.3. Contrôle de la LED via les Deux Voies</h3>
+
+<p><strong>Voie 1 — Via le Navigateur Web (HTTP sur Port TCP 80) :</strong></p>
+<ul>
+  <li>Sur le PC, ouvrez un navigateur et accédez à : <code>http://&lt;VOTRE_IP_CARTE&gt;/</code></li>
+  <li>Cliquez sur les boutons <strong>Allumer</strong> et <strong>Éteindre</strong>. Vérifiez le bon fonctionnement de la LED.</li>
+</ul>
+
+<p><strong>Voie 2 — Via la Commande UDP Directe (Port 4210) :</strong></p>
+<p>Pour contourner la restriction du navigateur et envoyer directement un datagramme UDP brut sans passer par TCP, utilisez l'un des deux déclencheurs ci-dessous depuis votre poste :</p>
+
+<div style="display:flex; gap:15px; flex-wrap:wrap; margin:10px 0;">
+  <div style="flex:1; min-width:300px; background:#f8fafc; border:1px solid #cbd5e1; border-radius:6px; padding:10px;">
+    <strong>Option A : Script Python Graphique (Recommandé)</strong>
+    <pre><code class="sourceCode python"><span class="co"># Sauvegardez dans 'udp_client.py' et lancez : python udp_client.py</span>
+<span class="im">import</span> socket, tkinter <span class="im">as</span> tk
+
+<span class="co"># ⚠️ Remplacer par l'IP de votre propre carte !</span>
+TARGET_IP, UDP_PORT = <span class="st">"192.168.1.100"</span>, <span class="dv">4210</span>
+sock = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
+
+<span class="kw">def</span> send_cmd(cmd):
+    sock.sendto(cmd.encode(), (TARGET_IP, UDP_PORT))
+    <span class="bu">print</span>(<span class="ss">f"[UDP ENVOYÉ] '</span><span class="sc">{</span>cmd<span class="sc">}</span><span class="ss">' vers </span><span class="sc">{</span>TARGET_IP<span class="sc">}</span><span class="ss">:</span><span class="sc">{</span>UDP_PORT<span class="sc">}</span><span class="ss">"</span>)
+
+app = tk.Tk()
+app.title(<span class="st">"Télécommande UDP - Binôme CIEL"</span>)
+app.geometry(<span class="st">"300x140"</span>)
+tk.Label(app, text=<span class="st">"Contrôle UDP Direct"</span>, font=(<span class="st">"Arial"</span>, <span class="dv">11</span>, <span class="st">"bold"</span>)).pack(pady=<span class="dv">6</span>)
+tk.Button(app, text=<span class="st">"LED ON (1 Datagramme)"</span>, bg=<span class="st">"#22c55e"</span>, fg=<span class="st">"white"</span>, font=(<span class="st">"Arial"</span>, <span class="dv">10</span>, <span class="st">"bold"</span>),
+          command=<span class="kw">lambda</span>: send_cmd(<span class="st">"ON"</span>)).pack(fill=<span class="st">"x"</span>, padx=<span class="dv">20</span>, pady=<span class="dv">3</span>)
+tk.Button(app, text=<span class="st">"LED OFF (1 Datagramme)"</span>, bg=<span class="st">"#ef4444"</span>, fg=<span class="st">"white"</span>, font=(<span class="st">"Arial"</span>, <span class="dv">10</span>, <span class="st">"bold"</span>),
+          command=<span class="kw">lambda</span>: send_cmd(<span class="st">"OFF"</span>)).pack(fill=<span class="st">"x"</span>, padx=<span class="dv">20</span>, pady=<span class="dv">3</span>)
+app.mainloop()</code></pre>
+  </div>
+
+  <div style="flex:1; min-width:300px; background:#f8fafc; border:1px solid #cbd5e1; border-radius:6px; padding:10px;">
+    <strong>Option B : Commande PowerShell (Sans installer Python)</strong>
+    <p>Ouvrez PowerShell sur le PC et saisissez :</p>
+    <pre><code># Pour Allumer :
+$u = New-Object System.Net.Sockets.UdpClient
+$b = [System.Text.Encoding]::ASCII.GetBytes("ON")
+$u.Send($b, $b.Length, "192.168.1.100", 4210)
+$u.Close()
+
+# Pour Éteindre :
+$u = New-Object System.Net.Sockets.UdpClient
+$b = [System.Text.Encoding]::ASCII.GetBytes("OFF")
+$u.Send($b, $b.Length, "192.168.1.100", 4210)
+$u.Close()</code></pre>
+  </div>
+</div>
+
+<h3>2.4. Capture Wireshark & Campagne de Mesures par le Binôme</h3>
+
+<ol>
+  <li>Lancez <strong>Wireshark</strong> sur votre poste et sélectionnez l'interface Wi-Fi active.</li>
+  <li>Saisissez le filtre d'affichage suivant en remplaçant par l'IP de votre carte :<br>
+  <code>(http || tcp.port == 80 || udp.port == 4210) && ip.addr == &lt;VOTRE_IP_CARTE&gt;</code></li>
+  <li>Démarrez la capture.</li>
+  <li><strong>Test 1 :</strong> Cliquez sur le bouton <em>Allumer</em> de la page Web HTTP. Observez la salve de trames.</li>
+  <li><strong>Test 2 :</strong> Cliquez sur le bouton <em>LED ON</em> du script UDP (ou envoyez la commande PowerShell). Observez la trame unique.</li>
+  <li>Arrêtez la capture et procédez au dépouillement dans le tableau ci-après.</li>
+</ol>
+
+<div class="student-response">
+  <div style="font-weight: 700; color: #0b3c5d; margin-bottom: 8px;">📊 Tableau Comparatif Expérimental (À remplir avec vos mesures Wireshark) :</div>
+  
+  <table>
+    <thead>
+      <tr>
+        <th style="width: 30%;">Grandeur / Caractéristique mesurée</th>
+        <th style="width: 35%;">Voie 1 : Clic Web HTTP (Port TCP 80)</th>
+        <th style="width: 35%;">Voie 2 : Commande UDP Directe (Port 4210)</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><strong>Nombre exact de trames échangées pour 1 action</strong></td>
+        <td>..................... trames</td>
+        <td>..................... trame(s)</td>
+      </tr>
+      <tr>
+        <td><strong>Présence d'un Handshake préalable (SYN / SYN-ACK)</strong></td>
+        <td>[ ] OUI &nbsp;&nbsp;&nbsp; [ ] NON</td>
+        <td>[ ] OUI &nbsp;&nbsp;&nbsp; [ ] NON</td>
+      </tr>
+      <tr>
+        <td><strong>Présence d'un acquittement de transport (ACK)</strong></td>
+        <td>[ ] OUI &nbsp;&nbsp;&nbsp; [ ] NON</td>
+        <td>[ ] OUI &nbsp;&nbsp;&nbsp; [ ] NON</td>
+      </tr>
+      <tr>
+        <td><strong>Taille de l'en-tête de transport (Couche 4)</strong></td>
+        <td>..................... octets (TCP)</td>
+        <td>..................... octets (UDP)</td>
+      </tr>
+      <tr>
+        <td><strong>Taille totale de la trame au niveau physique (L2)</strong></td>
+        <td>Cumul : ..................... octets</td>
+        <td>Trame unique : ..................... octets</td>
+      </tr>
+      <tr>
+        <td><strong>Temps de réaction perçu de la LED</strong></td>
+        <td>........................................................</td>
+        <td>........................................................</td>
+      </tr>
+    </tbody>
+  </table>
+
+  <p><strong>Questions de Synthèse & Bilan Pratique :</strong></p>
+  
+  <p><strong>Q2.2.</strong> Calculez le taux d'efficacité protocolaire de la commande UDP :</p>
+  <p>• Taille de la charge utile (Payload "ON") : <code>2 octets</code></p>
+  <p>• Taille totale de la trame Ethernet : <code>...... octets</code></p>
+  <p>• Ratio d'efficacité = (Taille Payload / Taille Totale) × 100 = <code>............ %</code></p>
+  <div class="dotted-line"></div>
+
+  <p><strong>Q2.3.</strong> Dans un système industriel de sécurité (arrêt d'urgence sans fil ou télécommande de pont roulant), quel protocole entre TCP et UDP choisiriez-vous si le réseau subit des micro-coupures ? Argumentez en comparant la gestion des pertes de paquets entre TCP (retransmission automatique) et UDP (aucun contrôle) :</p>
+  <div class="dotted-line"></div>
+  <div class="dotted-line"></div>
+  <div class="dotted-line"></div>
+</div>
+
+<hr />
+
+<h2>📊 Grille d'Évaluation du Travail Pratique (sur 20 points)</h2>
+
+<table>
+  <thead>
+    <tr>
+      <th style="width: 25%;">Critère d'Évaluation</th>
+      <th style="width: 45%;">Indicateurs de réussite et attendus</th>
+      <th style="width: 15%; text-align: center;">Barème</th>
+      <th style="width: 15%; text-align: center;">Note</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td><strong>1. Décodage Hexadécimal & Drapeaux (C04)</strong></td>
+      <td>Identification exacte du protocole L4 à l'offset <code>0x17</code>, conversion binaire des flags TCP à <code>0x2F</code>, justification précise du drapeau PSH.</td>
+      <td style="text-align: center;"><strong>5 pts</strong></td>
+      <td style="text-align: center;">...... / 5</td>
+    </tr>
+    <tr>
+      <td><strong>2. Mise en Œuvre Matérielle & Firmware (C05)</strong></td>
+      <td>Configuration correcte du Wi-Fi sur XIAO/Pico, téléversement sans erreur du firmware à double écoute, LED opérationnelle en HTTP et UDP.</td>
+      <td style="text-align: center;"><strong>5 pts</strong></td>
+      <td style="text-align: center;">...... / 5</td>
+    </tr>
+    <tr>
+      <td><strong>3. Analyse Wireshark & Filtres Réseau (C07)</strong></td>
+      <td>Application rigoureuse du filtre IP/ports, capture des deux événements, comptage exact des trames (Handshake vs Trame unique).</td>
+      <td style="text-align: center;"><strong>4 pts</strong></td>
+      <td style="text-align: center;">...... / 4</td>
+    </tr>
+    <tr>
+      <td><strong>4. Analyse Comparative & Calcul d'Overhead (C04)</strong></td>
+      <td>Tableau comparatif complété avec rigueur, calcul exact du ratio de charge utile, argumentation technique sur le modèle W3C.</td>
+      <td style="text-align: center;"><strong>4 pts</strong></td>
+      <td style="text-align: center;">...... / 4</td>
+    </tr>
+    <tr>
+      <td><strong>5. Rigueur & Esprit d'Équipe (Binôme)</strong></td>
+      <td>Autonomie sur le banc de test, soin du câblage, qualité de rédaction et justification technique des réponses.</td>
+      <td style="text-align: center;"><strong>2 pts</strong></td>
+      <td style="text-align: center;">...... / 2</td>
+    </tr>
+    <tr>
+      <td><strong>NOTE TOTALE</strong></td>
+      <td><strong>Évaluation globale des compétences Réseaux & Systèmes Connectés</strong></td>
+      <td style="text-align: center;"><strong>/ 20</strong></td>
+      <td style="text-align: center;"><strong>...... / 20</strong></td>
+    </tr>
+  </tbody>
+</table>
+
+<footer style="margin-top: 35px; padding-top: 12px; border-top: 1px solid #d0d7de; font-size: 8.5pt; color: #64748b; text-align: center;">
+  BTS CIEL (Cybersécurité, Informatique et Réseaux, Électronique) • Activité Préalable & Décodage Trame Réseau • Document Élève / Enseignant
+</footer>
+
+</body>
+</html>

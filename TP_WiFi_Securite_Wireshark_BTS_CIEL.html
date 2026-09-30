@@ -1,0 +1,1092 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="utf-8" />
+  <meta name="generator" content="BTS CIEL - Vincent Hilaire" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes" />
+  <title>TP : Communications Wi-Fi Avancées, Transport TCP/UDP & Sécurisation TLS sous Wireshark - BTS CIEL</title>
+  
+  <style>
+    /* Feuille de style conforme aux standards pédagogiques BTS CIEL */
+    @page {
+      margin: 1.5cm;
+      size: A4;
+    }
+    
+    html {
+      color: #1a1a1a;
+      background-color: #fdfdfd;
+      -webkit-text-size-adjust: 100%;
+    }
+    
+    body {
+      font-family: 'Segoe UI', -apple-system, BlinkMacSystemFont, Roboto, Helvetica, Arial, sans-serif;
+      line-height: 1.55;
+      color: #1a1a1a;
+      max-width: 920px;
+      margin: 0 auto;
+      padding: 25px 30px;
+      hyphens: auto;
+      overflow-wrap: break-word;
+      text-rendering: optimizeLegibility;
+      font-kerning: normal;
+    }
+    
+    @media (max-width: 768px) {
+      body {
+        font-size: 0.95em;
+        padding: 15px;
+      }
+      h1 {
+        font-size: 1.6em !important;
+      }
+    }
+    
+    @media print {
+      html { background-color: white; }
+      body { background-color: transparent; color: black; font-size: 10.5pt; max-width: 100%; padding: 0; }
+      p, h2, h3 { orphans: 3; widows: 3; }
+      h2, h3, h4 { page-break-after: avoid; }
+      pre, blockquote, table { page-break-inside: avoid; }
+      .no-print { display: none; }
+    }
+    
+    header {
+      margin-bottom: 2.5em;
+      text-align: center;
+      border-bottom: 3px solid #0b3c5d;
+      padding-bottom: 15px;
+    }
+    
+    .meta-badge {
+      display: inline-block;
+      background: #e1ecf4;
+      color: #0b3c5d;
+      font-size: 0.85em;
+      font-weight: 600;
+      padding: 4px 10px;
+      border-radius: 20px;
+      margin: 3px 6px;
+      border: 1px solid #7aa7c7;
+    }
+    
+    .badge-primary { background: #0b3c5d; color: #ffffff; border: 1px solid #0b3c5d; }
+    .badge-alert { background: #fee2e2; color: #991b1b; border: 1px solid #f87171; }
+    .badge-success { background: #dcfce7; color: #166534; border: 1px solid #86efac; }
+    .badge-warning { background: #fef3c7; color: #92400e; border: 1px solid #fcd34d; }
+    
+    h1, h2, h3, h4 {
+      color: #0b3c5d;
+      font-weight: 700;
+    }
+    
+    h1 {
+      font-size: 21pt;
+      margin-top: 0.6em;
+      margin-bottom: 0.3em;
+      letter-spacing: -0.5px;
+    }
+    
+    h2 {
+      font-size: 15pt;
+      margin-top: 24px;
+      margin-bottom: 12px;
+      border-bottom: 1.5px solid #d0d7de;
+      padding-bottom: 6px;
+    }
+    
+    h3 {
+      font-size: 12.5pt;
+      margin-top: 18px;
+      margin-bottom: 8px;
+      border-left: 4.5px solid #328cc1;
+      padding-left: 10px;
+    }
+    
+    h4 {
+      font-size: 11pt;
+      margin-top: 14px;
+      color: #1d5f8a;
+    }
+    
+    p {
+      margin: 0.85em 0;
+    }
+    
+    a {
+      color: #0969da;
+      text-decoration: none;
+    }
+    
+    a:hover {
+      text-decoration: underline;
+    }
+    
+    ul, ol {
+      padding-left: 1.6em;
+      margin: 0.8em 0;
+    }
+    
+    li {
+      margin-bottom: 0.35em;
+    }
+    
+    hr {
+      border: 0;
+      border-top: 1px solid #d0d7de;
+      margin: 24px 0;
+    }
+    
+    /* Callout & Notes */
+    .callout {
+      border-radius: 6px;
+      padding: 12px 16px;
+      margin: 16px 0;
+      font-size: 9.8pt;
+      border-left: 5px solid;
+    }
+    
+    .callout-info {
+      background-color: #f0f7fc;
+      border-color: #328cc1;
+      color: #1a446c;
+    }
+    
+    .callout-warning {
+      background-color: #fffbeb;
+      border-color: #f59e0b;
+      color: #78350f;
+    }
+    
+    .callout-danger {
+      background-color: #fef2f2;
+      border-color: #ef4444;
+      color: #7f1d1d;
+    }
+    
+    .callout-success {
+      background-color: #f0fdf4;
+      border-color: #22c55e;
+      color: #14532d;
+    }
+    
+    .callout-title {
+      font-weight: 700;
+      margin-bottom: 4px;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+    
+    /* Tables */
+    table {
+      border-collapse: collapse;
+      width: 100%;
+      margin: 16px 0;
+      font-size: 9.5pt;
+      background-color: #ffffff;
+      box-shadow: 0 1px 3px rgba(0,0,0,0.05);
+    }
+    
+    th, td {
+      border: 1px solid #d0d7de;
+      padding: 8px 12px;
+      text-align: left;
+      vertical-align: top;
+    }
+    
+    th {
+      background-color: #f0f4f8;
+      color: #0b3c5d;
+      font-weight: 700;
+      font-size: 9.5pt;
+    }
+    
+    tr:nth-child(even) {
+      background-color: #f8fafc;
+    }
+    
+    tr:hover {
+      background-color: #f1f5f9;
+    }
+    
+    /* Code and Pre blocks */
+    pre {
+      background-color: #f6f8fa;
+      border: 1px solid #d0d7de;
+      border-radius: 6px;
+      padding: 12px 14px;
+      font-size: 9.2pt;
+      line-height: 1.45;
+      overflow-x: auto;
+      font-family: Consolas, 'Courier New', Monaco, monospace;
+      color: #24292f;
+      margin: 14px 0;
+    }
+    
+    code {
+      background-color: #eff1f3;
+      padding: 2px 5px;
+      border-radius: 4px;
+      font-size: 88%;
+      font-family: Consolas, 'Courier New', Monaco, monospace;
+      color: #0969da;
+    }
+    
+    pre code {
+      background-color: transparent;
+      padding: 0;
+      border-radius: 0;
+      font-size: inherit;
+      color: inherit;
+    }
+    
+    /* Syntax highlighting */
+    .kw { color: #cf222e; font-weight: bold; } /* Keyword */
+    .dt { color: #0550ae; font-weight: 600; } /* Data Type */
+    .st { color: #0a3069; } /* String */
+    .co { color: #6e7781; font-style: italic; } /* Comment */
+    .pp { color: #953800; font-weight: 600; } /* Preprocessor */
+    .fu { color: #8250df; } /* Function */
+    .va { color: #953800; } /* Variable */
+    .dv { color: #0550ae; } /* Number */
+    
+    /* Zones de saisie / questions élève */
+    .student-response {
+      background: #fafbfc;
+      border: 1px dashed #7aa7c7;
+      border-radius: 5px;
+      padding: 10px 14px;
+      margin: 10px 0 16px 0;
+      font-style: italic;
+      color: #475569;
+    }
+    
+    .dotted-line {
+      border-bottom: 1px dotted #94a3b8;
+      height: 22px;
+      margin-bottom: 4px;
+    }
+    
+    .step-box {
+      background: #ffffff;
+      border: 1px solid #cbd5e1;
+      border-radius: 8px;
+      padding: 14px 18px;
+      margin: 18px 0;
+      box-shadow: 0 2px 4px rgba(0,0,0,0.03);
+    }
+    
+    .step-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      border-bottom: 1px solid #e2e8f0;
+      padding-bottom: 8px;
+      margin-bottom: 12px;
+    }
+    
+    .step-title {
+      font-weight: 700;
+      font-size: 11pt;
+      color: #0b3c5d;
+    }
+    
+    .timing-badge {
+      background: #e2e8f0;
+      color: #334155;
+      font-size: 8pt;
+      padding: 3px 8px;
+      border-radius: 12px;
+      font-weight: 600;
+    }
+  </style>
+</head>
+<body>
+
+<header id="title-block-header">
+  <div style="text-transform: uppercase; font-size: 0.9em; font-weight: 700; letter-spacing: 1px; color: #328cc1; margin-bottom: 4px;">
+    BTS CIEL — 2<sup>e</sup> Année • Électronique & Réseaux / Informatique & Réseaux
+  </div>
+  <h1 class="title">TP : Communications Wi-Fi Avancées, Transport TCP/UDP & Sécurisation TLS sous Wireshark</h1>
+  <div style="margin-top: 10px;">
+    <span class="meta-badge badge-primary">⏱ Durée : 3h00</span>
+    <span class="meta-badge">🎯 Cible : Raspberry Pi Pico W / Seeed XIAO ESP32-S3 (C++ Arduino)</span>
+    <span class="meta-badge badge-success">👥 Travail en Binôme</span>
+    <span class="meta-badge badge-warning">🛡 Audit Réseau Wireshark</span>
+  </div>
+</header>
+
+<div class="callout callout-info">
+  <div class="callout-title">📋 Positionnement Pédagogique & Compétences du Référentiel BTS CIEL</div>
+  <p><strong>Prérequis validés :</strong> Les activités <em>Serveur Web Embarqué HTTP</em> et <em>Publish/Subscribe MQTT avec Broker Mosquitto</em> ont été réalisées. Les étudiants maîtrisent l'environnement Arduino IDE et les principes de base du réseau local.</p>
+  <p><strong>Compétences ciblées (Épreuves E4 / E6) :</strong></p>
+  <ul>
+    <li><strong>C04 - Analyser l'existant :</strong> Décoder les échanges protocolaires à travers les couches OSI (L2 Liaison, L3 IP, L4 Transport TCP/UDP, L7 Application). Interpréter les trames réseau à l'aide de l'analyseur Wireshark.</li>
+    <li><strong>C05 - Concevoir & Développer :</strong> Programmer un client IoT autonome en C++ Arduino sur microcontrôleur 32 bits (Pico W / XIAO ESP32), gérer les sessions de communication et implémenter une couche de sécurisation cryptographique TLS v1.2/v1.3.</li>
+    <li><strong>C07 - Valider & Qualifier :</strong> Réaliser l'audit de sécurité des flux applicatifs, quantifier la surcharge protocolaire (overhead réseau) et caractériser la résistance au sniffing réseau.</li>
+  </ul>
+</div>
+
+<hr />
+
+<h2>1. Mise en Situation Industrielle & Architecture Globale</h2>
+
+<p>Dans un contexte d'usine 4.0 et de surveillance environnementale, votre bureau d'études doit concevoir un nœud de capteurs sans fil industriel basé sur une plateforme <strong>Raspberry Pi Pico W</strong> ou <strong>Seeed Studio XIAO ESP32-S3</strong>. Cet équipement autonome doit transmettre des mesures critiques (température, télémétrie, états d'alarmes) vers le système d'information de l'entreprise.</p>
+
+<p>Pour garantir la robustesse industrielle, le cahier des charges impose de répondre à trois problématiques techniques fondamentales :</p>
+<ol>
+  <li><strong>Phase d'enrôlement réseau :</strong> Analyser la séquence complète d'attachement Wi-Fi au point d'accès (AP), l'attribution dynamique d'adresse IP par protocole <strong>DHCP (DORA)</strong>, la résolution d'adresse physique par <strong>ARP</strong> et la synchronisation horaire par <strong>NTP (UDP 123)</strong>.</li>
+  <li><strong>Arbitrage Transport L4 (UDP vs TCP) :</strong> Comparer expérimentalement la gigue, l'overhead d'en-tête et les mécanismes de connexion (3-Way Handshake TCP vs datagramme brut UDP) pour déterminer le protocole de transport le plus pertinent selon la criticité des données.</li>
+  <li><strong>Vulnérabilité aux interceptions (Sniffing) & Chiffrement TLS/HTTPS :</strong> Mettre en évidence avec Wireshark la fuite critique de données d'un client HTTP standard (mots de passe, tokens d'API et mesures en clair), puis sécuriser la liaison avec la pile cryptographique <strong>TLS / HTTPS (port 443)</strong>.</li>
+</ol>
+
+<pre><code>                     +-------------------------------------------------------------+
+                     |                  TOPOLOGIE DU BANC DE TEST                  |
+                     +-------------------------------------------------------------+
+                                                    |
+             +-----------------------+              |              +--------------------------+
+             | MICROCONTRÔLEUR IOT   |              |              | POSTE DE SUPERVISION PC  |
+             | Pico W / XIAO ESP32   |              |              | (Windows / Linux)        |
+             | Mode : Wi-Fi STA      |              |              | Logiciel : Wireshark     |
+             | C++ Arduino           |              |              | Serveur HTTP/UDP Mock    |
+             | IP : 192.168.1.X      |              |              | IP : 192.168.1.Y         |
+             +-----------+-----------+              |              +------------+-------------+
+                         |                          |                           |
+                         | (Ondes RF 2.4 GHz)       |                           | (Câble RJ45 / Wi-Fi)
+                         +---------------------> [ ROUTEUR ] <------------------+
+                                                 [ POINT D'ACCÈS ]
+                                                 [ SERVEUR DHCP  ]
+                                                 [ 192.168.1.254 ]</code></pre>
+
+<div class="callout callout-warning">
+  <div class="callout-title">⚠️ Recommandation Matérielle & Environnement de Développement</div>
+  <p>Le code source fourni est <strong>universel</strong> : il exploite les API standardisées Arduino WiFi communes au <strong>Raspberry Pi Pico W</strong> (cœur Earle Philhower) et aux cartes <strong>Seeed Studio XIAO ESP32 / ESP32-S3 / ESP32-C3</strong>.</p>
+  <ul>
+    <li>Vérifiez que votre PC de TP et votre microcontrôleur sont associés au <strong>même réseau Wi-Fi</strong> (ex: réseau de la salle de TP ou point d'accès 4G partagé).</li>
+    <li>Sous Wireshark, veillez à capturer le trafic sur la carte réseau active (généralement <em>Wi-Fi</em> ou <em>Connexion au réseau local</em>).</li>
+  </ul>
+</div>
+
+<hr />
+
+<h2>2. Déroulement du TP (Planification 3h00)</h2>
+
+<table>
+  <thead>
+    <tr>
+      <th style="width: 15%;">Phase</th>
+      <th style="width: 25%;">Thématique</th>
+      <th style="width: 45%;">Activités & Travail demandé</th>
+      <th style="width: 15%;">Durée</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td><strong>Partie 1</strong></td>
+      <td><strong>Liaison Wi-Fi STA, DHCP & ARP</strong></td>
+      <td>Programmation C++ de la connexion STA avec métriques radio (RSSI). Capture Wireshark de la négociation DHCP (DORA) et des requêtes ARP.</td>
+      <td>45 min</td>
+    </tr>
+    <tr>
+      <td><strong>Partie 2</strong></td>
+      <td><strong>Transport L4 : Datagramme UDP vs TCP</strong></td>
+      <td>Implémentation d'un flux UDP rapide et d'un client TCP connecté. Analyse comparée sous Wireshark (Handshake SYN-ACK, acquittements, overhead).</td>
+      <td>45 min</td>
+    </tr>
+    <tr>
+      <td><strong>Partie 3</strong></td>
+      <td><strong>Audit HTTP en Clair vs Chiffrement HTTPS (TLS)</strong></td>
+      <td>Envoi de requêtes HTTP REST avec Token secret. Interception en clair sous Wireshark. Migration vers <code>WiFiClientSecure</code> (port 443) et analyse TLS.</td>
+      <td>55 min</td>
+    </tr>
+    <tr>
+      <td><strong>Partie 4</strong></td>
+      <td><strong>Synthèse & Grille d'Évaluation</strong></td>
+      <td>Remplissage du tableau d'analyse des couches OSI, bilan de cybersécurité et défis d'extension pour binômes avancés.</td>
+      <td>35 min</td>
+    </tr>
+  </tbody>
+</table>
+
+<hr />
+
+<h2>PARTIE 1 : Enrôlement Wi-Fi STA, Supervision Radio & Analyse DHCP / ARP (45 min)</h2>
+
+<h3>1.1. Code C++ Arduino : Connexion Robuste et Extraction des Paramètres IP</h3>
+<p>Ce premier programme initialise l'interface Wi-Fi en mode Station (STA), se connecte au point d'accès, extrait tous les paramètres de configuration réseau (IP, Masque, Passerelle, DNS, MAC) et mesure la qualité de réception RF (RSSI en dBm).</p>
+
+<div class="step-box">
+  <div class="step-header">
+    <span class="step-title">Fichier Arduino : <code>01_wifi_sta_diagnostics.ino</code></span>
+    <span class="timing-badge">Partie 1.1</span>
+  </div>
+
+<pre><code class="sourceCode cpp"><span class="co">/* ====================================================================</span>
+<span class="co">   BTS CIEL - Option A & B | TP Communications Wi-Fi Avancées</span>
+<span class="co">   Partie 1 : Connexion STA, Diagnostic Réseau et Métriques Radio RSSI</span>
+<span class="co">   Compatible : Raspberry Pi Pico W & Seeed Studio XIAO ESP32-S3</span>
+<span class="co">   ==================================================================== */</span>
+
+<span class="pp">#if defined(ARDUINO_ARCH_RP2040)</span>
+  <span class="pp">#include &lt;WiFi.h&gt;</span>
+  <span class="dt">const int</span> PIN_LED = LED_BUILTIN; <span class="co">// LED sur puce CYW43439</span>
+<span class="pp">#elif defined(ESP32)</span>
+  <span class="pp">#include &lt;WiFi.h&gt;</span>
+  <span class="dt">const int</span> PIN_LED = <span class="dv">21</span>;          <span class="co">// LED orange intégrée XIAO ESP32-S3 (Active LOW)</span>
+<span class="pp">#endif</span>
+
+<span class="co">// Identifiants du point d'accès Wi-Fi de la salle</span>
+<span class="dt">const char</span>* WIFI_SSID     = <span class="st">"WIFI_SALLE_CIEL"</span>;
+<span class="dt">const char</span>* WIFI_PASSWORD = <span class="st">"SuperSecretCIEL2026"</span>;
+
+<span class="dt">void</span> <span class="fu">setup</span>() {
+  Serial.<span class="fu">begin</span>(<span class="dv">115200</span>);
+  <span class="kw">while</span> (!Serial &amp;&amp; <span class="fu">millis</span>() &lt; <span class="dv">3000</span>); <span class="co">// Attente moniteur série</span>
+
+  <span class="fu">pinMode</span>(PIN_LED, OUTPUT);
+<span class="pp">#if defined(ESP32)</span>
+  <span class="fu">digitalWrite</span>(PIN_LED, HIGH); <span class="co">// Éteint pour XIAO (anode commune)</span>
+<span class="pp">#else</span>
+  <span class="fu">digitalWrite</span>(PIN_LED, LOW);  <span class="co">// Éteint pour Pico W</span>
+<span class="pp">#endif</span>
+
+  Serial.<span class="fu">println</span>(<span class="st">"\n--- [BTS CIEL] DEMARRAGE DIAGNOSTIC WI-FI STA ---"</span>);
+
+  <span class="co">// 1. Forcer le mode Station (désactive le mode Point d'Accès par défaut)</span>
+  WiFi.<span class="fu">mode</span>(WIFI_STA);
+  WiFi.<span class="fu">disconnect</span>(<span class="kw">true</span>);
+  <span class="fu">delay</span>(<span class="dv">200</span>);
+
+  Serial.<span class="fu">print</span>(<span class="st">"[+] Connexion en cours au SSID : "</span>);
+  Serial.<span class="fu">println</span>(WIFI_SSID);
+
+  WiFi.<span class="fu">begin</span>(WIFI_SSID, WIFI_PASSWORD);
+
+  <span class="co">// 2. Boucle de connexion avec clignotement de la LED</span>
+  <span class="dt">uint32_t</span> startAttempt = <span class="fu">millis</span>();
+  <span class="kw">while</span> (WiFi.<span class="fu">status</span>() != WL_CONNECTED &amp;&amp; (<span class="fu">millis</span>() - startAttempt &lt; <span class="dv">15000</span>)) {
+<span class="pp">#if defined(ESP32)</span>
+    <span class="fu">digitalWrite</span>(PIN_LED, !<span class="fu">digitalRead</span>(PIN_LED));
+<span class="pp">#else</span>
+    <span class="fu">digitalWrite</span>(PIN_LED, !<span class="fu">digitalRead</span>(PIN_LED));
+<span class="pp">#endif</span>
+    <span class="fu">delay</span>(<span class="dv">250</span>);
+    Serial.<span class="fu">print</span>(<span class="st">"."</span>);
+  }
+
+  <span class="co">// 3. Contrôle de l'état de connexion</span>
+  <span class="kw">if</span> (WiFi.<span class="fu">status</span>() == WL_CONNECTED) {
+    Serial.<span class="fu">println</span>(<span class="st">"\n[OK] Connecte avec succes !"</span>);
+<span class="pp">#if defined(ESP32)</span>
+    <span class="fu">digitalWrite</span>(PIN_LED, LOW);  <span class="co">// Fixe allumée</span>
+<span class="pp">#else</span>
+    <span class="fu">digitalWrite</span>(PIN_LED, HIGH); <span class="co">// Fixe allumée</span>
+<span class="pp">#endif</span>
+
+    <span class="co">// Affichage exhaustif des caractéristiques réseau de couche 2 et 3</span>
+    Serial.<span class="fu">println</span>(<span class="st">"=================================================="</span>);
+    Serial.<span class="fu">print</span>(<span class="st">"  Adresse MAC Matérielle : "</span>); Serial.<span class="fu">println</span>(WiFi.<span class="fu">macAddress</span>());
+    Serial.<span class="fu">print</span>(<span class="st">"  Adresse IP attribuée   : "</span>); Serial.<span class="fu">println</span>(WiFi.<span class="fu">localIP</span>());
+    Serial.<span class="fu">print</span>(<span class="st">"  Masque de sous-réseau  : "</span>); Serial.<span class="fu">println</span>(WiFi.<span class="fu">subnetMask</span>());
+    Serial.<span class="fu">print</span>(<span class="st">"  Passerelle par défaut  : "</span>); Serial.<span class="fu">println</span>(WiFi.<span class="fu">gatewayIP</span>());
+    Serial.<span class="fu">print</span>(<span class="st">"  Serveur DNS Primaire   : "</span>); Serial.<span class="fu">println</span>(WiFi.<span class="fu">dnsIP</span>());
+    Serial.<span class="fu">print</span>(<span class="st">"  Puissance Signal (RSSI): "</span>); Serial.<span class="fu">print</span>(WiFi.<span class="fu">RSSI</span>()); Serial.<span class="fu">println</span>(<span class="st">" dBm"</span>);
+    Serial.<span class="fu">print</span>(<span class="st">"  Canal Radio Wi-Fi      : "</span>); Serial.<span class="fu">println</span>(WiFi.<span class="fu">channel</span>());
+    Serial.<span class="fu">println</span>(<span class="st">"=================================================="</span>);
+  } <span class="kw">else</span> {
+    Serial.<span class="fu">println</span>(<span class="st">"\n[ERREUR] Echec de connexion (Timeout 15s)."</span>);
+  }
+}
+
+<span class="dt">void</span> <span class="fu">loop</span>() {
+  <span class="co">// Surveillance régulière de la qualité radio RSSI</span>
+  <span class="kw">if</span> (WiFi.<span class="fu">status</span>() == WL_CONNECTED) {
+    <span class="dt">long</span> rssi = WiFi.<span class="fu">RSSI</span>();
+    Serial.<span class="fu">print</span>(<span class="st">"[RSSI Monitoring] Signal actuel : "</span>);
+    Serial.<span class="fu">print</span>(rssi);
+    Serial.<span class="fu">print</span>(<span class="st">" dBm -> Qualite : "</span>);
+    <span class="kw">if</span> (rssi &gt; -<span class="dv">55</span>) Serial.<span class="fu">println</span>(<span class="st">"Excellente (Proche AP)"</span>);
+    <span class="kw">else if</span> (rssi &gt; -<span class="dv">70</span>) Serial.<span class="fu">println</span>(<span class="st">"Bonne (Usage normal)"</span>);
+    <span class="kw">else if</span> (rssi &gt; -<span class="dv">85</span>) Serial.<span class="fu">println</span>(<span class="st">"Faible (Risque de deconnexion)"</span>);
+    <span class="kw">else</span> Serial.<span class="fu">println</span>(<span class="st">"Critique !"</span>);
+  }
+  <span class="fu">delay</span>(<span class="dv">5000</span>);
+}</code></pre>
+</div>
+
+<h3>1.2. Manipulation Wireshark : Décodage de la Séquence DORA (DHCP) & Requêtes ARP</h3>
+
+<div class="callout callout-info">
+  <div class="callout-title">🔍 Protocole de Capture Wireshark</div>
+  <ol>
+    <li>Lancez <strong>Wireshark</strong> sur votre PC hôte et sélectionnez l'interface Wi-Fi active.</li>
+    <li>Appliquez le filtre de capture ou d'affichage suivant : <code>dhcp || bootp || arp</code></li>
+    <li>Démarrez la capture dans Wireshark.</li>
+    <li>Effectuez un <strong>Reset matériel</strong> de votre carte microcontrôleur (ou rebranchez le câble USB).</li>
+    <li>Observez dans le moniteur série Arduino et dans Wireshark les trames générées lors de la phase de rattachement au réseau.</li>
+    <li>Stoppez la capture une fois l'adresse IP obtenue.</li>
+  </ol>
+</div>
+
+<p><strong>Tableau d'analyse de la séquence d'allocation dynamique d'adresse IP (DHCP) :</strong></p>
+
+<table>
+  <thead>
+    <tr>
+      <th>Étape</th>
+      <th>Nom du Message DHCP</th>
+      <th>Émetteur (IP / MAC)</th>
+      <th>Destinataire (IP / MAC)</th>
+      <th>Rôle & Contenu clé</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td><strong>1 (D)</strong></td>
+      <td><code>DHCP Discover</code></td>
+      <td><code>0.0.0.0</code> / MAC MCU</td>
+      <td><code>255.255.255.255</code> (Broadcast)</td>
+      <td>Le client recherche les serveurs DHCP disponibles sur le LAN. Port UDP source 68, destination 67.</td>
+    </tr>
+    <tr>
+      <td><strong>2 (O)</strong></td>
+      <td><code>DHCP Offer</code></td>
+      <td>IP Serveur DHCP</td>
+      <td><code>255.255.255.255</code> (ou IP proposée)</td>
+      <td>Le serveur propose une adresse IP libre, le masque, la durée de bail (Lease Time) et l'IP de la passerelle.</td>
+    </tr>
+    <tr>
+      <td><strong>3 (R)</strong></td>
+      <td><code>DHCP Request</code></td>
+      <td><code>0.0.0.0</code> / MAC MCU</td>
+      <td><code>255.255.255.255</code> (Broadcast)</td>
+      <td>Le client informe formellement le serveur qu'il accepte l'adresse IP proposée.</td>
+    </tr>
+    <tr>
+      <td><strong>4 (A)</strong></td>
+      <td><code>DHCP ACK</code></td>
+      <td>IP Serveur DHCP</td>
+      <td>IP attribuée / MAC MCU</td>
+      <td>Acquittement final du serveur confirmant l'attribution définitive du bail IP et des serveurs DNS.</td>
+    </tr>
+  </tbody>
+</table>
+
+<div class="student-response">
+  <strong>✍️ Questions d'Analyse Partie 1 (À compléter pour le compte-rendu) :</strong>
+  <p><strong>Q1.1.</strong> Relevez l'adresse MAC de votre carte microcontrôleur affichée sur le moniteur série. Identifiez l'OUI (Organizationally Unique Identifier - 3 premiers octets) et retrouvez le fabricant du chipset Wi-Fi :</p>
+  <div class="dotted-line"></div>
+  <p><strong>Q1.2.</strong> Dans la capture Wireshark du paquet <code>DHCP Discover</code>, quel est le numéro de port UDP utilisé par le client ? Quel est le port UDP du serveur ?</p>
+  <div class="dotted-line"></div>
+  <p><strong>Q1.3.</strong> Justifiez pourquoi le premier paquet <code>DHCP Discover</code> a impérativement pour adresse IP source <code>0.0.0.0</code> et pour adresse de destination <code>255.255.255.255</code> :</p>
+  <div class="dotted-line"></div>
+  <p><strong>Q1.4.</strong> Observez les paquets <strong>ARP</strong> émis immédiatement après le <code>DHCP ACK</code>. Quel est le rôle d'une requête ARP "Gratuitous ARP" émise par le microcontrôleur avec sa propre IP ?</p>
+  <div class="dotted-line"></div>
+</div>
+
+<hr />
+
+<h2>PARTIE 2 : Comparaison de Transport L4 : Datagrammes UDP vs Session TCP (45 min)</h2>
+
+<p>Dans les applications IoT industrielles, le choix entre <strong>UDP (User Datagram Protocol)</strong> et <strong>TCP (Transmission Control Protocol)</strong> a un impact direct sur la réactivité, l'autonomie sur batterie et la fiabilité des alertes.</p>
+
+<ul>
+  <li><strong>UDP (Mode non connecté) :</strong> Pas de poignée de main, pas de garantie de livraison, pas d'acquittement, en-tête minimaliste (8 octets). Idéal pour le streaming de télémétrie haute fréquence ou l'envoi broadcast local.</li>
+  <li><strong>TCP (Mode connecté) :</strong> Établissement préalable de connexion (3-Way Handshake SYN, SYN-ACK, ACK), garantie de livraison, réémission en cas de perte, contrôle de flux, en-tête complet (20 octets minimum). Idéal pour les commandes d'actionneurs ou les transactions critiques.</li>
+</ul>
+
+<h3>2.1. Code C++ Arduino : Émission Conjointe de Télémétrie en UDP et TCP</h3>
+
+<div class="step-box">
+  <div class="step-header">
+    <span class="step-title">Fichier Arduino : <code>02_transport_udp_vs_tcp.ino</code></span>
+    <span class="timing-badge">Partie 2.1</span>
+  </div>
+
+<pre><code class="sourceCode cpp"><span class="co">/* ====================================================================</span>
+<span class="co">   BTS CIEL - Partie 2 : Comparatif Couche Transport L4 (UDP vs TCP)</span>
+<span class="co">   Mesure de charge utile, d'overhead et observation du Handshake</span>
+<span class="co">   ==================================================================== */</span>
+<span class="pp">#include &lt;WiFi.h&gt;</span>
+<span class="pp">#include &lt;WiFiUdp.h&gt;</span>
+
+<span class="dt">const char</span>* WIFI_SSID     = <span class="st">"WIFI_SALLE_CIEL"</span>;
+<span class="dt">const char</span>* WIFI_PASSWORD = <span class="st">"SuperSecretCIEL2026"</span>;
+
+<span class="co">// Adresse IP de votre PC de TP (remplacer par l'IP de votre machine !)</span>
+<span class="dt">const char</span>* PC_TARGET_IP  = <span class="st">"192.168.1.50"</span>;
+<span class="dt">const uint16_t</span> UDP_PORT   = <span class="dv">5005</span>;
+<span class="dt">const uint16_t</span> TCP_PORT   = <span class="dv">8080</span>;
+
+WiFiUDP udp;
+<span class="dt">uint32_t</span> compteurMesure = <span class="dv">0</span>;
+
+<span class="dt">void</span> <span class="fu">setup</span>() {
+  Serial.<span class="fu">begin</span>(<span class="dv">115200</span>);
+  <span class="kw">while</span> (!Serial &amp;&amp; <span class="fu">millis</span>() &lt; <span class="dv">2000</span>);
+
+  WiFi.<span class="fu">mode</span>(WIFI_STA);
+  WiFi.<span class="fu">begin</span>(WIFI_SSID, WIFI_PASSWORD);
+  <span class="kw">while</span> (WiFi.<span class="fu">status</span>() != WL_CONNECTED) {
+    <span class="fu">delay</span>(<span class="dv">200</span>);
+    Serial.<span class="fu">print</span>(<span class="st">"."</span>);
+  }
+  Serial.<span class="fu">println</span>(<span class="st">"\n[OK] Wi-Fi Connecte. Pret pour les tests de transport L4."</span>);
+
+  <span class="co">// Démarrage du socket UDP</span>
+  udp.<span class="fu">begin</span>(UDP_PORT);
+}
+
+<span class="dt">void</span> <span class="fu">loop</span>() {
+  compteurMesure++;
+
+  <span class="co">// Simulation d'une mesure analogique (ex: tension capteur ou température)</span>
+  <span class="dt">float</span> tensionCapteur = (<span class="dt">float</span>)<span class="fu">random</span>(<span class="dv">2000</span>, <span class="dv">3300</span>) / <span class="fl">1000.0</span>; <span class="co">// de 2.00V à 3.30V</span>
+  String payload = <span class="st">"{\"id\":"</span> + String(compteurMesure) + <span class="st">",\"val\":"</span> + String(tensionCapteur, <span class="dv">2</span>) + <span class="st">"}"</span>;
+
+  Serial.<span class="fu">println</span>(<span class="st">"\n--------------------------------------------------"</span>);
+  Serial.<span class="fu">print</span>(<span class="st">"[*] Transmission Trame #"</span>); Serial.<span class="fu">println</span>(compteurMesure);
+
+  <span class="co">// -------------------------------------------------------------</span>
+  <span class="co">// 1. ENVOI EN UDP (Mode Non Connecté - Datagramme Rapide)</span>
+  <span class="co">// -------------------------------------------------------------</span>
+  <span class="dt">uint32_t</span> t_udp_start = <span class="fu">micros</span>();
+  udp.<span class="fu">beginPacket</span>(PC_TARGET_IP, UDP_PORT);
+  udp.<span class="fu">print</span>(payload);
+  udp.<span class="fu">endPacket</span>();
+  <span class="dt">uint32_t</span> t_udp_duration = <span class="fu">micros</span>() - t_udp_start;
+
+  Serial.<span class="fu">print</span>(<span class="st">"  [UDP] Envoye vers "</span>); Serial.<span class="fu">print</span>(PC_TARGET_IP);
+  Serial.<span class="fu">print</span>(<span class="st">":"</span>); Serial.<span class="fu">print</span>(UDP_PORT);
+  Serial.<span class="fu">print</span>(<span class="st">" en "</span>); Serial.<span class="fu">print</span>(t_udp_duration); Serial.<span class="fu">println</span>(<span class="st">" us"</span>);
+
+  <span class="fu">delay</span>(<span class="dv">500</span>); <span class="co">// Décalage pour isoler les trames sous Wireshark</span>
+
+  <span class="co">// -------------------------------------------------------------</span>
+  <span class="co">// 2. ENVOI EN TCP (Mode Connecté - Handshake + Payload + ACK)</span>
+  <span class="co">// -------------------------------------------------------------</span>
+  WiFiClient tcpClient;
+  <span class="dt">uint32_t</span> t_tcp_start = <span class="fu">micros</span>();
+  <span class="kw">if</span> (tcpClient.<span class="fu">connect</span>(PC_TARGET_IP, TCP_PORT)) {
+    tcpClient.<span class="fu">println</span>(payload);
+    tcpClient.<span class="fu">flush</span>();
+    tcpClient.<span class="fu">stop</span>(); <span class="co">// Fermeture de session TCP (FIN-ACK)</span>
+    <span class="dt">uint32_t</span> t_tcp_duration = <span class="fu">micros</span>() - t_tcp_start;
+    Serial.<span class="fu">print</span>(<span class="st">"  [TCP] Session etablie & donnee transmise en "</span>);
+    Serial.<span class="fu">print</span>(t_tcp_duration); Serial.<span class="fu">println</span>(<span class="st">" us"</span>);
+  } <span class="kw">else</span> {
+    Serial.<span class="fu">println</span>(<span class="st">"  [TCP] Echec connexion serveur (Port 8080 non ecoute)."</span>);
+  }
+
+  <span class="fu">delay</span>(<span class="dv">4500</span>); <span class="co">// Période d'émission globale de 5 secondes</span>
+}</code></pre>
+</div>
+
+<h3>2.2. Manipulation Wireshark : Analyse Comparée de la Couche Transport</h3>
+
+<div class="callout callout-info">
+  <div class="callout-title">🖥️ Configuration de l'Écoute sur le PC de TP</div>
+  <p>Pour réceptionner le flux TCP et UDP sur votre PC, vous pouvez utiliser l'utilitaire <strong>Netcat</strong> (ou ncat) dans deux fenêtres de terminal :</p>
+  <ul>
+    <li>Écoute UDP : <code>nc -u -l -p 5005</code> (ou <code>ncat -u -l 5005</code>)</li>
+    <li>Écoute TCP : <code>nc -l -p 8080</code> (ou <code>ncat -l 8080</code>)</li>
+  </ul>
+</div>
+
+<p>Appliquez le filtre Wireshark suivant : <code>(udp.port == 5005 || tcp.port == 8080) &amp;&amp; ip.addr == &lt;IP_DE_VOTRE_MCU&gt;</code></p>
+
+<div class="student-response">
+  <strong>✍️ Questions d'Analyse Partie 2 (À compléter pour le compte-rendu) :</strong>
+  <p><strong>Q2.1.</strong> Combien de paquets réseau sont échangés sur le réseau pour transmettre un seul message en UDP ?</p>
+  <div class="dotted-line"></div>
+  <p><strong>Q2.2.</strong> Combien de paquets réseau au total ont été générés pour la transaction TCP (depuis la tentative de connexion jusqu'à la fermeture) ? Identifiez le rôle des drapeaux (Flags) : <code>[SYN]</code>, <code>[SYN, ACK]</code>, <code>[ACK]</code>, <code>[PSH, ACK]</code>, <code>[FIN, ACK]</code> :</p>
+  <div class="dotted-line"></div>
+  <div class="dotted-line"></div>
+  <p><strong>Q2.3.</strong> Remplissez le tableau comparatif d'overhead ci-dessous en vous basant sur l'arborescence des paquets dans Wireshark :</p>
+  
+  <table>
+    <thead>
+      <tr>
+        <th>Protocole</th>
+        <th>Taille En-tête L4</th>
+        <th>Taille Payload Utile</th>
+        <th>Total Octets Trame L2</th>
+        <th>Rapport Efficacité (Payload / Total)</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><strong>UDP</strong></td>
+        <td>...... octets</td>
+        <td>...... octets</td>
+        <td>...... octets</td>
+        <td>...... %</td>
+      </tr>
+      <tr>
+        <td><strong>TCP (Payload seul)</strong></td>
+        <td>...... octets</td>
+        <td>...... octets</td>
+        <td>...... octets</td>
+        <td>...... %</td>
+      </tr>
+    </tbody>
+  </table>
+
+  <p><strong>Q2.4.</strong> Pourquoi un protocole comme <strong>MQTT</strong> (étudié lors du TP précédent) ou <strong>HTTP</strong> repose-t-il obligatoirement sur TCP plutôt que sur UDP ?</p>
+  <div class="dotted-line"></div>
+</div>
+
+<hr />
+
+<h2>PARTIE 3 : Audit HTTP en Clair vs Chiffrement HTTPS / TLS sous Wireshark (55 min)</h2>
+
+<p>Les étudiants ont déjà expérimenté l'hébergement d'un serveur Web local. Dans cette partie, nous plaçons le microcontrôleur dans le rôle d'un <strong>Client REST</strong> envoyant des données télémétriques vers une API de supervision cloud ou d'entreprise avec un <strong>Token d'authentification Bearer</strong>.</p>
+
+<div class="callout callout-danger">
+  <div class="callout-title">🚨 Démonstration de Vulnérabilité : L'Espionnage Réseau (Sniffing)</div>
+  <p>Lorsque les données circulent en HTTP (port 80), n'importe quelle machine connectée au réseau local ou au même point d'accès Wi-Fi peut capturer les trames à l'aide de Wireshark et lire instantanément les identifiants d'accès, mots de passe et données industrielles.</p>
+</div>
+
+<h3>3.1. Code C++ : Client HTTP REST Non Sécurisé (Port 80)</h3>
+
+<div class="step-box">
+  <div class="step-header">
+    <span class="step-title">Fichier Arduino : <code>03_http_insecure_client.ino</code></span>
+    <span class="timing-badge">Partie 3.1</span>
+  </div>
+
+<pre><code class="sourceCode cpp"><span class="co">/* ====================================================================</span>
+<span class="co">   BTS CIEL - Partie 3.1 : Client HTTP REST Non Sécurisé</span>
+<span class="co">   Envoi d'un Token Bearer Secret et de données télémétrie sur le port 80</span>
+<span class="co">   ==================================================================== */</span>
+<span class="pp">#include &lt;WiFi.h&gt;</span>
+<span class="pp">#include &lt;HTTPClient.h&gt;</span>
+
+<span class="dt">const char</span>* WIFI_SSID     = <span class="st">"WIFI_SALLE_CIEL"</span>;
+<span class="dt">const char</span>* WIFI_PASSWORD = <span class="st">"SuperSecretCIEL2026"</span>;
+
+<span class="co">// URL cible de l'API de supervision (ex: serveur local du prof ou httpbin.org)</span>
+<span class="dt">const char</span>* SERVER_URL    = <span class="st">"http://httpbin.org/post"</span>;
+<span class="dt">const char</span>* SECRET_TOKEN  = <span class="st">"Bearer BTS_CIEL_TOP_SECRET_TOKEN_42"</span>;
+
+<span class="dt">void</span> <span class="fu">setup</span>() {
+  Serial.<span class="fu">begin</span>(<span class="dv">115200</span>);
+  <span class="kw">while</span> (!Serial &amp;&amp; <span class="fu">millis</span>() &lt; <span class="dv">2000</span>);
+
+  WiFi.<span class="fu">mode</span>(WIFI_STA);
+  WiFi.<span class="fu">begin</span>(WIFI_SSID, WIFI_PASSWORD);
+  <span class="kw">while</span> (WiFi.<span class="fu">status</span>() != WL_CONNECTED) {
+    <span class="fu">delay</span>(<span class="dv">250</span>);
+    Serial.<span class="fu">print</span>(<span class="st">"."</span>);
+  }
+  Serial.<span class="fu">println</span>(<span class="st">"\n[OK] Connecte. Envoi requetes HTTP en clair..."</span>);
+}
+
+<span class="dt">void</span> <span class="fu">loop</span>() {
+  <span class="kw">if</span> (WiFi.<span class="fu">status</span>() == WL_CONNECTED) {
+    HTTPClient http;
+    http.<span class="fu">begin</span>(SERVER_URL);
+
+    <span class="co">// Ajout des en-têtes HTTP (Headers)</span>
+    http.<span class="fu">addHeader</span>(<span class="st">"Content-Type"</span>, <span class="st">"application/json"</span>);
+    http.<span class="fu">addHeader</span>(<span class="st">"Authorization"</span>, SECRET_TOKEN);
+
+    <span class="co">// Corps de la requête (Payload JSON)</span>
+    String jsonPayload = <span class="st">"{\"station\":\"Lycée_CIEL\",\"pression_hpa\":1013.25,\"alarme\":false}"</span>;
+
+    Serial.<span class="fu">println</span>(<span class="st">"\n[HTTP] Emission POST vers httpbin.org..."</span>);
+    <span class="dt">int</span> httpResponseCode = http.<span class="fu">POST</span>(jsonPayload);
+
+    <span class="kw">if</span> (httpResponseCode &gt; <span class="dv">0</span>) {
+      Serial.<span class="fu">print</span>(<span class="st">"[HTTP] Code de Reponse : "</span>); Serial.<span class="fu">println</span>(httpResponseCode);
+      String response = http.<span class="fu">getString</span>();
+      Serial.<span class="fu">println</span>(<span class="st">"[HTTP] Reponse recue :"</span>);
+      Serial.<span class="fu">println</span>(response.<span class="fu">substring</span>(<span class="dv">0</span>, <span class="dv">120</span>) + <span class="st">"..."</span>);
+    } <span class="kw">else</span> {
+      Serial.<span class="fu">print</span>(<span class="st">"[ERREUR HTTP] Code : "</span>); Serial.<span class="fu">println</span>(httpResponseCode);
+    }
+    http.<span class="fu">end</span>();
+  }
+  <span class="fu">delay</span>(<span class="dv">10000</span>);
+}</code></pre>
+</div>
+
+<h3>3.2. Manipulation Wireshark : Interception en Clair (Sniffing)</h3>
+<ol>
+  <li>Lancez la capture Wireshark avec le filtre : <code>http &amp;&amp; ip.addr == &lt;IP_DE_VOTRE_MCU&gt;</code></li>
+  <li>Attendez l'émission d'une requête POST.</li>
+  <li>Sélectionnez la trame <code>POST /post HTTP/1.1</code>. Faites un clic droit puis sélectionnez <strong>Suivre > Flux TCP (Follow TCP Stream)</strong>.</li>
+</ol>
+
+<div class="student-response">
+  <strong>✍️ Constat de Sécurité & Questions d'Analyse (HTTP en clair) :</strong>
+  <p><strong>Q3.1.</strong> Collez ou recopiez ci-dessous la ligne exacte de la trame HTTP interceptée révélant le jeton de sécurité d'authentification :</p>
+  <div class="dotted-line"></div>
+  <p><strong>Q3.2.</strong> Le contenu du payload JSON (station, pression, alarme) est-il directement compréhensible par un pirate passif ? Quel type d'attaque réseau cette absence de chiffrement permet-elle ?</p>
+  <div class="dotted-line"></div>
+</div>
+
+<h3>3.3. Code C++ : Sécurisation par Client HTTPS / TLS (Port 443)</h3>
+<p>Pour éliminer cette faille de sécurité, nous migrons vers <code>WiFiClientSecure</code> qui encapsule la requête HTTP dans une session chiffrée <strong>TLS v1.2 / v1.3</strong> sur le port 443.</p>
+
+<div class="step-box">
+  <div class="step-header">
+    <span class="step-title">Fichier Arduino : <code>04_https_secure_tls_client.ino</code></span>
+    <span class="timing-badge">Partie 3.3</span>
+  </div>
+
+<pre><code class="sourceCode cpp"><span class="co">/* ====================================================================</span>
+<span class="co">   BTS CIEL - Partie 3.3 : Sécurisation Cryptographique HTTPS (TLS)</span>
+<span class="co">   Chiffrement de bout en bout sur le port 443 avec WiFiClientSecure</span>
+<span class="co">   ==================================================================== */</span>
+<span class="pp">#include &lt;WiFi.h&gt;</span>
+<span class="pp">#include &lt;WiFiClientSecure.h&gt;</span>
+<span class="pp">#include &lt;HTTPClient.h&gt;</span>
+
+<span class="dt">const char</span>* WIFI_SSID     = <span class="st">"WIFI_SALLE_CIEL"</span>;
+<span class="dt">const char</span>* WIFI_PASSWORD = <span class="st">"SuperSecretCIEL2026"</span>;
+
+<span class="co">// URL HTTPS (Remarquer le https:// et le port par défaut 443)</span>
+<span class="dt">const char</span>* SECURE_URL    = <span class="st">"https://httpbin.org/post"</span>;
+<span class="dt">const char</span>* SECRET_TOKEN  = <span class="st">"Bearer BTS_CIEL_TOP_SECRET_TOKEN_42"</span>;
+
+<span class="dt">void</span> <span class="fu">setup</span>() {
+  Serial.<span class="fu">begin</span>(<span class="dv">115200</span>);
+  <span class="kw">while</span> (!Serial &amp;&amp; <span class="fu">millis</span>() &lt; <span class="dv">2000</span>);
+
+  WiFi.<span class="fu">mode</span>(WIFI_STA);
+  WiFi.<span class="fu">begin</span>(WIFI_SSID, WIFI_PASSWORD);
+  <span class="kw">while</span> (WiFi.<span class="fu">status</span>() != WL_CONNECTED) {
+    <span class="fu">delay</span>(<span class="dv">250</span>);
+    Serial.<span class="fu">print</span>(<span class="st">"."</span>);
+  }
+  Serial.<span class="fu">println</span>(<span class="st">"\n[OK] Connecte. Envoi securise HTTPS..."</span>);
+}
+
+<span class="dt">void</span> <span class="fu">loop</span>() {
+  <span class="kw">if</span> (WiFi.<span class="fu">status</span>() == WL_CONNECTED) {
+    WiFiClientSecure secureClient;
+    
+    <span class="co">// Pour le TP : validation sans contrôle strict d'autorité racine CA</span>
+    <span class="co">// (En production industrielle, on intègre le certificat racine X.509)</span>
+    secureClient.<span class="fu">setInsecure</span>();
+
+    HTTPClient https;
+    Serial.<span class="fu">println</span>(<span class="st">"\n[HTTPS] Etablissement session TLS vers https://httpbin.org..."</span>);
+
+    <span class="dt">uint32_t</span> t0 = <span class="fu">millis</span>();
+    <span class="kw">if</span> (https.<span class="fu">begin</span>(secureClient, SECURE_URL)) {
+      https.<span class="fu">addHeader</span>(<span class="st">"Content-Type"</span>, <span class="st">"application/json"</span>);
+      https.<span class="fu">addHeader</span>(<span class="st">"Authorization"</span>, SECRET_TOKEN);
+
+      String jsonPayload = <span class="st">"{\"station\":\"Lycée_CIEL\",\"pression_hpa\":1013.25,\"alarme\":false}"</span>;
+
+      <span class="dt">int</span> httpCode = https.<span class="fu">POST</span>(jsonPayload);
+      <span class="dt">uint32_t</span> dureeSession = <span class="fu">millis</span>() - t0;
+
+      <span class="kw">if</span> (httpCode &gt; <span class="dv">0</span>) {
+        Serial.<span class="fu">print</span>(<span class="st">"[HTTPS] Reponse recue en "</span>); Serial.<span class="fu">print</span>(dureeSession); Serial.<span class="fu">println</span>(<span class="st">" ms"</span>);
+        Serial.<span class="fu">print</span>(<span class="st">"[HTTPS] Code HTTP : "</span>); Serial.<span class="fu">println</span>(httpCode);
+        String rep = https.<span class="fu">getString</span>();
+        Serial.<span class="fu">println</span>(<span class="st">"[HTTPS] Reponse chiffree correctement decapsulee."</span>);
+      } <span class="kw">else</span> {
+        Serial.<span class="fu">print</span>(<span class="st">"[ERREUR HTTPS] Code d'echec : "</span>); Serial.<span class="fu">println</span>(httpCode);
+      }
+      https.<span class="fu">end</span>();
+    }
+  }
+  <span class="fu">delay</span>(<span class="dv">10000</span>);
+}</code></pre>
+</div>
+
+<h3>3.4. Analyse Wireshark de la Négociation Cryptographique TLS</h3>
+<ol>
+  <li>Modifiez le filtre d'affichage sous Wireshark : <code>tls || tcp.port == 443</code></li>
+  <li>Déclenchez une requête HTTPS depuis votre carte.</li>
+  <li>Observez la séquence de poignée de main cryptographique (TLS Handshake).</li>
+</ol>
+
+<pre><code>            CLIENT (Pico W / XIAO)                               SERVEUR (Cloud API)
+                      |                                                   |
+                      | ---------- 1. Client Hello (Cipher Suites) -----> |
+                      | <--------- 2. Server Hello (Suite choisie) ------ |
+                      | <--------- 3. Certificate (Certificat X.509) ---- |
+                      | <--------- 4. Server Key Exchange / Hello Done -- |
+                      | ---------- 5. Client Key Exchange --------------> |
+                      | ---------- 6. Change Cipher Spec ---------------> |
+                      | <--------- 7. Change Cipher Spec / Finished ----- |
+                      |                                                   |
+                      | === ÉCHANGES DE DONNÉES ENTIÈREMENT CHIFFRÉES === |
+                      | <====> [ Application Data : Payload opaque ] <====>|</code></pre>
+
+<div class="student-response">
+  <strong>✍️ Fiche d'Analyse Comparative Sécurité (À compléter obligatoirement) :</strong>
+  
+  <table>
+    <thead>
+      <tr>
+        <th>Critère Technique</th>
+        <th>Protocole HTTP (Port 80)</th>
+        <th>Protocole HTTPS (Port 443 / TLS)</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><strong>Visibilité de l'URL et du Header 'Authorization' sous Wireshark</strong></td>
+        <td>........................................................</td>
+        <td>........................................................</td>
+      </tr>
+      <tr>
+        <td><strong>Résultat du filtre <code>http</code> sous Wireshark</strong></td>
+        <td>........................................................</td>
+        <td>........................................................</td>
+      </tr>
+      <tr>
+        <td><strong>Nom des paquets contenant les données utiles sous Wireshark</strong></td>
+        <td>........................................................</td>
+        <td>........................................................</td>
+      </tr>
+      <tr>
+        <td><strong>Temps moyen d'exécution de la requête (Mesuré sur le MCU)</strong></td>
+        <td>............ ms</td>
+        <td>............ ms</td>
+      </tr>
+    </tbody>
+  </table>
+
+  <p><strong>Q3.3.</strong> Pourquoi la requête HTTPS prend-elle significativement plus de temps à s'exécuter que la requête HTTP en clair ? Citez au moins deux opérations cryptographiques consommatrices de calcul exécutées par le microcontrôleur :</p>
+  <div class="dotted-line"></div>
+  <div class="dotted-line"></div>
+  <p><strong>Q3.4.</strong> Que signifie l'instruction <code>secureClient.setInsecure()</code> ? Pourquoi cette configuration est-elle tolérée en laboratoire d'apprentissage mais rigoureusement proscrite en production industrielle (attaque Man-In-The-Middle) ?</p>
+  <div class="dotted-line"></div>
+  <div class="dotted-line"></div>
+</div>
+
+<hr />
+
+<h2>4. Questions de Synthèse & Bilan BTS CIEL (35 min)</h2>
+
+<div class="student-response">
+  <p><strong>Q4.1. Synthèse des couches du Modèle OSI :</strong> Complétez le tableau suivant pour récapituler le rôle de chaque couche rencontrée durant ce TP :</p>
+  <table>
+    <thead>
+      <tr>
+        <th>Couche OSI</th>
+        <th>Nom de la Couche</th>
+        <th>Protocoles mis en œuvre dans ce TP</th>
+        <th>Unité de Données (PDU)</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td>Couche 7</td>
+        <td>.......................................</td>
+        <td>HTTP, HTTPS, DHCP, DNS</td>
+        <td>Donnée / Message</td>
+      </tr>
+      <tr>
+        <td>Couche 4</td>
+        <td>.......................................</td>
+        <td>TCP, UDP</td>
+        <td>.......................................</td>
+      </tr>
+      <tr>
+        <td>Couche 3</td>
+        <td>.......................................</td>
+        <td>IPv4, ICMP, ARP</td>
+        <td>Paquet</td>
+      </tr>
+      <tr>
+        <td>Couche 2</td>
+        <td>Liaison de données</td>
+        <td>Wi-Fi (IEEE 802.11 b/g/n)</td>
+        <td>.......................................</td>
+      </tr>
+    </tbody>
+  </table>
+
+  <p><strong>Q4.2. Impact Mémoire RAM :</strong> La négociation TLS nécessite l'allocation d'un tampon d'entrée/sortie (buffer SSL) d'au moins 16 Ko pour stocker les enregistrements TLS (TLS Record Layer). En vous référant à la fiche technique (Datasheet) de votre microcontrôleur :</p>
+  <ul>
+    <li>Quantité totale de RAM disponible sur votre carte (SRAM RP2040 ou ESP32-S3) : ........................... Ko</li>
+    <li>Quel pourcentage de la mémoire vive une seule connexion HTTPS monopolise-t-elle ? Est-il envisageable d'ouvrir 20 connexions HTTPS simultanées sur ce type de puce ? Justifiez.</li>
+  </ul>
+  <div class="dotted-line"></div>
+  <div class="dotted-line"></div>
+</div>
+
+<hr />
+
+<h2>🚀 Défis Bonus (Pour les binômes avancés)</h2>
+
+<ul>
+  <li><strong>Défi 1 — Machine à États Finis (FSM) de Reconnexion Non-Bloquante :</strong> Modifiez le programme de la Partie 1 pour supprimer toute boucle bloquante <code>while</code>. Implémentez une FSM avec 4 états : <code>ETAT_DECONNECTE</code>, <code>ETAT_TENTATIVE_CONNEXION</code>, <code>ETAT_CONNECTE</code>, <code>ETAT_ERREUR_TIMEOUT</code> cadencée par <code>millis()</code> afin que le reste du programme continue d'exécuter des tâches locales même en cas de coupure de la box Wi-Fi.</li>
+  <li><strong>Défi 2 — Scanner RF Wi-Fi Dynamique :</strong> Utilisez la fonction <code>WiFi.scanNetworks()</code> pour lister les réseaux Wi-Fi environnants dans le moniteur série. Affichez sous forme de tableau : le SSID, le BSSID (adresse MAC de l'AP), le canal radio (1 à 13), le RSSI en dBm, et le type de sécurité détecté (OPEN, WEP, WPA, WPA2-PSK, WPA3).</li>
+  <li><strong>Défi 3 — Capture du Handshake WPA2 (Épreuve E6 Cybersécurité) :</strong> À l'aide de Wireshark en mode moniteur (ou d'une carte Wi-Fi compatible), identifiez les 4 messages de la poignée de main <strong>WPA 4-Way Handshake (EAPOL)</strong> échangés lors de l'authentification initiale.</li>
+</ul>
+
+<hr />
+
+<h2>📊 Grille d'Évaluation Sommative & Formative (sur 20 points)</h2>
+
+<table>
+  <thead>
+    <tr>
+      <th style="width: 25%;">Critère d'Évaluation</th>
+      <th style="width: 45%;">Description des attendus et indicateurs de réussite</th>
+      <th style="width: 15%; text-align: center;">Barème</th>
+      <th style="width: 15%; text-align: center;">Note</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td><strong>1. Enrôlement Wi-Fi & Analyse DHCP / ARP (C04)</strong></td>
+      <td>Connexion fonctionnelle au point d'accès, extraction rigoureuse des paramètres IP/MAC/RSSI. Décodage exact de la séquence DORA et justification des adresses broadcast et ARP sous Wireshark.</td>
+      <td style="text-align: center;"><strong>4 pts</strong></td>
+      <td style="text-align: center;">...... / 4</td>
+    </tr>
+    <tr>
+      <td><strong>2. Maîtrise Couche Transport UDP / TCP (C05 & C07)</strong></td>
+      <td>Implémentation correcte des sockets UDP et TCP. Identification sous Wireshark du 3-Way Handshake TCP (SYN, SYN-ACK, ACK, FIN) et calcul rigoureux de l'overhead protocolaire.</td>
+      <td style="text-align: center;"><strong>4 pts</strong></td>
+      <td style="text-align: center;">...... / 4</td>
+    </tr>
+    <tr>
+      <td><strong>3. Audit de Sécurité & Sniffing HTTP (C04 & C07)</strong></td>
+      <td>Mise en évidence expérimentale de la fuite de données en clair (Token secret et payload JSON interceptés dans Wireshark via le flux TCP).</td>
+      <td style="text-align: center;"><strong>4 pts</strong></td>
+      <td style="text-align: center;">...... / 4</td>
+    </tr>
+    <tr>
+      <td><strong>4. Sécurisation HTTPS / TLS (C05)</strong></td>
+      <td>Migration réussie vers <code>WiFiClientSecure</code>. Observation des trames de négociation TLS Handshake et constat de l'opacité cryptographique des trames <em>Application Data</em>.</td>
+      <td style="text-align: center;"><strong>4 pts</strong></td>
+      <td style="text-align: center;">...... / 4</td>
+    </tr>
+    <tr>
+      <td><strong>5. Rigueur, Code C++ & Synthèse OSI (C04 & C05)</strong></td>
+      <td>Qualité du code source (indentation, commentaires, constantes), complétion méthodique des tableaux de synthèse et du modèle OSI.</td>
+      <td style="text-align: center;"><strong>2 pts</strong></td>
+      <td style="text-align: center;">...... / 2</td>
+    </tr>
+    <tr>
+      <td><strong>6. Autonomie, Démarche & Défi Bonus</strong></td>
+      <td>Gestion efficace du poste de travail et de Wireshark, esprit d'investigation, réalisation d'un défi bonus (FSM reconnexion ou scanner RF).</td>
+      <td style="text-align: center;"><strong>2 pts</strong></td>
+      <td style="text-align: center;">...... / 2</td>
+    </tr>
+    <tr>
+      <td><strong>NOTE TOTALE</strong></td>
+      <td><strong>Évaluation globale des compétences Réseau & Cybersécurité BTS CIEL</strong></td>
+      <td style="text-align: center;"><strong>/ 20</strong></td>
+      <td style="text-align: center;"><strong>...... / 20</strong></td>
+    </tr>
+  </tbody>
+</table>
+
+<footer style="margin-top: 40px; padding-top: 15px; border-top: 1px solid #d0d7de; font-size: 8.5pt; color: #64748b; text-align: center;">
+  BTS CIEL (Cybersécurité, Informatique et Réseaux, Électronique) — Option A (IR) & Option B (ER) • Document pédagogique pour Travaux Pratiques en Laboratoire Réseau & Systèmes Embarqués
+</footer>
+
+</body>
+</html>
