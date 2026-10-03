@@ -1,0 +1,1176 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="utf-8" />
+  <meta name="generator" content="BTS CIEL - Vincent Hilaire" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes" />
+  <title>TP : Liaison Bluetooth (SPP), Bus I²C et Instrumentation Digilent Analog Discovery 3 sur Arduino Nano - BTS CIEL</title>
+  
+  <style>
+    @page {
+      margin: 1.5cm;
+      size: A4;
+    }
+    
+    html {
+      color: #1a1a1a;
+      background-color: #fdfdfd;
+      -webkit-text-size-adjust: 100%;
+    }
+    
+    body {
+      font-family: 'Segoe UI', -apple-system, BlinkMacSystemFont, Roboto, Helvetica, Arial, sans-serif;
+      line-height: 1.55;
+      color: #1a1a1a;
+      max-width: 960px;
+      margin: 0 auto;
+      padding: 25px 30px;
+      hyphens: auto;
+      overflow-wrap: break-word;
+      text-rendering: optimizeLegibility;
+      font-kerning: normal;
+    }
+    
+    @media (max-width: 768px) {
+      body {
+        font-size: 0.95em;
+        padding: 15px;
+      }
+      h1 {
+        font-size: 1.55em !important;
+      }
+    }
+    
+    @media print {
+      html { background-color: white; }
+      body { background-color: transparent; color: black; font-size: 10pt; max-width: 100%; padding: 0; }
+      p, h2, h3 { orphans: 3; widows: 3; }
+      h2, h3, h4 { page-break-after: avoid; }
+      pre, blockquote, table, .figure-box { page-break-inside: avoid; }
+      .no-print { display: none; }
+    }
+    
+    header {
+      margin-bottom: 2.2em;
+      text-align: center;
+      border-bottom: 3px solid #0b3c5d;
+      padding-bottom: 15px;
+    }
+    
+    .meta-badge {
+      display: inline-block;
+      background: #e1ecf4;
+      color: #0b3c5d;
+      font-size: 0.85em;
+      font-weight: 600;
+      padding: 4px 10px;
+      border-radius: 20px;
+      margin: 3px 6px;
+      border: 1px solid #7aa7c7;
+    }
+    
+    .badge-primary { background: #0b3c5d; color: #ffffff; border: 1px solid #0b3c5d; }
+    .badge-alert { background: #fee2e2; color: #991b1b; border: 1px solid #f87171; }
+    .badge-success { background: #dcfce7; color: #166534; border: 1px solid #86efac; }
+    .badge-warning { background: #fef3c7; color: #92400e; border: 1px solid #fcd34d; }
+    .badge-purple { background: #f3e8ff; color: #6b21a8; border: 1px solid #d8b4fe; }
+    .badge-cyan { background: #e0f2fe; color: #0369a1; border: 1px solid #7dd3fc; }
+    .badge-orange { background: #ffedd5; color: #c2410c; border: 1px solid #fdba74; }
+    
+    h1, h2, h3, h4 {
+      color: #0b3c5d;
+      font-weight: 700;
+    }
+    
+    h1 {
+      font-size: 18pt;
+      margin-top: 0.6em;
+      margin-bottom: 0.3em;
+      letter-spacing: -0.5px;
+    }
+    
+    h2 {
+      font-size: 13.5pt;
+      margin-top: 26px;
+      margin-bottom: 12px;
+      border-bottom: 1.5px solid #d0d7de;
+      padding-bottom: 6px;
+    }
+    
+    h3 {
+      font-size: 11pt;
+      margin-top: 18px;
+      margin-bottom: 8px;
+      border-left: 4.5px solid #328cc1;
+      padding-left: 10px;
+    }
+    
+    h4 {
+      font-size: 10pt;
+      margin-top: 14px;
+      color: #1d5f8a;
+    }
+    
+    p {
+      margin: 0.8em 0;
+    }
+    
+    a {
+      color: #0969da;
+      text-decoration: none;
+    }
+    
+    a:hover {
+      text-decoration: underline;
+    }
+    
+    ul, ol {
+      padding-left: 1.6em;
+      margin: 0.8em 0;
+    }
+    
+    li {
+      margin-bottom: 0.35em;
+    }
+    
+    hr {
+      border: 0;
+      border-top: 1px solid #d0d7de;
+      margin: 22px 0;
+    }
+    
+    .callout {
+      border-radius: 6px;
+      padding: 12px 16px;
+      margin: 16px 0;
+      font-size: 9.3pt;
+      border-left: 5px solid;
+    }
+    
+    .callout-info {
+      background-color: #f0f7fc;
+      border-color: #328cc1;
+      color: #1a446c;
+    }
+    
+    .callout-warning {
+      background-color: #fffbeb;
+      border-color: #f59e0b;
+      color: #78350f;
+    }
+    
+    .callout-danger {
+      background-color: #fef2f2;
+      border-color: #ef4444;
+      color: #7f1d1d;
+    }
+    
+    .callout-success {
+      background-color: #f0fdf4;
+      border-color: #22c55e;
+      color: #14532d;
+    }
+    
+    .callout-title {
+      font-weight: 700;
+      margin-bottom: 4px;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+    
+    table {
+      border-collapse: collapse;
+      width: 100%;
+      margin: 14px 0;
+      font-size: 9pt;
+      background-color: #ffffff;
+      box-shadow: 0 1px 3px rgba(0,0,0,0.05);
+    }
+    
+    th, td {
+      border: 1px solid #d0d7de;
+      padding: 7px 10px;
+      text-align: left;
+      vertical-align: middle;
+    }
+    
+    th {
+      background-color: #f0f4f8;
+      color: #0b3c5d;
+      font-weight: 700;
+    }
+    
+    tr:nth-child(even) {
+      background-color: #f8fafc;
+    }
+    
+    tr:hover {
+      background-color: #f1f5f9;
+    }
+    
+    pre {
+      background-color: #f6f8fa;
+      border: 1px solid #d0d7de;
+      border-radius: 6px;
+      padding: 12px 14px;
+      font-size: 8.8pt;
+      line-height: 1.45;
+      overflow-x: auto;
+      font-family: Consolas, 'Courier New', Monaco, monospace;
+      color: #24292f;
+      margin: 14px 0;
+    }
+    
+    code {
+      background-color: #eff1f3;
+      padding: 2px 5px;
+      border-radius: 4px;
+      font-size: 88%;
+      font-family: Consolas, 'Courier New', Monaco, monospace;
+      color: #0969da;
+    }
+    
+    pre code {
+      background-color: transparent;
+      padding: 0;
+      border-radius: 0;
+      font-size: inherit;
+      color: inherit;
+    }
+    
+    .student-response {
+      background: #fafbfc;
+      border: 1.5px dashed #7aa7c7;
+      border-radius: 6px;
+      padding: 12px 16px;
+      margin: 14px 0 18px 0;
+      color: #334155;
+    }
+    
+    /* Typographie Mathématique et Formules */
+    .formula-box {
+      background: #f1f5f9;
+      border: 1px solid #cbd5e1;
+      border-radius: 6px;
+      padding: 8px 14px;
+      margin: 8px 0;
+      font-family: 'Cambria Math', 'DejaVu Serif', 'Times New Roman', Georgia, serif;
+      font-size: 10.5pt;
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      color: #0f172a;
+    }
+    
+    .frac {
+      display: inline-flex;
+      flex-direction: column;
+      vertical-align: middle;
+      text-align: center;
+      padding: 0 4px;
+      font-size: 0.95em;
+    }
+    
+    .frac > .num {
+      border-bottom: 1.5px solid #1e293b;
+      padding-bottom: 2px;
+    }
+    
+    .frac > .den {
+      padding-top: 2px;
+    }
+    
+    .dotted-line {
+      border-bottom: 1px dotted #94a3b8;
+      height: 22px;
+      margin-bottom: 5px;
+    }
+    
+    .step-box {
+      background: #ffffff;
+      border: 1px solid #cbd5e1;
+      border-radius: 8px;
+      padding: 14px 18px;
+      margin: 18px 0;
+      box-shadow: 0 2px 4px rgba(0,0,0,0.03);
+    }
+    
+    .step-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      border-bottom: 1px solid #e2e8f0;
+      padding-bottom: 8px;
+      margin-bottom: 12px;
+    }
+    
+    .step-title {
+      font-weight: 700;
+      font-size: 11pt;
+      color: #0b3c5d;
+    }
+    
+    .timing-badge {
+      background: #e2e8f0;
+      color: #334155;
+      font-size: 8pt;
+      padding: 3px 8px;
+      border-radius: 12px;
+      font-weight: 600;
+    }
+    
+    .figure-box {
+      margin: 18px 0;
+      padding: 12px;
+      background-color: #ffffff;
+      border: 1px solid #cbd5e1;
+      border-radius: 8px;
+      text-align: center;
+      box-shadow: 0 2px 5px rgba(0,0,0,0.04);
+    }
+    
+    .figure-caption {
+      font-size: 8.8pt;
+      color: #475569;
+      font-weight: 600;
+      margin-top: 8px;
+    }
+    
+    .svg-container {
+      width: 100%;
+      max-width: 870px;
+      margin: 0 auto;
+    }
+  </style>
+</head>
+<body>
+
+<header id="title-block-header">
+  <div style="text-transform: uppercase; font-size: 0.9em; font-weight: 700; letter-spacing: 1px; color: #328cc1; margin-bottom: 4px;">
+    BTS CIEL — 2<sup>e</sup> Année • Option A (IR) & Option B (ER)
+  </div>
+  <h1 class="title">TP : Communication Bluetooth (SPP), Bus I²C & Instrumentation Digilent Analog Discovery 3</h1>
+  <div style="margin-top: 10px;">
+    <span class="meta-badge badge-primary">⏱ Durée : 5h00 (Séance complète)</span>
+    <span class="meta-badge badge-purple">🎯 Cible : Arduino Nano v3 (ATmega328P) & Grove Shield</span>
+    <span class="meta-badge badge-orange">🔬 Mesures : Digilent Analog Discovery 3 (WaveForms)</span>
+    <span class="meta-badge badge-cyan">📡 Liaison : Bluetooth SPP (SoftwareSerial D2/D3) & Bus I²C (A4/A5)</span>
+  </div>
+</header>
+
+<div class="callout callout-info">
+  <div class="callout-title">📋 Contexte Industriel du Projet</div>
+  <p>Dans les environnements industriels et biomédicaux, la maintenance et le paramétrage d'équipements scellés ou difficiles d'accès s'effectuent sans liaison physique, au moyen d'un lien sans fil sécurisé à courte portée (Bluetooth). Vous êtes chargé de développer et de qualifier le sous-système de communication d'un <strong>pupitre de télé-exploitation sécurisé</strong>.</p>
+  <p>Le système embarqué repose sur une carte <strong>Arduino Nano v3</strong> (microcontrôleur ATmega328P 16 MHz, 5V TTL), enfichée sur son <strong>Grove Shield pour Arduino Nano</strong>. Elle dialogue avec un <strong>module Grove Serial Bluetooth</strong> connecté sur le port numérique <strong>D2 (D2=RX / D3=TX)</strong> via la bibliothèque <code>SoftwareSerial</code>, et un <strong>Grove I²C Hub</strong> mutualisant un <strong>clavier capacitif 12 touches</strong>, un <strong>écran OLED</strong> et une <strong>matrice de LED 8x8</strong>. La qualification temporelle et le décodage de trames sont réalisés avec l'analyseur logique mixte <strong>Digilent Analog Discovery 3</strong> piloté par la suite logicielle <strong>WaveForms</strong>.</p>
+</div>
+
+<div class="callout callout-warning">
+  <div class="callout-title">🔑 Pourquoi utilise-t-on des commandes AT pour le Bluetooth ?</div>
+  <p>Le module Bluetooth Grove sort d'usine avec une configuration générique impersonnelle : un nom par défaut (ex: <em>"HM-10"</em>, <em>"BT05"</em> ou <em>"HC-06"</em>), un code PIN standard (<em>"1234"</em> ou <em>"0000"</em>), un débit de 9600 bauds et un mode esclave (Slave). Si plusieurs binômes allument leurs maquettes simultanément dans la salle de TP sans les reconfigurer, il est impossible de distinguer les modules et n'importe qui peut s'y connecter par accident !</p>
+  <p><strong>Les commandes AT permettent de personnaliser et sécuriser notre équipement selon notre cahier des charges :</strong></p>
+  <ul>
+    <li><strong>Attribuer un identifiant unique :</strong> renommer le module avec le nom du binôme (ex : <code>AT+NAMECIEL_NANO_B1</code>) pour l'identifier sans ambiguïté sur les smartphones.</li>
+    <li><strong>Sécuriser l'accès physique :</strong> remplacer le code d'appairage d'usine par un code confidentiel propre au pupitre (ex : <code>AT+PIN9876</code>).</li>
+    <li><strong>Définir le rôle réseau :</strong> forcer le mode <em>Esclave (Slave)</em> afin que le pupitre attende la connexion du terminal de supervision.</li>
+    <li><strong>Consulter les paramètres radio :</strong> interroger l'adresse matérielle unique (<code>AT+ADDR?</code>) et la version logicielle.</li>
+  </ul>
+  <p><strong>Règle fondamentale des deux modes :</strong></p>
+  <ul>
+    <li><strong>Mode Commande (LED clignotante) :</strong> Tant qu'aucun smartphone n'est connecté, le module écoute la liaison série et interprète les chaînes commençant par <code>AT</code>.</li>
+    <li><strong>Mode Données Transparent (LED fixe) :</strong> Dès que l'application mobile est connectée, le module bascule en transmission transparente : tout caractère reçu sur la liaison série est envoyé directement par radio, et les commandes AT ne sont plus interprétées.</li>
+  </ul>
+</div>
+
+<hr />
+
+<!-- ========================================================================= -->
+<!-- 1. REFERENTIEL BTS CIEL & COMPETENCES VISEES                             -->
+<!-- ========================================================================= -->
+<h2>1. Référentiel BTS CIEL & Compétences Visées</h2>
+
+<table>
+  <thead>
+    <tr>
+      <th style="width: 15%;">Code</th>
+      <th style="width: 35%;">Compétence du Référentiel</th>
+      <th style="width: 50%;">Critères de Réussite & Tâches associées dans ce TP</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td><strong>C04</strong></td>
+      <td><strong>Analyser une structure matérielle et logicielle</strong></td>
+      <td>
+        • Décoder les chronogrammes des liaisons série asynchrones (UART/SoftwareSerial) et synchrones (I²C).<br>
+        • Justifier l'arbitrage matériel entre l'UART matériel USB (D0/D1) et le port série logiciel <code>SoftwareSerial</code> sur D2/D3.<br>
+        • Analyser le protocole de commandes AT brutes sans caractère de terminaison (mode <em>No line ending</em>).
+      </td>
+    </tr>
+    <tr>
+      <td><strong>C05</strong></td>
+      <td><strong>Concevoir une structure matérielle et logicielle</strong></td>
+      <td>
+        • Développer l'algorithme de routage des données série entre l'USB natif (<code>Serial</code>) et le Bluetooth (<code>BT_SERIAL</code>).<br>
+        • Implémenter une machine à états finis (FSM) pour le décodage d'un protocole industriel avec contrôle d'intégrité (Checksum XOR).<br>
+        • Piloter sur un même bus I²C mutualisé (via Hub) l'afficheur OLED SSD1306, le clavier tactile et la matrice LED.
+      </td>
+    </tr>
+    <tr>
+      <td><strong>C06</strong></td>
+      <td><strong>Valider une structure matérielle et logicielle</strong></td>
+      <td>
+        • Mettre en œuvre l'analyseur logique <strong>Digilent Analog Discovery 3</strong> et le logiciel <strong>WaveForms</strong>.<br>
+        • Configurer les décodeurs de protocoles UART et I²C sous WaveForms Logic Analyzer.<br>
+        • Mesurer avec précision les temps bit, les niveaux de tension 5V TTL et les temps de montée.<br>
+        • Renseigner la grille de recette technique et synthétiser les résultats d'essais.
+      </td>
+    </tr>
+    <tr>
+      <td><strong>C07</strong></td>
+      <td><strong>Réaliser des maquettes et prototypes</strong></td>
+      <td>
+        • Câbler les sous-ensembles modulaires Grove sur le shield Arduino Nano et le Hub I²C, et raccorder les sondes MTE de l'Analog Discovery 3 en respectant la masse commune (GND).
+      </td>
+    </tr>
+  </tbody>
+</table>
+
+<hr />
+
+<!-- ========================================================================= -->
+<!-- 2. INVENTAIRE DU MATERIEL ET ARCHITECTURE D'INSTRUMENTATION              -->
+<!-- ========================================================================= -->
+<h2>2. Inventaire du Matériel et Architecture d'Instrumentation</h2>
+
+<h3>2.1. Matériel utilisé</h3>
+<ul>
+  <li><strong>1x Carte microcontrôleur :</strong> <strong>Arduino Nano v3</strong> (ATmega328P 8 bits, 16 MHz, 5V TTL) enfichée sur son <strong>Grove Shield pour Arduino Nano</strong>.</li>
+  <li><strong>1x Module sans fil :</strong> <strong>Grove - Serial Bluetooth v3.0</strong> (liaison série UART, profil SPP, connecté sur le port numérique <strong>D2</strong>).</li>
+  <li><strong>1x Hub d'extension I²C :</strong> <strong>Grove - I2C Hub (4 ports)</strong> (démultiplicateur de bus I²C).</li>
+  <li><strong>1x Clavier de saisie :</strong> <strong>Grove - 12 Key Capacitive I2C Touch Keypad</strong> (contrôleur I²C MPR121, adresse <code>0x5B</code>).</li>
+  <li><strong>1x Afficheur graphique :</strong> <strong>Grove - OLED Display 0.96"</strong> (128x64 pixels, contrôleur SSD1306, adresse I²C <code>0x3C</code>).</li>
+  <li><strong>1x Afficheur d'état :</strong> <strong>Grove - Matrice LED 8x8</strong> (contrôleur I²C HT16K33, adresse <code>0x70</code>).</li>
+  <li><strong>1x Banc de mesure :</strong> <strong>Digilent Analog Discovery 3 (AD3)</strong> avec nappe MTE 30 broches + logiciel <strong>Digilent WaveForms</strong>.</li>
+  <li><strong>1x Terminal client distant :</strong> Smartphone Android/iOS avec l'application <em>Serial Bluetooth Terminal</em> (ou PC avec adaptateur Bluetooth).</li>
+</ul>
+
+<div class="callout callout-info">
+  <div class="callout-title">💡 Architecture Matérielle Arduino Nano : UART Matériel vs SoftwareSerial</div>
+  <p><strong>1. Conflit sur l'UART matériel (D0/D1) :</strong><br>
+  Sur l'Arduino Nano, les broches <code>D0 (RX)</code> et <code>D1 (TX)</code> sont reliées directement au convertisseur USB-Série de la carte (CH340 ou FTDI). Si on y connectait le module Bluetooth, il y aurait un conflit électrique direct entre le PC et le Bluetooth lors du téléversement et du débogage.<br>
+  <strong>Solution :</strong> On utilise la bibliothèque <strong><code>SoftwareSerial</code></strong> sur le connecteur Grove <strong>D2</strong> du shield (broche D2 = RX Arduino, broche D3 = TX Arduino). L'USB (<code>Serial</code>) reste ainsi 100% disponible pour la console du PC à 115200 bauds.</p>
+  <p><strong>2. Mutualisation du Bus I²C (A4/A5) et Point de Test :</strong><br>
+  Le port <strong>I2C</strong> du Grove Shield Nano (broches A4=SDA, A5=SCL) alimente le <strong>Grove I2C Hub</strong>. Les 3 périphériques I²C (OLED, Clavier, Matrice) y sont branchés en parallèle. Le 4<sup>e</sup> port disponible du Hub constitue un <strong>point de test (Test Point)</strong> pour brancher les sondes de l'Analog Discovery 3 (DIO 2 et DIO 3) sans risque de faux contact.</p>
+</div>
+
+<h3>2.2. Plan de câblage complet et sondes Digilent AD3</h3>
+
+<table>
+  <thead>
+    <tr>
+      <th>Signal / Fonction</th>
+      <th>Broche Arduino Nano</th>
+      <th>Port Grove Shield / Hub</th>
+      <th>Sonde Digilent AD3 (Nappe MTE)</th>
+      <th>Rôle & Format</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td><strong>Masse commune (GND)</strong></td>
+      <td>GND</td>
+      <td>GND (Hub I²C ou Shield)</td>
+      <td><strong>GND (Fil Noir - flèche ▼)</strong></td>
+      <td>Référence de potentiel 0V <em>(INDISPENSABLE)</em></td>
+    </tr>
+    <tr>
+      <td><strong>Bluetooth TX (Module) / RX (Nano)</strong></td>
+      <td>D2 (Software RX)</td>
+      <td>Port D2 (Broche Jaune)</td>
+      <td><strong>DIO 0 (Fil Rose / Orange 0)</strong></td>
+      <td>Capture des réponses émises par le Bluetooth</td>
+    </tr>
+    <tr>
+      <td><strong>Bluetooth RX (Module) / TX (Nano)</strong></td>
+      <td>D3 (Software TX)</td>
+      <td>Port D2 (Broche Blanche)</td>
+      <td><strong>DIO 1 (Fil Vert / Vert-Blanc 1)</strong></td>
+      <td>Capture des commandes émises par l'Arduino</td>
+    </tr>
+    <tr>
+      <td><strong>Bus I²C - Horloge (SCL)</strong></td>
+      <td>A5 (I2C SCL)</td>
+      <td><strong>Hub I²C (Port 4 - Broche Blanche)</strong></td>
+      <td><strong>DIO 2 (Fil Bleu / Bleu-Blanc 2)</strong></td>
+      <td>Horloge I²C commune (OLED, Clavier, Matrice)</td>
+    </tr>
+    <tr>
+      <td><strong>Bus I²C - Données (SDA)</strong></td>
+      <td>A4 (I2C SDA)</td>
+      <td><strong>Hub I²C (Port 4 - Broche Jaune)</strong></td>
+      <td><strong>DIO 3 (Fil Jaune / Jaune-Blanc 3)</strong></td>
+      <td>Données bidirectionnelles I²C</td>
+    </tr>
+    <tr>
+      <td><strong>Signal Analogique TX (Scope)</strong></td>
+      <td>D3 (TX Nano)</td>
+      <td>Port D2 (Broche Blanche)</td>
+      <td><strong>1+ (Fil Orange) & 1- (Orange/Blanc à GND)</strong></td>
+      <td>Oscilloscope Voie 1 (Niveau 5V TTL et temps de montée)</td>
+    </tr>
+  </tbody>
+</table>
+
+<!-- FIGURE 1 : SCHEMA DE CABLAGE ARDUINO NANO, HUB I2C & DIGILENT AD3 -->
+<div class="figure-box">
+  <div class="svg-container">
+    <svg viewBox="0 0 870 380" width="100%" height="auto" xmlns="http://www.w3.org/2000/svg">
+      <defs>
+        <linearGradient id="ad3Grad" x1="0%" y1="0%" x2="100%" y2="100%">
+          <stop offset="0%" stop-color="#2d3748" />
+          <stop offset="100%" stop-color="#1a202c" />
+        </linearGradient>
+        <linearGradient id="nanoShieldGrad" x1="0%" y1="0%" x2="0%" y2="100%">
+          <stop offset="0%" stop-color="#0284c7" />
+          <stop offset="100%" stop-color="#0369a1" />
+        </linearGradient>
+        <linearGradient id="nanoBoardGrad" x1="0%" y1="0%" x2="100%" y2="0%">
+          <stop offset="0%" stop-color="#00878f" />
+          <stop offset="100%" stop-color="#00979d" />
+        </linearGradient>
+        <linearGradient id="btGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+          <stop offset="0%" stop-color="#1976d2" />
+          <stop offset="100%" stop-color="#0d47a1" />
+        </linearGradient>
+        <linearGradient id="hubGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+          <stop offset="0%" stop-color="#0d9488" />
+          <stop offset="100%" stop-color="#0f766e" />
+        </linearGradient>
+        <filter id="shadow" x="-3%" y="-3%" width="106%" height="108%">
+          <feDropShadow dx="2" dy="3" stdDeviation="3" flood-opacity="0.25"/>
+        </filter>
+      </defs>
+
+      <!-- FOND -->
+      <rect width="870" height="380" fill="#f8fafc" rx="8" />
+
+      <!-- BOITIER DIGILENT DISCOVERY 3 (GAUCHE) -->
+      <g transform="translate(25, 45)" filter="url(#shadow)">
+        <rect width="210" height="280" rx="14" fill="url(#ad3Grad)" stroke="#cbd5e1" stroke-width="2"/>
+        <rect x="15" y="15" width="180" height="40" rx="6" fill="#0f172a" />
+        <text x="105" y="38" fill="#f8fafc" font-family="'Segoe UI', sans-serif" font-size="11pt" font-weight="bold" text-anchor="middle">DIGILENT</text>
+        <text x="105" y="50" fill="#f59e0b" font-family="'Segoe UI', sans-serif" font-size="7pt" font-weight="600" text-anchor="middle">Analog Discovery 3 (AD3)</text>
+        
+        <!-- Connecteur MTE 30 broches -->
+        <rect x="20" y="75" width="170" height="50" rx="4" fill="#111827" stroke="#94a3b8" stroke-width="1.5" />
+        <text x="105" y="92" fill="#94a3b8" font-family="Consolas" font-size="7pt" text-anchor="middle">Connecteur MTE 2x15</text>
+        
+        <!-- Broches et sorties -->
+        <circle cx="45" cy="110" r="4" fill="#f43f5e" /><!-- DIO 0 -->
+        <text x="45" y="132" fill="#f8fafc" font-size="6.5pt" font-family="Consolas" text-anchor="middle">DIO 0</text>
+
+        <circle cx="75" cy="110" r="4" fill="#22c55e" /><!-- DIO 1 -->
+        <text x="75" y="132" fill="#f8fafc" font-size="6.5pt" font-family="Consolas" text-anchor="middle">DIO 1</text>
+
+        <circle cx="105" cy="110" r="4" fill="#3b82f6" /><!-- DIO 2 -->
+        <text x="105" y="132" fill="#f8fafc" font-size="6.5pt" font-family="Consolas" text-anchor="middle">DIO 2</text>
+
+        <circle cx="135" cy="110" r="4" fill="#eab308" /><!-- DIO 3 -->
+        <text x="135" y="132" fill="#f8fafc" font-size="6.5pt" font-family="Consolas" text-anchor="middle">DIO 3</text>
+
+        <circle cx="165" cy="110" r="4" fill="#000000" stroke="#ffffff" stroke-width="1"/><!-- GND -->
+        <text x="165" y="132" fill="#f8fafc" font-size="6.5pt" font-family="Consolas" text-anchor="middle">GND</text>
+
+        <!-- Oscilloscope Voie 1+ -->
+        <circle cx="45" cy="180" r="4" fill="#f97316" />
+        <text x="60" y="184" fill="#f8fafc" font-size="7pt" font-family="Consolas">Voie 1+ (Scope 5V)</text>
+        
+        <!-- Câble USB vers PC -->
+        <rect x="70" y="240" width="70" height="15" rx="3" fill="#64748b" />
+        <text x="105" y="251" fill="#ffffff" font-size="6.5pt" text-anchor="middle">USB vers PC</text>
+      </g>
+
+      <!-- ARDUINO NANO & GROVE SHIELD NANO (CENTRE) -->
+      <g transform="translate(270, 45)" filter="url(#shadow)">
+        <rect width="230" height="280" rx="10" fill="url(#nanoShieldGrad)" stroke="#0284c7" stroke-width="2"/>
+        <text x="115" y="24" fill="#ffffff" font-family="'Segoe UI', sans-serif" font-size="10pt" font-weight="bold" text-anchor="middle">Grove Shield Arduino Nano</text>
+        
+        <!-- Arduino Nano Board enfichée au centre -->
+        <rect x="55" y="45" width="120" height="135" rx="5" fill="url(#nanoBoardGrad)" stroke="#005c5f" stroke-width="1.5" />
+        <rect x="90" y="40" width="50" height="16" rx="3" fill="#cbd5e1" stroke="#475569" stroke-width="1" />
+        <text x="115" y="52" fill="#1e293b" font-family="Consolas" font-size="6.5pt" text-anchor="middle">Mini-USB</text>
+        <rect x="85" y="90" width="60" height="40" rx="3" fill="#1e293b" />
+        <text x="115" y="113" fill="#ffffff" font-family="Consolas" font-size="7pt" text-anchor="middle">ATmega328P</text>
+        
+        <!-- Port Grove D2 (D2=RX, D3=TX) -->
+        <rect x="15" y="200" width="90" height="55" rx="5" fill="#f1f5f9" stroke="#94a3b8" stroke-width="1.5" />
+        <text x="60" y="216" fill="#0f172a" font-family="Consolas" font-size="7pt" font-weight="bold" text-anchor="middle">Port Grove D2</text>
+        <text x="60" y="228" fill="#334155" font-family="Consolas" font-size="6pt" text-anchor="middle">D2 (RX) / D3 (TX)</text>
+        <circle cx="30" cy="242" r="3" fill="#f43f5e" /><!-- D2 RX -->
+        <circle cx="50" cy="242" r="3" fill="#22c55e" /><!-- D3 TX -->
+        <circle cx="70" cy="242" r="3" fill="#ef4444" /><!-- VCC 5V -->
+        <circle cx="90" cy="242" r="3" fill="#000000" /><!-- GND -->
+
+        <!-- Port Grove I2C (A4=SDA, A5=SCL) -->
+        <rect x="125" y="200" width="90" height="55" rx="5" fill="#f1f5f9" stroke="#94a3b8" stroke-width="1.5" />
+        <text x="170" y="216" fill="#0f172a" font-family="Consolas" font-size="7pt" font-weight="bold" text-anchor="middle">Port Grove I2C</text>
+        <text x="170" y="228" fill="#334155" font-family="Consolas" font-size="6pt" text-anchor="middle">A5 (SCL) / A4 (SDA)</text>
+        <circle cx="140" cy="242" r="3" fill="#3b82f6" /><!-- SCL -->
+        <circle cx="160" cy="242" r="3" fill="#eab308" /><!-- SDA -->
+        <circle cx="180" cy="242" r="3" fill="#ef4444" /><!-- VCC 5V -->
+        <circle cx="200" cy="242" r="3" fill="#000000" /><!-- GND -->
+      </g>
+
+      <!-- MODULE GROVE BLUETOOTH (BAS GAUCHE) -->
+      <g transform="translate(180, 275)" filter="url(#shadow)">
+        <rect width="130" height="70" rx="6" fill="url(#btGrad)" stroke="#1e40af" stroke-width="1.5"/>
+        <text x="65" y="20" fill="#ffffff" font-family="'Segoe UI', sans-serif" font-size="7.5pt" font-weight="bold" text-anchor="middle">Grove Bluetooth</text>
+        <circle cx="20" cy="38" r="4" fill="#38bdf8" />
+        <text x="28" y="41" fill="#bae6fd" font-size="6pt" font-family="Consolas">LED Status</text>
+        <!-- Broches Grove -->
+        <rect x="25" y="52" width="80" height="14" fill="#ffffff" rx="2" />
+        <text x="65" y="62" fill="#0f172a" font-size="6pt" font-family="Consolas" text-anchor="middle">TX / RX / 5V / GND</text>
+      </g>
+
+      <!-- GROVE I2C HUB 4 PORTS (DROITE) -->
+      <g transform="translate(540, 45)" filter="url(#shadow)">
+        <rect width="140" height="280" rx="8" fill="url(#hubGrad)" stroke="#0f766e" stroke-width="2"/>
+        <text x="70" y="22" fill="#ffffff" font-family="'Segoe UI', sans-serif" font-size="8.5pt" font-weight="bold" text-anchor="middle">Grove I²C Hub</text>
+        <text x="70" y="34" fill="#99f6e4" font-family="Consolas" font-size="6.5pt" text-anchor="middle">(4 ports mutualisés)</text>
+
+        <!-- Port 1 (In vers Nano) -->
+        <rect x="15" y="46" width="110" height="42" rx="4" fill="#f0fdfa" stroke="#14b8a6"/>
+        <text x="70" y="62" fill="#134e4a" font-size="7pt" font-weight="bold" text-anchor="middle">Port 1 (In Nano)</text>
+        <text x="70" y="74" fill="#64748b" font-size="6pt" font-family="Consolas" text-anchor="middle">SCL / SDA / 5V / GND</text>
+
+        <!-- Port 2 (OLED) -->
+        <rect x="15" y="100" width="110" height="42" rx="4" fill="#f0fdfa" stroke="#14b8a6"/>
+        <text x="70" y="116" fill="#134e4a" font-size="7pt" font-weight="bold" text-anchor="middle">Port 2 : OLED SSD1306</text>
+        <text x="70" y="128" fill="#0284c7" font-size="6pt" font-family="Consolas" text-anchor="middle">Adresse 0x3C</text>
+
+        <!-- Port 3 (Clavier + Matrice) -->
+        <rect x="15" y="154" width="110" height="42" rx="4" fill="#f0fdfa" stroke="#14b8a6"/>
+        <text x="70" y="170" fill="#134e4a" font-size="7pt" font-weight="bold" text-anchor="middle">Port 3 : Clavier / Matrice</text>
+        <text x="70" y="182" fill="#7c3aed" font-size="6pt" font-family="Consolas" text-anchor="middle">0x5B (Touch) / 0x70 (LED)</text>
+
+        <!-- Port 4 (Point de Test AD3) -->
+        <rect x="15" y="208" width="110" height="52" rx="4" fill="#fef3c7" stroke="#f59e0b" stroke-width="1.5"/>
+        <text x="70" y="224" fill="#78350f" font-size="7pt" font-weight="bold" text-anchor="middle">Port 4 : TEST POINT</text>
+        <text x="70" y="238" fill="#b45309" font-size="6.5pt" font-weight="bold" text-anchor="middle">Sondes AD3 DIO 2 &amp; 3</text>
+        <circle cx="35" cy="250" r="3" fill="#3b82f6" /><!-- DIO 2 SCL -->
+        <circle cx="60" cy="250" r="3" fill="#eab308" /><!-- DIO 3 SDA -->
+        <circle cx="85" cy="250" r="3" fill="#ef4444" /><!-- VCC -->
+        <circle cx="105" cy="250" r="3" fill="#000000" /><!-- GND -->
+      </g>
+
+      <!-- MODULES CLIENTS I2C (EXTREME DROITE) -->
+      <g transform="translate(710, 45)">
+        <!-- OLED -->
+        <g filter="url(#shadow)">
+          <rect width="135" height="75" rx="6" fill="#1e293b" stroke="#475569" stroke-width="1.5"/>
+          <text x="67" y="18" fill="#38bdf8" font-family="'Segoe UI', sans-serif" font-size="7pt" font-weight="bold" text-anchor="middle">Grove OLED 0.96"</text>
+          <rect x="15" y="26" width="105" height="38" rx="3" fill="#020617" stroke="#38bdf8"/>
+          <text x="67" y="42" fill="#38bdf8" font-family="Consolas" font-size="6pt" text-anchor="middle">CIEL BT READY</text>
+          <text x="67" y="54" fill="#22c55e" font-family="Consolas" font-size="5.5pt" text-anchor="middle">Addr: 0x3C</text>
+        </g>
+        <!-- Clavier 12 touches -->
+        <g transform="translate(0, 95)" filter="url(#shadow)">
+          <rect width="135" height="75" rx="6" fill="#334155" stroke="#475569" stroke-width="1.5"/>
+          <text x="67" y="18" fill="#f8fafc" font-family="'Segoe UI', sans-serif" font-size="7pt" font-weight="bold" text-anchor="middle">Grove Keypad (0x5B)</text>
+          <text x="67" y="32" fill="#cbd5e1" font-size="5.5pt" font-family="Consolas" text-anchor="middle">12 touches capacitives</text>
+          <!-- Touches dessinées -->
+          <circle cx="35" cy="50" r="7" fill="#64748b"/> <text x="35" y="53" fill="#fff" font-size="5.5pt" text-anchor="middle">1</text>
+          <circle cx="67" cy="50" r="7" fill="#64748b"/> <text x="67" y="53" fill="#fff" font-size="5.5pt" text-anchor="middle">2</text>
+          <circle cx="100" cy="50" r="7" fill="#64748b"/> <text x="100" y="53" fill="#fff" font-size="5.5pt" text-anchor="middle">3</text>
+        </g>
+        <!-- Matrice LED -->
+        <g transform="translate(0, 190)" filter="url(#shadow)">
+          <rect width="135" height="75" rx="6" fill="#1e1e2e" stroke="#475569" stroke-width="1.5"/>
+          <text x="67" y="18" fill="#f8fafc" font-family="'Segoe UI', sans-serif" font-size="7pt" font-weight="bold" text-anchor="middle">Matrice LED 8x8 (0x70)</text>
+          <rect x="40" y="26" width="55" height="40" rx="3" fill="#000"/>
+          <circle cx="55" cy="40" r="3" fill="#ef4444"/>
+          <circle cx="75" cy="40" r="3" fill="#ef4444"/>
+          <circle cx="65" cy="52" r="3" fill="#ef4444"/>
+        </g>
+      </g>
+
+      <!-- LIAISONS ET CABLAGES -->
+      <!-- DIO 0 (Rose) : AD3 vers D2 (RX Nano / TX Bluetooth) -->
+      <path d="M 70 155 C 70 190, 200 220, 285 287" fill="none" stroke="#f43f5e" stroke-width="2.5" stroke-dasharray="4 2"/>
+      <!-- DIO 1 (Vert) : AD3 vers D3 (TX Nano / RX Bluetooth) -->
+      <path d="M 100 155 C 100 230, 260 260, 310 287" fill="none" stroke="#22c55e" stroke-width="2.5"/>
+      <!-- Câble Grove Nano I2C vers Hub Port 1 -->
+      <path d="M 440 255 C 470 255, 500 100, 555 75" fill="none" stroke="#0ea5e9" stroke-width="3"/>
+      <!-- Câble Grove Nano D2 vers Bluetooth -->
+      <path d="M 330 255 C 330 290, 300 295, 270 300" fill="none" stroke="#6366f1" stroke-width="3"/>
+      <!-- Hub Port 4 vers AD3 (DIO 2 Bleu & DIO 3 Jaune) -->
+      <path d="M 575 295 C 400 370, 150 350, 130 155" fill="none" stroke="#3b82f6" stroke-width="2.5"/>
+      <path d="M 600 295 C 430 385, 170 365, 160 155" fill="none" stroke="#eab308" stroke-width="2.5"/>
+      <!-- Masse GND commune (Noir) -->
+      <path d="M 190 155 C 190 270, 340 320, 360 287" fill="none" stroke="#000000" stroke-width="2.5"/>
+    </svg>
+  </div>
+  <div class="figure-caption">Figure 1 : Schéma d'instrumentation - Raccordement du Digilent AD3, de l'Arduino Nano sur Grove Shield, du Grove I²C Hub et des modules périphériques</div>
+</div>
+
+<hr />
+
+<!-- ========================================================================= -->
+<!-- 3. DEROULEMENT DU TP - ACTIVITES PRATIQUES ET MESURES                     -->
+<!-- ========================================================================= -->
+<h2>3. Déroulement du TP — Activités Pratiques et Mesures</h2>
+
+<!-- ETAPE 1 -->
+<div class="step-box">
+  <div class="step-header">
+    <span class="step-title">PARTIE 1 : Configuration AT du Module Bluetooth & Qualification Temporelle UART (AD3)</span>
+    <span class="timing-badge">Durée estimée : 1h00</span>
+  </div>
+
+  <p>Pour effectuer cette configuration, nous utiliserons un programme passerelle sur l'Arduino Nano avec la bibliothèque <strong><code>SoftwareSerial</code></strong> et qualifierons les échanges avec l'analyseur logique mixte <strong>Digilent Analog Discovery 3</strong>.</p>
+
+  <h4>3.1. Guide de mise en route de Digilent WaveForms (Outil Logic Analyzer) :</h4>
+  <ol>
+    <li>Connectez l'Analog Discovery 3 au port USB du PC et lancez le logiciel <strong>Digilent WaveForms</strong>.</li>
+    <li>Dans la fenêtre d'accueil de WaveForms, sélectionnez votre périphérique <em>Analog Discovery 3</em> puis cliquez sur <strong>Logic</strong> (Analyseur Logique).</li>
+    <li>Ajoutez un décodeur de protocole : cliquez sur <strong>+ (Add)</strong> $\rightarrow$ <strong>UART</strong>.</li>
+    <li>Configurez les propriétés du protocole UART dans le volet :
+      <ul>
+        <li><strong>TX (Émission Nano vers Bluetooth) :</strong> Sélectionner <code>DIO 1</code> (Broche D3 de l'Arduino Nano).</li>
+        <li><strong>RX (Réception réponse Bluetooth) :</strong> Sélectionner <code>DIO 0</code> (Broche D2 de l'Arduino Nano).</li>
+        <li><strong>Baud Rate :</strong> <code>9600</code> bauds.</li>
+        <li><strong>Format :</strong> <code>8 Bits</code>, <strong>Parity :</strong> <code>None</code>, <strong>Stop :</strong> <code>1 Bit</code>.</li>
+      </ul>
+    </li>
+    <li>Réglez le déclenchement (Trigger) : configurez la condition sur <code>DIO 1</code> en <strong>Falling Edge (Front descendant ⮧)</strong> pour déclencher l'acquisition dès l'apparition du bit de Start de la commande émise.</li>
+    <li>Réglez la base de temps : Fréquence d'échantillonnage à <code>1 MHz</code> ou <code>2 MHz</code> et durée totale de capture à <code>50 ms</code>.</li>
+  </ol>
+
+  <!-- FIGURE 2 : INTERFACE WAVEFORMS LOGIC ANALYZER -->
+  <div class="figure-box">
+    <div class="svg-container">
+      <svg viewBox="0 0 850 330" width="100%" height="auto" xmlns="http://www.w3.org/2000/svg">
+        <defs>
+          <linearGradient id="wfHeader" x1="0%" y1="0%" x2="100%" y2="0%">
+            <stop offset="0%" stop-color="#0b3c5d" />
+            <stop offset="100%" stop-color="#1d5f8a" />
+          </linearGradient>
+        </defs>
+        <!-- Fenêtre WaveForms -->
+        <rect width="850" height="330" rx="8" fill="#ffffff" stroke="#cbd5e1" stroke-width="2"/>
+        <!-- Barre de titre -->
+        <rect width="850" height="36" rx="8" fill="url(#wfHeader)"/>
+        <text x="20" y="24" fill="#ffffff" font-family="'Segoe UI', sans-serif" font-size="10.5pt" font-weight="bold">Digilent WaveForms — Logic Analyzer [Analog Discovery 3 - Arduino Nano D2/D3]</text>
+        <circle cx="820" cy="18" r="6" fill="#ef4444" />
+        <circle cx="800" cy="18" r="6" fill="#f59e0b" />
+        <circle cx="780" cy="18" r="6" fill="#10b981" />
+        
+        <!-- Barre d'outils -->
+        <rect y="36" width="850" height="34" fill="#f1f5f9" stroke="#cbd5e1" stroke-width="1"/>
+        <rect x="15" y="42" width="70" height="22" rx="4" fill="#16a34a"/>
+        <text x="50" y="57" fill="#ffffff" font-family="'Segoe UI', sans-serif" font-size="8.5pt" font-weight="bold" text-anchor="middle">▶ Single</text>
+        <rect x="95" y="42" width="60" height="22" rx="4" fill="#2563eb"/>
+        <text x="125" y="57" fill="#ffffff" font-family="'Segoe UI', sans-serif" font-size="8.5pt" font-weight="bold" text-anchor="middle">Run</text>
+        <rect x="165" y="42" width="60" height="22" rx="4" fill="#dc2626"/>
+        <text x="195" y="57" fill="#ffffff" font-family="'Segoe UI', sans-serif" font-size="8.5pt" font-weight="bold" text-anchor="middle">Stop</text>
+        <text x="250" y="57" fill="#334155" font-family="Consolas" font-size="8.5pt">Mode: Repeated | Freq: 2.0 MHz | Base: 5 ms/div | Trigger: DIO 1 ⮧</text>
+
+        <!-- Volet de configuration UART (Gauche) -->
+        <rect x="10" y="76" width="220" height="240" fill="#f8fafc" stroke="#cbd5e1" rx="4"/>
+        <text x="20" y="98" fill="#0b3c5d" font-family="'Segoe UI', sans-serif" font-size="9pt" font-weight="bold">Configuration Décodeur UART</text>
+        <text x="20" y="125" fill="#334155" font-family="Consolas" font-size="8pt">• Signal TX: DIO 1 (D3 Nano)</text>
+        <text x="20" y="150" fill="#334155" font-family="Consolas" font-size="8pt">• Signal RX: DIO 0 (D2 Nano)</text>
+        <text x="20" y="175" fill="#334155" font-family="Consolas" font-size="8pt">• Débit: 9600 Baud</text>
+        <text x="20" y="200" fill="#334155" font-family="Consolas" font-size="8pt">• Format: 8 Bits / No Parity</text>
+        <text x="20" y="225" fill="#334155" font-family="Consolas" font-size="8pt">• Stop bits: 1</text>
+        <text x="20" y="250" fill="#334155" font-family="Consolas" font-size="8pt">• Décodage: ASCII + HEX</text>
+        <rect x="20" y="270" width="200" height="30" rx="4" fill="#e0f2fe" stroke="#38bdf8"/>
+        <text x="120" y="289" fill="#0369a1" font-family="'Segoe UI', sans-serif" font-size="8pt" font-weight="bold" text-anchor="middle">Status: Armed (En attente...)</text>
+
+        <!-- Zone d'affichage des chronogrammes (Droite) -->
+        <rect x="240" y="76" width="600" height="240" fill="#0f172a" rx="4"/>
+        <!-- Grille -->
+        <line x1="300" y1="76" x2="300" y2="316" stroke="#1e293b" stroke-width="1"/>
+        <line x1="380" y1="76" x2="380" y2="316" stroke="#1e293b" stroke-width="1"/>
+        <line x1="460" y1="76" x2="460" y2="316" stroke="#1e293b" stroke-width="1"/>
+        <line x1="540" y1="76" x2="540" y2="316" stroke="#1e293b" stroke-width="1"/>
+        <line x1="620" y1="76" x2="620" y2="316" stroke="#1e293b" stroke-width="1"/>
+        <line x1="700" y1="76" x2="700" y2="316" stroke="#1e293b" stroke-width="1"/>
+        <line x1="780" y1="76" x2="780" y2="316" stroke="#1e293b" stroke-width="1"/>
+
+        <!-- Trame décodée Bus UART (Sans terminateur \r\n) -->
+        <rect x="250" y="90" width="580" height="26" fill="#312e81" rx="3"/>
+        <text x="260" y="107" fill="#a5b4fc" font-family="Consolas" font-size="8.5pt" font-weight="bold">UART</text>
+        <rect x="350" y="93" width="70" height="20" rx="3" fill="#4338ca"/>
+        <text x="385" y="107" fill="#ffffff" font-family="Consolas" font-size="8pt" text-anchor="middle">'A' (0x41)</text>
+        <rect x="430" y="93" width="70" height="20" rx="3" fill="#4338ca"/>
+        <text x="465" y="107" fill="#ffffff" font-family="Consolas" font-size="8pt" text-anchor="middle">'T' (0x54)</text>
+
+        <!-- Signal Digital DIO 1 (TX Nano D3) -->
+        <text x="250" y="160" fill="#4ade80" font-family="Consolas" font-size="8.5pt">DIO 1 (D3/TX)</text>
+        <path d="M 330 145 L 350 145 L 350 170 L 360 170 L 360 145 L 380 145 L 380 170 L 400 170 L 400 145 L 430 145 L 430 170 L 450 170 L 450 145 L 470 145 L 470 170 L 510 170 L 510 145 L 820 145" fill="none" stroke="#22c55e" stroke-width="2"/>
+
+        <!-- Signal Digital DIO 0 (RX Nano D2) -->
+        <text x="250" y="235" fill="#f43f5e" font-family="Consolas" font-size="8.5pt">DIO 0 (D2/RX)</text>
+        <path d="M 330 220 L 560 220 L 560 245 L 575 245 L 575 220 L 590 220 L 590 245 L 610 245 L 610 220 L 650 220 L 650 245 L 670 245 L 670 220 L 820 220" fill="none" stroke="#f43f5e" stroke-width="2"/>
+
+        <!-- Curseur de mesure X1 / X2 -->
+        <line x1="350" y1="76" x2="350" y2="316" stroke="#f59e0b" stroke-width="1.5" stroke-dasharray="3 3"/>
+        <line x1="360" y1="76" x2="360" y2="316" stroke="#f59e0b" stroke-width="1.5" stroke-dasharray="3 3"/>
+        <rect x="340" y="270" width="130" height="24" rx="3" fill="#1e293b" stroke="#f59e0b"/>
+        <text x="405" y="286" fill="#fcd34d" font-family="Consolas" font-size="7.5pt" text-anchor="middle">ΔX = 104.17 µs</text>
+      </svg>
+    </div>
+    <div class="figure-caption">Figure 2 : Interface WaveForms — Décodage de la commande AT avec l'Analyseur Logique du Digilent AD3</div>
+  </div>
+
+  <h4>3.2. Code Passerelle USB-Série pour Arduino Nano &amp; Configuration :</h4>
+  <p>L'Arduino Nano exécute le programme passerelle ci-dessous en exploitant <strong><code>SoftwareSerial</code></strong> sur les broches <strong>D2 (RX)</strong> et <strong>D3 (TX)</strong> :</p>
+
+  <pre><code>/* =========================================================================
+   BTS CIEL - Passerelle de commandes AT pour Arduino Nano & Grove Bluetooth
+   Matériel : Arduino Nano v3 + Grove Shield (Module sur le port D2)
+   Broches  : D2 (RX Nano <- TX Bluetooth), D3 (TX Nano -> RX Bluetooth)
+   ========================================================================= */
+
+#include &lt;SoftwareSerial.h&gt;
+
+// D2 = RX (reçoit du Bluetooth TX), D3 = TX (émet vers Bluetooth RX)
+SoftwareSerial BT_SERIAL(2, 3); 
+
+const long BAUD_PC = 115200;  // Vitesse de la console série du PC (USB natif)
+const long BAUD_BT = 9600;    // Vitesse d'usine du module Grove Bluetooth
+
+void setup() {
+  // 1. Démarrage de la liaison série USB matérielle vers le PC
+  Serial.begin(BAUD_PC);
+
+  // 2. Démarrage de la liaison série logicielle reliée au module Bluetooth
+  BT_SERIAL.begin(BAUD_BT);
+
+  Serial.println(F("\r\n================================================"));
+  Serial.println(F("    Arduino Nano - Passerelle Commandes AT"));
+  Serial.println(F("================================================"));
+  Serial.println(F("Module Bluetooth connecte sur port D2/D3"));
+  Serial.println(F("Vitesse Bluetooth : 9600 bauds"));
+  Serial.println(F("Pret ! Tapez 'AT' et appuyez sur Entree."));
+  Serial.println(F("Important : Selectionner 'No line ending' ci-dessous !"));
+  Serial.println(F("------------------------------------------------"));
+}
+
+void loop() {
+  // 1. Ce que vous tapez dans le moniteur série USB est transmis au Bluetooth
+  while (Serial.available() > 0) {
+    char c = (char)Serial.read();
+    BT_SERIAL.write(c);
+  }
+
+  // 2. Ce que répond le module Bluetooth est affiché sur votre écran PC
+  while (BT_SERIAL.available() > 0) {
+    char c = (char)BT_SERIAL.read();
+    Serial.write(c);
+  }
+}</code></pre>
+
+  <div class="callout callout-warning">
+    <div class="callout-title">⚠️ Réglage Critique du Moniteur Série : "No line ending"</div>
+    <p>Ouvrez le <strong>Moniteur Série</strong> (Serial Monitor) de l'Arduino IDE et configurez impérativement :</p>
+    <ul>
+      <li><strong>Fin de ligne (Line Ending) :</strong> Sélectionnez <strong><code>No line ending</code></strong> (<em>Pas de fin de ligne</em>).<br>
+      <em>Le firmware du module Bluetooth (type HM-10 / HC-06) attend les commandes en données brutes sans caractères de fin de ligne (<code>\r\n</code>). Si vous laissez "Both NL &amp; CR", le module interprète les retours chariot comme une partie de la commande et refuse de répondre !</em></li>
+      <li><strong>Vitesse USB :</strong> Réglez sur <strong><code>115200 baud</code></strong>.</li>
+    </ul>
+  </div>
+
+  <h4>3.3. Manipulation et commandes AT :</h4>
+  <ol>
+    <li>Dans l'Arduino IDE, vérifiez le paramétrage de la carte : <em>Outils</em> $\rightarrow$ <em>Type de carte : Arduino Nano</em>, <em>Processeur : ATmega328P</em> (ou <em>ATmega328P Old Bootloader</em> selon votre modèle).</li>
+    <li>Téléversez le programme passerelle ci-dessus sur l'Arduino Nano.</li>
+    <li>Ouvrez le moniteur série (réglé sur <code>No line ending</code> à 115200 bauds), saisissez la commande <code>AT</code> puis validez.</li>
+    <li>Observez la réponse immédiate <code>OK</code> dans la console, et simultanément sur l'écran WaveForms la capture des signaux DIO 1 et DIO 0.</li>
+    <li>Configurez les paramètres personnalisés du module :
+      <ul>
+        <li>Nom Bluetooth : <code>AT+NAMECIEL_NANO_X</code> (où X est votre numéro de binôme).</li>
+        <li>Code de sécurité PIN : <code>AT+PIN1234</code>.</li>
+        <li>Adresse MAC matérielle : <code>AT+ADDR?</code>.</li>
+      </ul>
+    </li>
+  </ol>
+
+  <div class="student-response">
+    <strong>Question 1.1 :</strong> Relevez l'adresse matérielle Bluetooth (BD_ADDR) obtenue dans la console WaveForms / Terminal :<br>
+    <code>BD_ADDR :</code> .............................................................. (Format hexadécimal à 48 bits / 6 octets).<br>
+    Expliquez en quoi cette structure est comparable à l'adresse MAC IEEE 802.3 Ethernet étudiée au semestre précédent.
+    <div class="dotted-line"></div>
+    <div class="dotted-line"></div>
+  </div>
+
+  <div class="student-response">
+    <strong>Question 1.2 (Mesure temporelle avec les curseurs WaveForms) :</strong><br>
+    Placez les curseurs temporels <strong>X1</strong> et <strong>X2</strong> de WaveForms sur les fronts délimitant un bit élémentaire de données lors de la transmission du caractère 'A' (0x41).<br><br>
+    
+    • <strong>Calcul théorique de la durée d'un bit :</strong><br>
+    <div class="formula-box">
+      <i>T</i><sub>bit_th</sub> = 
+      <span class="frac"><span class="num">1</span><span class="den">Baudrate</span></span>
+      = 
+      <span class="frac"><span class="num">1</span><span class="den">9600 bauds</span></span>
+      = <strong>......................... µs</strong>
+    </div><br><br>
+    
+    • <strong>Valeur mesurée aux curseurs (ΔX) sur l'Analog Discovery 3 :</strong> <strong>......................... µs</strong><br><br>
+    
+    • <strong>Calcul de l'erreur relative (en %) :</strong><br>
+    <div class="formula-box">
+      <i>Écart</i> (%) = 
+      <span class="frac">
+        <span class="num">| <i>T</i><sub>bit_mesuré</sub> − <i>T</i><sub>bit_th</sub> |</span>
+        <span class="den"><i>T</i><sub>bit_th</sub></span>
+      </span>
+      × 100 = <strong>......................... %</strong>
+    </div>
+  </div>
+
+  <div class="student-response">
+    <strong>Question 1.3 (Mesure analogique avec l'oscilloscope WaveForms Scope) :</strong><br>
+    Basculez sur l'instrument <strong>Scope</strong> de WaveForms (Voie 1+ connectée sur D3/TX). Relevez le temps de montée <i>t</i><sub>r</sub> (rise time 10% - 90%) et le niveau haut <i>V</i><sub>OH</sub>. Le niveau mesuré respecte-t-il la tolérance TTL 5V du microcontrôleur ATmega328P ?
+    <div class="dotted-line"></div>
+  </div>
+</div>
+
+<!-- ETAPE 2 -->
+<div class="step-box">
+  <div class="step-header">
+    <span class="step-title">PARTIE 2 : Appairage SPP, Télémétrie et Pilotage de l'Écran OLED sur Bus I²C Mutualisé</span>
+    <span class="timing-badge">Durée estimée : 1h15</span>
+  </div>
+
+  <p>Nous exploitons le profil <strong>SPP (Serial Port Profile)</strong>. Il émule une liaison série asynchrone RS-232 sur les couches radio RFCOMM / L2CAP du standard Bluetooth.</p>
+
+  <h4>Travail demandé :</h4>
+  <ol>
+    <li>Sur votre smartphone, activez le Bluetooth et recherchez le périphérique configuré.</li>
+    <li>Effectuez l'appairage avec le code PIN défini. Ouvrez l'application <em>Serial Bluetooth Terminal</em> et connectez-vous au module. Observez le changement d'état de la LED d'indication sur le module Bluetooth (passage d'un clignotement rapide à une lumière fixe).</li>
+    <li>Initialisez le bus I²C (broches A4=SDA, A5=SCL) et l'écran OLED SSD1306 (adresse <code>0x3C</code>). Affichez en temps réel :
+      <ul>
+        <li>L'état de la liaison Bluetooth (<code>CONNECTÉ / DÉCONNECTÉ</code>).</li>
+        <li>Le nom du pupitre.</li>
+        <li>Le dernier message textuel reçu depuis le smartphone.</li>
+      </ul>
+    </li>
+    <li>Développez une fonction de réception avec l'Arduino Nano : tout message reçu depuis le smartphone doit être affiché sur l'OLED et un acquittement formaté (ex : <code>ACK: &lt;message&gt;\r\n</code>) doit être renvoyé au smartphone via Bluetooth.</li>
+  </ol>
+
+  <!-- FIGURE 3 : DECODAGE I2C SOUS WAVEFORMS -->
+  <div class="figure-box">
+    <div class="svg-container">
+      <svg viewBox="0 0 850 260" width="100%" height="auto" xmlns="http://www.w3.org/2000/svg">
+        <rect width="850" height="260" rx="6" fill="#0f172a" stroke="#cbd5e1" stroke-width="1"/>
+        <text x="20" y="28" fill="#38bdf8" font-family="'Segoe UI', sans-serif" font-size="10pt" font-weight="bold">WaveForms Logic — Décodage du Bus I²C Mutualisé (Arduino Nano : A4=SDA, A5=SCL via Hub)</text>
+        
+        <!-- Décodeur I2C -->
+        <rect x="20" y="45" width="810" height="30" rx="3" fill="#1e1b4b"/>
+        <text x="35" y="65" fill="#a5b4fc" font-family="Consolas" font-size="8.5pt" font-weight="bold">I²C Bus</text>
+        <!-- Trame I2C décodée -->
+        <rect x="110" y="49" width="30" height="22" rx="2" fill="#10b981"/>
+        <text x="125" y="64" fill="#ffffff" font-family="Consolas" font-size="7.5pt" text-anchor="middle">S</text>
+        <rect x="145" y="49" width="140" height="22" rx="2" fill="#4338ca"/>
+        <text x="215" y="64" fill="#ffffff" font-family="Consolas" font-size="8pt" text-anchor="middle">Addr: 0x3C + W</text>
+        <rect x="290" y="49" width="40" height="22" rx="2" fill="#059669"/>
+        <text x="310" y="64" fill="#ffffff" font-family="Consolas" font-size="7.5pt" text-anchor="middle">ACK</text>
+        <rect x="335" y="49" width="130" height="22" rx="2" fill="#6366f1"/>
+        <text x="400" y="64" fill="#ffffff" font-family="Consolas" font-size="8pt" text-anchor="middle">Data: 0x00 (Cmd)</text>
+        <rect x="470" y="49" width="40" height="22" rx="2" fill="#059669"/>
+        <text x="490" y="64" fill="#ffffff" font-family="Consolas" font-size="7.5pt" text-anchor="middle">ACK</text>
+        <rect x="515" y="49" width="130" height="22" rx="2" fill="#6366f1"/>
+        <text x="580" y="64" fill="#ffffff" font-family="Consolas" font-size="8pt" text-anchor="middle">Data: 0xAF (On)</text>
+        <rect x="650" y="49" width="40" height="22" rx="2" fill="#059669"/>
+        <text x="670" y="64" fill="#ffffff" font-family="Consolas" font-size="7.5pt" text-anchor="middle">ACK</text>
+        <rect x="695" y="49" width="30" height="22" rx="2" fill="#ef4444"/>
+        <text x="710" y="64" fill="#ffffff" font-family="Consolas" font-size="7.5pt" text-anchor="middle">P</text>
+
+        <!-- Chronogramme SCL (DIO 2 / A5) -->
+        <text x="25" y="125" fill="#60a5fa" font-family="Consolas" font-size="8.5pt">DIO 2 (A5/SCL)</text>
+        <path d="M 100 115 L 140 115 L 140 135 L 155 135 L 155 115 L 170 115 L 170 135 L 185 135 L 185 115 L 200 115 L 200 135 L 215 135 L 215 115 L 230 115 L 230 135 L 245 135 L 245 115 L 260 115 L 260 135 L 275 135 L 275 115 L 290 115 L 290 135 L 305 135 L 305 115 L 700 115 L 740 115" fill="none" stroke="#3b82f6" stroke-width="2"/>
+
+        <!-- Chronogramme SDA (DIO 3 / A4) -->
+        <text x="25" y="195" fill="#facc15" font-family="Consolas" font-size="8.5pt">DIO 3 (A4/SDA)</text>
+        <path d="M 100 185 L 120 185 L 120 205 L 140 205 L 140 185 L 165 185 L 165 205 L 200 205 L 200 185 L 240 185 L 240 205 L 285 205 L 285 185 L 310 185 L 310 205 L 690 205 L 690 185 L 740 185" fill="none" stroke="#eab308" stroke-width="2"/>
+
+        <!-- Annotations START / STOP -->
+        <text x="120" y="235" fill="#10b981" font-family="Consolas" font-size="7.5pt">START (SDA⮧ pendant SCL haut)</text>
+        <text x="660" y="235" fill="#ef4444" font-family="Consolas" font-size="7.5pt">STOP (SDA⮥ pendant SCL haut)</text>
+      </svg>
+    </div>
+    <div class="figure-caption">Figure 3 : Décodage I²C sous WaveForms (DIO 2 = A5/SCL, DIO 3 = A4/SDA) avec condition de START, octet d'adresse et acquittement ACK</div>
+  </div>
+
+  <div class="student-response">
+    <strong>Question 2.1 :</strong> Dans WaveForms Logic, ajoutez le canal de décodage I²C (DIO 2 = SCL, DIO 3 = SDA).<br>
+    Mesurez la fréquence de l'horloge SCL : <i>f</i><sub>SCL</sub> = <strong>......................... kHz</strong>.<br>
+    Le bus fonctionne-t-il en <em>Standard-mode</em> (100 kHz) ou en <em>Fast-mode</em> (400 kHz) ? Justifiez.
+    <div class="dotted-line"></div>
+  </div>
+</div>
+
+<!-- ETAPE 3 -->
+<div class="step-box">
+  <div class="step-header">
+    <span class="step-title">PARTIE 3 : Intégration du Clavier Capacitif 12 Touches & Matrice LED 8x8 sur Bus Partagé</span>
+    <span class="timing-badge">Durée estimée : 1h15</span>
+  </div>
+
+  <p>L'ensemble des modules I²C (OLED, clavier capacitif et matrice de LED) partagent le même bus physique en étoile grâce au <strong>Grove I²C Hub</strong> relié au port I2C de l'Arduino Nano (A4/A5).</p>
+
+  <h4>Travail demandé :</h4>
+  <ol>
+    <li>Raccordez le port I2C du Grove Shield au <strong>Grove I²C Hub</strong>. Connectez sur les ports du Hub l'écran OLED, le clavier capacitif 12 touches et la matrice de LED 8x8. Lancez un programme de balayage I²C (scanner I2C) pour relever les adresses hexadécimales de tous les composants connectés.</li>
+    <li>Développez la routine de lecture des touches pressées. À chaque appui sur une touche :
+      <ul>
+        <li>Affichez le caractère saisi sur l'écran OLED.</li>
+        <li>Transmettez en temps réel la notification au smartphone via Bluetooth sous la forme : <code>KEY:&lt;valeur&gt;\n</code>.</li>
+      </ul>
+    </li>
+    <li>Raccordez la matrice de LED 8x8 sur le Hub I²C (adresse <code>0x70</code>). Créez des motifs graphiques 8x8 (bitmaps) représentant :
+      <ul>
+        <li>Une croix ❌ : Système verrouillé / code erroné.</li>
+        <li>Une coche ✔️ : Système déverrouillé / accès autorisé.</li>
+        <li>Une icône Bluetooth : En attente de connexion.</li>
+      </ul>
+    </li>
+    <li>Permettez au superviseur sur smartphone d'envoyer les commandes <code>LOCK</code> ou <code>UNLOCK</code> pour piloter à distance la matrice de LED.</li>
+  </ol>
+
+  <div class="student-response">
+    <strong>Question 3.1 :</strong> Les 3 composants I²C partagent exactement les mêmes lignes physiques A4 (SDA) et A5 (SCL) via le Grove Hub.<br>
+    Comment le microcontrôleur fait-il pour communiquer avec un composant précis sans interférer avec les deux autres ? Quelles adresses physiques respectives avez-vous relevées lors du scan ?
+    <div class="dotted-line"></div>
+    <div class="dotted-line"></div>
+  </div>
+</div>
+
+<!-- ETAPE 4 -->
+<div class="step-box">
+  <div class="step-header">
+    <span class="step-title">PARTIE 4 : Conception d'un Protocole Industriel avec Détection d'Erreurs (FSM)</span>
+    <span class="timing-badge">Durée estimée : 1h00</span>
+  </div>
+
+  <p>En milieu industriel, les transmissions sans fil sont soumises aux perturbations électromagnétiques. Vous devez implémenter un protocole à encapsulation binaire/ASCII sécurisé par une <strong>somme de contrôle (Checksum XOR / LRC)</strong>.</p>
+
+  <h4>Format de la trame normalisée :</h4>
+  <table>
+    <thead>
+      <tr>
+        <th>Délimiteur Début</th>
+        <th>ID Émetteur</th>
+        <th>Code Commande</th>
+        <th>Longueur (N)</th>
+        <th>Données (Payload)</th>
+        <th>Checksum (XOR)</th>
+        <th>Délimiteur Fin</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><code>$</code> (0x24)</td>
+        <td><code>0x01</code></td>
+        <td><code>0x10</code> (Ordre)</td>
+        <td><code>0x02</code> (2 octets)</td>
+        <td>Ex: <code>'O', 'N'</code></td>
+        <td>1 octet (LRC)</td>
+        <td><code>#</code> (0x23)</td>
+      </tr>
+    </tbody>
+  </table>
+
+  <h4>Travail demandé :</h4>
+  <ol>
+    <li>Tracez le diagramme de la <strong>Machine à États Finis (FSM)</strong> chargée de décoder cette trame (États : <code>WAIT_START</code>, <code>READ_HEADER</code>, <code>READ_PAYLOAD</code>, <code>VERIF_CHECKSUM</code>, <code>EXECUTE_COMMAND</code>).</li>
+    <li>Écrivez la fonction de calcul du Checksum XOR sur l'ensemble des octets compris entre le délimiteur de début et le checksum.</li>
+    <li>Implémentez l'automate en langage C/C++. En cas d'erreur de checksum, le système doit rejeter la trame, afficher une alerte sur l'OLED et renvoyer <code>NACK_CHECKSUM_ERROR\r\n</code>.</li>
+  </ol>
+
+  <div class="student-response">
+    <strong>Question 4.1 :</strong> Calculez manuellement la somme de contrôle XOR (LRC) de la trame suivante :<br>
+    Octets : <code>[ID: 0x01] ^ [CMD: 0x20] ^ [LEN: 0x01] ^ [DATA: 0x41 ('A')]</code> = <strong>0x.......</strong>
+    <div class="dotted-line"></div>
+  </div>
+</div>
+
+<!-- ETAPE 5 -->
+<div class="step-box">
+  <div class="step-header">
+    <span class="step-title">PARTIE 5 : Recette Technique, Mesures de Performances & Synthèse Sécurité</span>
+    <span class="timing-badge">Durée estimée : 0h30</span>
+  </div>
+
+  <h4>Cahier de recette et essais de portée :</h4>
+  <ol>
+    <li>Éloignez le smartphone du pupitre et notez la portée maximale en champ libre avant décrochage de la liaison : ............ mètres.</li>
+    <li>Transmettez un bloc de données via le terminal Bluetooth. Mesurez la durée totale du transfert et déduisez-en le débit utile effectif (<i>D</i><sub>utile</sub> en kbit/s).</li>
+  </ol>
+
+  <div class="student-response">
+    <strong>Question 5.1 (Synthèse Cybersécurité) :</strong> 
+    Dans le TP précédent sur l'ESP32S3, nous avions mis en œuvre un chiffrement <strong>TLS/HTTPS (Port 443)</strong> avec des certificats X.509.<br>
+    Identifiez deux vulnérabilités majeures du protocole Bluetooth Classique SPP avec code PIN fixe (4 chiffres) tel que déployé ici par rapport à TLS, et proposez deux mesures de remédiation conformes aux recommandations de l'ANSSI.
+    <div class="dotted-line"></div>
+    <div class="dotted-line"></div>
+    <div class="dotted-line"></div>
+  </div>
+</div>
+
+<hr />
+
+<!-- ========================================================================= -->
+<!-- 4. GRILLE D'EVALUATION SOMMATIVE                                           -->
+<!-- ========================================================================= -->
+<h2>4. Grille d'Évaluation des Compétences (Barème /20)</h2>
+
+<table>
+  <thead>
+    <tr>
+      <th>Compétence</th>
+      <th>Indicateurs d'Évaluation</th>
+      <th>Barème</th>
+      <th>Note</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td><strong>C07 - Réalisation</strong></td>
+      <td>Câblage soigné sur le Shield Arduino Nano et le Hub I²C, raccordement correct des sondes MTE de l'Analog Discovery 3 et de la masse commune (GND).</td>
+      <td>/3 pts</td>
+      <td></td>
+    </tr>
+    <tr>
+      <td><strong>C04 - Analyse</strong></td>
+      <td>Justesse de l'analyse temporelle UART sous WaveForms, compréhension du port SoftwareSerial D2/D3 et absence de terminateur (No line ending).</td>
+      <td>/4 pts</td>
+      <td></td>
+    </tr>
+    <tr>
+      <td><strong>C05 - Conception</strong></td>
+      <td>Gestion conjointe de SoftwareSerial et de l'I²C mutualisé (OLED + Clavier + Matrice), robustesse de la FSM / Checksum XOR.</td>
+      <td>/7 pts</td>
+      <td></td>
+    </tr>
+    <tr>
+      <td><strong>C06 - Validation</strong></td>
+      <td>Mise en œuvre du Digilent AD3 (triggers, curseurs, décodeurs), recette technique et analyse critique de sécurité.</td>
+      <td>/4 pts</td>
+      <td></td>
+    </tr>
+    <tr>
+      <td><strong>C01 - Communication</strong></td>
+      <td>Clarté du compte-rendu, rigueur des réponses et vocabulaire technique normalisé.</td>
+      <td>/2 pts</td>
+      <td></td>
+    </tr>
+  </tbody>
+</table>
+
+</body>
+</html>
