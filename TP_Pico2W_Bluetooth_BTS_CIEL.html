@@ -1047,6 +1047,91 @@ void loop() {
     <li>Implémentez la fonction de réception non-bloquante avec buffer circulaire : tout message reçu depuis le terminal doit être stocké dans le tampon, affiché sur l'OLED et un accusé de réception (ex : <code>ACK: &lt;message&gt;\r\n</code>) doit être renvoyé au superviseur.</li>
   </ol>
 
+  <h4>Algorithme en pseudo-code de la réception non-bloquante (Buffer Circulaire FIFO) :</h4>
+  <p>Avant d'écrire le code en C++, étudiez l'architecture logicielle modulaire ci-dessous qui découpe la réception en deux rôles : <em>Producteur</em> (remplissage rapide dès qu'un octet arrive sur l'UART) et <em>Consommateur</em> (dépilement d'un message complet sans jamais geler la boucle principale) :</p>
+
+  <pre><code>// =============================================================================
+// ALGORITHME : Réception Série Non-Bloquante par Tampon Circulaire (FIFO)
+// CIBLE      : Raspberry Pi Pico 2 W &amp; Écran OLED I2C
+// =============================================================================
+
+CONSTANTE TAILLE_TAMPON = 128
+
+STRUCTURE TamponCirculaire :
+    tableau octets[TAILLE_TAMPON]
+    entier tête   = 0     // Pointeur d'écriture (avancé lors de la réception UART)
+    entier queue  = 0     // Pointeur de lecture  (avancé lors du traitement métier)
+FIN STRUCTURE
+
+VARIABLE GLOBALE tampon : TamponCirculaire
+
+// -----------------------------------------------------------------------------
+// MODULE 1 : Enregistrement dans le tampon (Écriture - Producteur)
+// -----------------------------------------------------------------------------
+FONCTION EnregistrerOctetsBluetooth()
+    TANT QUE (Des octets sont disponibles sur l'UART Bluetooth) FAIRE
+        octet_reçu &larr; LireOctet(UART Bluetooth)
+        prochaine_tête &larr; (tampon.tête + 1) MODULO TAILLE_TAMPON
+        
+        SI (prochaine_tête != tampon.queue) ALORS
+            tampon.octets[tampon.tête] &larr; octet_reçu
+            tampon.tête &larr; prochaine_tête
+        SINON
+            AfficherErreur("Débordement du tampon circulaire !")
+        FIN SI
+    FIN TANT QUE
+FIN FONCTION
+
+// -----------------------------------------------------------------------------
+// MODULE 2 : Dépilement et Traitement du message complet (Lecture - Consommateur)
+// -----------------------------------------------------------------------------
+FONCTION TraiterMessageRecu()
+    // 1. Vérifier si un délimiteur de fin (\n ou \r) est présent dans le tampon
+    SI NON MessageCompletDisponible() ALORS
+        RETOURNER    // Rien à traiter pour l'instant, aucun blocage du processeur
+    FIN SI
+
+    // 2. Extraire le message du tampon circulaire vers une chaîne locale
+    chaine message_extrait &larr; ""
+    TANT QUE (tampon.queue != tampon.tête) FAIRE
+        caractere &larr; tampon.octets[tampon.queue]
+        tampon.queue &larr; (tampon.queue + 1) MODULO TAILLE_TAMPON
+        
+        SI (caractere == '\n' OU caractere == '\r') ALORS
+            SORTIR DE LA BOUCLE    // Fin du message atteinte
+        SINON
+            message_extrait &larr; message_extrait + caractere
+        FIN SI
+    FIN TANT QUE
+
+    // 3. Traitement métier du message extrait
+    SI (Longueur(message_extrait) &gt; 0) ALORS
+        // A. Mise à jour de l'affichage graphique OLED (I2C)
+        Effacer écran OLED
+        Afficher sur OLED "MSG RECU :"
+        Afficher sur OLED message_extrait
+        Rafraîchir écran OLED (display)
+
+        // B. Envoi de l'accusé de réception vers le terminal Bluetooth
+        Envoyer sur UART Bluetooth "ACK: " + message_extrait + "\r\n"
+        
+        // C. Écho sur la console USB de débogage PC
+        Afficher sur USB PC "[LOG] Message traité : " + message_extrait
+    FIN SI
+FIN FONCTION
+
+// -----------------------------------------------------------------------------
+// BOUCLE PRINCIPALE (Super-Loop coopérative non-bloquante)
+// -----------------------------------------------------------------------------
+DEBUT BOUCLE_PRINCIPALE()
+    EnregistrerOctetsBluetooth()     // Remplissage rapide sans attente
+    TraiterMessageRecu()              // Dépilement si message complet
+    
+    // Autres tâches temps réel exécutées sans être ralenties :
+    LireClavierSerie()               // Lecture du clavier numérique sur UART0
+    SurveillerAccelerometre()        // Lecture de l'accéléromètre sur bus I2C
+FIN BOUCLE_PRINCIPALE</code></pre>
+
   <!-- FIGURE 3 : DECODAGE I2C SOUS WAVEFORMS -->
   <div class="figure-box">
     <div class="svg-container">

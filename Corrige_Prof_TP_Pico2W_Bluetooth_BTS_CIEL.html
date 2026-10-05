@@ -383,7 +383,41 @@
   <p><strong>1. Pourquoi cette pile protocolaire ?</strong><br>
   Le profil SPP crée un canal de télécommunication série au-dessus des couches radio. <strong>L2CAP</strong> découpe les blocs et gère la qualité de service, tandis que <strong>RFCOMM</strong> fournit le flux d'octets avec émulation de ports de communication (signaux virtuels RX, TX, ACK). Les PC sous Windows voient un port <code>COMx</code> sortant classique, utilisable directement avec n'importe quel logiciel de terminal série.</p>
 
-  <p><strong>2. Code C++ de réception non-bloquante avec Buffer Circulaire (Ring Buffer FIFO) :</strong></p>
+  <p><strong>2. Algorithme en pseudo-code (Modèle Producteur / Consommateur FIFO) :</strong></p>
+  <pre><code>CONSTANTE TAILLE_TAMPON = 128
+STRUCTURE TamponCirculaire :
+    tableau octets[TAILLE_TAMPON]
+    entier tête = 0, entier queue = 0
+FIN STRUCTURE
+VARIABLE GLOBALE tampon : TamponCirculaire
+
+FONCTION EnregistrerOctetsBluetooth()
+    TANT QUE (Octets disponibles sur UART Bluetooth) FAIRE
+        octet_reçu &larr; LireOctet(UART Bluetooth)
+        prochaine_tête &larr; (tampon.tête + 1) MODULO TAILLE_TAMPON
+        SI (prochaine_tête != tampon.queue) ALORS
+            tampon.octets[tampon.tête] &larr; octet_reçu
+            tampon.tête &larr; prochaine_tête
+        FIN SI
+    FIN TANT QUE
+FIN FONCTION
+
+FONCTION TraiterMessageRecu()
+    SI NON MessageCompletDisponible() ALORS RETOURNER
+    chaine message_extrait &larr; ""
+    TANT QUE (tampon.queue != tampon.tête) FAIRE
+        caractere &larr; tampon.octets[tampon.queue]
+        tampon.queue &larr; (tampon.queue + 1) MODULO TAILLE_TAMPON
+        SI (caractere == '\n' OU caractere == '\r') ALORS SORTIR DE LA BOUCLE
+        SINON message_extrait &larr; message_extrait + caractere
+    FIN TANT QUE
+    SI (Longueur(message_extrait) &gt; 0) ALORS
+        AfficherOLED(message_extrait)
+        EnvoyerBluetooth("ACK: " + message_extrait + "\r\n")
+    FIN SI
+FIN FONCTION</code></pre>
+
+  <p><strong>3. Code C++ complet de réception non-bloquante avec Buffer Circulaire (Ring Buffer FIFO) :</strong></p>
   <pre><code>#include &lt;Wire.h&gt;
 #include &lt;Adafruit_GFX.h&gt;
 #include &lt;Adafruit_SSD1306.h&gt;
