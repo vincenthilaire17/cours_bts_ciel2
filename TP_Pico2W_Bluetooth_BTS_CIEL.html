@@ -1540,19 +1540,97 @@ void traiterOctetRecu(uint8_t c) {
 </div>
 
 <!-- ETAPE 5 -->
+<!-- ETAPE 5 -->
 <div class="step-box">
   <div class="step-header">
-    <span class="step-title">PARTIE 5 : Recette de Débit (10 000 octets), Bluetooth Interne CYW43439 & Synthèse</span>
-    <span class="timing-badge">Durée estimée : 0h30</span>
+    <span class="step-title">PARTIE 5 : Recette Industrielle, Essai de Portée Radio (Distance), Débit 10 000 octets &amp; Synthèse</span>
+    <span class="timing-badge">Durée estimée : 0h45</span>
   </div>
 
-  <h4>5.1. Procédure de mesure du débit effectif sur un bloc de 10 000 octets :</h4>
   <div class="callout callout-info">
-    <div class="callout-title">📋 Comment réaliser le test des 10 000 octets ?</div>
+    <div class="callout-title">🎯 Objectifs et Justification des Essais de Qualification (Recette Technique)</div>
+    <p>Dans un cycle de développement industriel (Compétence <strong>C06 - Valider une structure matérielle et logicielle</strong>), la conformité fonctionnelle ne suffit pas : vous devez qualifier les limites physiques et opérationnelles du pupitre sous contraintes réelles :</p>
+    <ul>
+      <li><strong>1. Essai de portée radio en distance (Range Test) :</strong> En milieu industriel (atelier, entrepôt, bloc médical), l'opérateur se déplace avec sa tablette ou son PC de maintenance. Il est impératif de déterminer la <em>distance de décrochage</em> en champ libre et d'évaluer l'atténuation causée par les obstacles (murs, portes métalliques, corps humain).</li>
+      <li><strong>2. Essai de débit utile en charge (Transfert massif de 10 000 octets) :</strong> Valider le comportement du système lors du téléversement d'un journal d'événements ou d'une mise à jour de paramètres sans saturation des mémoires tampons ni perte de paquets.</li>
+      <li><strong>3. Essai comparatif d'architecture système (Bluetooth externe vs interne CYW43439) :</strong> Argumenter techniquement le choix entre un module modulaire pré-certifié et une solution monopuce intégrée au silicium.</li>
+      <li><strong>4. Audit de cybersécurité :</strong> Identifier les vulnérabilités de la liaison sans fil face aux exigences de l'ANSSI.</li>
+    </ul>
+  </div>
+
+  <h4>5.1. Essai de Portée Radio &amp; Test de Distance (Range Test) :</h4>
+  <p><strong>Protocole expérimental pas-à-pas :</strong></p>
+  <ol>
+    <li>L'un des étudiants du binôme reste au poste de travail avec le Raspberry Pi Pico 2 W sous tension.</li>
+    <li>Le second étudiant s'éloigne progressivement avec le terminal distant (PC portable ou smartphone connecté au Bluetooth).</li>
+    <li>À chaque palier de distance, transmettez la commande <code>PING</code> depuis le terminal et notez si l'accusé de réception <code>ACK: PING</code> revient instantanément. Si votre application affiche le niveau de réception radio (RSSI en dBm), relevez-le.</li>
+    <li>Répétez la mesure en <strong>ligne de vue directe (champ libre / couloir)</strong> puis <strong>avec obstacle</strong> (porte fermée ou cloison).</li>
+  </ol>
+
+  <table>
+    <thead>
+      <tr>
+        <th>Distance Testée</th>
+        <th>Condition de propagation</th>
+        <th>État de la liaison (Stable / Pertes / Coupure)</th>
+        <th>Niveau RSSI estimé (dBm)</th>
+        <th>Comportement de la LED Bluetooth</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><strong>2 mètres</strong> (paillasse)</td>
+        <td>Ligne de vue directe (LOS)</td>
+        <td>............................................................</td>
+        <td>~ -45 dBm</td>
+        <td>Fixe (connecté)</td>
+      </tr>
+      <tr>
+        <td><strong>5 mètres</strong> (salle de TP)</td>
+        <td>Ligne de vue directe (LOS)</td>
+        <td>............................................................</td>
+        <td>~ -60 dBm</td>
+        <td>Fixe</td>
+      </tr>
+      <tr>
+        <td><strong>10 mètres</strong> (fond de classe)</td>
+        <td>Ligne de vue directe (LOS)</td>
+        <td>............................................................</td>
+        <td>~ -75 dBm</td>
+        <td>Fixe / Clignotements furtifs</td>
+      </tr>
+      <tr>
+        <td><strong>15 mètres</strong> (couloir)</td>
+        <td>Champ libre sans obstacle</td>
+        <td>............................................................</td>
+        <td>~ -85 dBm</td>
+        <td>Instable</td>
+      </tr>
+      <tr>
+        <td><strong>10 mètres</strong> (derrière porte)</td>
+        <td>Avec obstacle (cloison / porte)</td>
+        <td>............................................................</td>
+        <td>~ -90 dBm</td>
+        <td>...................................</td>
+      </tr>
+    </tbody>
+  </table>
+
+  <div class="student-response">
+    <strong>Question 5.0 (Analyse de la portée radio) :</strong><br>
+    • Relevez la distance maximale obtenue avant décrochage définitif en champ libre : <strong>......................... mètres</strong>.<br>
+    • Le module Grove Bluetooth relève de la <strong>Classe 2 Bluetooth</strong> (puissance d'émission nominale de 2,5 mW soit +4 dBm, portée théorique de 10 m). Les résultats obtenus en pratique sont-ils conformes à cette spécification ? Comment expliquez-vous l'impact des cloisons sur les ondes radio à 2,4 GHz ?
+    <div class="dotted-line"></div>
+    <div class="dotted-line"></div>
+  </div>
+
+  <h4>5.2. Mesure du débit utile effectif sur un bloc massif de 10 000 octets :</h4>
+  <div class="callout callout-info">
+    <div class="callout-title">📋 Comment réaliser le test de transfert des 10 000 octets ?</div>
     <p>Pour mesurer rigoureusement le débit utile sans saturation manuelle :</p>
     <ol>
       <li><strong>Préparation du fichier test sur le PC :</strong> Créez sur votre ordinateur un fichier texte nommé <code>test_10k.txt</code> contenant exactement 10 000 caractères ASCII (par exemple 100 lignes de 100 caractères).</li>
-      <li><strong>Côté Pico 2 W :</strong> Développez une routine de mesure temporelle :
+      <li><strong>Côté Pico 2 W :</strong> Intégrez la routine de mesure temporelle :
         <pre><code>unsigned long t_start = 0, t_end = 0;
 long octetsRecus = 0;
 
@@ -1565,8 +1643,8 @@ void loop() {
       t_end = millis();
       unsigned long duree_ms = t_end - t_start;
       float debit_kbit = (10000.0 * 8.0) / (float)duree_ms; // kbit/s
-      Serial.print("Duree: "); Serial.print(duree_ms); Serial.println(" ms");
-      Serial.print("Debit utile effectif: "); Serial.print(debit_kbit); Serial.println(" kbit/s");
+      Serial.print("Duree totale : "); Serial.print(duree_ms); Serial.println(" ms");
+      Serial.print("Debit utile effectif : "); Serial.print(debit_kbit); Serial.println(" kbit/s");
       octetsRecus = 0;
     }
   }

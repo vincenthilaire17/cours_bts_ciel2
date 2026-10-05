@@ -615,7 +615,22 @@ void traiterOctet(uint8_t c) {
 <!-- ========================================================================= -->
 <!-- CORRIGE PARTIE 5 : DEBIT 10 000 OCTETS & BLUETOOTH INTERNE                -->
 <!-- ========================================================================= -->
-<h2>Corrigé Partie 5 : Débit sur 10 000 octets &amp; Bluetooth Interne CYW43439</h2>
+<h2>Corrigé Partie 5 : Recette Industrielle, Portée Radio, Débit 10 000 octets &amp; Bluetooth Interne</h2>
+
+<div class="teacher-answer">
+  <div class="teacher-answer-title">✅ Question 5.0 : Essai de Portée Radio (Distance) &amp; Analyse de Propagation</div>
+  <p>• <strong>Valeurs expérimentales de référence (Module Grove Bluetooth Classe 2) :</strong></p>
+  <ul>
+    <li><strong>En champ libre (Ligne de vue directe / LOS) :</strong> Liaison parfaitement stable de <code>0 à 10 mètres</code> (RSSI &gt; -75 dBm). Apparition de légères latences entre <code>12 et 15 mètres</code>. Décrochage définitif (déconnexion) constaté entre <code>15 et 20 mètres</code> selon l'environnement.</li>
+    <li><strong>Avec obstacle (porte fermée ou cloison de classe) :</strong> La portée chute à environ <code>6 à 8 mètres</code>. Derrière une porte coupe-feu métallique ou un mur porteur en béton armé, le lien décroche immédiatement.</li>
+  </ul>
+  <p>• <strong>Interprétation physique BTS CIEL (Propagation radio 2,4 GHz) :</strong></p>
+  <ul>
+    <li><strong>Classe d'émission Bluetooth :</strong> Le module relève de la <strong>Classe 2</strong> avec une puissance nominale de $+4\ \text{dBm}$ ($2,5\ \text{mW}$), normalisée pour une portée de 10 mètres. Les mesures réelles sont donc en parfait accord avec la norme.</li>
+    <li><strong>Atténuation en espace libre :</strong> La puissance reçue décroît avec le carré de la distance ($P_r \propto 1/d^2$), ce qui correspond à une atténuation de 6 dB à chaque doublement de la distance.</li>
+    <li><strong>Absorption des obstacles à 2,4 GHz :</strong> La longueur d'onde (&lambda; &approx; 12,5 cm) est fortement absorbée par l'eau (corps humain) et les matériaux diélectriques denses, tandis que les armatures métalliques provoquent des réflexions et créent des zones d'ombre électromagnétique.</li>
+  </ul>
+</div>
 
 <div class="teacher-answer">
   <div class="teacher-answer-title">✅ Mesure de Débit sur 10 000 octets &amp; Rendement utile</div>
