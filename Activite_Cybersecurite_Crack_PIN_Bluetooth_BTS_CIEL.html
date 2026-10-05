@@ -1,0 +1,722 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="utf-8" />
+  <meta name="generator" content="BTS CIEL - Vincent Hilaire" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes" />
+  <title>Extension Cybersécurité : Cassage Rapide de Code PIN Bluetooth (Brute-Force & Crack E0) - BTS CIEL</title>
+  
+  <style>
+    @page {
+      margin: 1.5cm;
+      size: A4;
+    }
+    
+    html {
+      color: #1a1a1a;
+      background-color: #fdfdfd;
+      -webkit-text-size-adjust: 100%;
+    }
+    
+    body {
+      font-family: 'Segoe UI', -apple-system, BlinkMacSystemFont, Roboto, Helvetica, Arial, sans-serif;
+      line-height: 1.55;
+      color: #1a1a1a;
+      max-width: 960px;
+      margin: 0 auto;
+      padding: 25px 30px;
+      hyphens: auto;
+      overflow-wrap: break-word;
+      text-rendering: optimizeLegibility;
+      font-kerning: normal;
+    }
+    
+    @media (max-width: 768px) {
+      body {
+        font-size: 0.95em;
+        padding: 15px;
+      }
+      h1 {
+        font-size: 1.55em !important;
+      }
+    }
+    
+    @media print {
+      html { background-color: white; }
+      body { background-color: transparent; color: black; font-size: 10pt; max-width: 100%; padding: 0; }
+      p, h2, h3 { orphans: 3; widows: 3; }
+      h2, h3, h4 { page-break-after: avoid; }
+      pre, blockquote, table, .figure-box { page-break-inside: avoid; }
+      .no-print { display: none; }
+    }
+    
+    header {
+      margin-bottom: 2.2em;
+      text-align: center;
+      border-bottom: 3px solid #b91c1c;
+      padding-bottom: 15px;
+    }
+    
+    .meta-badge {
+      display: inline-block;
+      background: #fee2e2;
+      color: #991b1b;
+      font-size: 0.85em;
+      font-weight: 600;
+      padding: 4px 10px;
+      border-radius: 20px;
+      margin: 3px 6px;
+      border: 1px solid #f87171;
+    }
+    
+    .badge-primary { background: #0b3c5d; color: #ffffff; border: 1px solid #0b3c5d; }
+    .badge-alert { background: #fee2e2; color: #991b1b; border: 1px solid #f87171; }
+    .badge-success { background: #dcfce7; color: #166534; border: 1px solid #86efac; }
+    .badge-warning { background: #fef3c7; color: #92400e; border: 1px solid #fcd34d; }
+    .badge-purple { background: #f3e8ff; color: #6b21a8; border: 1px solid #d8b4fe; }
+    .badge-cyan { background: #e0f2fe; color: #0369a1; border: 1px solid #7dd3fc; }
+    .badge-dark { background: #0f172a; color: #f8fafc; border: 1px solid #334155; }
+    
+    h1, h2, h3, h4 {
+      color: #0b3c5d;
+      font-weight: 700;
+    }
+    
+    h1 {
+      font-size: 18pt;
+      margin-top: 0.6em;
+      margin-bottom: 0.3em;
+      letter-spacing: -0.5px;
+      color: #991b1b;
+    }
+    
+    h2 {
+      font-size: 13.5pt;
+      margin-top: 26px;
+      margin-bottom: 12px;
+      border-bottom: 1.5px solid #d0d7de;
+      padding-bottom: 6px;
+      color: #0b3c5d;
+    }
+    
+    h3 {
+      font-size: 11pt;
+      margin-top: 18px;
+      margin-bottom: 8px;
+      border-left: 4.5px solid #b91c1c;
+      padding-left: 10px;
+      color: #1e293b;
+    }
+    
+    h4 {
+      font-size: 10pt;
+      margin-top: 14px;
+      color: #b91c1c;
+    }
+    
+    p {
+      margin: 0.8em 0;
+    }
+    
+    ul, ol {
+      padding-left: 1.6em;
+      margin: 0.8em 0;
+    }
+    
+    li {
+      margin-bottom: 0.35em;
+    }
+    
+    hr {
+      border: 0;
+      border-top: 1px solid #d0d7de;
+      margin: 22px 0;
+    }
+    
+    .callout {
+      border-radius: 6px;
+      padding: 12px 16px;
+      margin: 16px 0;
+      font-size: 9.3pt;
+      border-left: 5px solid;
+    }
+    
+    .callout-info {
+      background-color: #f0f7fc;
+      border-color: #328cc1;
+      color: #1a446c;
+    }
+    
+    .callout-warning {
+      background-color: #fffbeb;
+      border-color: #f59e0b;
+      color: #78350f;
+    }
+    
+    .callout-danger {
+      background-color: #fef2f2;
+      border-color: #ef4444;
+      color: #7f1d1d;
+    }
+    
+    .callout-success {
+      background-color: #f0fdf4;
+      border-color: #22c55e;
+      color: #14532d;
+    }
+    
+    .callout-title {
+      font-weight: 700;
+      margin-bottom: 4px;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+    
+    .formula-box {
+      background: #f8fafc;
+      border: 1px solid #cbd5e1;
+      border-radius: 6px;
+      padding: 12px 16px;
+      margin: 12px 0;
+      font-family: 'Consolas', monospace;
+      font-size: 10.5pt;
+      text-align: center;
+      color: #0f172a;
+    }
+    
+    .frac {
+      display: inline-flex;
+      flex-direction: column;
+      vertical-align: middle;
+      text-align: center;
+      padding: 0 4px;
+    }
+    .num { border-bottom: 1px solid #0f172a; padding-bottom: 1px; }
+    .den { padding-top: 1px; }
+    
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      margin: 15px 0;
+      font-size: 9pt;
+    }
+    
+    th, td {
+      border: 1px solid #d0d7de;
+      padding: 7px 10px;
+      text-align: left;
+    }
+    
+    th {
+      background-color: #f1f5f9;
+      color: #0f172a;
+      font-weight: 600;
+    }
+    
+    tr:nth-child(even) {
+      background-color: #f8fafc;
+    }
+    
+    code {
+      font-family: Consolas, 'Courier New', Courier, monospace;
+      font-size: 0.9em;
+      background-color: #f1f5f9;
+      color: #b91c1c;
+      padding: 2px 5px;
+      border-radius: 4px;
+      border: 1px solid #e2e8f0;
+    }
+    
+    pre {
+      background-color: #0f172a;
+      color: #f8fafc;
+      padding: 14px;
+      border-radius: 6px;
+      overflow-x: auto;
+      font-size: 8.5pt;
+      line-height: 1.45;
+      border: 1px solid #1e293b;
+    }
+    
+    pre code {
+      background-color: transparent;
+      color: inherit;
+      padding: 0;
+      border: none;
+      font-size: inherit;
+    }
+    
+    .step-box {
+      border: 1.5px solid #cbd5e1;
+      border-radius: 8px;
+      padding: 16px 20px;
+      margin: 20px 0;
+      background: #ffffff;
+      box-shadow: 0 2px 4px rgba(0,0,0,0.02);
+    }
+    
+    .step-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 12px;
+      border-bottom: 2px solid #e2e8f0;
+      padding-bottom: 8px;
+    }
+    
+    .step-title {
+      font-size: 11.5pt;
+      font-weight: bold;
+      color: #991b1b;
+    }
+    
+    .timing-badge {
+      background: #fee2e2;
+      color: #991b1b;
+      font-size: 8pt;
+      font-weight: 600;
+      padding: 3px 8px;
+      border-radius: 12px;
+      border: 1px solid #f87171;
+    }
+    
+    .student-response {
+      background: #fdf2f2;
+      border-left: 4px solid #ef4444;
+      padding: 12px 14px;
+      margin: 14px 0;
+      border-radius: 0 6px 6px 0;
+      font-size: 9pt;
+    }
+    
+    .dotted-line {
+      border-bottom: 1.5px dotted #94a3b8;
+      min-height: 22px;
+      margin-top: 6px;
+    }
+    
+    .figure-box {
+      text-align: center;
+      margin: 18px 0;
+      padding: 12px;
+      background: #ffffff;
+      border: 1px solid #e2e8f0;
+      border-radius: 8px;
+    }
+    
+    .figure-caption {
+      font-size: 8.5pt;
+      color: #475569;
+      margin-top: 8px;
+      font-style: italic;
+    }
+    
+    /* Interactive Simulator Box */
+    .sim-card {
+      background: #0f172a;
+      color: #f8fafc;
+      border-radius: 8px;
+      padding: 16px;
+      margin: 16px 0;
+      border: 1px solid #334155;
+      font-family: Consolas, monospace;
+    }
+    .sim-card h4 {
+      color: #38bdf8;
+      margin-top: 0;
+      font-family: 'Segoe UI', sans-serif;
+    }
+    .sim-btn {
+      background: #dc2626;
+      color: white;
+      border: none;
+      padding: 8px 16px;
+      border-radius: 4px;
+      cursor: pointer;
+      font-weight: bold;
+      margin-right: 8px;
+      margin-top: 8px;
+      transition: background 0.2s;
+    }
+    .sim-btn:hover { background: #b91c1c; }
+    .sim-btn-secondary {
+      background: #0284c7;
+    }
+    .sim-btn-secondary:hover { background: #0369a1; }
+    .sim-input {
+      background: #1e293b;
+      border: 1px solid #475569;
+      color: #38bdf8;
+      padding: 6px 10px;
+      border-radius: 4px;
+      font-size: 11pt;
+      width: 100px;
+      text-align: center;
+    }
+    .sim-output {
+      background: #020617;
+      border: 1px solid #1e293b;
+      border-radius: 4px;
+      padding: 10px;
+      margin-top: 10px;
+      min-height: 70px;
+      max-height: 160px;
+      overflow-y: auto;
+      font-size: 8.5pt;
+      color: #a5f3fc;
+    }
+  </style>
+</head>
+<body>
+
+<header>
+  <div style="font-size: 10pt; color: #475569; font-weight: 600; text-transform: uppercase; letter-spacing: 1px;">
+    BTS CIEL - Cybersécurité, Informatique & Réseaux, Électronique
+  </div>
+  <h1>Extension TP Cybersécurité : Cassage Rapide de Code PIN Bluetooth</h1>
+  <div style="font-size: 11pt; color: #1e293b; margin: 5px 0;">
+    Audit de Sécurité de l'Appairage Bluetooth Legacy (PIN fixe 4 chiffres) & Vulnérabilités Cryptographiques
+  </div>
+  <div>
+    <span class="meta-badge badge-alert">Sécurité Offensive Éthique</span>
+    <span class="meta-badge badge-primary">BTS CIEL (IR / ER)</span>
+    <span class="meta-badge badge-purple">Bluetooth Legacy Pairing</span>
+    <span class="meta-badge badge-cyan">Algorithmes E22 / SAFER+</span>
+    <span class="meta-badge badge-dark">Outils : btcrack, btlejack, Scapy</span>
+  </div>
+</header>
+
+<div class="callout callout-danger">
+  <div class="callout-title">⚖️ Avertissement Légal & Cadre Pédagogique (Charte Informatique)</div>
+  <p>Cette activité pratique s'inscrit strictement dans le cadre de la formation aux métiers de la cybersécurité (référentiel national BTS CIEL - Compétences <strong>C04 Analyser</strong> et <strong>C06 Valider</strong>). Les tests d'audit et les techniques de cassage présentés doivent être réalisés exclusivement en laboratoire fermé sur vos propres maquettes pédagogiques (Raspberry Pi Pico 2 W). Toute tentative d'interception ou de compromission de systèmes tiers sans consentement explicite est passible de sanctions pénales (Articles 323-1 et suivants du Code pénal).</p>
+</div>
+
+<!-- ========================================================================= -->
+<!-- 1. CONTEXTE ET MECANISME DE VULNERABILITE                                  -->
+<!-- ========================================================================= -->
+<h2>1. Pourquoi le Code PIN Bluetooth à 4 chiffres est-il si vulnérable ?</h2>
+
+<p>Dans les modules Bluetooth industriels économiques de type SPP (HC-05, HC-06, HM-10 ou Grove Bluetooth v3.0), le mécanisme d'authentification utilisé est le protocole historique <strong>Legacy Pairing</strong> (spécification Bluetooth &le; 2.0/2.1).</p>
+
+<p>Ce protocole présente deux vulnérabilités fondamentales :</p>
+<ol>
+  <li><strong>L'espace des clés est dérisoire :</strong> Un code PIN à 4 chiffres décimaux (de <code>0000</code> à <code>9999</code>) ne représente que :
+    <div class="formula-box">
+      <i>Espace des clés</i> = 10<sup>4</sup> = <strong>10 000 combinaisons possibles</strong> (&approx; 13,3 bits d'entropie)
+    </div>
+  </li>
+  <li><strong>Le protocole transmet des informations dérivées en clair :</strong> Lors de la négociation d'appairage, les deux équipements échangent publiquement leurs adresses matérielles MAC (<code>BD_ADDR</code>) et des nombres aléatoires (<code>IN_RAND</code>). Un attaquant passif qui écoute les trames radio peut exécuter une attaque <strong>hors-ligne (offline brute-force)</strong> à une vitesse de plusieurs millions de combinaisons par seconde.</li>
+</ol>
+
+<!-- SVG : NÉGOCIATION LEGACY ET ATTAQUE HORS-LIGNE -->
+<div class="figure-box">
+  <div class="svg-container">
+    <svg viewBox="0 0 850 310" width="100%" height="auto" xmlns="http://www.w3.org/2000/svg">
+      <defs>
+        <marker id="redArrow" viewBox="0 0 10 10" refX="6" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+          <path d="M 0 1 L 8 5 L 0 9 z" fill="#dc2626"/>
+        </marker>
+        <marker id="blueArrow" viewBox="0 0 10 10" refX="6" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+          <path d="M 0 1 L 8 5 L 0 9 z" fill="#0284c7"/>
+        </marker>
+      </defs>
+
+      <!-- Fond -->
+      <rect width="850" height="310" fill="#f8fafc" rx="8" stroke="#cbd5e1" stroke-width="1.5"/>
+
+      <!-- Titre -->
+      <text x="425" y="26" fill="#0b3c5d" font-family="'Segoe UI', sans-serif" font-size="11pt" font-weight="bold" text-anchor="middle">Mécanisme d'Attaque Passive Hors-Ligne (Offline PIN Crack) sur Bluetooth Legacy Pairing</text>
+
+      <!-- Colonnes : Équipement A (PC Master), Équipement B (Pupitre Pico Slave), Sniffer (Attaquant) -->
+      <!-- PC Master -->
+      <rect x="50" y="45" width="180" height="40" rx="6" fill="#0284c7"/>
+      <text x="140" y="70" fill="#ffffff" font-family="'Segoe UI', sans-serif" font-size="9.5pt" font-weight="bold" text-anchor="middle">PC Maître (Windows)</text>
+
+      <!-- Pupitre Slave -->
+      <rect x="335" y="45" width="180" height="40" rx="6" fill="#16a34a"/>
+      <text x="425" y="70" fill="#ffffff" font-family="'Segoe UI', sans-serif" font-size="9.5pt" font-weight="bold" text-anchor="middle">Pupitre Pico 2 W (Esclave)</text>
+
+      <!-- Attaquant Sniffer -->
+      <rect x="620" y="45" width="180" height="40" rx="6" fill="#dc2626"/>
+      <text x="710" y="70" fill="#ffffff" font-family="'Segoe UI', sans-serif" font-size="9.5pt" font-weight="bold" text-anchor="middle">Attaquant Passif (Sniffer)</text>
+
+      <!-- Lignes de vie -->
+      <line x1="140" y1="85" x2="140" y2="290" stroke="#94a3b8" stroke-width="1.5" stroke-dasharray="4 4"/>
+      <line x1="425" y1="85" x2="425" y2="290" stroke="#94a3b8" stroke-width="1.5" stroke-dasharray="4 4"/>
+      <line x1="710" y1="85" x2="710" y2="290" stroke="#f87171" stroke-width="1.5" stroke-dasharray="4 4"/>
+
+      <!-- Étape 1 : IN_RAND -->
+      <path d="M 140 115 L 425 115" stroke="#0284c7" stroke-width="2" marker-end="url(#blueArrow)"/>
+      <text x="282" y="107" fill="#0369a1" font-family="Consolas" font-size="8pt" font-weight="bold" text-anchor="middle">1. Envoi IN_RAND (128 bits public)</text>
+
+      <!-- Interception Sniffer 1 -->
+      <path d="M 282 115 L 710 135" stroke="#dc2626" stroke-width="1.5" stroke-dasharray="3 3" marker-end="url(#redArrow)"/>
+      <text x="560" y="125" fill="#b91c1c" font-family="Consolas" font-size="7.5pt">Interception IN_RAND</text>
+
+      <!-- Étape 2 : Calcul E22 / Kinit local -->
+      <rect x="65" y="145" width="150" height="26" rx="4" fill="#e0f2fe" stroke="#38bdf8"/>
+      <text x="140" y="162" fill="#0369a1" font-family="Consolas" font-size="7pt" text-anchor="middle">K_init = E22(PIN, IN_RAND, ...)</text>
+
+      <rect x="350" y="145" width="150" height="26" rx="4" fill="#dcfce7" stroke="#4ade80"/>
+      <text x="425" y="162" fill="#15803d" font-family="Consolas" font-size="7pt" text-anchor="middle">K_init = E22(PIN, IN_RAND, ...)</text>
+
+      <!-- Étape 3 : Challenge AU_RAND -->
+      <path d="M 425 195 L 140 195" stroke="#16a34a" stroke-width="2" marker-end="url(#blueArrow)"/>
+      <text x="282" y="187" fill="#15803d" font-family="Consolas" font-size="8pt" font-weight="bold" text-anchor="middle">2. Challenge AU_RAND (128 bits)</text>
+
+      <!-- Interception Sniffer 2 -->
+      <path d="M 282 195 L 710 205" stroke="#dc2626" stroke-width="1.5" stroke-dasharray="3 3" marker-end="url(#redArrow)"/>
+
+      <!-- Étape 4 : Réponse SRES -->
+      <path d="M 140 235 L 425 235" stroke="#0284c7" stroke-width="2" marker-end="url(#blueArrow)"/>
+      <text x="282" y="227" fill="#0369a1" font-family="Consolas" font-size="8pt" font-weight="bold" text-anchor="middle">3. Réponse SRES = E1(K_init, AU_RAND)</text>
+
+      <!-- Interception Sniffer 3 -->
+      <path d="M 282 235 L 710 240" stroke="#dc2626" stroke-width="1.5" stroke-dasharray="3 3" marker-end="url(#redArrow)"/>
+
+      <!-- Bloc Cassage Off-line -->
+      <rect x="630" y="250" width="160" height="45" rx="5" fill="#fee2e2" stroke="#dc2626" stroke-width="1.5"/>
+      <text x="710" y="267" fill="#991b1b" font-family="'Segoe UI', sans-serif" font-size="7.5pt" font-weight="bold" text-anchor="middle">TEST LOCAL 0000..9999 :</text>
+      <text x="710" y="282" fill="#dc2626" font-family="Consolas" font-size="7.5pt" font-weight="bold" text-anchor="middle">PIN TROUVÉ EN &lt; 0.1 s !</text>
+    </svg>
+  </div>
+  <div class="figure-caption">Figure E1 : Diagramme de séquence de l'attaque par écoute passive d'appairage Bluetooth Legacy et cassage hors-ligne sans interaction avec la cible</div>
+</div>
+
+<hr />
+
+<!-- ========================================================================= -->
+<!-- 2. LES DEUX VECTEURS D'ATTAQUE : EN LIGNE VS HORS-LIGNE                   -->
+<!-- ========================================================================= -->
+<h2>2. Comparatif des Deux Stratégies d'Attaque</h2>
+
+<table>
+  <thead>
+    <tr>
+      <th>Critère</th>
+      <th>Attaque 1 : Brute-Force En Ligne (Online)</th>
+      <th>Attaque 2 : Cassage Hors-Ligne (Offline Sniffing)</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td><strong>Principe</strong></td>
+      <td>L'attaquant envoie des demandes d'appairage successives (<code>0000</code>, <code>0001</code>, <code>0002</code>...) directement au module esclave.</td>
+      <td>L'attaquant écoute passivement les ondes lors d'un appairage légitime entre le PC et le pupitre, puis teste les 10 000 PIN en mémoire sur son propre PC.</td>
+    </tr>
+    <tr>
+      <td><strong>Débit / Vitesse</strong></td>
+      <td><strong>Très lente :</strong> Limitée par le timeout Bluetooth du module (~1 à 2 tentatives par seconde).</td>
+      <td><strong>Ultra-rapide :</strong> Calcul mathématique pur sur CPU/GPU (> 500 000 clés testées par seconde).</td>
+    </tr>
+    <tr>
+      <td><strong>Temps de cassage total</strong></td>
+      <td>10 000 / 1,5 = <strong>~1h40 à 3h00</strong> (facilement détectable et blocable).</td>
+      <td>10 000 / 500 000 = <strong>Moins de 0,05 seconde (quasi instantané) !</strong></td>
+    </tr>
+    <tr>
+      <td><strong>Discrétion radio</strong></td>
+      <td>Bruyante : des centaines de paquets de rejet émis par le module esclave.</td>
+      <td><strong>Totalement invisible :</strong> 0 paquet émis, l'attaquant ne fait que recevoir.</td>
+    </tr>
+    <tr>
+      <td><strong>Outils types</strong></td>
+      <td>Scripts Python (pybluez, bluetoothctl), apps Android.</td>
+      <td><code>btcrack</code>, <code>btlejack</code>, <code>Ubertooth One</code>, Wireshark.</td>
+    </tr>
+  </tbody>
+</table>
+
+<hr />
+
+<!-- ========================================================================= -->
+<!-- 3. SIMULATEUR PEDAGOGIQUE INTERACTIF DU CRACK PIN                         -->
+<!-- ========================================================================= -->
+<h2>3. Simulateur Intégré : Testez la Vitesse de Cassage</h2>
+
+<p>Utilisez le simulateur pédagogique ci-dessous pour visualiser la différence de rapidité d'exécution entre l'attaque en ligne et l'attaque cryptographique hors-ligne sur un code PIN de votre choix :</p>
+
+<div class="sim-card">
+  <h4>⚙️ Laboratoire Virtuel : Comparateur d'Attaques Bluetooth</h4>
+  <div style="margin-bottom: 12px;">
+    Code PIN secret configuré sur le module : 
+    <input type="text" id="targetPin" class="sim-input" maxlength="4" value="1234" />
+    <span style="font-size: 8.5pt; color: #94a3b8; margin-left: 8px;">(4 chiffres décimaux : 0000 à 9999)</span>
+  </div>
+
+  <div>
+    <button class="sim-btn" onclick="lancerAttaqueHorsLigne()">⚡ 1. Simuler l'Attaque Hors-Ligne (Cracking E22)</button>
+    <button class="sim-btn sim-btn-secondary" onclick="lancerAttaqueEnLigne()">⏱️ 2. Simuler l'Attaque En Ligne (Brute-Force Radio)</button>
+    <button class="sim-btn" style="background: #475569;" onclick="reinitialiserConsole()">Effacer</button>
+  </div>
+
+  <div id="simLog" class="sim-output">
+[CONSOLDE PRET] Saisissez un code PIN à 4 chiffres et lancez une simulation...
+  </div>
+</div>
+
+<script>
+function reinitialiserConsole() {
+  document.getElementById('simLog').innerHTML = "[CONSOLE PRET] En attente d'instruction...";
+}
+
+function printLog(msg) {
+  var log = document.getElementById('simLog');
+  log.innerHTML += "<br>" + msg;
+  log.scrollTop = log.scrollHeight;
+}
+
+function lancerAttaqueHorsLigne() {
+  var pin = document.getElementById('targetPin').value.padStart(4, '0');
+  var log = document.getElementById('simLog');
+  log.innerHTML = "<span style='color: #f59e0b;'>[SNIFFER ACTIF]</span> Interception de l'appairage : BD_ADDR=00:1B:DC:06:55:12, IN_RAND=0x4A8F... AU_RAND=0x91C2..., SRES=0x38AF19";
+  
+  var t0 = performance.now();
+  var count = 0;
+  var pinInt = parseInt(pin, 10);
+  if (isNaN(pinInt) || pinInt < 0 || pinInt > 9999) {
+    printLog("<span style='color: #ef4444;'>[ERREUR]</span> Veuillez saisir un code PIN valide entre 0000 et 9999.");
+    return;
+  }
+
+  // Simulation de calcul de dérivation cryptographique
+  for (var i = 0; i <= pinInt; i++) {
+    count++;
+    // Calcul de vérification symbolique
+    var dummyHash = (i * 2654435761) ^ 0x5bf03635;
+  }
+  var t1 = performance.now();
+  var dureeMs = (t1 - t0).toFixed(2);
+
+  printLog("<span style='color: #22c55e;'>[CRACK HORS-LIGNE SUCCÈS]</span> Combinaisons testées : " + count + " / 10 000.");
+  printLog(">>> <strong>CODE PIN TROUVÉ : " + pin + "</strong> en seulement <strong>" + dureeMs + " ms</strong> !");
+  printLog("[IMPACT] La clé de chiffrement maîtresse K_init a été reconstruite. L'attaquant peut désormais déchiffrer tout le trafic.");
+}
+
+var onlineInterval = null;
+function lancerAttaqueEnLigne() {
+  if (onlineInterval) clearInterval(onlineInterval);
+  var pin = document.getElementById('targetPin').value.padStart(4, '0');
+  var target = parseInt(pin, 10);
+  var log = document.getElementById('simLog');
+  log.innerHTML = "<span style='color: #38bdf8;'>[BRUTE-FORCE EN LIGNE]</span> Connexion active au module... (Cadence réelle : ~2 tentatives / sec par limitation radio)";
+  
+  var current = 0;
+  var step = Math.max(1, Math.floor(target / 15)); // Accéléré pour la démo pédagogique
+  var simulatedSeconds = 0;
+
+  onlineInterval = setInterval(function() {
+    current += step;
+    simulatedSeconds += (step * 0.5);
+    if (current >= target) {
+      current = target;
+      clearInterval(onlineInterval);
+      printLog("<span style='color: #22c55e;'>[SUCCÈS EN LIGNE]</span> Tentative n°" + current + " : PIN valide = <strong>" + pin + "</strong> !");
+      printLog("⏱️ Temps écoulé réel équivalent : <strong>" + Math.round(simulatedSeconds) + " secondes</strong> (~" + (simulatedSeconds/60).toFixed(1) + " minutes).");
+      printLog("⚠️ Problème : Le module a reçu " + current + " requêtes d'échec consécutives, ce qui alerte immédiatement un système de détection d'intrusion (IDS).");
+    } else {
+      var currentStr = String(current).padStart(4, '0');
+      printLog("Tentative PIN '" + currentStr + "' : <span style='color: #ef4444;'>REJET (Auth Failure)</span> | Temps simulé : " + Math.round(simulatedSeconds) + "s");
+    }
+  }, 120);
+}
+</script>
+
+<hr />
+
+<!-- ========================================================================= -->
+<!-- 4. GUIDE TECHNIQUE : LE SCRIPT OFF-LINE BTCRACK EN PRATIQUE               -->
+<!-- ========================================================================= -->
+<h2>4. Comment fonctionne l'outil de référence <code>btcrack</code></h2>
+
+<p>Le logiciel libre <code>btcrack</code> (développé initialement par Thierry Zoller) est l'outil canonique utilisé pour démontrer la faiblesse de l'algorithme d'authentification Bluetooth <strong>E22</strong> (basé sur le chiffrement par bloc SAFER+).</p>
+
+<div class="callout callout-info">
+  <div class="callout-title">📋 Algorithme mathématique de dérivation E22</div>
+  <p>Pour chaque entier <code>PIN</code> candidat entre <code>0000</code> et <code>9999</code> :</p>
+  <ol>
+    <li>Calculer la clé d'initialisation candidate : <code>K_cand = E22(PIN, IN_RAND, BD_ADDR_esclave)</code></li>
+    <li>Calculer la réponse d'authentification candidate : <code>SRES_cand = E1(K_cand, AU_RAND, BD_ADDR_maitre)</code></li>
+    <li>Comparer <code>SRES_cand</code> avec le <code>SRES_capture</code> intercepté lors du sniffing.</li>
+    <li>Si égalité : <strong>le PIN candidat est garanti exact à 100%</strong> !</li>
+  </ol>
+</div>
+
+<h4>Exemple de commande d'audit sous console Linux / Kali :</h4>
+<pre><code># 1. Capture du trafic Bluetooth avec un dongle récepteur (Ubertooth / Scapy)
+# Le fichier capture.pcap contient l'échange complet d'appairage.
+
+# 2. Extraction des paramètres de la capture :
+# BD_ADDR Master : 00:1A:7D:DA:71:02
+# BD_ADDR Slave  : 00:1B:DC:06:55:12 (Pupitre Pico)
+# IN_RAND        : 4A 8F 1B 09 33 21 00 12 CC 90 AA BB CC DD EE FF
+# AU_RAND        : 91 C2 33 44 55 66 77 88 99 AA BB CC DD EE FF 00
+# SRES           : 38 AF 19 44
+
+# 3. Exécution de btcrack pour tester les 10 000 clés :
+$ btcrack -b 00:1B:DC:06:55:12 -m 00:1A:7D:DA:71:02 \
+          -r 4A8F1B0933210012CC90AABBCCDDEEFF \
+          -a 91C233445566778899AABBCCDDEEFF00 \
+          -s 38AF1944
+
+# --- RÉSULTAT OBTENU EN MOINS DE 0.1 SECONDE ---
+[*] Initializing SAFER+ lookup tables...
+[*] Brute-forcing PIN keyspace (0000 -> 9999)...
+[+] MATCH FOUND! PIN is: '1234'
+[+] Initialization Key (K_init): 7B 41 D2 9F 08 ...
+[+] Execution time: 0.042 seconds (238 000 keys/sec)</code></pre>
+
+<hr />
+
+<!-- ========================================================================= -->
+<!-- 5. QUESTIONS POUR LES ÉTUDIANTS                                            -->
+<!-- ========================================================================= -->
+<h2>5. Travail d'Analyse et Réponses Étudiants</h2>
+
+<div class="student-response">
+  <strong>Question E.1 (Calcul d'entropie et complexité) :</strong><br>
+  1. Calculez l'entropie en bits d'un code PIN à 4 chiffres décimaux : <i>H</i> = log<sub>2</sub>(10 000) = <strong>............. bits</strong>.<br>
+  2. Si l'on remplace ce PIN par un mot de passe alphanumérique de 12 caractères comprenant majuscules, minuscules et chiffres (espace de 62 caractères par position), quel devient le nombre total de combinaisons possibles ? Pourquoi ce mot de passe est-il incassable en force brute ?
+  <div class="formula-box">
+    <i>Combinaisons</i> = 62<sup>12</sup> &approx; <strong>........................................................</strong>
+  </div>
+  <div class="dotted-line"></div>
+</div>
+
+<div class="student-response">
+  <strong>Question E.2 (Contre-mesures de protection) :</strong><br>
+  En vous appuyant sur les guides de durcissement de l'<strong>ANSSI</strong> (Agence Nationale de la Sécurité des Systèmes d'Information) :<br>
+  1. Pourquoi le mode d'appairage <strong>Bluetooth Secure Simple Pairing (SSP)</strong> introduit à partir de Bluetooth 2.1 résout-il définitivement cette faille ? Quel algorithme mathématique à clé publique est utilisé ?<br>
+  2. Quelle mesure simple pouvez-vous activer sur le microcontrôleur esclave pour bloquer l'attaque en ligne (brute-force actif) ?
+  <div class="dotted-line"></div>
+  <div class="dotted-line"></div>
+</div>
+
+<hr />
+
+<!-- ========================================================================= -->
+<!-- 6. CORRIGE RAPIDE POUR L'ENSEIGNANT                                        -->
+<!-- ========================================================================= -->
+<h2>6. Synthèse & Corrigé Synthétique (Repères Enseignant)</h2>
+
+<div class="callout callout-success">
+  <div class="callout-title">✅ Éléments de Correction :</div>
+  <ul>
+    <li><strong>Question E.1 :</strong>
+      <ul>
+        <li><i>H</i> = log<sub>2</sub>(10 000) = 13,28 bits. C'est une entropie extrêmement faible qui ne résiste à aucune attaque computationnelle moderne.</li>
+        <li>Pour 12 caractères choisis parmi 62 symboles : 62<sup>12</sup> &approx; 3,22 &times; 10<sup>21</sup> combinaisons (&approx; 71,4 bits d'entropie). Même à 1 milliard de tests par seconde, il faudrait plus de 100 000 ans pour tester toutes les combinaisons.</li>
+      </ul>
+    </li>
+    <li><strong>Question E.2 :</strong>
+      <ul>
+        <li><strong>Secure Simple Pairing (SSP) :</strong> Utilise un échange de clés à clé publique <strong>ECDH (Elliptic Curve Diffie-Hellman, courbe P-256)</strong>. Les deux équipements négocient une clé secrète partagée sans jamais faire transiter le secret sur la liaison radio. Un écouteur passif qui capture tous les échanges ne peut rien dériver sans résoudre le problème du logarithme discret sur courbes elliptiques.</li>
+        <li><strong>Contre-mesure active contre l'attaque en ligne :</strong> Implémenter un <strong>délai exponentiel (Rate Limiting)</strong> ou un blocage temporaire (verrouillage de 5 minutes après 3 tentatives infructueuses de connexion).</li>
+      </ul>
+    </li>
+  </ul>
+</div>
+
+</body>
+</html>
