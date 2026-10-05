@@ -734,7 +734,7 @@
   <ol>
     <li>Connectez l'Analog Discovery 3 au port USB du PC et lancez le logiciel <strong>Digilent WaveForms</strong>.</li>
     <li>Dans la fenêtre d'accueil de WaveForms, sélectionnez votre périphérique <em>Analog Discovery 3</em> puis cliquez sur <strong>Logic</strong> (Analyseur Logique).</li>
-    <li>Ajoutez un décodeur de protocole : cliquez sur <strong>+ (Add)</strong> $\rightarrow$ <strong>UART</strong>.</li>
+    <li>Ajoutez un décodeur de protocole : cliquez sur <strong>+ (Add)</strong> &rarr; <strong>UART</strong>.</li>
     <li>Configurez les propriétés du protocole UART dans le volet :
       <ul>
         <li><strong>TX (Émission Nano vers Bluetooth) :</strong> Sélectionner <code>DIO 1</code> (Broche D3 de l'Arduino Nano).</li>
@@ -885,7 +885,7 @@ void loop() {
 
   <h4>3.3. Manipulation et commandes AT :</h4>
   <ol>
-    <li>Dans l'Arduino IDE, vérifiez le paramétrage de la carte : <em>Outils</em> $\rightarrow$ <em>Type de carte : Arduino Nano</em>, <em>Processeur : ATmega328P</em> (ou <em>ATmega328P Old Bootloader</em> selon votre modèle).</li>
+    <li>Dans l'Arduino IDE, vérifiez le paramétrage de la carte : <em>Outils</em> &rarr; <em>Type de carte : Arduino Nano</em>, <em>Processeur : ATmega328P</em> (ou <em>ATmega328P Old Bootloader</em> selon votre modèle).</li>
     <li>Téléversez le programme passerelle ci-dessus sur l'Arduino Nano.</li>
     <li>Ouvrez le moniteur série (réglé sur <code>No line ending</code> à 115200 bauds), saisissez la commande <code>AT</code> puis validez.</li>
     <li>Observez la réponse immédiate <code>OK</code> dans la console, et simultanément sur l'écran WaveForms la capture des signaux DIO 1 et DIO 0.</li>
