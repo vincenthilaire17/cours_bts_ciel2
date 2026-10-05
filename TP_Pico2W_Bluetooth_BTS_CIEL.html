@@ -1470,7 +1470,17 @@ void loop() {
     <div class="figure-caption">Figure 4 : Exemple de diagramme d'états de la FSM pour le traitement sécurisé des trames série</div>
   </div>
 
-  <h4>Squelette de code à compléter par les étudiants :</h4>
+  <div class="student-response">
+    <strong>Question 4.1 :</strong> Calculez manuellement la somme de contrôle XOR (LRC) de la trame suivante :<br>
+    Octets : <code>[ID: 0x01] ^ [CMD: 0x20] ^ [LEN: 0x01] ^ [DATA: 0x41 ('A')]</code> = <strong>0x.......</strong><br>
+    Détaillez le calcul binaire bit à bit sur les 8 bits.
+    <div class="dotted-line"></div>
+    <div class="dotted-line"></div>
+  </div>
+
+  <h4>Squelette de code C++ à compléter par les étudiants (FSM &amp; Checksum XOR) :</h4>
+  <p>En vous aidant du calcul ci-dessus et du diagramme d'états (Figure 4), complétez les portions manquantes de l'automate :</p>
+
   <pre><code>/* =========================================================================
    BTS CIEL - Squelette du calcul de Checksum XOR et de la FSM
    A compléter par les étudiants
@@ -1527,14 +1537,6 @@ void traiterOctetRecu(uint8_t c) {
       break;
   }
 }</code></pre>
-
-  <div class="student-response">
-    <strong>Question 4.1 :</strong> Calculez manuellement la somme de contrôle XOR (LRC) de la trame suivante :<br>
-    Octets : <code>[ID: 0x01] ^ [CMD: 0x20] ^ [LEN: 0x01] ^ [DATA: 0x41 ('A')]</code> = <strong>0x.......</strong><br>
-    Détaillez le calcul binaire bit à bit sur les 8 bits.
-    <div class="dotted-line"></div>
-    <div class="dotted-line"></div>
-  </div>
 </div>
 
 <!-- ETAPE 5 -->
