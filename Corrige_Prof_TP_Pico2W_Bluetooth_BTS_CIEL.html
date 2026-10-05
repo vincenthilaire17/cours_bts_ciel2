@@ -1,0 +1,710 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="utf-8" />
+  <meta name="generator" content="BTS CIEL - Vincent Hilaire" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes" />
+  <title>CORRIGÉ ENSEIGNANT - TP Bluetooth (SPP), Bus I²C et Instrumentation Digilent AD3 sur Raspberry Pi Pico 2 W - BTS CIEL</title>
+  
+  <style>
+    @page {
+      margin: 1.5cm;
+      size: A4;
+    }
+    
+    html {
+      color: #1a1a1a;
+      background-color: #fdfdfd;
+      -webkit-text-size-adjust: 100%;
+    }
+    
+    body {
+      font-family: 'Segoe UI', -apple-system, BlinkMacSystemFont, Roboto, Helvetica, Arial, sans-serif;
+      line-height: 1.55;
+      color: #1a1a1a;
+      max-width: 960px;
+      margin: 0 auto;
+      padding: 25px 30px;
+      hyphens: auto;
+      overflow-wrap: break-word;
+      text-rendering: optimizeLegibility;
+      font-kerning: normal;
+    }
+    
+    @media (max-width: 768px) {
+      body {
+        font-size: 0.95em;
+        padding: 15px;
+      }
+      h1 {
+        font-size: 1.55em !important;
+      }
+    }
+    
+    @media print {
+      html { background-color: white; }
+      body { background-color: transparent; color: black; font-size: 10pt; max-width: 100%; padding: 0; }
+      p, h2, h3 { orphans: 3; widows: 3; }
+      h2, h3, h4 { page-break-after: avoid; }
+      pre, blockquote, table, .figure-box { page-break-inside: avoid; }
+      .no-print { display: none; }
+    }
+    
+    header {
+      margin-bottom: 2.2em;
+      text-align: center;
+      border-bottom: 3px solid #b91c1c;
+      padding-bottom: 15px;
+    }
+    
+    .meta-badge {
+      display: inline-block;
+      background: #e1ecf4;
+      color: #0b3c5d;
+      font-size: 0.85em;
+      font-weight: 600;
+      padding: 4px 10px;
+      border-radius: 20px;
+      margin: 3px 6px;
+      border: 1px solid #7aa7c7;
+    }
+    
+    .badge-primary { background: #0b3c5d; color: #ffffff; border: 1px solid #0b3c5d; }
+    .badge-alert { background: #fee2e2; color: #991b1b; border: 1px solid #f87171; }
+    .badge-success { background: #dcfce7; color: #166534; border: 1px solid #86efac; }
+    .badge-warning { background: #fef3c7; color: #92400e; border: 1px solid #fcd34d; }
+    .badge-purple { background: #f3e8ff; color: #6b21a8; border: 1px solid #d8b4fe; }
+    .badge-cyan { background: #e0f2fe; color: #0369a1; border: 1px solid #7dd3fc; }
+    .badge-orange { background: #ffedd5; color: #c2410c; border: 1px solid #fdba74; }
+    .badge-danger { background: #b91c1c; color: #ffffff; border: 1px solid #991b1b; font-weight: 700; }
+    
+    h1, h2, h3, h4 {
+      color: #0b3c5d;
+      font-weight: 700;
+    }
+    
+    h1 {
+      font-size: 18pt;
+      margin-top: 0.6em;
+      margin-bottom: 0.3em;
+      letter-spacing: -0.5px;
+    }
+    
+    h2 {
+      font-size: 13.5pt;
+      margin-top: 26px;
+      margin-bottom: 12px;
+      border-bottom: 1.5px solid #d0d7de;
+      padding-bottom: 6px;
+    }
+    
+    h3 {
+      font-size: 11pt;
+      margin-top: 18px;
+      margin-bottom: 8px;
+      border-left: 4.5px solid #328cc1;
+      padding-left: 10px;
+    }
+    
+    h4 {
+      font-size: 10pt;
+      margin-top: 14px;
+      color: #1d5f8a;
+    }
+    
+    p {
+      margin: 0.8em 0;
+    }
+    
+    table {
+      border-collapse: collapse;
+      width: 100%;
+      margin: 14px 0;
+      font-size: 9pt;
+      background-color: #ffffff;
+      box-shadow: 0 1px 3px rgba(0,0,0,0.05);
+    }
+    
+    th, td {
+      border: 1px solid #d0d7de;
+      padding: 7px 10px;
+      text-align: left;
+      vertical-align: middle;
+    }
+    
+    th {
+      background-color: #f0f4f8;
+      color: #0b3c5d;
+      font-weight: 700;
+    }
+    
+    tr:nth-child(even) {
+      background-color: #f8fafc;
+    }
+    
+    pre {
+      background-color: #f6f8fa;
+      border: 1px solid #d0d7de;
+      border-radius: 6px;
+      padding: 12px 14px;
+      font-size: 8.8pt;
+      line-height: 1.45;
+      overflow-x: auto;
+      font-family: Consolas, 'Courier New', Monaco, monospace;
+      color: #24292f;
+      margin: 14px 0;
+    }
+    
+    code {
+      background-color: #eff1f3;
+      padding: 2px 5px;
+      border-radius: 4px;
+      font-size: 88%;
+      font-family: Consolas, 'Courier New', Monaco, monospace;
+      color: #0969da;
+    }
+    
+    pre code {
+      background-color: transparent;
+      padding: 0;
+      border-radius: 0;
+      font-size: inherit;
+      color: inherit;
+    }
+    
+    .callout {
+      border-radius: 6px;
+      padding: 12px 16px;
+      margin: 16px 0;
+      font-size: 9.3pt;
+      border-left: 5px solid;
+    }
+    
+    .callout-info {
+      background-color: #f0f7fc;
+      border-color: #328cc1;
+      color: #1a446c;
+    }
+    
+    .callout-warning {
+      background-color: #fffbeb;
+      border-color: #f59e0b;
+      color: #78350f;
+    }
+    
+    .callout-danger {
+      background-color: #fef2f2;
+      border-color: #ef4444;
+      color: #7f1d1d;
+    }
+    
+    .callout-success {
+      background-color: #f0fdf4;
+      border-color: #22c55e;
+      color: #14532d;
+    }
+    
+    .callout-title {
+      font-weight: 700;
+      margin-bottom: 4px;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+    
+    .teacher-answer {
+      background-color: #ecfdf5;
+      border: 1.5px solid #10b981;
+      border-radius: 6px;
+      padding: 14px 18px;
+      margin: 14px 0 20px 0;
+      color: #064e3b;
+    }
+    
+    .teacher-answer-title {
+      font-weight: 700;
+      font-size: 10pt;
+      color: #047857;
+      margin-bottom: 8px;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+    
+    .formula-box {
+      background: #f1f5f9;
+      border: 1px solid #cbd5e1;
+      border-radius: 6px;
+      padding: 8px 14px;
+      margin: 8px 0;
+      font-family: 'Cambria Math', 'DejaVu Serif', 'Times New Roman', Georgia, serif;
+      font-size: 10.5pt;
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      color: #0f172a;
+    }
+    
+    .frac {
+      display: inline-flex;
+      flex-direction: column;
+      vertical-align: middle;
+      text-align: center;
+      padding: 0 4px;
+      font-size: 0.95em;
+    }
+    
+    .frac > .num {
+      border-bottom: 1.5px solid #1e293b;
+      padding-bottom: 2px;
+    }
+    
+    .frac > .den {
+      padding-top: 2px;
+    }
+    
+    .step-box {
+      background: #ffffff;
+      border: 1px solid #cbd5e1;
+      border-radius: 8px;
+      padding: 14px 18px;
+      margin: 18px 0;
+      box-shadow: 0 2px 4px rgba(0,0,0,0.03);
+    }
+    
+    .step-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      border-bottom: 1px solid #e2e8f0;
+      padding-bottom: 8px;
+      margin-bottom: 12px;
+    }
+    
+    .step-title {
+      font-weight: 700;
+      font-size: 11pt;
+      color: #0b3c5d;
+    }
+  </style>
+</head>
+<body>
+
+<header id="title-block-header">
+  <div style="text-transform: uppercase; font-size: 0.9em; font-weight: 700; letter-spacing: 1px; color: #b91c1c; margin-bottom: 4px;">
+    BTS CIEL — 2<sup>e</sup> Année • Option A (IR) & Option B (ER) • DOCUMENT PROFESSEUR
+  </div>
+  <h1 class="title">CORRIGÉ DÉTAILLÉ &amp; GUIDE D'ÉVALUATION TP BLUETOOTH (SPP) / I²C / AD3</h1>
+  <div style="margin-top: 10px;">
+    <span class="meta-badge badge-danger">🔒 CORRIGÉ PROFESSEUR (CONFIDENTIEL)</span>
+    <span class="meta-badge badge-purple">🎯 Cible : Raspberry Pi Pico 2 W (RP2350) & Grove Shield</span>
+    <span class="meta-badge badge-orange">🔬 Instrumentation : Digilent AD3 & WaveForms</span>
+    <span class="meta-badge badge-primary">⏱ Séance 5h00 • Barème /20</span>
+  </div>
+</header>
+
+<div class="callout callout-danger">
+  <div class="callout-title">⚠️ Guide Pédagogique Enseignant</div>
+  <p>Ce document rassemble l'ensemble des réponses attendues, les démonstrations de calculs, les captures de validation WaveForms (Analog Discovery 3), les codes sources C++ complets et éprouvés pour le Raspberry Pi Pico 2 W, ainsi que les critères d'évaluation par compétences BTS CIEL (C04, C05, C06, C07, C01).</p>
+</div>
+
+<hr />
+
+<!-- ========================================================================= -->
+<!-- CORRIGE PARTIE 1 : CONFIGURATION AT & MESURES TEMPORELLES UART            -->
+<!-- ========================================================================= -->
+<h2>Corrigé Partie 1 : Passerelle Série, Commandes AT &amp; Mesures UART</h2>
+
+<div class="teacher-answer">
+  <div class="teacher-answer-title">✅ Question 1.0 (Analyse de code) : Explication du programme double série passerelle</div>
+  <p><strong>1. Architecture du pontage bidirectionnel :</strong></p>
+  <ul>
+    <li><code>Serial</code> correspond au port virtuel USB connecté à l'ordinateur du développeur (PC à 115200 bauds).</li>
+    <li><code>BT_SERIAL</code> (défini sur <code>Serial2</code>) correspond au contrôleur matériel UART1 du RP2350 relié au module Grove Bluetooth (sur GP4/TX et GP5/RX à 9600 bauds).</li>
+  </ul>
+  <p><strong>2. Rôle des boucles dans <code>loop()</code> :</strong></p>
+  <ul>
+    <li><code>while (Serial.available() > 0)</code> : Vérifie s'il y a des octets en attente dans le tampon FIFO de réception USB du PC. Si oui, chaque caractère est lu par <code>Serial.read()</code> et immédiatement réémis sur l'UART physique du Bluetooth par <code>BT_SERIAL.write(c)</code>. C'est le sens <strong>PC &rarr; Bluetooth</strong> (transmission des commandes AT ou des données saisies au clavier PC).</li>
+    <li><code>while (BT_SERIAL.available() > 0)</code> : Vérifie s'il y a des octets reçus par la broche GP5 depuis le Bluetooth. Si oui, chaque caractère est lu par <code>BT_SERIAL.read()</code> et retransmis vers l'écran de l'ordinateur par <code>Serial.write(c)</code>. C'est le sens <strong>Bluetooth &rarr; PC</strong> (affichage des réponses <code>OK</code>, des statuts ou des données reçues par radio).</li>
+  </ul>
+  <p><strong>3. Pourquoi le programme est-il transparent et non-bloquant ?</strong><br>
+  Le code n'utilise aucune fonction d'attente bloquante (aucun <code>delay()</code>, aucun <code>while(!Serial.available())</code>). Si aucun octet n'est disponible, le processeur passe immédiatement à l'instruction suivante. La boucle <code>loop()</code> s'exécute à très haute fréquence (plusieurs centaines de milliers de passes par seconde sur le Cortex-M33 à 150 MHz), assurant un pontage quasi instantané avec une latence inférieure à la microseconde.</p>
+</div>
+
+<div class="teacher-answer">
+  <div class="teacher-answer-title">✅ Question 1.1 : Adresse matérielle Bluetooth (BD_ADDR) vs Adresse MAC Ethernet</div>
+  <p>• <strong>Format de la BD_ADDR relevée :</strong> Ex : <code>00:1B:10:25:A3:8F</code> (48 bits / 6 octets, souvent affiché sans deux-points <code>001B1025A38F</code> dans la réponse AT).</p>
+  <p>• <strong>Comparaison avec l'adresse MAC Ethernet (IEEE 802.3) :</strong><br>
+  La structure est rigoureusement identique :
+  <ul>
+    <li>Les 3 premiers octets (24 bits de poids fort) constituent l'<strong>OUI (Organizationally Unique Identifier)</strong>, assigné par l'IEEE au fabricant du chipset radio (ex: Texas Instruments, Cambridge Silicon Radio, Qualcomm).</li>
+    <li>Les 3 derniers octets (24 bits de poids faible) forment le <strong>NAP/LAP (Network/Lower Address Part)</strong>, identifiant unique du circuit intégré gravé en usine.</li>
+  </ul>
+  Comme pour Ethernet, cette adresse garantit l'unicité globale de l'interface réseau sur la couche liaison de données (Couche 2 OSI).</p>
+</div>
+
+<div class="teacher-answer">
+  <div class="teacher-answer-title">✅ Question 1.2 : Mesure temporelle du temps bit (Tbit) et calcul d'écart relatif</div>
+  <p>• <strong>Calcul théorique :</strong></p>
+  <div class="formula-box">
+    <i>T</i><sub>bit_th</sub> = 
+    <span class="frac"><span class="num">1</span><span class="den">9600</span></span>
+    = 0,000104167 s = <strong>104,17 µs</strong>
+  </div>
+  <p>• <strong>Mesure expérimentale aux curseurs WaveForms (ΔX) :</strong> Valeur typique mesurée entre <strong>104,1 µs</strong> et <strong>104,3 µs</strong>.</p>
+  <p>• <strong>Calcul d'erreur relative (Exemple avec 104,2 µs mesuré) :</strong></p>
+  <div class="formula-box">
+    <i>Écart</i> (%) = 
+    <span class="frac">
+      <span class="num">| 104,20 − 104,17 |</span>
+      <span class="den">104,17</span>
+    </span>
+    × 100 = <strong>0,03 %</strong>
+  </div>
+  <p><strong>Conclusion technique :</strong> L'erreur est largement inférieure au seuil limite de <strong>±2 %</strong> toléré par les oscillateurs UART asynchrones. La synchronisation sur le bit de Start ne risque donc aucun décalage d'échantillonnage sur les 8 bits de données.</p>
+</div>
+
+<div class="teacher-answer">
+  <div class="teacher-answer-title">✅ Question 1.3 : Mesure analogique Scope (Scope 1+) & Tolérance LVTTL 3,3V</div>
+  <p>• <strong>Niveau haut V<sub>OH</sub> mesuré :</strong> <code>3,28 V</code> à <code>3,32 V</code>.</p>
+  <p>• <strong>Temps de montée t<sub>r</sub> (10% &rarr; 90%) :</strong> ~18 ns à 35 ns (selon la capacité parasite du câble Grove et de la sonde MTE).</p>
+  <p>• <strong>Conformité :</strong> Parfaitement conforme aux spécifications LVTTL 3,3V du microcontrôleur RP2350 ($V_{IH\_min} = 2,0\ \text{V}$ et $V_{OH\_min} = 2,4\ \text{V}$). Aucun dépassement excessif (overshoot) susceptible d'endommager les diodes de clamping des broches GPIO.</p>
+</div>
+
+<hr />
+
+<!-- ========================================================================= -->
+<!-- CORRIGE PARTIE 2 : PILE SPP & BUFFER CIRCULAIRE NON BLOQUANT              -->
+<!-- ========================================================================= -->
+<h2>Corrigé Partie 2 : Profil SPP, I²C &amp; Buffer Circulaire</h2>
+
+<div class="teacher-answer">
+  <div class="teacher-answer-title">✅ Approfondissement : Pile SPP / RFCOMM / L2CAP & Buffer Circulaire</div>
+  <p><strong>1. Pourquoi cette pile protocolaire ?</strong><br>
+  Le profil SPP crée un canal de télécommunication série au-dessus des couches radio. <strong>L2CAP</strong> découpe les blocs et gère la qualité de service, tandis que <strong>RFCOMM</strong> fournit le flux d'octets avec émulation de ports de communication (signaux virtuels RX, TX, ACK). Les PC sous Windows voient un port <code>COMx</code> sortant classique, utilisable directement avec n'importe quel logiciel de terminal série.</p>
+
+  <p><strong>2. Code C++ de réception non-bloquante avec Buffer Circulaire (Ring Buffer FIFO) :</strong></p>
+  <pre><code>#include &lt;Wire.h&gt;
+#include &lt;Adafruit_GFX.h&gt;
+#include &lt;Adafruit_SSD1306.h&gt;
+
+#define SCREEN_WIDTH 128
+#define SCREEN_HEIGHT 64
+Adafruit_SSD1306 display(SCREEN_WIDTH, SCREEN_HEIGHT, &Wire, -1);
+
+#define BT_SERIAL Serial2
+#define RING_BUF_SIZE 128
+
+// Tampon circulaire
+uint8_t ringBuffer[RING_BUF_SIZE];
+volatile uint8_t head = 0;
+uint8_t tail = 0;
+
+void setup() {
+  Serial.begin(115200);
+  
+  BT_SERIAL.setTX(4);
+  BT_SERIAL.setRX(5);
+  BT_SERIAL.begin(9600);
+
+  Wire.setSDA(8);
+  Wire.setSCL(9);
+  Wire.begin();
+
+  display.begin(SSD1306_SWITCHCAPVCC, 0x3C);
+  display.clearDisplay();
+  display.setTextSize(1);
+  display.setTextColor(SSD1306_WHITE);
+  display.setCursor(0, 0);
+  display.println(F("PUPITRE BT PRET"));
+  display.display();
+}
+
+void loop() {
+  // 1. Acquisition en arrière-plan sans bloquer
+  while (BT_SERIAL.available() > 0) {
+    uint8_t c = BT_SERIAL.read();
+    uint8_t nextHead = (head + 1) % RING_BUF_SIZE;
+    if (nextHead != tail) { // Évite l'écrasement en cas de saturation
+      ringBuffer[head] = c;
+      head = nextHead;
+    }
+  }
+
+  // 2. Traitement des données prêtes dans le tampon
+  if (head != tail) {
+    char msg[64];
+    uint8_t idx = 0;
+    while (head != tail && idx < 63) {
+      char c = (char)ringBuffer[tail];
+      tail = (tail + 1) % RING_BUF_SIZE;
+      if (c == '\n' || c == '\r') break;
+      msg[idx++] = c;
+    }
+    msg[idx] = '\0';
+
+    if (idx > 0) {
+      // Affichage OLED
+      display.clearDisplay();
+      display.setCursor(0, 0);
+      display.println(F("MSG RECU :"));
+      display.setCursor(0, 20);
+      display.println(msg);
+      display.display();
+
+      // Envoi de l'accusé de réception (ACK)
+      BT_SERIAL.print(F("ACK: "));
+      BT_SERIAL.println(msg);
+    }
+  }
+}</code></pre>
+</div>
+
+<div class="teacher-answer">
+  <div class="teacher-answer-title">✅ Question 2.1 : Décodage I²C &amp; Fréquence d'horloge SCL</div>
+  <p>• <strong>Fréquence SCL mesurée :</strong> <code>100 kHz</code> (période $T_{SCL} = 10\ \mu\text{s}$).</p>
+  <p>• <strong>Mode de fonctionnement :</strong> <strong>Standard-mode (Sm)</strong>, caractérisé par un débit nominal de 100 kbit/s. La forme des fronts montants présente une allure exponentielle typique liée à la charge RC ($R_{pull-up} \approx 4,7\ \text{k}\Omega$ et capacité parasite des pistes/câbles Grove $\approx 50\ \text{pF}$).</p>
+</div>
+
+<hr />
+
+<!-- ========================================================================= -->
+<!-- CORRIGE PARTIE 3 : CLAVIER SERIE UART0 & ACCELEROMETRE I2C                -->
+<!-- ========================================================================= -->
+<h2>Corrigé Partie 3 : Clavier Série (UART0), Matrice &amp; Accéléromètre 3 Axes</h2>
+
+<div class="teacher-answer">
+  <div class="teacher-answer-title">✅ Question 3.1 : Adressage matériel sur bus I²C partagé</div>
+  <p>• <strong>Principe de multiplexage par adresse :</strong><br>
+  Sur le bus I²C partagé, les lignes physiques SDA et SCL sont communes à tous les périphériques. Le maître (Pico 2 W) débute chaque transaction par une <strong>condition de START</strong> suivie d'un <strong>octet d'adresse (7 bits d'adresse + 1 bit R/W)</strong>. Seul le périphérique dont l'adresse interne correspond génère un accusé de réception (ACK) en forçant la ligne SDA au niveau bas au 9<sup>e</sup> coup d'horloge SCL. Tous les autres circuits restent en haute impédance.</p>
+  <p>• <strong>Adresses physiques relevées lors du scan I²C :</strong></p>
+  <ul>
+    <li><code>0x3C</code> : Afficheur graphique OLED SSD1306.</li>
+    <li><code>0x53</code> : Capteur d'accélération 3 axes numérique (ADXL345 / LIS3DHTR).</li>
+    <li><code>0x70</code> : Matrice de LED 8x8 (contrôleur Holtek HT16K33).</li>
+  </ul>
+  <p>• <strong>Gestion conjointe du Clavier Série sur UART0 :</strong><br>
+  Le clavier numérique série émet ses caractères en asynchrone sur <strong>UART0 (GP1/RX Pico)</strong> à 9600 bauds. Il est lu indépendamment via <strong><code>Serial1</code></strong> sans aucune collision possible avec le bus I²C ni avec le Bluetooth (sur UART1/<code>Serial2</code>).</p>
+</div>
+
+<hr />
+
+<!-- ========================================================================= -->
+<!-- CORRIGE PARTIE 4 : FSM & CALCUL DU CHECKSUM XOR                           -->
+<!-- ========================================================================= -->
+<h2>Corrigé Partie 4 : Machine à États Finis (FSM) &amp; Checksum XOR</h2>
+
+<div class="teacher-answer">
+  <div class="teacher-answer-title">✅ Question 4.1 : Démonstration mathématique du Checksum XOR (LRC)</div>
+  <p>Trame à valider : <code>ID=0x01</code>, <code>CMD=0x20</code>, <code>LEN=0x01</code>, <code>DATA=0x41 ('A')</code>.</p>
+  <p>Calcul binaire étape par étape bit à bit (OU Exclusif : $0 \oplus 0 = 0$, $1 \oplus 1 = 0$, $0 \oplus 1 = 1$) :</p>
+  <pre><code>  Octet 1 (ID)   : 0000 0001 (0x01)
+^ Octet 2 (CMD)  : 0010 0000 (0x20)
+------------------------------------
+= Résultat int.1 : 0010 0001 (0x21)
+
+^ Octet 3 (LEN)  : 0000 0001 (0x01)
+------------------------------------
+= Résultat int.2 : 0010 0000 (0x20)
+
+^ Octet 4 (DATA) : 0100 0001 (0x41)
+------------------------------------
+= Checksum final : 0110 0001 (0x61 = caractère ASCII 'a')</code></pre>
+  <p>Le Checksum attendu est donc <strong><code>0x61</code></strong> (valeur décimale 97).</p>
+
+  <p><strong>Code complet de l'automate FSM et du contrôle d'intégrité :</strong></p>
+  <pre><code>uint8_t calculerChecksum(const uint8_t* buffer, uint8_t longueur) {
+  uint8_t ck = 0x00;
+  for (uint8_t i = 0; i < longueur; i++) {
+    ck ^= buffer[i];
+  }
+  return ck;
+}
+
+enum FSM_State { WAIT_START, READ_HEADER, READ_PAYLOAD, VERIF_CHECKSUM };
+FSM_State etatFSM = WAIT_START;
+
+uint8_t rxBuffer[32];
+uint8_t rxIndex = 0;
+uint8_t payloadLen = 0;
+uint8_t checksumRecu = 0;
+
+void traiterOctet(uint8_t c) {
+  switch (etatFSM) {
+    case WAIT_START:
+      if (c == '$') {
+        rxIndex = 0;
+        etatFSM = READ_HEADER;
+      }
+      break;
+
+    case READ_HEADER:
+      rxBuffer[rxIndex++] = c;
+      if (rxIndex == 3) { // ID, CMD, LEN
+        payloadLen = rxBuffer[2];
+        etatFSM = (payloadLen > 0) ? READ_PAYLOAD : VERIF_CHECKSUM;
+      }
+      break;
+
+    case READ_PAYLOAD:
+      rxBuffer[rxIndex++] = c;
+      if (rxIndex == 3 + payloadLen) {
+        etatFSM = VERIF_CHECKSUM;
+      }
+      break;
+
+    case VERIF_CHECKSUM:
+      if (rxIndex == 3 + payloadLen) {
+        checksumRecu = c;
+        rxIndex++;
+      } else if (c == '#') { // Délimiteur de fin reçu
+        uint8_t ckCalcule = calculerChecksum(rxBuffer, 3 + payloadLen);
+        if (ckCalcule == checksumRecu) {
+          // Trame intègre : exécution de la commande
+          BT_SERIAL.println(F("ACK_FRAME_VALID"));
+          executerCommande(rxBuffer[1], &rxBuffer[3], payloadLen);
+        } else {
+          // Erreur d'intégrité détectée
+          BT_SERIAL.println(F("NACK_CHECKSUM_ERROR"));
+        }
+        etatFSM = WAIT_START;
+      } else {
+        etatFSM = WAIT_START; // Erreur de trame
+      }
+      break;
+  }
+}</code></pre>
+</div>
+
+<hr />
+
+<!-- ========================================================================= -->
+<!-- CORRIGE PARTIE 5 : DEBIT 10 000 OCTETS & BLUETOOTH INTERNE                -->
+<!-- ========================================================================= -->
+<h2>Corrigé Partie 5 : Débit sur 10 000 octets &amp; Bluetooth Interne CYW43439</h2>
+
+<div class="teacher-answer">
+  <div class="teacher-answer-title">✅ Mesure de Débit sur 10 000 octets &amp; Rendement utile</div>
+  <p>• <strong>Calcul de la durée théorique de transmission :</strong><br>
+  À 9600 bauds avec le format 8N1 (1 bit start, 8 bits data, 1 bit stop = 10 bits transmis par octet utile) :</p>
+  <div class="formula-box">
+    <i>Durée</i><sub>th</sub> = 
+    <span class="frac"><span class="num">10 000 octets × 10 bits</span><span class="den">9600 bauds</span></span>
+    = <strong>10,417 s</strong> = 10 417 ms
+  </div>
+  <p>• <strong>Débit utile théorique :</strong></p>
+  <div class="formula-box">
+    <i>D</i><sub>utile_th</sub> = 
+    <span class="frac"><span class="num">10 000 × 8 bits</span><span class="den">10,417 s</span></span>
+    = 7680 bit/s = <strong>7,68 kbit/s</strong>
+  </div>
+  <p>• <strong>Rendement utile du protocole physique :</strong></p>
+  <div class="formula-box">
+    <i>Rendement</i> = 
+    <span class="frac"><span class="num">8 bits utiles</span><span class="den">10 bits physiques</span></span>
+    = <strong>80 %</strong>
+  </div>
+  <p><strong>Note d'évaluation :</strong> Les étudiants relèvent en pratique une durée d'environ 10,5 à 10,8 secondes, due à la légère gigue logicielle et aux accusés radio Bluetooth.</p>
+</div>
+
+<div class="teacher-answer">
+  <div class="teacher-answer-title">✅ Question 5.1 : Comparatif Bluetooth Externe UART vs Interne CYW43439</div>
+  <p><strong>Synthèse comparative :</strong></p>
+  <ul>
+    <li><strong>Avantages du module externe Grove UART :</strong>
+      <ul>
+        <li>Décharge complète du processeur hôte (la pile radio Bluetooth tourne sur le microcontrôleur dédié du module).</li>
+        <li>Empreinte mémoire Flash/RAM négligeable sur le Pico (économie de plus de 60 Ko de RAM).</li>
+        <li>Simplicité de développement (manipulation de simples flux d'octets UART).</li>
+        <li>Certification radio simplifiée (module pré-certifié CE/FCC).</li>
+      </ul>
+    </li>
+    <li><strong>Avantages du Bluetooth interne CYW43439 :</strong>
+      <ul>
+        <li>Coût unitaire (BOM) nettement inférieur : aucun circuit imprimé additionnel requis.</li>
+        <li>Compacité physique optimale pour l'intégration dans un boîtier étanche scellé.</li>
+        <li>Débits radio bien plus élevés (jusqu'à 1 à 2 Mbit/s en BLE 5.2).</li>
+      </ul>
+    </li>
+  </ul>
+  <p><strong>Préconisation industrielle :</strong> Pour un capteur autonome ultra-basse consommation sur batterie, la solution <strong>interne BLE (CYW43439)</strong> est préconisée car elle permet de basculer en mode veille profonde (Deep Sleep) entre deux émissions d'annonces (Advertising), alors qu'un module externe sous tension consomme en continu 8 à 15 mA.</p>
+</div>
+
+<div class="teacher-answer">
+  <div class="teacher-answer-title">✅ Question 5.2 : Synthèse Cybersécurité (Bluetooth SPP vs TLS)</div>
+  <p><strong>1. Deux vulnérabilités majeures de la solution Bluetooth SPP déployée :</strong></p>
+  <ol>
+    <li><strong>Faiblesse du PIN fixe à 4 chiffres (Authentification faible) :</strong> L'espace des clés est restreint à $10^4 = 10\ 000$ combinaisons possibles. Une attaque par force brute ou écoute passive de l'échange de clés (E0 stream cipher) permet de casser le secret en quelques secondes.</li>
+    <li><strong>Absence de chiffrement et d'authentification applicative :</strong> Les octets circulent en clair au-dessus du canal RFCOMM. Contrairement à TLS qui authentifie le serveur via des certificats X.509 et chiffre les données en AES-GCM avec Perfect Forward Secrecy, le lien SPP est vulnérable aux attaques de type Man-in-the-Middle (MitM) et aux écoutes clandestines passives.</li>
+  </ol>
+  <p><strong>2. Deux mesures de remédiation conformes ANSSI :</strong></p>
+  <ol>
+    <li>Activer le mode <strong>Bluetooth Secure Connections (SSP)</strong> avec association par code numérique dynamique (Numeric Comparison) ou clé pré-partagée longue (PSK &ge; 128 bits).</li>
+    <li>Sur-chiffrer la charge utile applicative avec un protocole de chiffrement authentifié moderne (ex : <strong>ChaCha20-Poly1305</strong> ou <strong>AES-128-CCM</strong>) avec clés éphémères négociées par échange Diffie-Hellman sur courbes elliptiques (ECDH).</li>
+  </ol>
+</div>
+
+<hr />
+
+<!-- ========================================================================= -->
+<!-- BAREME DETAILLE /20                                                       -->
+<!-- ========================================================================= -->
+<h2>Grille Sommative d'Évaluation Enseignant (Barème /20)</h2>
+
+<table>
+  <thead>
+    <tr>
+      <th>Compétence</th>
+      <th>Critères d'Évaluation Détaillés</th>
+      <th>Barème</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td><strong>C07 - Réalisation</strong></td>
+      <td>
+        • Exécution autonome de la procédure Nuke Universal (1 pt)<br>
+        • Câblage soigné du Shield Pico, Clavier Série (UART0), Bluetooth (UART1) et Hub I²C (2 pts)<br>
+        • Raccordement correct des sondes Digilent AD3 avec masse commune (1 pt)
+      </td>
+      <td>/4 pts</td>
+    </tr>
+    <tr>
+      <td><strong>C04 - Analyse</strong></td>
+      <td>
+        • Explication rigoureuse du code passerelle double série (1,5 pt)<br>
+        • Maîtrise des couches SPP/RFCOMM/L2CAP et du rôle des commandes AT (1,5 pt)<br>
+        • Décodage et calcul d'écart relatif du temps bit UART sous WaveForms (1 pt)
+      </td>
+      <td>/4 pts</td>
+    </tr>
+    <tr>
+      <td><strong>C05 - Conception</strong></td>
+      <td>
+        • Implémentation fonctionnelle du buffer circulaire non-bloquant (2 pts)<br>
+        • Intégration conjointe du Clavier Série, de l'OLED, de la Matrice et de l'Accéléromètre I²C (2 pts)<br>
+        • Implémentation correcte de la FSM et du calcul de Checksum XOR (2 pts)
+      </td>
+      <td>/6 pts</td>
+    </tr>
+    <tr>
+      <td><strong>C06 - Validation</strong></td>
+      <td>
+        • Mesure expérimentale du débit effectif sur 10 000 octets et calcul de rendement (1,5 pt)<br>
+        • Analyse comparative technique Bluetooth externe vs interne CYW43439 (1,5 pt)<br>
+        • Analyse critique de cybersécurité et propositions de remédiation ANSSI (1 pt)
+      </td>
+      <td>/4 pts</td>
+    </tr>
+    <tr>
+      <td><strong>C01 - Communication</strong></td>
+      <td>
+        • Clarté du compte-rendu, rigueur des schémas et vocabulaire technique normalisé
+      </td>
+      <td>/2 pts</td>
+    </tr>
+  </tbody>
+</table>
+
+</body>
+</html>
