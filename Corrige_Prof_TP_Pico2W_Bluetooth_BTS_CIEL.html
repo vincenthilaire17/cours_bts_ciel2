@@ -653,8 +653,8 @@ void traiterOctet(uint8_t c) {
     <span class="frac"><span class="num">8 bits utiles</span><span class="den">10 bits physiques</span></span>
     = <strong>80 %</strong>
   </div>
-  <p><strong>Note d'évaluation &amp; Aspects pratiques de transfert sous Windows :</strong> Les étudiants relèvent en pratique une durée d'environ 10,5 à 10,8 secondes, due à la légère gigue logicielle et aux accusés radio Bluetooth.<br>
-  <em>Rappel technique :</em> Le port Bluetooth de Windows n'étant pas utilisable en simple écoute sous le moniteur série Arduino IDE, l'émission des 10 000 octets s'effectue soit via l'outil du Store <strong>« Bluetooth RFCOMM Monitor »</strong>, soit nativement par l'assistant Windows <strong>« Envoyer un fichier »</strong> (accessible par clic droit sur l'icône Bluetooth de la barre des tâches).</p>
+  <p><strong>Note d'évaluation &amp; Aspects pratiques sous Windows :</strong> Les étudiants relèvent en pratique une durée d'environ 10,5 à 10,8 secondes, due à la légère gigue logicielle et aux accusés radio Bluetooth.<br>
+  <em>Rappel technique :</em> Pour utiliser le Moniteur Série d'Arduino IDE, le port COM virtuel sortant doit être déclaré dans <em>Paramètres Bluetooth &rarr; Plus de paramètres Bluetooth &rarr; Ports COM</em> (ex : <code>COM8</code>). L'ouverture de ce port dans Arduino IDE ou Tera Term déclenche la liaison RFCOMM. Pour l'envoi du bloc massif de 10 000 octets, les étudiants peuvent utiliser le menu Windows <em>« Envoyer un fichier »</em>, un terminal série (<em>File &rarr; Send file</em>) ou l'application <em>Bluetooth RFCOMM Monitor</em>.</p>
 </div>
 
 <div class="teacher-answer">

@@ -342,6 +342,16 @@
       max-width: 870px;
       margin: 0 auto;
     }
+
+    .img-tutorial {
+      max-width: 100%;
+      height: auto;
+      border: 1px solid #cbd5e1;
+      border-radius: 6px;
+      box-shadow: 0 2px 4px rgba(0,0,0,0.08);
+      margin: 8px 0;
+      display: block;
+    }
   </style>
 </head>
 <body>
@@ -1032,29 +1042,45 @@ void loop() {
   <h4>Travail demandé :</h4>
   <ol>
     <li><strong>Choix et configuration du terminal de supervision :</strong>
-      <div class="callout callout-warning">
-        <div class="callout-title">⚠️ Pourquoi le Bluetooth du PC ne peut pas être lu directement dans Arduino IDE ?</div>
-        <p>Lorsque Windows s'appaire avec un périphérique Bluetooth SPP, le système crée une liaison radio gérée par la pile Bluetooth propriétaire de Windows. Contrairement aux liaisons série USB physiques (comme le câble relié au Pico 2 W) qui fournissent un port COM matériel permanent :</p>
-        <ul>
-          <li><strong>Gestion dynamique du port COM :</strong> Le port COM virtuel Bluetooth n'est instancié et ouvert qu'à la demande par un canal RFCOMM actif. Le Moniteur Série de l'<strong>Arduino IDE</strong> n'initie pas la séquence de synchronisation RFCOMM requise par le pilote Windows et refuse souvent d'ouvrir le port ou n'affiche aucun flux entrant.</li>
-          <li><strong>Deux solutions opérationnelles sous Windows pour le TP :</strong>
-            <ol>
-              <li><strong>Solution Recommandée (Terminal Série RFCOMM dédié) :</strong> Installez et lancez l'application <strong>« Bluetooth RFCOMM Monitor »</strong> (ou <em>Bluetooth Analyzer / BTRFComm / Bluetooth Serial Port</em>) disponible gratuitement sur le <strong>Microsoft Store</strong>. Cette application se connecte nativement à l'API RFCOMM de Windows, détecte directement votre périphérique Bluetooth sans conflit de port COM, et permet d'envoyer/recevoir des flux ASCII en temps réel.</li>
-              <li><strong>Solution alternative pour le transfert de fichiers :</strong> Vous pouvez également utiliser le menu contextuel natif de Windows (icône Bluetooth dans la barre des tâches &rarr; <em>« Envoyer un fichier »</em>) pour transmettre des flux binaires ou des fichiers complets directement vers le périphérique appairé.</li>
-            </ol>
+      
+      <div class="callout callout-info">
+        <div class="callout-title">📡 Procédure Officielle : Associer un port COM virtuel Bluetooth sous Windows pour Arduino IDE</div>
+        <p>Pour pouvoir dialoguer en Bluetooth avec le Raspberry Pi Pico 2 W directement depuis le <strong>Moniteur Série d'Arduino IDE</strong> (ou un terminal série classique), Windows doit affecter un port série virtuel (COM) permanent lié au profil SPP de votre module. Suivez scrupuleusement les 4 étapes illustrées ci-dessous :</p>
+        
+        <ol style="margin-top: 10px;">
+          <li><strong>Étape 1 : Accéder aux périphériques Bluetooth de Windows</strong><br>
+            Ouvrez les <strong>Paramètres Windows</strong> &rarr; cliquez sur <strong>Bluetooth et appareils</strong> &rarr; puis sur <strong>Périphériques</strong>.<br>
+            <img src="win_bt_step1_peripheriques.png" alt="Bluetooth et appareils > Périphériques" class="img-tutorial" style="max-height: 48px;" />
+            <br>Si votre module <code>CIEL_PUPITRE_X</code> n'est pas encore appairé, cliquez sur <em>Ajouter un appareil</em> &rarr; <em>Bluetooth</em> et entrez le code PIN (<code>1234</code>).
           </li>
-        </ul>
+
+          <li style="margin-top: 12px;"><strong>Étape 2 : Ouvrir les paramètres avancés Bluetooth</strong><br>
+            Faites défiler la page vers le bas jusqu'à la section <em>Paramètres associés</em>, puis cliquez sur le lien <strong>« Plus de paramètres Bluetooth »</strong> :<br>
+            <img src="win_bt_step2_plus_parametres.png" alt="Plus de paramètres Bluetooth" class="img-tutorial" style="max-height: 48px;" />
+          </li>
+
+          <li style="margin-top: 12px;"><strong>Étape 3 : Identifier et configurer le port COM attribué</strong><br>
+            Dans la fenêtre de dialogue qui s'ouvre, basculez sur l'onglet <strong>« Ports COM »</strong>.<br>
+            Windows affiche la liste des ports série associés à vos liaisons Bluetooth (par exemple <strong>COM8</strong>) :<br>
+            <img src="win_bt_step3_ports_com.png" alt="Onglet Ports COM Bluetooth Windows - COM8" class="img-tutorial" style="max-height: 180px;" />
+            <br><em>Note :</em> Si aucun port n'est listé automatiquement pour votre pupitre, cliquez sur <strong>Ajouter...</strong> &rarr; sélectionnez <em>Sortant</em> &rarr; choisissez votre périphérique Bluetooth <code>CIEL_PUPITRE_X</code>. Windows lui affectera immédiatement un numéro de port (ex : <code>COM8</code>).
+          </li>
+
+          <li style="margin-top: 12px;"><strong>Étape 4 : Ouvrir le port Bluetooth dans Arduino IDE</strong><br>
+            Dans <strong>Arduino IDE</strong> (v2.x ou v1.8.x) :
+            <ul>
+              <li>Dans le sélecteur de cible/port en haut de l'IDE, sélectionnez la carte <em>'Raspberry Pi Pico 2W'</em> et associez-la au port COM Bluetooth identifié (ex : <strong>COM8</strong>).</li>
+              <li>Ouvrez l'onglet <strong>Serial Monitor</strong> (Moniteur Série).</li>
+              <li>Réglez la vitesse sur <strong>115200 baud</strong> (ou <strong>9600 baud</strong> selon la configuration) et le terminateur sur <strong>Both NL & CR</strong>.</li>
+            </ul>
+            <img src="win_bt_step4_arduino_ide.png" alt="Moniteur Série Arduino IDE sur COM8" class="img-tutorial" style="max-height: 70px;" />
+            <p>Dès que le moniteur série s'ouvre sur ce port, Windows déclenche la connexion RFCOMM avec le Pico 2 W : la LED du module Bluetooth passe au bleu fixe, confirmant l'ouverture du canal sans fil !</p>
+          </li>
+        </ol>
       </div>
 
       <ul>
-        <li><strong>Option A (PC de la salle de TP) :</strong> 
-          <ol>
-            <li>Activez le Bluetooth sous Windows (<em>Paramètres &rarr; Périphériques Bluetooth &rarr; Ajouter un appareil</em>).</li>
-            <li>Sélectionnez votre module <code>CIEL_PUPITRE_X</code> et saisissez le code PIN (<code>1234</code>).</li>
-            <li>Lancez l'application <strong>Bluetooth RFCOMM Monitor</strong> depuis le menu Démarrer / Microsoft Store. Connectez-vous au module : la LED d'état passe au bleu fixe.</li>
-            <li>Vous disposez désormais d'une console d'émission/réception série temps réel pour dialoguer avec votre pupitre.</li>
-          </ol>
-        </li>
+        <li><strong>Option A (PC de la salle de TP - Recommandé) :</strong> Suivez la procédure ci-dessus pour associer le port COM Bluetooth sous Windows et dialoguer directement depuis le Moniteur Série d'Arduino IDE (ou via l'application <em>Bluetooth RFCOMM Monitor</em> du Microsoft Store si vous préférez un outil dédié).</li>
         <li><strong>Option B (Smartphone Android / iOS) :</strong> Ouvrez l'application <em>Serial Bluetooth Terminal</em>, connectez-vous au module et vérifiez le passage de la LED du module au mode fixe.</li>
       </ul>
     </li>
@@ -1672,7 +1698,7 @@ void loop() {
 }</code></pre>
       </li>
       <li><strong>Transmission du fichier depuis l'ordinateur :</strong>
-        <p>Le moniteur série de l'Arduino IDE ne permet pas d'émettre des fichiers bruts ni de se connecter directement au port Bluetooth. Utilisez l'une des méthodes suivantes :</p>
+        <p>Pour transférer le fichier test de 10 000 octets vers le Pico 2 W via la liaison Bluetooth, utilisez l'une des méthodes opérationnelles suivantes :</p>
         <ul>
           <li><strong>Méthode 1 (Menu Natif Windows « Envoyer un fichier ») :</strong>
             <ol>
@@ -1682,10 +1708,13 @@ void loop() {
               <li>Windows négocie le canal OBEX / RFCOMM et transfère le bloc complet en continu vers le Pico 2 W.</li>
             </ol>
           </li>
-          <li><strong>Méthode 2 (Application Microsoft Store « Bluetooth RFCOMM Monitor ») :</strong>
-            <p>Ouvrez l'application, connectez-vous au module appairé, utilisez la fonction <em>Send File / Send Text Block</em> pour envoyer d'un seul coup les 10 000 octets.</p>
+          <li><strong>Méthode 2 (Via le port COM virtuel sortant sous Tera Term / CoolTerm) :</strong>
+            <p>Ouvrez le port COM Bluetooth identifié à la Partie 2 (ex : <strong>COM8</strong>) à 9600 bauds. Dans le menu <em>File &rarr; Send File...</em>, sélectionnez <code>test_10k.txt</code> pour transmettre le bloc complet.</p>
           </li>
-          <li><strong>Méthode 3 (Smartphone avec Serial Bluetooth Terminal) :</strong> Menu <em>Send &rarr; File</em> ou macro répétant un bloc de 500 octets.</li>
+          <li><strong>Méthode 3 (Application Microsoft Store « Bluetooth RFCOMM Monitor ») :</strong>
+            <p>Ouvrez l'application, connectez-vous au module appairé, utilisez la fonction <em>Send File / Send Text Block</em> pour injecter les 10 000 octets.</p>
+          </li>
+          <li><strong>Méthode 4 (Smartphone avec Serial Bluetooth Terminal) :</strong> Menu <em>Send &rarr; File</em> ou macro répétant un bloc de 500 octets.</li>
         </ul>
       </li>
     </ol>
