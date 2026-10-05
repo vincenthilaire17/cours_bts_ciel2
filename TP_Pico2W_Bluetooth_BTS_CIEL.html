@@ -1132,6 +1132,127 @@ DEBUT BOUCLE_PRINCIPALE()
     SurveillerAccelerometre()        // Lecture de l'accéléromètre sur bus I2C
 FIN BOUCLE_PRINCIPALE</code></pre>
 
+  <h4>Squelette de code C++ à compléter par les étudiants (Buffer Circulaire) :</h4>
+  <p>En vous aidant du pseudo-code ci-dessus, complétez les portions manquantes signalées par <code>/* A COMPLETER */</code> dans le programme C++ ci-dessous :</p>
+
+  <pre><code>/* =========================================================================
+   BTS CIEL - Réception Série Non-Bloquante par Tampon Circulaire (FIFO)
+   Matériel : Raspberry Pi Pico 2 W + Grove OLED SSD1306 (0x3C) + Bluetooth (UART1)
+   ========================================================================= */
+
+#include &lt;Wire.h&gt;
+#include &lt;Adafruit_GFX.h&gt;
+#include &lt;Adafruit_SSD1306.h&gt;
+
+#define SCREEN_WIDTH 128
+#define SCREEN_HEIGHT 64
+Adafruit_SSD1306 display(SCREEN_WIDTH, SCREEN_HEIGHT, &amp;Wire, -1);
+
+#define BT_SERIAL Serial2
+#define RING_BUF_SIZE 128
+
+// Tampon circulaire
+uint8_t ringBuffer[RING_BUF_SIZE];
+volatile uint8_t head = 0;  // Pointeur d'écriture (avancé par le producteur)
+uint8_t tail = 0;           // Pointeur de lecture (avancé par le consommateur)
+
+// --- MODULE 1 : Enregistrement dans le tampon (Producteur) ---
+void enregistrerOctetsBluetooth() {
+  while (BT_SERIAL.available() &gt; 0) {
+    uint8_t c = BT_SERIAL.read();
+    
+    // TODO 1 : Calculer l'index suivant de head avec l'arithmétique modulaire
+    uint8_t nextHead = /* A COMPLETER : (head + 1) ... */ ;
+
+    // TODO 2 : Vérifier que le tampon n'est pas plein (nextHead != tail)
+    if (/* A COMPLETER */) {
+      ringBuffer[head] = c;
+      head = nextHead;
+    } else {
+      Serial.println(F("[AVERTISSEMENT] Debordement du tampon circulaire !"));
+    }
+  }
+}
+
+// --- FONCTION UTILITAIRE : Recherche non-destructive du délimiteur ---
+bool messageCompletDisponible() {
+  uint8_t curseur = tail;
+  while (curseur != head) {
+    if (ringBuffer[curseur] == '\n' || ringBuffer[curseur] == '\r') {
+      return true;
+    }
+    curseur = (curseur + 1) % RING_BUF_SIZE;
+  }
+  return false;
+}
+
+// --- MODULE 2 : Dépilement et Traitement du message (Consommateur) ---
+void traiterMessageRecu() {
+  // Si aucun message complet n'est encore arrivé, on quitte sans attendre
+  if (!messageCompletDisponible()) return;
+
+  char message[64];
+  uint8_t idx = 0;
+
+  // Dépilement des caractères du message
+  while (tail != head &amp;&amp; idx &lt; 63) {
+    char c = (char)ringBuffer[tail];
+    
+    // TODO 3 : Avancer le pointeur tail avec l'arithmétique modulaire
+    tail = /* A COMPLETER : (tail + 1) ... */ ;
+
+    if (c == '\n' || c == '\r') break;
+    message[idx++] = c;
+  }
+  message[idx] = '\0'; // Délimiteur de fin de chaîne C
+
+  if (idx &gt; 0) {
+    // TODO 4 : Afficher le message extrait sur l'écran OLED
+    display.clearDisplay();
+    display.setCursor(0, 0);
+    display.println(F("MSG RECU :"));
+    display.setCursor(0, 20);
+    /* A COMPLETER : display.println(...); */
+    /* A COMPLETER : display.display(); */
+
+    // TODO 5 : Émettre l'accusé de réception vers le terminal Bluetooth
+    /* A COMPLETER : BT_SERIAL.print(...); */
+    /* A COMPLETER : BT_SERIAL.println(...); */
+
+    // Écho sur la console USB de débogage du PC
+    Serial.print(F("[LOG] Message traite : "));
+    Serial.println(message);
+  }
+}
+
+void setup() {
+  Serial.begin(115200);
+
+  // Configuration UART1 Bluetooth (GP4=TX, GP5=RX)
+  BT_SERIAL.setTX(4);
+  BT_SERIAL.setRX(5);
+  BT_SERIAL.begin(9600);
+
+  // Configuration Bus I2C (GP8=SDA, GP9=SCL)
+  Wire.setSDA(8);
+  Wire.setSCL(9);
+  Wire.begin();
+
+  // Initialisation écran OLED SSD1306
+  display.begin(SSD1306_SWITCHCAPVCC, 0x3C);
+  display.clearDisplay();
+  display.setTextSize(1);
+  display.setTextColor(SSD1306_WHITE);
+  display.setCursor(0, 0);
+  display.println(F("PUPITRE BT PRET"));
+  display.display();
+}
+
+void loop() {
+  enregistrerOctetsBluetooth(); // Remplissage rapide
+  traiterMessageRecu();          // Dépilement et exécution non-bloquante
+}</code></pre>
+
   <!-- FIGURE 3 : DECODAGE I2C SOUS WAVEFORMS -->
   <div class="figure-box">
     <div class="svg-container">
