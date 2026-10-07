@@ -875,7 +875,7 @@ void loop() {
   <ol>
     <li><strong>Étape 1 : Ouvrir l'outil Logic Analyzer dans WaveForms</strong><br>
       Connectez l'Analog Discovery 3 au port USB du PC et lancez le logiciel <strong>Digilent WaveForms</strong>. Dans la fenêtre d'accueil (Welcome), cliquez sur l'icône <strong>Logic</strong> (Logic Analyzer) :<br>
-      <img src="wf_step1_logic_icon.png" alt="Icône Logic Analyzer WaveForms" class="img-tutorial" style="max-height: 52px;" />
+      <img src="images/wf_step1_logic_icon.png" alt="Icône Logic Analyzer WaveForms" class="img-tutorial" style="max-height: 52px;" />
     </li>
     <li style="margin-top: 14px;"><strong>Étape 2 : Ajouter deux décodeurs de protocole UART (Full-Duplex TX et RX)</strong><br>
       Dans l'analyseur logique de WaveForms, un décodeur UART analyse <strong>un seul signal physique</strong> (la ligne <code>Data</code>). Pour observer simultanément l'envoi de la commande et la réponse du module sur le même chronogramme, il est nécessaire d'instancier <strong>deux décodeurs UART distincts</strong> :<br>
@@ -883,7 +883,7 @@ void loop() {
         <li><strong>Premier bus UART (Émission TX : commande <code>AT</code>) :</strong> Cliquez sur le bouton vert <strong>+ (Add)</strong> &rarr; sélectionnez <strong>UART</strong>. Nommez ce bus <code>UART_TX</code> (ou laissez <code>UART</code>) et affectez la broche <code>Data</code> à <strong><code>DIO 1</code></strong> (reliée à GP4 du Pico).</li>
         <li><strong>Second bus UART (Réception RX : réponse <code>OK</code>) :</strong> Cliquez une nouvelle fois sur <strong>+ (Add)</strong> &rarr; sélectionnez <strong>UART</strong>. Nommez ce second bus <code>UART_RX</code> (ou <code>UART2</code>) et affectez la broche <code>Data</code> à <strong><code>DIO 0</code></strong> (reliée à GP5 du Pico).</li>
       </ul>
-      <img src="wf_step2_add_uart.png" alt="Menu d'ajout WaveForms : + > UART" class="img-tutorial" style="max-height: 140px;" />
+      <img src="images/wf_step2_add_uart.png" alt="Menu d'ajout WaveForms : + > UART" class="img-tutorial" style="max-height: 140px;" />
     </li>
     <li style="margin-top: 14px;"><strong>Étape 3 : Configurer les paramètres série sur les deux décodeurs</strong><br>
       Vérifiez les paramètres pour chacun des deux décodeurs UART créés :
@@ -898,7 +898,7 @@ void loop() {
         <li>Dans la colonne <strong>T</strong> (Trigger) en face de <code>DIO 1</code> (TX), cliquez sur le <strong><code>X</code></strong> et sélectionnez l'option <strong><code>⮧ Fall</code></strong> (Front descendant / Falling Edge).</li>
         <li><strong style="color: #b91c1c;">Règle essentielle :</strong> Laissez impérativement la colonne <strong>T</strong> de <code>DIO 0</code> (RX) sur <strong><code>X</code></strong> (<em>Ignore</em>). Si vous activez aussi un déclencheur sur RX, l'analyseur risque de se synchroniser sur la réponse, ce qui ferait disparaître la commande <code>AT</code> hors de la fenêtre temporelle !</li>
       </ul>
-      <img src="wf_step3_trigger_falling_edge.png" alt="Réglage Trigger sur colonne T : Fall (Front descendant)" class="img-tutorial" style="max-height: 165px;" />
+      <img src="images/wf_step3_trigger_falling_edge.png" alt="Réglage Trigger sur colonne T : Fall (Front descendant)" class="img-tutorial" style="max-height: 165px;" />
       <div style="background-color: #f8fafc; border-left: 3px solid #0284c7; padding: 6px 12px; margin-top: 8px; border-radius: 0 4px 4px 0; font-size: 0.9em; color: #334155;">
         <strong>Principe physique :</strong> Au repos, la ligne UART est maintenue à l'état haut (niveau logique 1 / 3,3 V). Dès que le Raspberry Pi Pico transmet une commande (ex. le 'A' de <code>AT</code>), le premier bit envoyé est le <strong>bit de Start</strong>, qui force la ligne à l'état bas (0 V). Le front descendant <strong>⮧ Fall</strong> détecte instantanément cette transition et lance la capture à la microseconde près.
       </div>
@@ -922,7 +922,7 @@ void loop() {
           </ol>
         </li>
       </ul>
-      <img src="wf_step4_interface_complete.png" alt="Interface complète WaveForms Logic Analyzer avec Trigger armé" class="img-tutorial" style="max-height: 180px;" />
+      <img src="images/wf_step4_interface_complete.png" alt="Interface complète WaveForms Logic Analyzer avec Trigger armé" class="img-tutorial" style="max-height: 180px;" />
     </li>
   </ol>
 
@@ -1072,7 +1072,7 @@ void loop() {
     <div style="background-color: #f8fafc; border-left: 3px solid #0284c7; padding: 8px 12px; margin: 8px 0; border-radius: 0 4px 4px 0; font-size: 0.9em; color: #334155;">
       <strong>Astuce WaveForms — Outil Quick Measure &amp; Curseurs :</strong><br>
       Au-dessus de la zone des chronogrammes (en haut à droite), repérez la barre d'outils de mesure :<br>
-      <img src="wf_quick_measure_cursors.png" alt="Outil Quick Measure et Curseurs dans WaveForms Logic" class="img-tutorial" style="max-height: 75px; margin: 6px 0;" />
+      <img src="images/wf_quick_measure_cursors.png" alt="Outil Quick Measure et Curseurs dans WaveForms Logic" class="img-tutorial" style="max-height: 75px; margin: 6px 0;" />
       <ul>
         <li><strong>Mesure rapide (Quick Measure) :</strong> Double-cliquez directement dans la zone du chronogramme (ou activez l'icône <em>Quick Measure</em> surlignée en bleu). Déplacez le pointeur sur la ligne <code>DIO 1</code> : WaveForms s'accroche automatiquement aux fronts logiques et mesure instantanément la largeur de l'impulsion (\(\Delta X\)). Un simple clic gauche permet de verrouiller (<em>lock</em>) la mesure à l'écran.</li>
         <li><strong>Curseurs manuels (X1 / X2) :</strong> Utilisez l'icône <strong><code>|&minus;&minus;|</code></strong> située juste à côté pour poser deux curseurs verticaux <strong>X1</strong> et <strong>X2</strong> délimitant manuellement le début et la fin du bit.</li>
@@ -1264,19 +1264,19 @@ void loop() {
         <ol style="margin-top: 10px;">
           <li><strong>Étape 1 : Accéder aux périphériques Bluetooth de Windows</strong><br>
             Ouvrez les <strong>Paramètres Windows</strong> &rarr; cliquez sur <strong>Bluetooth et appareils</strong> &rarr; puis sur <strong>Périphériques</strong>.<br>
-            <img src="win_bt_step1_peripheriques.png" alt="Bluetooth et appareils > Périphériques" class="img-tutorial" style="max-height: 48px;" />
+            <img src="images/win_bt_step1_peripheriques.png" alt="Bluetooth et appareils > Périphériques" class="img-tutorial" style="max-height: 48px;" />
             <br>Si votre module <code>CIEL_PUPITRE_X</code> n'est pas encore appairé, cliquez sur <em>Ajouter un appareil</em> &rarr; <em>Bluetooth</em> et entrez le code PIN (<code>1234</code>).
           </li>
 
           <li style="margin-top: 12px;"><strong>Étape 2 : Ouvrir les paramètres avancés Bluetooth</strong><br>
             Faites défiler la page vers le bas jusqu'à la section <em>Paramètres associés</em>, puis cliquez sur le lien <strong>« Plus de paramètres Bluetooth »</strong> :<br>
-            <img src="win_bt_step2_plus_parametres.png" alt="Plus de paramètres Bluetooth" class="img-tutorial" style="max-height: 48px;" />
+            <img src="images/win_bt_step2_plus_parametres.png" alt="Plus de paramètres Bluetooth" class="img-tutorial" style="max-height: 48px;" />
           </li>
 
           <li style="margin-top: 12px;"><strong>Étape 3 : Identifier et configurer le port COM attribué</strong><br>
             Dans la fenêtre de dialogue qui s'ouvre, basculez sur l'onglet <strong>« Ports COM »</strong>.<br>
             Windows affiche la liste des ports série associés à vos liaisons Bluetooth (par exemple <strong>COM8</strong>) :<br>
-            <img src="win_bt_step3_ports_com.png" alt="Onglet Ports COM Bluetooth Windows - COM8" class="img-tutorial" style="max-height: 180px;" />
+            <img src="images/win_bt_step3_ports_com.png" alt="Onglet Ports COM Bluetooth Windows - COM8" class="img-tutorial" style="max-height: 180px;" />
             <br><em>Note :</em> Si aucun port n'est listé automatiquement pour votre pupitre, cliquez sur <strong>Ajouter...</strong> &rarr; sélectionnez <em>Sortant</em> &rarr; choisissez votre périphérique Bluetooth <code>CIEL_PUPITRE_X</code>. Windows lui affectera immédiatement un numéro de port (ex : <code>COM8</code>).
           </li>
 
@@ -1287,7 +1287,7 @@ void loop() {
               <li>Ouvrez l'onglet <strong>Serial Monitor</strong> (Moniteur Série).</li>
               <li>Réglez la vitesse sur <strong>115200 baud</strong> (ou <strong>9600 baud</strong> selon la configuration) et le terminateur sur <strong>Both NL & CR</strong>.</li>
             </ul>
-            <img src="win_bt_step4_arduino_ide.png" alt="Moniteur Série Arduino IDE sur COM8" class="img-tutorial" style="max-height: 70px;" />
+            <img src="images/win_bt_step4_arduino_ide.png" alt="Moniteur Série Arduino IDE sur COM8" class="img-tutorial" style="max-height: 70px;" />
             <p>Dès que le moniteur série s'ouvre sur ce port, Windows déclenche la connexion RFCOMM avec le Pico 2 W : la LED du module Bluetooth passe au bleu fixe, confirmant l'ouverture du canal sans fil !</p>
           </li>
         </ol>
