@@ -867,8 +867,8 @@ void loop() {
   <h4>3.2. Guide de mise en route de Digilent WaveForms (Outils Oscilloscope &amp; Logic Analyzer) :</h4>
   <p>L'<strong>Analog Discovery 3</strong> regroupe deux instruments complémentaires indispensables pour qualifier les échanges série :</p>
   <ul>
-    <li><strong>L'Analyseur Logique (outil Logic) :</strong> pour capturer et décoder numériquement les trames UART (niveaux logiques 0 et 1, détection des octets, temps bit \(T_{\text{bit}}\)).</li>
-    <li><strong>L'Oscilloscope Numérique (outil Scope) :</strong> pour mesurer les grandeurs analogiques réelles (niveaux de tension \(V_{\text{OH}}\), intégrité du signal et temps de montée \(t_{\text{r}}\) sur la voie <strong>1+</strong> raccordée à GP4/TX).</li>
+    <li><strong>L'Analyseur Logique (outil Logic) :</strong> pour capturer et décoder numériquement les trames UART (niveaux logiques 0 et 1, détection des octets, temps bit <i>T</i><sub>bit</sub>).</li>
+    <li><strong>L'Oscilloscope Numérique (outil Scope) :</strong> pour mesurer les grandeurs analogiques réelles (niveaux de tension <i>V</i><sub>OH</sub>, intégrité du signal et temps de montée <i>t</i><sub>r</sub> sur la voie <strong>1+</strong> raccordée à GP4/TX).</li>
   </ul>
 
   <h5>Configuration pas-à-pas de l'Analyseur Logique (Logic Analyzer) :</h5>
@@ -906,7 +906,7 @@ void loop() {
     <li style="margin-top: 14px;"><strong>Étape 5 : Élargir impérativement la base de temps et armer la capture</strong><br>
       <div class="callout callout-warning" style="margin: 8px 0 12px 0;">
         <div class="callout-title">⏱️ Pourquoi faut-il obligatoirement élargir la base de temps ?</div>
-        <p>L'envoi des 2 octets <code>AT</code> à 9600 bauds ne dure qu'environ <strong>2,08 ms</strong> (\(2 \times 10 \times 104{,}17\,\mu\text{s}\)). Cependant, le microcontrôleur interne du module Bluetooth a besoin d'un temps de traitement (latence logicielle typique de <strong>10 ms à 30 ms</strong>) avant de renvoyer <code>OK</code>.<br>
+        <p>L'envoi des 2 octets <code>AT</code> à 9600 bauds ne dure qu'environ <strong>2,08&nbsp;ms</strong> (2 &times; 10 &times; 104,17&nbsp;µs). Cependant, le microcontrôleur interne du module Bluetooth a besoin d'un temps de traitement (latence logicielle typique de <strong>10 ms à 30 ms</strong>) avant de renvoyer <code>OK</code>.<br>
         Si vous conservez une base de temps trop rapide (ex. 1 ms/div ou 500 µs/div), la mémoire de capture sera saturée avant même que le module Bluetooth n'ait commencé à répondre !</p>
       </div>
       Dans la barre supérieure de WaveForms :
@@ -1067,14 +1067,14 @@ void loop() {
 
   <div class="student-response">
     <strong>Question 1.2 (Mesure temporelle avec les curseurs WaveForms) :</strong><br>
-    Pour mesurer la durée réelle d'un bit élémentaire (\(T_{\text{bit}}\)) lors de la transmission du caractère <code>'A'</code> (code <code>0x41</code>) :<br><br>
+    Pour mesurer la durée réelle d'un bit élémentaire (<i>T</i><sub>bit</sub>) lors de la transmission du caractère <code>'A'</code> (code <code>0x41</code>) :<br><br>
 
     <div style="background-color: #f8fafc; border-left: 3px solid #0284c7; padding: 8px 12px; margin: 8px 0; border-radius: 0 4px 4px 0; font-size: 0.9em; color: #334155;">
       <strong>Astuce WaveForms — Outil Quick Measure &amp; Curseurs :</strong><br>
       Au-dessus de la zone des chronogrammes (en haut à droite), repérez la barre d'outils de mesure :<br>
       <img src="images/wf_quick_measure_cursors.png" alt="Outil Quick Measure et Curseurs dans WaveForms Logic" class="img-tutorial" style="max-height: 75px; margin: 6px 0;" />
       <ul>
-        <li><strong>Mesure rapide (Quick Measure) :</strong> Double-cliquez directement dans la zone du chronogramme (ou activez l'icône <em>Quick Measure</em> surlignée en bleu). Déplacez le pointeur sur la ligne <code>DIO 1</code> : WaveForms s'accroche automatiquement aux fronts logiques et mesure instantanément la largeur de l'impulsion (\(\Delta X\)). Un simple clic gauche permet de verrouiller (<em>lock</em>) la mesure à l'écran.</li>
+        <li><strong>Mesure rapide (Quick Measure) :</strong> Double-cliquez directement dans la zone du chronogramme (ou activez l'icône <em>Quick Measure</em> surlignée en bleu). Déplacez le pointeur sur la ligne <code>DIO 1</code> : WaveForms s'accroche automatiquement aux fronts logiques et mesure instantanément la largeur de l'impulsion (ΔX). Un simple clic gauche permet de verrouiller (<em>lock</em>) la mesure à l'écran.</li>
         <li><strong>Curseurs manuels (X1 / X2) :</strong> Utilisez l'icône <strong><code>|&minus;&minus;|</code></strong> située juste à côté pour poser deux curseurs verticaux <strong>X1</strong> et <strong>X2</strong> délimitant manuellement le début et la fin du bit.</li>
       </ul>
     </div><br>
@@ -1155,64 +1155,6 @@ void loop() {
     <div class="dotted-line"></div>
   </div>
 
-  <div class="student-response">
-    <strong>Question 1.4 (Mesure analogique avec l'oscilloscope WaveForms Scope &amp; Niveaux LVTTL 3,3V) :</strong><br>
-    Basculez sur l'instrument <strong>Scope</strong> (Oscilloscope) de WaveForms (Voie <strong>1+</strong> raccordée sur GP4/TX et fil noir sur <strong>GND</strong>). Lancez une acquisition en Single lors de l'émission d'une commande.<br><br>
-
-    <strong>1. Signification et définition du standard LVTTL :</strong><br>
-    Donnez la signification exacte du sigle <strong>LVTTL</strong> :<br>
-    <code>LVTTL =</code> <strong>.......................................................................................................................</strong><br>
-    <em>Précision :</em> Il s'agit du standard logique JEDEC (JESD8C.01) adapté aux circuits numériques basse tension alimentés sous une tension nominale de <strong>3,3 V</strong> (contrairement au standard TTL historique alimenté sous 5 V).<br><br>
-
-    <strong>2. Seuils et tolérances normalisés LVTTL 3,3V :</strong><br>
-    Rappelez ou complétez les seuils de tension théoriques garantis par la norme :
-    <table style="width: 100%; border-collapse: collapse; margin: 8px 0; font-size: 0.9em;">
-      <thead>
-        <tr style="background: #e2e8f0; color: #1e293b;">
-          <th style="border: 1px solid #cbd5e1; padding: 6px;">Paramètre</th>
-          <th style="border: 1px solid #cbd5e1; padding: 6px;">Définition technique</th>
-          <th style="border: 1px solid #cbd5e1; padding: 6px;">Seuil normalisé LVTTL 3,3V</th>
-        </tr>
-      </thead>
-      <tbody>
-        <tr>
-          <td style="border: 1px solid #cbd5e1; padding: 6px; text-align: center;"><strong><i>V</i><sub>OH_min</sub></strong></td>
-          <td style="border: 1px solid #cbd5e1; padding: 6px;">Tension de sortie minimale au niveau logique HAUT ('1')</td>
-          <td style="border: 1px solid #cbd5e1; padding: 6px; text-align: center;"><strong>&ge; 2,4 V</strong> (typ. ~3,3 V)</td>
-        </tr>
-        <tr>
-          <td style="border: 1px solid #cbd5e1; padding: 6px; text-align: center;"><strong><i>V</i><sub>OL_max</sub></strong></td>
-          <td style="border: 1px solid #cbd5e1; padding: 6px;">Tension de sortie maximale au niveau logique BAS ('0')</td>
-          <td style="border: 1px solid #cbd5e1; padding: 6px; text-align: center;"><strong>&le; 0,4 V</strong> (typ. ~0 V)</td>
-        </tr>
-        <tr>
-          <td style="border: 1px solid #cbd5e1; padding: 6px; text-align: center;"><strong><i>V</i><sub>IH_min</sub></strong></td>
-          <td style="border: 1px solid #cbd5e1; padding: 6px;">Tension d'entrée minimale reconnue de manière garantie comme un niveau HAUT</td>
-          <td style="border: 1px solid #cbd5e1; padding: 6px; text-align: center;"><strong>&ge; 2,0 V</strong></td>
-        </tr>
-        <tr>
-          <td style="border: 1px solid #cbd5e1; padding: 6px; text-align: center;"><strong><i>V</i><sub>IL_max</sub></strong></td>
-          <td style="border: 1px solid #cbd5e1; padding: 6px;">Tension d'entrée maximale reconnue de manière garantie comme un niveau BAS</td>
-          <td style="border: 1px solid #cbd5e1; padding: 6px; text-align: center;"><strong>&le; 0,8 V</strong></td>
-        </tr>
-      </tbody>
-    </table>
-    <em>Note :</em> La plage comprise entre 0,8 V et 2,0 V constitue la <strong>zone indéterminée</strong> (interdite). La différence \(V_{\text{OH\_min}} - V_{\text{IH\_min}} = 2{,}4\,\text{V} - 2{,}0\,\text{V} = \mathbf{0{,}4\,\text{V}}\) représente la <strong>marge d'immunité au bruit</strong> au niveau haut.<br><br>
-
-    <strong>3. Mesures expérimentales aux curseurs / mesures automatiques WaveForms Scope :</strong><br>
-    • Niveau haut de sortie mesuré : <i>V</i><sub>OH_mesuré</sub> = <strong>......................... V</strong><br>
-    • Temps de montée mesuré (Rise Time 10% &rarr; 90%) : <i>t</i><sub>r</sub> = <strong>......................... ns</strong><br><br>
-    
-    <strong>4. Conclusion et conformité RP2350 :</strong><br>
-    Le niveau haut <i>V</i><sub>OH</sub> mesuré est-il conforme à la tolérance LVTTL 3,3V ? Présente-t-il une marge de bruit suffisante pour le récepteur Bluetooth ? Observez-vous des oscillations parasites (overshoot) risquant de détériorer les entrées GPIO ?<br>
-    <div class="dotted-line"></div>
-    <div class="dotted-line"></div>
-
-    <div class="capture-box">
-      📸 <strong>Livrable Compte-Rendu — Capture 3 (Oscillogramme analogique Scope) :</strong><br>
-      Insérez l'oscillogramme capturé sur la voie analogique avec les mesures automatiques du temps de montée <i>t</i><sub>r</sub> et de la tension de niveau logique haut <i>V</i><sub>OH</sub>.
-    </div>
-  </div>
 </div>
 
 <!-- ETAPE 2 -->
@@ -1626,7 +1568,7 @@ void loop() {
     <div class="dotted-line"></div>
 
     <div class="capture-box">
-      📸 <strong>Livrable Compte-Rendu — Capture 4 (Trame de communication I²C) :</strong><br>
+      📸 <strong>Livrable Compte-Rendu — Capture 3 (Trame de communication I²C) :</strong><br>
       Insérez dans votre compte-rendu la capture d'écran WaveForms Logic montrant une trame I²C complète décodée lors d'une transaction avec l'écran OLED (<code>0x3C</code>), la matrice (<code>0x70</code>) ou l'accéléromètre (<code>0x53</code>). Mettez en évidence par une annotation la condition de <strong>START</strong>, l'octet d'adresse avec le bit R/W, et le bit d'acquittement <strong>ACK</strong>.
     </div>
   </div>
