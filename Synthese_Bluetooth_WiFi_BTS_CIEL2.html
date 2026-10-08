@@ -1,0 +1,825 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="utf-8" />
+  <meta name="generator" content="BTS CIEL - Vincent Hilaire" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes" />
+  <title>Synthèse B.O. : Bluetooth, Wi-Fi & Cybersécurité - BTS CIEL 2e Année</title>
+  
+  <style>
+    @page {
+      margin: 1.2cm 1.4cm;
+      size: A4 portrait;
+    }
+    
+    html {
+      color: #1a1a1a;
+      background-color: #f8fafc;
+      -webkit-text-size-adjust: 100%;
+    }
+    
+    body {
+      font-family: 'Segoe UI', -apple-system, BlinkMacSystemFont, Roboto, Helvetica, Arial, sans-serif;
+      line-height: 1.52;
+      color: #1e293b;
+      max-width: 980px;
+      margin: 0 auto;
+      padding: 25px 32px;
+      hyphens: auto;
+      background-color: #ffffff;
+      box-shadow: 0 4px 16px rgba(0,0,0,0.06);
+    }
+    
+    @media (max-width: 768px) {
+      body {
+        font-size: 0.95em;
+        padding: 15px;
+      }
+      h1 {
+        font-size: 1.45em !important;
+      }
+    }
+    
+    @media print {
+      html { background-color: #ffffff; }
+      body {
+        background-color: transparent;
+        color: #000000;
+        font-size: 9.3pt;
+        max-width: 100%;
+        padding: 0;
+        box-shadow: none;
+      }
+      p, h2, h3 { orphans: 3; widows: 3; }
+      h2, h3, h4 { page-break-after: avoid; }
+      pre, blockquote, table, .figure-box, .step-box, .formula-box { page-break-inside: avoid; }
+      .page-break { page-break-before: always; }
+      .no-print { display: none !important; }
+      a { color: #000000; text-decoration: none; }
+      .badge-primary, .badge-alert, .badge-success, .badge-warning, .badge-purple, .badge-cyan {
+        border: 1px solid #64748b !important;
+        color: #000000 !important;
+        background: #f1f5f9 !important;
+      }
+    }
+    
+    header {
+      margin-bottom: 2.2em;
+      text-align: center;
+      border-bottom: 3px solid #0b3c5d;
+      padding-bottom: 18px;
+    }
+    
+    .super-title {
+      font-size: 9.5pt;
+      color: #475569;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 1.5px;
+      margin-bottom: 6px;
+    }
+    
+    h1 {
+      color: #0b3c5d;
+      font-size: 20pt;
+      margin: 0.3em 0;
+      letter-spacing: -0.5px;
+      font-weight: 800;
+    }
+    
+    .subtitle {
+      font-size: 11pt;
+      color: #334155;
+      margin-bottom: 14px;
+      font-weight: 500;
+    }
+    
+    .meta-badge {
+      display: inline-block;
+      font-size: 8pt;
+      font-weight: 600;
+      padding: 3px 9px;
+      border-radius: 14px;
+      margin: 2px 4px;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+    }
+    
+    .badge-primary { background: #0b3c5d; color: #ffffff; border: 1px solid #0b3c5d; }
+    .badge-alert   { background: #fee2e2; color: #991b1b; border: 1px solid #f87171; }
+    .badge-success { background: #dcfce7; color: #166534; border: 1px solid #86efac; }
+    .badge-warning { background: #fef3c7; color: #92400e; border: 1px solid #fcd34d; }
+    .badge-purple  { background: #f3e8ff; color: #6b21a8; border: 1px solid #d8b4fe; }
+    .badge-cyan    { background: #e0f2fe; color: #0369a1; border: 1px solid #7dd3fc; }
+    .badge-slate   { background: #f1f5f9; color: #334155; border: 1px solid #cbd5e1; }
+    
+    h2 {
+      font-size: 13.5pt;
+      color: #0b3c5d;
+      margin-top: 30px;
+      margin-bottom: 12px;
+      border-bottom: 2px solid #cbd5e1;
+      padding-bottom: 6px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+    
+    h3 {
+      font-size: 11pt;
+      color: #1e3a8a;
+      margin-top: 20px;
+      margin-bottom: 8px;
+      border-left: 4px solid #3b82f6;
+      padding-left: 10px;
+    }
+    
+    h4 {
+      font-size: 9.8pt;
+      color: #0369a1;
+      margin-top: 14px;
+      margin-bottom: 6px;
+    }
+    
+    p {
+      margin: 0.7em 0;
+      text-align: justify;
+    }
+    
+    ul, ol {
+      padding-left: 1.5em;
+      margin: 0.6em 0;
+    }
+    
+    li {
+      margin-bottom: 0.3em;
+    }
+    
+    table {
+      border-collapse: collapse;
+      width: 100%;
+      margin: 14px 0;
+      font-size: 8.8pt;
+      background-color: #ffffff;
+      box-shadow: 0 1px 3px rgba(0,0,0,0.04);
+    }
+    
+    th, td {
+      border: 1px solid #cbd5e1;
+      padding: 7px 10px;
+      text-align: left;
+      vertical-align: middle;
+    }
+    
+    th {
+      background-color: #f1f5f9;
+      color: #0b3c5d;
+      font-weight: 700;
+    }
+    
+    tr:nth-child(even) {
+      background-color: #f8fafc;
+    }
+    
+    .callout {
+      border-radius: 6px;
+      padding: 10px 14px;
+      margin: 14px 0;
+      font-size: 9pt;
+      border-left: 4.5px solid;
+    }
+    
+    .callout-info    { background-color: #f0f7fc; border-color: #0284c7; color: #0369a1; }
+    .callout-warning { background-color: #fffbeb; border-color: #f59e0b; color: #92400e; }
+    .callout-danger  { background-color: #fef2f2; border-color: #ef4444; color: #991b1b; }
+    .callout-success { background-color: #f0fdf4; border-color: #22c55e; color: #166534; }
+    
+    .callout-title {
+      font-weight: 700;
+      margin-bottom: 4px;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+    
+    pre {
+      background-color: #0f172a;
+      color: #f8fafc;
+      border: 1px solid #334155;
+      border-radius: 6px;
+      padding: 11px 14px;
+      font-size: 8.4pt;
+      line-height: 1.45;
+      overflow-x: auto;
+      font-family: Consolas, 'Courier New', Monaco, monospace;
+      margin: 12px 0;
+    }
+    
+    code {
+      background-color: #eff6ff;
+      color: #1d4ed8;
+      padding: 2px 5px;
+      border-radius: 4px;
+      font-size: 88%;
+      font-family: Consolas, 'Courier New', Monaco, monospace;
+      border: 1px solid #dbeafe;
+    }
+    
+    pre code {
+      background-color: transparent;
+      padding: 0;
+      border-radius: 0;
+      color: inherit;
+      border: none;
+    }
+    
+    .formula-box {
+      background: #f8fafc;
+      border: 1px solid #cbd5e1;
+      border-radius: 6px;
+      padding: 8px 14px;
+      margin: 10px 0;
+      font-family: 'Cambria Math', 'Times New Roman', Georgia, serif;
+      font-size: 10pt;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      color: #0f172a;
+    }
+    
+    .frac {
+      display: inline-flex;
+      flex-direction: column;
+      vertical-align: middle;
+      text-align: center;
+      padding: 0 4px;
+      font-size: 0.95em;
+    }
+    
+    .frac > .num {
+      border-bottom: 1.2px solid #1e293b;
+      padding-bottom: 1px;
+    }
+    
+    .frac > .den {
+      padding-top: 1px;
+    }
+    
+    .exercise-card {
+      border: 1.5px solid #cbd5e1;
+      border-radius: 8px;
+      padding: 16px 20px;
+      margin: 20px 0;
+      background: #ffffff;
+      box-shadow: 0 2px 6px rgba(0,0,0,0.03);
+    }
+    
+    .exercise-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      border-bottom: 2px solid #e2e8f0;
+      padding-bottom: 8px;
+      margin-bottom: 12px;
+    }
+    
+    .exercise-title {
+      font-weight: 700;
+      font-size: 11pt;
+      color: #0b3c5d;
+    }
+    
+    .solution-box {
+      background-color: #f8fafc;
+      border: 1.5px dashed #0284c7;
+      border-radius: 6px;
+      padding: 14px 18px;
+      margin: 14px 0;
+      color: #0f172a;
+    }
+    
+    .solution-title {
+      font-weight: 700;
+      color: #0369a1;
+      margin-bottom: 8px;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+    
+    .btn-bar {
+      position: sticky;
+      top: 10px;
+      z-index: 1000;
+      background: rgba(255, 255, 255, 0.95);
+      backdrop-filter: blur(8px);
+      padding: 10px 16px;
+      border-radius: 8px;
+      border: 1px solid #cbd5e1;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 20px;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.06);
+    }
+    
+    .btn {
+      background-color: #0b3c5d;
+      color: #ffffff;
+      border: none;
+      padding: 8px 16px;
+      border-radius: 6px;
+      font-weight: 600;
+      font-size: 9pt;
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      transition: background 0.2s;
+    }
+    
+    .btn:hover {
+      background-color: #08293f;
+    }
+    
+    .btn-secondary {
+      background-color: #e2e8f0;
+      color: #1e293b;
+    }
+    
+    .btn-secondary:hover {
+      background-color: #cbd5e1;
+    }
+    
+    .figure-box {
+      margin: 16px 0;
+      padding: 12px;
+      background-color: #f8fafc;
+      border: 1px solid #e2e8f0;
+      border-radius: 8px;
+      text-align: center;
+    }
+    
+    .figure-caption {
+      font-size: 8.5pt;
+      color: #475569;
+      margin-top: 6px;
+      font-style: italic;
+    }
+  </style>
+</head>
+<body>
+
+  <!-- BARRE D'ACTIONS UTILISATEUR (NON IMPRIMÉE) -->
+  <div class="btn-bar no-print">
+    <div>
+      <span style="font-weight: 700; color: #0b3c5d; font-size: 9.5pt;">BTS CIEL 2e Année</span>
+      <span style="color: #64748b; font-size: 9pt;"> | Document Synthèse & Exercices</span>
+    </div>
+    <div style="display: flex; gap: 8px;">
+      <button class="btn btn-secondary" onclick="toggleSolutions()">👁️ Afficher / Masquer Corrigés</button>
+      <button class="btn" onclick="window.print()">🖨️ Imprimer / Exporter en PDF</button>
+    </div>
+  </div>
+
+  <header>
+    <div class="super-title">Brevet de Technicien Supérieur • Cybersécurité, Informatique & Réseaux, Électronique</div>
+    <h1>Synthèse B.O. : Bluetooth, Wi-Fi & Cybersécurité</h1>
+    <div class="subtitle">
+      Référentiel National (2ᵉ Année) • Compétences C04, C05, C06, C09, C10 • Travaux Pratiques & Épreuves E4 / E5 / E6
+    </div>
+    <div>
+      <span class="meta-badge badge-primary">BTS CIEL (IR / ER)</span>
+      <span class="meta-badge badge-cyan">WPAN Bluetooth SPP</span>
+      <span class="meta-badge badge-purple">WLAN Wi-Fi 802.11 STA/AP</span>
+      <span class="meta-badge badge-alert">Sécurité TLS & Brute-Force</span>
+      <span class="meta-badge badge-success">Instrumentation Digilent AD3</span>
+      <span class="meta-badge badge-slate">Analyse Wireshark</span>
+    </div>
+  </header>
+
+  <!-- ========================================================================= -->
+  <!-- 1. CADRE DU REFERENTIEL DU B.O.                                           -->
+  <!-- ========================================================================= -->
+  <h2>1. Cadre du Référentiel National (B.O. BTS CIEL)</h2>
+  
+  <p>En deuxième année de BTS CIEL, l'enseignement professionnel décloisonne les télécommunications sans fil et la cybersécurité. Les activités menées sur plateformes de prototypage (<strong>Raspberry Pi Pico 2 W</strong>, <strong>Seeed Studio XIAO ESP32-S3</strong>, <strong>Arduino Nano</strong>) et bancs d'instrumentation (<strong>Digilent Analog Discovery 3</strong>, <strong>Wireshark</strong>) mobilisent cinq compétences fondamentales :</p>
+
+  <table>
+    <thead>
+      <tr>
+        <th style="width: 14%;">Compétence</th>
+        <th style="width: 36%;">Intitulé du B.O.</th>
+        <th style="width: 50%;">Applications concrètes en TP & Évaluations</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><strong>C04</strong></td>
+        <td><strong>Analyser une structure matérielle et logicielle</strong></td>
+        <td>
+          • Décodage des chronogrammes de liaisons séries asynchrones (UART) et synchrones (I²C).<br>
+          • Analyse de la pile Bluetooth classique BR/EDR (RFCOMM, L2CAP) et commandes AT.<br>
+          • Décorticage du modèle en couches OSI / TCP-IP, analyse des en-têtes Ethernet, IP, TCP, UDP.
+        </td>
+      </tr>
+      <tr>
+        <td><strong>C05</strong></td>
+        <td><strong>Concevoir une structure matérielle et logicielle</strong></td>
+        <td>
+          • Implémentation d'un routage de trames non-bloquant avec buffer circulaire (Ring Buffer FIFO).<br>
+          • Machine à états finis (FSM) pour le décodage protocolaire avec contrôle d'intégrité (Checksum XOR).<br>
+          • Programmation de clients/serveurs TCP/UDP et requêtes REST HTTP/HTTPS avec <code>WiFiClientSecure</code>.
+        </td>
+      </tr>
+      <tr>
+        <td><strong>C06</strong></td>
+        <td><strong>Valider une structure matérielle et logicielle</strong></td>
+        <td>
+          • Métrologie avec analyseur logique <strong>Digilent Analog Discovery 3 (WaveForms)</strong> : temps bit, jitter, seuils LVTTL 3.3V.<br>
+          • Capture et audit des paquets avec <strong>Wireshark</strong> : handshake TCP, échange DHCP DORA, ARP.<br>
+          • Mesure de débit utile et de portée radio (RSSI en dBm).
+        </td>
+      </tr>
+      <tr>
+        <td><strong>C09</strong></td>
+        <td><strong>Installer un système électronique ou informatique</strong></td>
+        <td>
+          • Câblage de modules Grove (Bluetooth, capteurs, afficheurs) sur Shield et bus partagés.<br>
+          • Raccordement des sondes de mesure en respectant impérativement la masse commune (GND).<br>
+          • Enrôlement radio : association Wi-Fi STA, appairage Bluetooth (port COM virtuel).
+        </td>
+      </tr>
+      <tr>
+        <td><strong>C10</strong></td>
+        <td><strong>Exploiter un réseau informatique</strong></td>
+        <td>
+          • Audit de sécurité : identification des flux réseau en clair (HTTP, Telnet) et interception de secrets.<br>
+          • Analyse des vulnérabilités de l'appairage Bluetooth d'ancienne génération (Legacy PIN brute-force).<br>
+          • Vérification du chiffrement TLS (port 443) et contrôle des certificats d'authenticité.
+        </td>
+      </tr>
+    </tbody>
+  </table>
+
+  <!-- ========================================================================= -->
+  <!-- 2. SYNTHESE BLUETOOTH                                                     -->
+  <!-- ========================================================================= -->
+  <h2>2. Synthèse Technologique : Bluetooth (BR/EDR & SPP)</h2>
+
+  <h3>2.1. Architecture Matérielle & Rôle des Liaisons Séries</h3>
+  <p>Dans un système communicant basé sur un microcontrôleur moderne (ex. RP2350 sur Raspberry Pi Pico 2 W), la séparation des canaux de communication est indispensable pour la supervision et la robustesse :</p>
+  <ul>
+    <li><strong>UART0 (GP0/GP1 - <code>Serial1</code>) :</strong> Réservé au dialogue avec les périphériques locaux (ex: clavier de saisie série).</li>
+    <li><strong>UART1 (GP4/GP5 - <code>Serial2</code>) :</strong> Relié au module émetteur-récepteur radio Bluetooth (Grove Bluetooth v3.0 / HC-05).</li>
+    <li><strong>USB CDC Natif (<code>Serial</code>) :</strong> Liaison virtuelle directe vers la console de débogage du PC de développement (115200 bauds).</li>
+  </ul>
+
+  <div class="callout callout-info">
+    <div class="callout-title">💡 Les Deux Modes Fondamentaux du Module Bluetooth Série</div>
+    <ul>
+      <li><strong>Mode Commande AT (LED d'état clignotante) :</strong> Tant qu'aucun terminal n'est connecté par radio, le module interprète les commandes textuelles reçues sur son UART (ex: <code>AT+NAMEPupitre_B1</code>, <code>AT+PIN9876</code>, <code>AT+BAUD?</code>).</li>
+      <li><strong>Mode Données Transparent (LED d'état allumée fixe) :</strong> Dès que l'appairage radio est validé, le module désactive l'interpréteur AT. Tout octet reçu sur l'UART est modulé directement sur l'onde radio (2.4 GHz) vers le terminal distant (et réciproquement).</li>
+    </ul>
+  </div>
+
+  <h3>2.2. Le Profil SPP (Serial Port Profile) & Pile Protocolaire</h3>
+  <p>Le profil <strong>SPP</strong> émule une liaison série RS-232 classique à travers le canal radio. Il repose sur le multiplexeur <strong>RFCOMM</strong>, lui-même encapsulé dans la couche <strong>L2CAP</strong> (<em>Logical Link Control and Adaptation Protocol</em>). Sur un système d'exploitation hôte (Windows/Linux/Android), l'appairage SPP instancie un <strong>port COM virtuel sortant</strong> permettant à n'importe quel logiciel applicatif (PuTTY, terminal de supervision, script Python) de communiquer sans modifier son code série.</p>
+
+  <h3>2.3. Métrologie avec l'Analog Discovery 3 (WaveForms)</h3>
+  <p>La validation de la couche physique et liaison fait appel à un analyseur logique configuré en conformité avec la norme UART asynchrone (format 8N1 : 1 Start, 8 Données, Pas de parité, 1 Stop) :</p>
+  
+  <div class="formula-box">
+    <span>Durée d'un bit :</span>
+    <i>T</i><sub>bit</sub> = <span class="frac"><span class="num">1</span><span class="den">Baudrate</span></span>
+    <span>&emsp;|&emsp;Exemple à 38 400 bauds :</span>
+    <i>T</i><sub>bit</sub> = <span class="frac"><span class="num">1</span><span class="den">38 400</span></span> &approx; <strong>26,04 &mu;s</strong>
+  </div>
+
+  <p>Un octet nécessitant 10 bits de transmission (1 bit Start à l'état bas + 8 bits de données LSB en premier + 1 bit Stop à l'état haut), la durée de transmission d'un octet est $T_{\text{octet}} = 10 \times T_{\text{bit}} \approx 260{,}4\ \mu\text{s}$.</p>
+
+  <h3>2.4. Cybersécurité : Audit de l'Appairage Bluetooth Legacy (PIN fixe)</h3>
+  <p>Les modules industriels économiques (HC-05, Grove BT v3.0) utilisent le protocole historique <strong>Legacy Pairing</strong> (&le; Bluetooth 2.0). Deux faiblesses critiques en résultent :</p>
+  <ol>
+    <li><strong>Espace des clés dérisoire :</strong> Un code PIN à 4 chiffres (0000 à 9999) représente $10^4 = 10\,000$ combinaisons possibles (soit seulement <strong>&approx; 13,3 bits d'entropie</strong>).</li>
+    <li><strong>Exposition de l'aléa radio :</strong> Les adresses MAC matérielles (<code>BD_ADDR</code>) et un nombre aléatoire de 128 bits (<code>IN_RAND</code>) sont transmis en clair lors de la négociation.</li>
+    <li><strong>Attaque hors-ligne (Offline Brute-Force) :</strong> Un attaquant muni d'un récepteur radio passif (sniffer Ubertooth / SDR) capture l'échange et fait tourner l'algorithme de dérivation $E_{22}(\text{PIN}, \text{IN\_RAND}, \text{BD\_ADDR})$ sur son processeur/GPU à plusieurs millions d'essais/s, trouvant le PIN en quelques millisecondes.</li>
+  </ol>
+
+  <!-- ========================================================================= -->
+  <!-- 3. SYNTHESE WI-FI & TCP/IP                                                -->
+  <!-- ========================================================================= -->
+  <h2>3. Synthèse Technologique : Wi-Fi (IEEE 802.11) & Pile TCP/IP</h2>
+
+  <h3>3.1. Couche Liaison & Enrôlement Réseau (DHCP / ARP)</h3>
+  <ul>
+    <li><strong>Mode Station (STA) :</strong> Le module (ex: XIAO ESP32-S3 ou Pico W) s'associe à un point d'accès Wi-Fi d'infrastructure.</li>
+    <li><strong>Indicateur RSSI (dBm) :</strong> Valeur négative mesurant la puissance radio reçue. Typiquement : $-45\ \text{dBm}$ (très proche), $-65\ \text{dBm}$ (nominal), $<-80\ \text{dBm}$ (limite de décrochage).</li>
+    <li><strong>Négociation DHCP (Processus DORA en 4 étapes) :</strong>
+      <ol>
+        <li><strong>Discover :</strong> Le client sans IP diffuse un broadcast UDP (port 68 &rarr; 67, IP src <code>0.0.0.0</code>, IP dst <code>255.255.255.255</code>).</li>
+        <li><strong>Offer :</strong> Le serveur DHCP propose un bail IP unitaire.</li>
+        <li><strong>Request :</strong> Le client confirme et demande officiellement l'adresse retenue.</li>
+        <li><strong>Acknowledge (ACK) :</strong> Le serveur valide l'attribution et transmet masque, passerelle et DNS.</li>
+      </ol>
+    </li>
+    <li><strong>Résolution ARP :</strong> Avant d'émettre vers la passerelle par défaut, le microcontrôleur émet une requête ARP broadcast pour lier l'adresse IPv4 de la passerelle à son adresse physique MAC de couche 2.</li>
+  </ul>
+
+  <h3>3.2. Comparatif de la Couche Transport (L4) : UDP vs TCP</h3>
+
+  <table>
+    <thead>
+      <tr>
+        <th>Caractéristique</th>
+        <th>UDP (User Datagram Protocol)</th>
+        <th>TCP (Transmission Control Protocol)</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><strong>Mode de connexion</strong></td>
+        <td>Non connecté (émission immédiate)</td>
+        <td>Connecté (Handshake SYN &rarr; SYN-ACK &rarr; ACK)</td>
+      </tr>
+      <tr>
+        <td><strong>Fiabilité des données</strong></td>
+        <td>Aucune (pas d'acquittement, pertes possibles)</td>
+        <td>Garantie totale (acquittements ACK, retransmissions)</td>
+      </tr>
+      <tr>
+        <td><strong>Contrôle de flux & congestion</strong></td>
+        <td>Aucun</td>
+        <td>Fenêtre glissante (Window Size), régulation dynamique</td>
+      </tr>
+      <tr>
+        <td><strong>Taille d'en-tête (Overhead)</strong></td>
+        <td><strong>8 octets</strong> seulement</td>
+        <td><strong>20 octets</strong> au minimum (jusqu'à 60 octets)</td>
+      </tr>
+      <tr>
+        <td><strong>Domaine d'application</strong></td>
+        <td>Streaming capteur temps réel, audio/vidéo, DNS</td>
+        <td>Téléchargement firmware OTA, requêtes REST, MQTT, HTTP(S)</td>
+      </tr>
+    </tbody>
+  </table>
+
+  <h3>3.3. Cybersécurité Applicative : HTTP en Clair vs Chiffrement TLS (HTTPS)</h3>
+  <div class="callout callout-danger">
+    <div class="callout-title">⚠️ Vulnérabilité des flux HTTP en clair (Port 80)</div>
+    <p>Lors d'un audit sous Wireshark avec la commande <code>Follow &gt; TCP Stream</code>, une requête HTTP injectée sur le réseau expose l'intégralité de la trame en texte clair : URL, verbes REST, paramètres JSON et en-têtes d'authentification sensibles (<code>Authorization: Bearer [TOKEN]</code>). Tout attaquant situé sur le même réseau Wi-Fi peut usurper l'équipement.</p>
+  </div>
+
+  <p><strong>Sécurisation par TLS (Transport Layer Security - Port 443) :</strong></p>
+  <ul>
+    <li>Utilisation de la bibliothèque <strong><code>WiFiClientSecure</code></strong> sur ESP32/Pico W.</li>
+    <li><strong>Handshake TLS :</strong> Authentification du serveur par son certificat numérique X.509 et échange de clés asymétrique (ECDHE) pour négocier une clé secrète éphémère.</li>
+    <li><strong>Chiffrement symétrique :</strong> Chiffrement rapide de tous les segments TCP au moyen d'AES-128-GCM ou ChaCha20.</li>
+    <li><strong>Bonne pratique contre le Man-in-the-Middle (MitM) :</strong> Toujours intégrer le certificat racine de l'autorité de certification (CA) via <code>setCACert()</code> et bannir la fonction permissive <code>setInsecure()</code> en environnement de production.</li>
+  </ul>
+
+  <!-- ========================================================================= -->
+  <!-- 4. CAHIER D'EXERCICES TYPE BTS CIEL                                       -->
+  <!-- ========================================================================= -->
+  <div class="page-break"></div>
+  <h2>4. Cahier d'Exercices Type Épreuve BTS CIEL</h2>
+
+  <!-- EXERCICE 1 -->
+  <div class="exercise-card">
+    <div class="exercise-header">
+      <span class="exercise-title">Exercice 1 : Liaison Série Bluetooth & Contrôle d'Intégrité par Checksum XOR</span>
+      <span class="meta-badge badge-primary">Compétences C04 & C05</span>
+    </div>
+    <p>Un pupitre à base de <strong>Raspberry Pi Pico 2 W</strong> transmet périodiquement une trame de télémétrie vers un terminal de supervision via son port série <strong>UART1</strong> (relié au module Grove Bluetooth configuré à <strong>38 400 bauds, 8N1</strong>).</p>
+    <p>La trame binaire de 6 octets est structurée comme suit :</p>
+    <ul>
+      <li>Octet 0 : Début de trame <code>STX = 0x02</code></li>
+      <li>Octet 1 : Identifiant de la carte <code>ID = 0x42</code></li>
+      <li>Octet 2 : Donnée capteur Température <code>TEMP = 0x19</code> (25°C)</li>
+      <li>Octet 3 : Donnée capteur Humidité <code>HUM = 0x3C</code> (60%)</li>
+      <li>Octet 4 : Octet de contrôle <strong>Checksum XOR</strong> (calculé sur ID, TEMP et HUM)</li>
+      <li>Octet 5 : Fin de trame <code>ETX = 0x03</code></li>
+    </ul>
+
+    <p><strong>Questions :</strong></p>
+    <ol>
+      <li><strong>[C04]</strong> Calculer la durée théorique d'un bit élémentaire $T_{\text{bit}}$ à 38 400 bauds.</li>
+      <li><strong>[C04]</strong> Préciser le nombre de bits réels transmis pour chaque octet (format 8N1). En déduire le temps nécessaire pour transmettre un octet complet $T_{\text{octet}}$.</li>
+      <li><strong>[C05]</strong> Calculer manuellement la valeur hexadécimale du <strong>Checksum XOR</strong> pour les trois octets de charge utile. Détailler le calcul bit à bit sous forme binaire.</li>
+      <li><strong>[C06]</strong> Lors d'une vérification avec l'analyseur logique <strong>Analog Discovery 3</strong>, déterminer la durée totale théorique d'occupation du bus série pour l'envoi de cette trame de 6 octets.</li>
+      <li><strong>[C05]</strong> Rédiger en langage C la fonction <code>uint8_t calculer_checksum(uint8_t id, uint8_t temp, uint8_t hum)</code>.</li>
+    </ol>
+
+    <!-- SOLUTION 1 -->
+    <div class="solution-box solution-item">
+      <div class="solution-title">📝 Corrigé Détaillé de l'Exercice 1</div>
+      <p><strong>1. Durée d'un bit :</strong></p>
+      <div class="formula-box">
+        <i>T</i><sub>bit</sub> = <span class="frac"><span class="num">1</span><span class="den">38 400</span></span> &approx; <strong>26,042 &mu;s</strong>
+      </div>
+
+      <p><strong>2. Format 8N1 et durée par octet :</strong><br>
+      Le format 8N1 comprend : 1 bit Start + 8 bits de données + 0 bit de parité + 1 bit Stop = <strong>10 bits par caractère</strong>.<br>
+      $$T_{\text{octet}} = 10 \times T_{\text{bit}} = 10 \times 26{,}042\ \mu\text{s} = \mathbf{260{,}42\ \mu\text{s}}$$</p>
+
+      <p><strong>3. Calcul du Checksum XOR bit à bit :</strong></p>
+      <ul>
+        <li><code>ID   = 0x42</code> &rarr; <code>0100 0010</code></li>
+        <li><code>TEMP = 0x19</code> &rarr; <code>0001 1001</code></li>
+        <li><code>HUM  = 0x3C</code> &rarr; <code>0011 1100</code></li>
+      </ul>
+      <pre><code>  0100 0010  (0x42)
+^ 0001 1001  (0x19)
+-----------
+  0101 1011  (Résultat intermédiaire = 0x5B)
+^ 0011 1100  (0x3C)
+-----------
+  0110 0111  (Checksum final = 0x67)</code></pre>
+      <p>La valeur hexadécimale du Checksum est <strong><code>0x67</code></strong>.</p>
+
+      <p><strong>4. Durée totale de la trame sous l'Analog Discovery 3 :</strong><br>
+      La trame contient 6 octets au total.<br>
+      $$T_{\text{totale}} = 6 \times T_{\text{octet}} = 6 \times 260{,}42\ \mu\text{s} \approx \mathbf{1{,}562\ \text{ms}}$$</p>
+
+      <p><strong>5. Fonction en C :</strong></p>
+      <pre><code>uint8_t calculer_checksum(uint8_t id, uint8_t temp, uint8_t hum) {
+    return (id ^ temp ^ hum);
+}</code></pre>
+    </div>
+  </div>
+
+  <!-- EXERCICE 2 -->
+  <div class="exercise-card">
+    <div class="exercise-header">
+      <span class="exercise-title">Exercice 2 : Audit de Sécurité du Bluetooth Legacy Pairing (Code PIN 4 Chiffres)</span>
+      <span class="meta-badge badge-alert">Compétences C04, C06 & C10</span>
+    </div>
+    <p>Lors d'une séance d'audit de cybersécurité, un module Bluetooth HC-06 est déployé avec son code PIN de configuration d'usine par défaut à 4 chiffres décimaux (valeurs de <code>0000</code> à <code>9999</code>).</p>
+
+    <p><strong>Questions :</strong></p>
+    <ol>
+      <li><strong>[C04]</strong> Calculer l'entropie cryptographique $H$ (en bits) associée à ce secret à 4 chiffres décimaux :
+        $$H = \log_2(N) \quad \text{avec } N = 10^4$$</li>
+      <li><strong>[C06]</strong> Un attaquant tente une attaque par force brute en ligne (<em>Online Brute-force</em>). Le module impose un délai de temporisation matériel de <strong>1,2 seconde</strong> après chaque échec d'association. Calculer la durée maximale (en heures et minutes) requise pour tester exhaustivement l'espace des clés. Indiquer pourquoi cette attaque est difficilement viable.</li>
+      <li><strong>[C10]</strong> L'attaquant capture désormais passivement la séquence d'appairage radio à l'aide d'une clé SDR. Il bascule sur une attaque hors-ligne (<em>Offline Brute-force</em>) sur son poste de travail, capable d'évaluer <strong>$2{,}5 \times 10^6$ dérivations $E_{22}$ par seconde</strong>. Calculer le temps maximal nécessaire pour retrouver le code PIN.</li>
+      <li><strong>[C04]</strong> Préciser quelle évolution de la norme Bluetooth élimine radicalement cette faille d'interception passive.</li>
+    </ol>
+
+    <!-- SOLUTION 2 -->
+    <div class="solution-box solution-item">
+      <div class="solution-title">📝 Corrigé Détaillé de l'Exercice 2</div>
+      <p><strong>1. Entropie du code PIN :</strong><br>
+      $$H = \frac{\ln(10\,000)}{\ln(2)} \approx \frac{9{,}2103}{0{,}6931} \approx \mathbf{13{,}29\ \text{bits}}$$
+      Une sécurité de 13,3 bits est extrêmement faible (le standard minimal recommandé pour un secret symétrique est de 128 bits).</p>
+
+      <p><strong>2. Attaque en ligne (Online) :</strong><br>
+      Temps maximal pour 10 000 tentatives :
+      $$T_{\text{max}} = 10\,000 \times 1{,}2\ \text{s} = 12\,000\ \text{s} = \frac{12\,000}{3\,600} \approx \mathbf{3{,}33\ \text{heures}}\ (\mathbf{3\text{h } 20\text{min}})$$
+      <em>Analyse :</em> L'attaque en ligne est lente, génère des journaux d'erreurs d'appairage massifs et risque de saturer la pile radio du module. Elle n'est absolument pas discrète.</p>
+
+      <p><strong>3. Attaque hors-ligne (Offline) :</strong><br>
+      $$T_{\text{max}} = \frac{10\,000}{2{,}5 \times 10^6\ \text{op/s}} = 0{,}004\ \text{seconde} = \mathbf{4\ \text{millisecondes}}$$
+      <em>Conclusion :</em> L'attaque est quasi-instantanée et totalement invisible pour la cible.</p>
+
+      <p><strong>4. Évolution normative :</strong><br>
+      L'adoption du <strong>Secure Simple Pairing (SSP)</strong> introduit avec Bluetooth 2.1+, ou du <strong>BLE 4.2+ LE Secure Connections</strong>, qui reposent sur un échange de clés asymétriques à courbes elliptiques (**ECDH** - <em>Elliptic Curve Diffie-Hellman</em>). Même si un pirate intercepte la totalité des trames radio d'appairage, il lui est mathématiquement impossible de calculer la clé de session.</p>
+    </div>
+  </div>
+
+  <!-- EXERCICE 3 -->
+  <div class="exercise-card">
+    <div class="exercise-header">
+      <span class="exercise-title">Exercice 3 : Analyse d'une Négociation Réseau Wi-Fi & Transport sous Wireshark</span>
+      <span class="meta-badge badge-purple">Compétences C04, C06 & C10</span>
+    </div>
+    <p>Une carte <strong>XIAO ESP32-S3</strong> démarre et se connecte au réseau Wi-Fi d'un laboratoire de télémesure. L'extrait de capture Wireshark suivant est recueilli :</p>
+
+    <pre><code>No.  Time       Source          Destination      Protocol  Info
+1    0.000000   0.0.0.0         255.255.255.255  DHCP      DHCP Discover - Transaction ID 0x8a1b2c
+2    0.038120   192.168.1.254   192.168.1.105    DHCP      DHCP Offer    - Transaction ID 0x8a1b2c
+3    0.040100   0.0.0.0         255.255.255.255  DHCP      DHCP Request  - Transaction ID 0x8a1b2c
+4    0.075400   192.168.1.254   192.168.1.105    DHCP      DHCP ACK      - Transaction ID 0x8a1b2c
+5    0.105200   28:cd:c1:05:ab  Broadcast        ARP       Who has 192.168.1.254? Tell 192.168.1.105
+6    0.106100   00:1a:2b:3c:4d  28:cd:c1:05:ab   ARP       192.168.1.254 is at 00:1a:2b:3c:4d
+7    0.200100   192.168.1.105   192.168.1.254    TCP       54210 &rarr; 8080 [SYN] Seq=0 Win=5840
+8    0.204500   192.168.1.254   192.168.1.105    TCP       8080 &rarr; 54210 [SYN, ACK] Seq=0 Ack=1
+9    0.205200   192.168.1.105   192.168.1.254    TCP       54210 &rarr; 8080 [ACK] Seq=1 Ack=1</code></pre>
+
+    <p><strong>Questions :</strong></p>
+    <ol>
+      <li><strong>[C10]</strong> Relever l'adresse IP et l'adresse MAC du microcontrôleur ainsi que celles de la passerelle / serveur DHCP.</li>
+      <li><strong>[C04]</strong> Expliciter la nécessité des adresses `0.0.0.0` et `255.255.255.255` dans la trame n°1 (DHCP Discover).</li>
+      <li><strong>[C04]</strong> Décrire précisément l'objectif de l'échange ARP (trames 5 et 6). Pourquoi cette étape est-elle indispensable avant la trame n°7 ?</li>
+      <li><strong>[C06]</strong> Identifier le protocole et la phase réseau observés entre les trames 7, 8 et 9. Quel est le rôle des drapeaux SYN et ACK ?</li>
+      <li><strong>[C05]</strong> Si l'application consistait à diffuser 50 fois par seconde une position angulaire sans besoin de confirmation, justifier pourquoi le protocole UDP aurait été préféré à TCP.</li>
+    </ol>
+
+    <!-- SOLUTION 3 -->
+    <div class="solution-box solution-item">
+      <div class="solution-title">📝 Corrigé Détaillé de l'Exercice 3</div>
+      <p><strong>1. Identification des adresses :</strong></p>
+      <ul>
+        <li><strong>Microcontrôleur (XIAO ESP32-S3) :</strong> Adresse IP = <code>192.168.1.105</code> | Adresse MAC = <code>28:cd:c1:05:ab</code></li>
+        <li><strong>Passerelle / Serveur DHCP :</strong> Adresse IP = <code>192.168.1.254</code> | Adresse MAC = <code>00:1a:2b:3c:4d</code></li>
+      </ul>
+
+      <p><strong>2. Trame DHCP Discover :</strong><br>
+      Au démarrage, le microcontrôleur n'a pas encore d'adresse IP valide configurée sur sa pile, il utilise donc l'adresse source neutre <code>0.0.0.0</code>. Ignorant l'adresse du serveur DHCP sur le segment local, il émet sa requête vers l'adresse de diffusion générale <code>255.255.255.255</code> pour toucher tous les hôtes.</p>
+
+      <p><strong>3. Échange ARP (Address Resolution Protocol) :</strong><br>
+      Avant d'émettre un paquet IP vers <code>192.168.1.254</code>, la couche 2 (Liaison Ethernet/Wi-Fi) a impérativement besoin de connaître l'adresse physique matérielle (MAC) du récepteur pour constituer l'en-tête de trame. La trame 5 interroge le réseau en broadcast, et la trame 6 fournit la réponse (<code>00:1a:2b:3c:4d</code>).</p>
+
+      <p><strong>4. Établissement de connexion TCP (Three-Way Handshake) :</strong><br>
+      Les trames 7, 8 et 9 réalisent la poignée de main d'ouverture de session TCP :</p>
+      <ul>
+        <li><strong>Trame 7 [SYN] :</strong> Le client synchronise ses numéros de séquence (Seq=0).</li>
+        <li><strong>Trame 8 [SYN, ACK] :</strong> Le serveur accepte, synchronise son propre numéro de séquence (Seq=0) et acquitte celui du client (Ack=1).</li>
+        <li><strong>Trame 9 [ACK] :</strong> Le client acquitte le serveur (Ack=1). La connexion est désormais établie.</li>
+      </ul>
+
+      <p><strong>5. Intérêt d'UDP pour un flux angulaire temps réel :</strong><br>
+      UDP supprime le temps de latence de la négociation d'ouverture de session, n'effectue aucun accusé de réception ni retransmission en cas de perte (qui créerait des blocages et du jitter), et minimise la bande passante avec un en-tête très réduit de 8 octets contre 20 octets minimum pour TCP.</p>
+    </div>
+  </div>
+
+  <!-- EXERCICE 4 -->
+  <div class="exercise-card">
+    <div class="exercise-header">
+      <span class="exercise-title">Exercice 4 : Sécurisation IoT - Migration HTTP vers HTTPS/TLS</span>
+      <span class="meta-badge badge-alert">Compétences C04, C05 & C10</span>
+    </div>
+    <p>Un objet connecté transmet des relevés météo à un serveur distant via le protocole HTTP standard (port 80). Lors d'un test sous Wireshark, la trame suivante est capturée :</p>
+
+    <pre><code>POST /api/telemetry HTTP/1.1
+Host: api.station-meteo.org
+User-Agent: ESP32S3-Firmware/2.0
+Authorization: Bearer Key_CIEL_987654321
+Content-Type: application/json
+Content-Length: 29
+
+{"temp": 21.8, "pression": 1013}</code></pre>
+
+    <p><strong>Questions :</strong></p>
+    <ol>
+      <li><strong>[C10]</strong> Identifier la vulnérabilité majeure de ce message vis-à-vis d'un attaquant passif écoutant le réseau local.</li>
+      <li><strong>[C05]</strong> Pour remédier à cette faille, le développeur utilise la bibliothèque <code>WiFiClientSecure</code> en C++ pour basculer en HTTPS :
+        <ul>
+          <li>Quel est le port réseau standard assigné au protocole HTTPS ?</li>
+          <li>Quelles sont les deux garanties fondamentales apportées par la couche TLS (*Transport Layer Security*) ?</li>
+        </ul>
+      </li>
+      <li><strong>[C04]</strong> Dans certains tutoriels en ligne, la commande suivante est utilisée :
+        <pre><code>client.setInsecure(); // Désactive la vérification du certificat</code></pre>
+        Expliquer pourquoi cette instruction annule une part essentielle de la sécurité et à quelle attaque critique elle expose le microcontrôleur.
+      </li>
+      <li><strong>[C05]</strong> Indiquer la méthode correcte à adopter en environnement industriel pour assurer une authentification stricte du serveur.</li>
+    </ol>
+
+    <!-- SOLUTION 4 -->
+    <div class="solution-box solution-item">
+      <div class="solution-title">📝 Corrigé Détaillé de l'Exercice 4</div>
+      <p><strong>1. Vulnérabilité de la trame en clair :</strong><br>
+      La requête circulant sans chiffrement (HTTP port 80), l'en-tête d'authentification <code>Authorization: Bearer Key_CIEL_987654321</code> ainsi que les données du capteur sont lisibles en clair par simple écoute passive (sniffing). Un pirate peut voler le jeton (token) et usurper l'identité de l'objet connecté sur l'API centrale.</p>
+
+      <p><strong>2. Migration vers HTTPS / TLS :</strong></p>
+      <ul>
+        <li><strong>Port standard :</strong> Port TCP <strong>443</strong>.</li>
+        <li><strong>Deux garanties fondamentales de TLS :</strong>
+          <ol>
+            <li><strong>Confidentialité & Intégrité :</strong> Chiffrement robuste de bout en bout des données empêchant toute lecture ou altération des paquets en transit.</li>
+            <li><strong>Authentification du serveur :</strong> Garantie formelle que le client dialogue bien avec le serveur légitime grâce à la chaîne de confiance du certificat numérique X.509.</li>
+          </ol>
+        </li>
+      </ul>
+
+      <p><strong>3. Danger de <code>client.setInsecure()</code> :</strong><br>
+      Cette fonction indique au microcontrôleur d'ignorer la validité du certificat délivré par le serveur (absence de contrôle de l'autorité émettrice et du nom de domaine). Le système devient alors immédiatement vulnérable à une attaque de type <strong>Homme du Milieu (MitM - Man-in-the-Middle)</strong> : un attaquant peut intercepter la liaison, présenter un certificat auto-signé frauduleux et déchiffrer/modifier toutes les données à l'insu de l'objet connecté.</p>
+
+      <p><strong>4. Solution industrielle recommandée :</strong><br>
+      Injecter dans la mémoire Flash du microcontrôleur l'empreinte racine de l'autorité de certification de confiance (<em>Root CA Certificate</em> au format PEM) et la charger dans le client via la méthode :
+      <pre><code>client.setCACert(root_ca_certificate);</code></pre>
+      Le microcontrôleur vérifie alors cryptographiquement la signature numérique du serveur avant tout échange de données.</p>
+    </div>
+  </div>
+
+  <hr style="margin-top: 35px; border-top: 1px solid #cbd5e1;" />
+  <footer style="text-align: center; font-size: 8.5pt; color: #64748b; margin-top: 15px;">
+    Document pédagogique BTS CIEL - 2e Année • Référentiel National Cybersécurité, Informatique & Électronique • Vincent Hilaire
+  </footer>
+
+  <script>
+    function toggleSolutions() {
+      const solutions = document.querySelectorAll('.solution-item');
+      solutions.forEach(el => {
+        if (el.style.display === 'none') {
+          el.style.display = 'block';
+        } else {
+          el.style.display = 'none';
+        }
+      });
+    }
+  </script>
+</body>
+</html>
