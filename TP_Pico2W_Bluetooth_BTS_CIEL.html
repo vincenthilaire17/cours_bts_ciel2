@@ -1639,28 +1639,243 @@ void loop() {
     <span class="timing-badge">Durée estimée : 1h15</span>
   </div>
 
+  <div class="callout callout-info">
+    <div class="callout-title">📡 Justification Industrielle du Lien Bluetooth & Pupitre Déporté</div>
+    <p>Dans un contexte de supervision industrielle (ex : machine-outil en zone étanche, sas sécurisé, robot mobile), l'opérateur ne peut pas être relié par un câble USB. La passerelle sans fil <strong>Bluetooth SPP</strong> permet de <strong>déporter l'IHM de contrôle-commande sur le PC du poste de supervision</strong> :</p>
+    <ul>
+      <li>Les frappes sur le <strong>clavier numérique déporté</strong> (connecté sur UART0) sont immédiatement relayées sans fil vers le superviseur.</li>
+      <li>Les mesures en temps réel de <strong>l'accéléromètre 3 axes (I²C)</strong> sont diffusées périodiquement au superviseur pour surveiller l'assiette du pupitre (détection de chute, inclinaison anormale).</li>
+      <li>Sur le PC de contrôle, une <strong>application graphique développée en Python (bibliothèque Tkinter)</strong> se connecte au port série virtuel Bluetooth (ex : <code>COM8</code>), décode les flux en temps réel et actualise dynamiquement le tableau de bord opérateur.</li>
+    </ul>
+  </div>
+
   <p>Cette étape intègre l'ensemble des entrées/sorties du pupitre de commande :</p>
   <ul>
     <li>Le <strong>clavier numérique série Grove</strong> est raccordé au port <strong>UART0 (GP0/GP1)</strong> du Pi Pico (exploité avec <code>Serial1</code> à 9600 bauds).</li>
     <li>Le <strong>bus I²C mutualisé</strong> (port I2C0 sur GP8/GP9 via le Hub) regroupe l'écran OLED (<code>0x3C</code>), la matrice de LED 8x8 (<code>0x70</code>) et le capteur d'accélération 3 axes (<code>0x53</code>).</li>
+    <li>La liaison <strong>Bluetooth SPP</strong> (sur UART1/<code>Serial2</code>) transmet les trames au superviseur PC.</li>
   </ul>
 
-  <h4>Travail demandé :</h4>
+  <h4>3.1. Format des trames de télémétrie émises par le Pico 2 W :</h4>
+  <p>Le microcontrôleur formate et émet deux types de messages ASCII terminés par <code>\r\n</code> vers <code>BT_SERIAL</code> (<code>Serial2</code>) :</p>
+  <ul>
+    <li><strong>Événement Clavier Série :</strong> <code>KEY:&lt;touche&gt;\r\n</code> (ex : <code>KEY:5\r\n</code>, <code>KEY:#\r\n</code>).</li>
+    <li><strong>Télémétrie Périodique Accéléromètre (toutes les 200 ms) :</strong> <code>ACCEL:X=&lt;valX&gt;,Y=&lt;valY&gt;,Z=&lt;valZ&gt;\r\n</code> (ex : <code>ACCEL:X=0.05,Y=-0.12,Z=0.98\r\n</code>).</li>
+    <li><strong>Alerte Inclinaison (&gt; 30°) :</strong> <code>ALARM:TILT_DETECTED [X:..., Y:..., Z:...]\r\n</code>.</li>
+  </ul>
+
+  <h4>3.2. Code C++ embarqué sur le Pico 2 W (Émission Clavier + Accéléromètre) :</h4>
+  <pre><code>/* =========================================================================
+   BTS CIEL - Émission Télémesure Bluetooth : Clavier Série UART0 + Accélérateur I2C
+   ========================================================================= */
+#include &lt;Wire.h&gt;
+#include &lt;Adafruit_Sensor.h&gt;
+#include &lt;Adafruit_ADXL345_U.h&gt; // ou bibliothèque compatible ADXL345 / LIS3DHTR
+
+Adafruit_ADXL345_Unified accel = Adafruit_ADXL345_Unified(12345);
+
+#define BT_SERIAL Serial2   // UART1 : GP4 (TX), GP5 (RX) vers Grove Bluetooth
+#define KEY_SERIAL Serial1  // UART0 : GP0 (TX), GP1 (RX) vers Clavier Série
+
+unsigned long dernierEnvoiAccel = 0;
+const unsigned long PERIODE_ACCEL_MS = 200; // Fréquence de télémétrie : 5 Hz
+
+void setup() {
+  Serial.begin(115200);
+
+  // Configuration UART0 (Clavier Série)
+  KEY_SERIAL.setTX(0); KEY_SERIAL.setRX(1);
+  KEY_SERIAL.begin(9600);
+
+  // Configuration UART1 (Bluetooth SPP)
+  BT_SERIAL.setTX(4); BT_SERIAL.setRX(5);
+  BT_SERIAL.begin(9600);
+
+  // Configuration Bus I2C0 (GP8=SDA, GP9=SCL)
+  Wire.setSDA(8); Wire.setSCL(9);
+  Wire.begin();
+
+  if (!accel.begin()) {
+    Serial.println(F("[ERREUR] Capteur ADXL345 introuvable sur bus I2C !"));
+  }
+}
+
+void loop() {
+  // 1. Lecture asynchrone du clavier série et transmission Bluetooth instantanée
+  while (KEY_SERIAL.available() > 0) {
+    char touche = (char)KEY_SERIAL.read();
+    if (touche >= 32 && touche <= 126) { // Caractère imprimable
+      BT_SERIAL.print("KEY:");
+      BT_SERIAL.println(touche);
+      Serial.print("[KEYBOARD -> BT] Touche : "); Serial.println(touche);
+    }
+  }
+
+  // 2. Acquisition périodique de l'accéléromètre et émission Bluetooth (5 Hz)
+  unsigned long now = millis();
+  if (now - dernierEnvoiAccel >= PERIODE_ACCEL_MS) {
+    dernierEnvoiAccel = now;
+
+    sensors_event_t event;
+    accel.getEvent(&event);
+
+    // Format : ACCEL:X=val,Y=val,Z=val
+    BT_SERIAL.print("ACCEL:X=");
+    BT_SERIAL.print(event.acceleration.x, 2);
+    BT_SERIAL.print(",Y=");
+    BT_SERIAL.print(event.acceleration.y, 2);
+    BT_SERIAL.print(",Z=");
+    BT_SERIAL.println(event.acceleration.z, 2);
+
+    // Alerte inclinaison si nécessaire
+    if (abs(event.acceleration.x) > 5.0 || abs(event.acceleration.y) > 5.0) {
+      BT_SERIAL.println("ALARM:TILT_DETECTED");
+    }
+  }
+}</code></pre>
+
+  <h4>3.3. Application de Supervision Graphique sur le PC (Python Tkinter) :</h4>
+  <p>Sur le poste de travail PC connecté en Bluetooth (port COM virtuel identifié, ex : <code>COM8</code>), développez le script de tableau de bord en Python. La bibliothèque standard <strong><code>tkinter</code></strong> assure le rendu graphique de l'interface, tandis que <strong><code>pyserial</code></strong> lit en tâche de fond le flux Bluetooth :</p>
+
+  <pre><code># =============================================================================
+# BTS CIEL - Poste de Supervision Déporté Bluetooth SPP (Pico 2 W)
+# Prérequis PC : pip install pyserial
+# =============================================================================
+import tkinter as tk
+from tkinter import ttk, messagebox
+import serial
+import threading
+import time
+
+# --- CONFIGURATION DU PORT BLUETOOTH DU PC ---
+PORT_BLUETOOTH = "COM8"   # Modifier selon le port COM identifié sous Windows
+BAUDRATE = 9600
+
+class SupervisionApp:
+    def __init__(self, root):
+        self.root = root
+        self.root.title("BTS CIEL — Pupitre de Supervision Bluetooth (Pico 2 W)")
+        self.root.geometry("560x480")
+        self.root.configure(bg="#0f172a")
+
+        self.ser = None
+        self.running = False
+
+        # --- TITRE PRINCIPAL ---
+        header = tk.Label(root, text="📡 SUPERVISION PUPITRE SANS FIL (BT SPP)",
+                          font=("Segoe UI", 13, "bold"), fg="#38bdf8", bg="#0f172a")
+        header.pack(pady=12)
+
+        # --- CADRE STATUT CONNEXION ---
+        frame_status = tk.Frame(root, bg="#1e293b", bd=1, relief="ridge")
+        frame_status.pack(fill="x", padx=16, pady=6)
+        self.lbl_status = tk.Label(frame_status, text="État liaison : DÉCONNECTÉ",
+                                   font=("Segoe UI", 10, "bold"), fg="#ef4444", bg="#1e293b")
+        self.lbl_status.pack(side="left", padx=10, pady=8)
+
+        self.btn_connect = tk.Button(frame_status, text="Connecter Bluetooth", command=self.toggle_connection,
+                                     bg="#0284c7", fg="white", font=("Segoe UI", 9, "bold"), relief="flat", padx=10)
+        self.btn_connect.pack(side="right", padx=10, pady=6)
+
+        # --- CADRE CLAVIER SÉRIE ---
+        frame_key = tk.LabelFrame(root, text=" ⌨️ Événements Clavier Série (UART0) ",
+                                  font=("Segoe UI", 10, "bold"), fg="#e2e8f0", bg="#1e293b", padx=12, pady=10)
+        frame_key.pack(fill="x", padx=16, pady=8)
+
+        self.lbl_key = tk.Label(frame_key, text="Dernière touche pressée : ---",
+                                font=("Consolas", 14, "bold"), fg="#facc15", bg="#1e293b")
+        self.lbl_key.pack(pady=4)
+
+        # --- CADRE TÉLÉMÉTRIE ACCÉLÉROMÈTRE ---
+        frame_accel = tk.LabelFrame(root, text=" 📐 Télémétrie Accéléromètre 3 Axes (I²C) ",
+                                    font=("Segoe UI", 10, "bold"), fg="#e2e8f0", bg="#1e293b", padx=12, pady=10)
+        frame_accel.pack(fill="x", padx=16, pady=8)
+
+        self.lbl_accel_x = tk.Label(frame_accel, text="Axe X :  0.00 m/s²", font=("Consolas", 11), fg="#4ade80", bg="#1e293b")
+        self.lbl_accel_x.pack(anchor="w", pady=2)
+        self.lbl_accel_y = tk.Label(frame_accel, text="Axe Y :  0.00 m/s²", font=("Consolas", 11), fg="#4ade80", bg="#1e293b")
+        self.lbl_accel_y.pack(anchor="w", pady=2)
+        self.lbl_accel_z = tk.Label(frame_accel, text="Axe Z :  0.00 m/s²", font=("Consolas", 11), fg="#4ade80", bg="#1e293b")
+        self.lbl_accel_z.pack(anchor="w", pady=2)
+
+        self.lbl_alarm = tk.Label(frame_accel, text="STATUT : Assiette pupitre normale",
+                                  font=("Segoe UI", 10, "bold"), fg="#22c55e", bg="#1e293b")
+        self.lbl_alarm.pack(pady=6)
+
+        # --- CONSOLE DES TRAMES BRUTES ---
+        frame_log = tk.LabelFrame(root, text=" 📝 Flux de Données Brut (Console) ",
+                                  font=("Segoe UI", 9, "bold"), fg="#94a3b8", bg="#0f172a", padx=8, pady=4)
+        frame_log.pack(fill="both", expand=True, padx=16, pady=8)
+
+        self.txt_log = tk.Text(frame_log, height=5, bg="#020617", fg="#a5f3fc", font=("Consolas", 8), relief="flat")
+        self.txt_log.pack(fill="both", expand=True)
+
+    def toggle_connection(self):
+        if not self.running:
+            try:
+                self.ser = serial.Serial(PORT_BLUETOOTH, BAUDRATE, timeout=1)
+                self.running = True
+                self.lbl_status.config(text=f"État liaison : CONNECTÉ ({PORT_BLUETOOTH})", fg="#22c55e")
+                self.btn_connect.config(text="Déconnecter", bg="#dc2626")
+                # Thread d'écoute asynchrone pour ne pas figer l'interface Tkinter
+                threading.Thread(target=self.lecture_serie_thread, daemon=True).start()
+            except Exception as e:
+                messagebox.showerror("Erreur de connexion Bluetooth", f"Impossible d'ouvrir {PORT_BLUETOOTH} :\n{e}")
+        else:
+            self.running = False
+            if self.ser: self.ser.close()
+            self.lbl_status.config(text="État liaison : DÉCONNECTÉ", fg="#ef4444")
+            self.btn_connect.config(text="Connecter Bluetooth", bg="#0284c7")
+
+    def lecture_serie_thread(self):
+        while self.running:
+            try:
+                if self.ser and self.ser.in_waiting > 0:
+                    ligne = self.ser.readline().decode('utf-8', errors='ignore').strip()
+                    if ligne:
+                        self.root.after(0, self.traiter_trame_recue, ligne)
+            except Exception:
+                break
+            time.sleep(0.01)
+
+    def traiter_trame_recue(self, trame):
+        # Affichage dans le journal brut
+        self.txt_log.insert("end", f"[RX] {trame}\n")
+        self.txt_log.see("end")
+
+        # Décodage événement clavier
+        if trame.startswith("KEY:"):
+            key_val = trame.split("KEY:")[1]
+            self.lbl_key.config(text=f"Dernière touche pressée : [ {key_val} ]")
+
+        # Décodage télémétrie accéléromètre : ACCEL:X=val,Y=val,Z=val
+        elif trame.startswith("ACCEL:"):
+            try:
+                payload = trame.split("ACCEL:")[1]
+                parts = dict(item.split("=") for item in payload.split(","))
+                self.lbl_accel_x.config(text=f"Axe X : {parts.get('X', '0')} m/s²")
+                self.lbl_accel_y.config(text=f"Axe Y : {parts.get('Y', '0')} m/s²")
+                self.lbl_accel_z.config(text=f"Axe Z : {parts.get('Z', '0')} m/s²")
+                self.lbl_alarm.config(text="STATUT : Assiette pupitre normale", fg="#22c55e")
+            except Exception:
+                pass
+
+        # Décodage Alarme
+        elif "ALARM:TILT_DETECTED" in trame:
+            self.lbl_alarm.config(text="⚠️ ALERTE : INCLINAISON EXCESSIVE DÉTECTÉE !", fg="#ef4444")
+
+if __name__ == "__main__":
+    app_root = tk.Tk()
+    app = SupervisionApp(app_root)
+    app_root.mainloop()</code></pre>
+
+  <h4>Travail demandé aux étudiants :</h4>
   <ol>
     <li>Raccordez le clavier numérique série sur le port UART0 du shield. Raccordez le Hub I²C au port I2C0, puis branchez l'OLED, la matrice LED et l'accéléromètre 3 axes sur les ports du Hub.</li>
     <li>Téléversez un programme de scanner I²C pour valider la détection des trois adresses hexadécimales sur le bus (<code>0x3C</code>, <code>0x53</code>, <code>0x70</code>).</li>
-    <li>Développez la routine de saisie : à chaque touche pressée sur le clavier série (lu sur <code>Serial1</code>) :
-      <ul>
-        <li>Affichez le caractère saisi sur l'écran OLED.</li>
-        <li>Transmettez en temps réel la notification au terminal de supervision Bluetooth (sur <code>Serial2</code>) sous la forme : <code>KEY:&lt;valeur&gt;\r\n</code>.</li>
-      </ul>
-    </li>
-    <li>Lisez périodiquement les composantes d'accélération (X, Y, Z) de l'accéléromètre 3 axes I²C (ADXL345 / LIS3DHTR). Dès qu'une inclinaison anormale du pupitre est détectée (&gt; 30° sur un axe) :
-      <ul>
-        <li>Affichez le symbole d'alerte ❌ sur la matrice de LED 8x8.</li>
-        <li>Transmettez l'alerte de télémétrie par Bluetooth : <code>ALARM:TILT_DETECTED [X:..., Y:..., Z:...]\r\n</code>.</li>
-      </ul>
-    </li>
+    <li>Téléversez le programme d'émission de télémétrie sur le Pico 2 W.</li>
+    <li>Sur votre PC, lancez le script Python <code>supervision_bluetooth.py</code> après avoir ajusté la variable <code>PORT_BLUETOOTH</code> sur votre port COM attribué (ex : <code>COM8</code>).</li>
+    <li>Appuyez sur plusieurs touches du clavier numérique et inclinez physiquement la maquette Pico 2 W. Vérifiez la mise à jour instantanée des données dans l'interface Tkinter.</li>
   </ol>
 
   <div class="student-response">
@@ -1668,6 +1883,18 @@ void loop() {
     Comment le microcontrôleur RP2350 fait-il pour dialoguer avec un capteur précis sans interférer avec les deux autres ? Quelles adresses physiques respectives avez-vous relevées lors du scan ?
     <div class="dotted-line"></div>
     <div class="dotted-line"></div>
+  </div>
+
+  <div class="student-response">
+    <strong>Question 3.2 (Architecture Client-Serveur &amp; Multithreading Python Tkinter) :</strong><br>
+    Dans le script Python de supervision, pourquoi la réception série des données Bluetooth est-elle exécutée dans un <strong>Thread d'arrière-plan distinct (<code>threading.Thread</code>)</strong> plutôt que directement dans la boucle graphique <code>root.mainloop()</code> ? Que se passerait-il si l'on appelait une fonction de lecture bloquante <code>ser.readline()</code> dans la boucle graphique principale ?
+    <div class="dotted-line"></div>
+    <div class="dotted-line"></div>
+
+    <div class="capture-box">
+      📸 <strong>Livrable Compte-Rendu — Capture 5 (Interface Graphique Tkinter de Supervision) :</strong><br>
+      Insérez dans votre compte-rendu une capture d'écran de votre interface Python Tkinter en fonctionnement actif, affichant une touche du clavier détectée et les valeurs dynamiques (X, Y, Z) de l'accéléromètre lors d'une inclinaison de la maquette.
+    </div>
   </div>
 </div>
 

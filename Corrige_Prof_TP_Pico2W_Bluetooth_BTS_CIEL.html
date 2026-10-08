@@ -521,6 +521,15 @@ void loop() {
   Le clavier numérique série émet ses caractères en asynchrone sur <strong>UART0 (GP1/RX Pico)</strong> à 9600 bauds. Il est lu indépendamment via <strong><code>Serial1</code></strong> sans aucune collision possible avec le bus I²C ni avec le Bluetooth (sur UART1/<code>Serial2</code>).</p>
 </div>
 
+<div class="teacher-answer">
+  <div class="teacher-answer-title">✅ Question 3.2 : Supervision Python Tkinter &amp; Architecture Multithread</div>
+  <p>• <strong>Justification de la liaison Bluetooth pour le pupitre :</strong><br>
+  La liaison Bluetooth SPP émule un lien série sans fil permettant de dissocier physiquement la partie opérative (Pico 2 W, capteurs, clavier) de la console de supervision. L'opérateur peut ainsi se trouver à plusieurs mètres (jusqu'à 10-15 m) en zone sécurisée sans liaison filaire gênante.</p>
+  <p>• <strong>Rôle du Thread d'arrière-plan (<code>threading.Thread</code>) :</strong><br>
+  Dans Tkinter, la boucle événementielle <code>root.mainloop()</code> gère le rafraîchissement visuel des composants graphiques (boutons, labels, fenêtres) et les interactions utilisateur (clics de souris, frappes clavier). Si l'on exécutait une lecture série bloquante comme <code>ser.readline()</code> directement dans <code>mainloop()</code>, le processus Python attendrait indéfiniment l'arrivée d'octets sur le port COM : la fenêtre graphique deviendrait instantanément <em>« Ne répond pas »</em> (gelée / figée).<br>
+  L'utilisation d'un <strong>Thread secondaire</strong> permet de bloquer uniquement ce sous-processus en attente des trames Bluetooth, puis de transférer de façon sécurisée les données décodées au thread graphique principal via <code>root.after(0, ...)</code>.</p>
+</div>
+
 <hr />
 
 <!-- ========================================================================= -->
