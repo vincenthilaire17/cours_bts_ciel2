@@ -495,6 +495,40 @@ void loop() {
 </div>
 
 <div class="teacher-answer">
+  <div class="teacher-answer-title">✅ Question 2.0 : Analyse du Buffer Circulaire Producteur / Consommateur &amp; Opérateur Modulo</div>
+  
+  <p><strong>Partie A : Le Producteur — <code>enregistrerOctetsBluetooth()</code></strong></p>
+  <ul>
+    <li><strong>1. Boucle <code>while (BT_SERIAL.available() > 0)</code> :</strong><br>
+    La méthode <code>available()</code> renvoie le nombre d'octets stockés dans le tampon matériel interne de l'UART. On utilise <code>while</code> pour vider tous les octets en attente en une seule fois lors du passage dans la boucle, ce qui évite d'accumuler un retard par rapport au flux entrant.</li>
+    
+    <li><strong>2. Opérateur Modulo <code>%</code> et calculs d'application :</strong><br>
+    • <em>Définition mathématique et informatique :</em> L'opérateur modulo <code>%</code> calcule le <strong>reste de la division euclidienne (entière)</strong> de deux nombres.<br>
+    • <em>Calculs pour les 3 valeurs d'indice :</em>
+      <ul>
+        <li><code>head = 0</code> &rarr; <code>nextHead = (0 + 1) % 128 = 1 % 128</code> = <strong>1</strong> (1 divisé par 128 donne 0, reste 1).</li>
+        <li><code>head = 64</code> &rarr; <code>nextHead = (64 + 1) % 128 = 65 % 128</code> = <strong>65</strong>.</li>
+        <li><code>head = 127</code> &rarr; <code>nextHead = (127 + 1) % 128 = 128 % 128</code> = <strong>0</strong> (128 divisé par 128 donne 1, <strong>reste 0</strong> !).</li>
+      </ul>
+    • <em>Interprétation :</em> Lorsque l'indice atteint la dernière case du tableau (127), l'opération modulo le réinitialise automatiquement à <strong>0</strong> sans nécessiter de conditionnelle <code>if</code>. Cela garantit mathématiquement que <code>nextHead</code> restera toujours strictement compris dans l'intervalle $[0\,;\,127]$, évitant tout débordement mémoire (*buffer overflow*).</li>
+    
+    <li><strong>3. Test de débordement <code>if (nextHead != tail)</code> :</strong><br>
+    Si <code>nextHead == tail</code>, cela signifie que la tête d'écriture est sur le point de rattraper la queue de lecture : le tampon est <strong>plein</strong>. Sans ce test, le producteur écraserait les anciens octets non encore lus par le consommateur, corrompant ainsi le message en cours.</li>
+  </ul>
+
+  <p><strong>Partie B : Le Consommateur — <code>traiterMessageRecu()</code></strong></p>
+  <ul>
+    <li><strong>4. Non-blocage <code>if (!messageCompletDisponible()) return;</code> :</strong><br>
+    La fonction inspecte le tampon en amont. Si aucun caractère de fin de ligne (<code>\n</code> ou <code>\r</code>) n'est encore détecté, elle quitte immédiatement (<code>return</code>). Le processeur consacre ainsi son temps aux autres tâches (OLED, I²C, accéléromètre) au lieu d'attendre passivement.</li>
+    <li><strong>5. Avancement de <code>tail</code> :</strong><br>
+    <code>head</code> avance lors de l'enregistrement d'un nouvel octet (producteur). <code>tail</code> avance au fur et à mesure que les octets sont extraits et traités (consommateur). Le tampon est totalement vide lorsque <code>head == tail</code>.</li>
+    <li><strong>6. Caractère nul <code>'\0'</code> et <code>display.display()</code> :</strong><br>
+    • En C/C++, <code>'\0'</code> marque la fin d'une chaîne de caractères (sentinelle). Sans lui, les fonctions comme <code>println()</code> continuent de lire la mémoire au-delà du message.<br>
+    • L'OLED utilise un tampon mémoire graphique dans la RAM du Pico. Les fonctions de tracé écrivent dans ce tampon local ; seule <code>display.display()</code> transfère physiquement les données par le bus I²C vers l'écran.</li>
+  </ul>
+</div>
+
+<div class="teacher-answer">
   <div class="teacher-answer-title">✅ Question 2.1 : Décodage I²C &amp; Fréquence d'horloge SCL</div>
   <p>• <strong>Fréquence SCL mesurée :</strong> <code>100 kHz</code> (période <i>T</i><sub>SCL</sub> = 10 µs).</p>
   <p>• <strong>Mode de fonctionnement :</strong> <strong>Standard-mode (Sm)</strong>, caractérisé par un débit nominal de 100 kbit/s. La forme des fronts montants présente une allure exponentielle typique liée à la charge RC (<i>R</i><sub>pull-up</sub> &approx; 4,7 k&Omega; et capacité parasite des pistes/câbles Grove &approx; 50 pF).</p>
