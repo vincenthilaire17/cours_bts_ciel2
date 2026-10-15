@@ -1,0 +1,948 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="utf-8" />
+  <meta name="generator" content="BTS CIEL - Vincent Hilaire" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Guide Pratique : Déploiement Dual-Boot Windows 11 &amp; Ubuntu - Partitionnement 100 Go &amp; Configuration GRUB</title>
+  
+  <style>
+    @page {
+      size: A4;
+      margin: 14mm 13mm 14mm 13mm;
+      @bottom-right {
+        content: "Page " counter(page) " / " counter(pages);
+        font-family: 'Segoe UI', Arial, sans-serif;
+        font-size: 8pt;
+        color: #64748b;
+      }
+      @bottom-left {
+        content: "BTS CIEL 2 \2022  Procédure Atelier : Dual-Boot Windows 11 & Ubuntu";
+        font-family: 'Segoe UI', Arial, sans-serif;
+        font-size: 8pt;
+        color: #64748b;
+      }
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    html {
+      color: #1e293b;
+      background-color: #f8fafc;
+      -webkit-text-size-adjust: 100%;
+    }
+
+    body {
+      font-family: 'Segoe UI', -apple-system, BlinkMacSystemFont, Roboto, Helvetica, Arial, sans-serif;
+      line-height: 1.48;
+      color: #1e293b;
+      max-width: 960px;
+      margin: 0 auto;
+      padding: 18px 24px;
+      font-size: 9.3pt;
+    }
+
+    @media print {
+      html { background-color: white; }
+      body {
+        background-color: transparent;
+        color: #0f172a;
+        font-size: 8.9pt;
+        max-width: 100%;
+        padding: 0;
+      }
+      p, h2, h3 { orphans: 3; widows: 3; }
+      h2, h3, h4 { break-after: avoid; page-break-after: avoid; }
+      pre, blockquote, table, .callout, .step-card { break-inside: avoid; page-break-inside: avoid; }
+      .no-print { display: none; }
+    }
+
+    /* En-tête Institutionnel */
+    header {
+      margin-bottom: 18px;
+      border-bottom: 2.5px solid #0b3c5d;
+      padding-bottom: 12px;
+    }
+
+    .header-top {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 6px;
+      font-size: 8.2pt;
+      font-weight: 700;
+      color: #475569;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      border-bottom: 1px solid #e2e8f0;
+      padding-bottom: 4px;
+    }
+
+    h1 {
+      font-size: 17pt;
+      color: #0b3c5d;
+      margin: 6px 0 4px 0;
+      line-height: 1.25;
+      letter-spacing: -0.3px;
+      font-weight: 800;
+    }
+
+    .subtitle {
+      font-size: 9.8pt;
+      color: #334155;
+      font-weight: 500;
+      margin: 2px 0 8px 0;
+    }
+
+    .badge-container {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 5px;
+      margin-top: 8px;
+    }
+
+    .meta-badge {
+      display: inline-block;
+      font-size: 7.8pt;
+      font-weight: 600;
+      padding: 2.5px 8px;
+      border-radius: 10px;
+      border: 1px solid transparent;
+    }
+
+    .badge-navy { background: #0b3c5d; color: #ffffff; }
+    .badge-cyan { background: #e0f2fe; color: #0369a1; border-color: #7dd3fc; }
+    .badge-amber { background: #fef3c7; color: #92400e; border-color: #fcd34d; }
+    .badge-green { background: #dcfce7; color: #166534; border-color: #86efac; }
+    .badge-slate { background: #f1f5f9; color: #334155; border-color: #cbd5e1; }
+
+    /* Sommaire Express */
+    .summary-box {
+      background: #f8fafc;
+      border: 1px solid #cbd5e1;
+      border-radius: 6px;
+      padding: 10px 14px;
+      margin: 12px 0;
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 6px 16px;
+      font-size: 8.5pt;
+    }
+
+    .summary-item {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      color: #1e293b;
+    }
+
+    .summary-item strong {
+      color: #0b3c5d;
+    }
+
+    /* Titres de Sections */
+    h2 {
+      font-size: 12pt;
+      color: #0b3c5d;
+      margin-top: 18px;
+      margin-bottom: 8px;
+      border-bottom: 1.5px solid #cbd5e1;
+      padding-bottom: 4px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    h2 .section-num {
+      background: #0b3c5d;
+      color: white;
+      padding: 1px 6px;
+      border-radius: 4px;
+      font-size: 8.8pt;
+      font-weight: 700;
+    }
+
+    h3 {
+      font-size: 10.2pt;
+      color: #1d5f8a;
+      margin-top: 12px;
+      margin-bottom: 6px;
+      border-left: 3.5px solid #328cc1;
+      padding-left: 8px;
+    }
+
+    h4 {
+      font-size: 9.1pt;
+      color: #0f172a;
+      margin-top: 10px;
+      margin-bottom: 4px;
+      font-weight: 700;
+    }
+
+    p {
+      margin: 5px 0;
+      text-align: justify;
+    }
+
+    ul, ol {
+      margin: 5px 0;
+      padding-left: 20px;
+    }
+
+    li {
+      margin-bottom: 3px;
+    }
+
+    /* Cartes & Étapes */
+    .step-card {
+      background: #ffffff;
+      border: 1px solid #e2e8f0;
+      border-radius: 5px;
+      padding: 10px 12px;
+      margin: 8px 0;
+      box-shadow: 0 1px 2px rgba(0,0,0,0.02);
+      break-inside: avoid;
+      page-break-inside: avoid;
+    }
+
+    .step-header {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      margin-bottom: 6px;
+      font-weight: 700;
+      color: #0b3c5d;
+      font-size: 9.4pt;
+    }
+
+    .step-badge {
+      background: #328cc1;
+      color: #ffffff;
+      padding: 1.5px 7px;
+      border-radius: 10px;
+      font-size: 7.6pt;
+      font-weight: 700;
+    }
+
+    /* Callouts */
+    .callout {
+      border-radius: 5px;
+      padding: 8px 12px;
+      margin: 8px 0;
+      font-size: 8.6pt;
+      border-left: 4px solid;
+      line-height: 1.42;
+      break-inside: avoid;
+      page-break-inside: avoid;
+    }
+
+    .callout-info {
+      background-color: #f0f7fc;
+      border-color: #328cc1;
+      color: #1a446c;
+    }
+
+    .callout-warning {
+      background-color: #fffbeb;
+      border-color: #f59e0b;
+      color: #854d0e;
+    }
+
+    .callout-danger {
+      background-color: #fef2f2;
+      border-color: #ef4444;
+      color: #991b1b;
+    }
+
+    .callout-success {
+      background-color: #f0fdf4;
+      border-color: #22c55e;
+      color: #166534;
+    }
+
+    .callout-title {
+      font-weight: 700;
+      margin-bottom: 3px;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      font-size: 8.9pt;
+    }
+
+    /* Tableaux */
+    table {
+      border-collapse: collapse;
+      width: 100%;
+      margin: 8px 0;
+      font-size: 8.4pt;
+      background-color: #ffffff;
+      break-inside: avoid;
+      page-break-inside: avoid;
+    }
+
+    th, td {
+      border: 1px solid #cbd5e1;
+      padding: 5px 8px;
+      text-align: left;
+      vertical-align: middle;
+    }
+
+    th {
+      background-color: #f1f5f9;
+      color: #0b3c5d;
+      font-weight: 700;
+    }
+
+    tr:nth-child(even) {
+      background-color: #f8fafc;
+    }
+
+    /* Code & Terminal */
+    pre {
+      background-color: #1e293b;
+      color: #f8fafc;
+      border-radius: 5px;
+      padding: 8px 12px;
+      font-size: 8.2pt;
+      line-height: 1.42;
+      overflow-x: auto;
+      font-family: 'Consolas', 'Courier New', Monaco, monospace;
+      margin: 7px 0;
+      border: 1px solid #334155;
+      break-inside: avoid;
+      page-break-inside: avoid;
+    }
+
+    code {
+      background-color: #f1f5f9;
+      padding: 1.5px 4px;
+      border-radius: 3px;
+      font-size: 88%;
+      font-family: 'Consolas', 'Courier New', Monaco, monospace;
+      color: #0369a1;
+      border: 1px solid #e2e8f0;
+    }
+
+    pre code {
+      background-color: transparent;
+      padding: 0;
+      border-radius: 0;
+      font-size: inherit;
+      color: inherit;
+      border: none;
+    }
+
+    .terminal-prompt {
+      color: #38bdf8;
+      font-weight: bold;
+      user-select: none;
+    }
+
+    .terminal-comment {
+      color: #94a3b8;
+      font-style: italic;
+    }
+
+    .terminal-highlight {
+      color: #4ade80;
+      font-weight: bold;
+    }
+
+    /* Touches Clavier */
+    kbd {
+      background-color: #f8fafc;
+      border: 1px solid #94a3b8;
+      border-bottom-color: #64748b;
+      box-shadow: 0 1px 1px rgba(0, 0, 0, 0.15);
+      border-radius: 3px;
+      color: #334155;
+      display: inline-block;
+      font-size: 7.8pt;
+      font-family: Arial, Helvetica, sans-serif;
+      font-weight: 600;
+      line-height: 1;
+      padding: 2px 4px;
+      white-space: nowrap;
+    }
+
+    /* Diagramme Disque */
+    .disk-map {
+      display: flex;
+      width: 100%;
+      height: 42px;
+      margin: 10px 0 4px 0;
+      border-radius: 5px;
+      overflow: hidden;
+      border: 1.5px solid #334155;
+      font-size: 7.5pt;
+      font-weight: 600;
+      text-align: center;
+      break-inside: avoid;
+      page-break-inside: avoid;
+    }
+
+    .disk-part {
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      padding: 2px 3px;
+      overflow: hidden;
+      white-space: nowrap;
+      text-overflow: ellipsis;
+    }
+
+    .part-efi { background: #bae6fd; color: #0369a1; width: 9%; border-right: 1px solid #334155; }
+    .part-msr { background: #e2e8f0; color: #475569; width: 4%; border-right: 1px solid #334155; font-size: 6.8pt; }
+    .part-win { background: #bfdbfe; color: #1e40af; width: 47%; border-right: 1px solid #334155; }
+    .part-unalloc { background: #334155; color: #f8fafc; width: 34%; border-right: 1px solid #334155; }
+    .part-recov { background: #fed7aa; color: #9a3412; width: 6%; font-size: 6.8pt; }
+
+    .checklist {
+      list-style-type: none;
+      padding-left: 0;
+      margin: 6px 0;
+    }
+
+    .checklist li {
+      margin-bottom: 5px;
+      display: flex;
+      align-items: flex-start;
+      gap: 7px;
+    }
+
+    .check-box {
+      display: inline-block;
+      width: 13px;
+      height: 13px;
+      border: 1.5px solid #0b3c5d;
+      border-radius: 3px;
+      margin-top: 2px;
+      flex-shrink: 0;
+    }
+  </style>
+</head>
+<body>
+
+  <!-- EN-TÊTE PRINCIPAL -->
+  <header>
+    <div class="header-top">
+      <span>BTS CIEL &bull; Cybersécurité, Informatique &amp; Réseaux, Électronique</span>
+      <span>Fiche de Procédure Technique &bull; Atelier Système &amp; Réseaux</span>
+    </div>
+    <h1>Procédure de Déploiement Dual-Boot Windows 11 &amp; Ubuntu</h1>
+    <div class="subtitle">
+      Partitionnement du disque (100 Go), Installation UEFI depuis clé USB et Paramétrage complet de GRUB (Menu 10 s &amp; Choix du système par défaut)
+    </div>
+    <div class="badge-container">
+      <span class="meta-badge badge-navy">Système existant : Windows 11 Famille</span>
+      <span class="meta-badge badge-cyan">Système ajouté : Ubuntu 24.04 / 22.04 LTS</span>
+      <span class="meta-badge badge-amber">Espace alloué : 100 Go (102 400 Mo)</span>
+      <span class="meta-badge badge-green">Amorçage : UEFI / GPT + GRUB 2.06+</span>
+      <span class="meta-badge badge-slate">Niveau : BTS CIEL 1 &amp; 2</span>
+    </div>
+  </header>
+
+  <!-- SOMMAIRE RAPIDE -->
+  <div class="summary-box">
+    <div class="summary-item"><strong>01.</strong> Contexte &amp; Objectifs du TP</div>
+    <div class="summary-item"><strong>05.</strong> Étape 3 : Installation pas à pas d'Ubuntu</div>
+    <div class="summary-item"><strong>02.</strong> Prérequis vitaux (BitLocker &amp; Fast Startup)</div>
+    <div class="summary-item"><strong>06.</strong> Étape 4 : Configuration GRUB (10s &amp; OS défaut)</div>
+    <div class="summary-item"><strong>03.</strong> Étape 1 : Partitionnement Windows 11 (100 Go)</div>
+    <div class="summary-item"><strong>07.</strong> Étape 5 : Validation &amp; Recette du Dual-Boot</div>
+    <div class="summary-item"><strong>04.</strong> Étape 2 : Boot sur la clé USB fournie</div>
+    <div class="summary-item"><strong>08.</strong> Troubleshooting &amp; Fiche d'évaluation</div>
+  </div>
+
+  <!-- SECTION 1 : INTRODUCTION -->
+  <h2><span class="section-num">01</span> Contexte &amp; Objectifs de l'Atelier</h2>
+  <p>
+    Dans le cadre des activités pratiques de développement en C/C++, d'analyse de trames réseau avec Wireshark, de programmation de microcontrôleurs et d'initiation à la cybersécurité en <strong>BTS CIEL</strong>, un environnement d'exécution Linux natif est indispensable. L'objectif de cette fiche est de guider pas à pas l'étudiant dans l'installation d'<strong>Ubuntu Linux</strong> à côté de son <strong>Windows 11 Famille</strong> existant sur le même support de stockage.
+  </p>
+  <p><strong>Cahier des charges technique à respecter :</strong></p>
+  <ul>
+    <li>Conserver intégralement l'installation de Windows 11 et préserver toutes les données personnelles existantes.</li>
+    <li>Réduire la partition Windows pour dégager un bloc contigu de <strong>100 Go (102 400 Mo) non alloué</strong>.</li>
+    <li>Amorcer la machine sur la clé USB fournie en mode <strong>UEFI</strong> et installer Ubuntu.</li>
+    <li>Configurer le gestionnaire de démarrage GRUB pour <strong>afficher un compte à rebours visible de 10 secondes</strong>.</li>
+    <li>Définir avec précision le <strong>système d'exploitation lancé automatiquement après expiration des 10 secondes</strong> (au choix : Windows 11 ou Ubuntu).</li>
+  </ul>
+
+  <!-- SECTION 2 : PRÉREQUIS ET PRÉCAUTIONS CRITIQUES -->
+  <h2><span class="section-num">02</span> Prérequis et Précautions Vitales (Avant de partitionner)</h2>
+  
+  <div class="callout callout-danger">
+    <div class="callout-title">
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>
+      Avertissement préalable : Sauvegarde et Clé de récupération BitLocker
+    </div>
+    Toute manipulation de table de partitions comporte un risque résiduel. Sauvegardez vos fichiers indispensables sur support externe ou cloud. <br/>
+    <strong>Attention critique :</strong> Sur de nombreux PC récents, Windows 11 Famille active automatiquement le <em>Chiffrement de l'appareil</em> (BitLocker OEM). La modification de la table des partitions alerte le module de sécurité TPM 2.0, qui peut exiger la clé de secours au prochain démarrage de Windows.
+  </div>
+
+  <div class="step-card">
+    <div class="step-header">
+      <span class="step-badge">Action 1</span>
+      Sauvegarder la clé numérique de récupération BitLocker
+    </div>
+    <ol>
+      <li>Sous Windows 11, ouvrez <strong>Paramètres</strong> (<kbd>Win</kbd> + <kbd>I</kbd>) &gt; <strong>Confidentialité et sécurité</strong> &gt; <strong>Chiffrement de l'appareil</strong>.</li>
+      <li>Si le chiffrement est activé, cliquez sur le lien vers votre compte Microsoft : <br/>
+        <code>https://account.microsoft.com/devices/recoverykey</code></li>
+      <li><strong>Notez impérativement la clé de récupération de 48 chiffres</strong> (sur votre smartphone ou sur une feuille papier). <em>Ne commencez aucun partitionnement sans cette clé !</em></li>
+    </ol>
+  </div>
+
+  <div class="step-card">
+    <div class="step-header">
+      <span class="step-badge">Action 2</span>
+      Désactiver le « Démarrage Rapide » (Fast Startup) sous Windows 11
+    </div>
+    <p>
+      Le démarrage rapide de Windows plonge le noyau en veille prolongée (fichier <code>hiberfil.sys</code>) et verrouille le système de fichiers NTFS. Si Ubuntu tente de monter ce volume NTFS verrouillé, cela provoque des erreurs de montage en lecture seule ou des risques de corruption de données.
+    </p>
+    <ol>
+      <li>Faites <kbd>Win</kbd> + <kbd>R</kbd>, tapez <code>powercfg.cpl</code> et appuyez sur <kbd>Entrée</kbd>.</li>
+      <li>Dans la colonne de gauche, cliquez sur <strong>« Choisir l'action des boutons d'alimentation »</strong>.</li>
+      <li>Cliquez sur le lien administrateur : <strong>« Modifier des paramètres actuellement non disponibles »</strong>.</li>
+      <li>Dans les cases du bas, <strong>décochez</strong> : <code>Activer le démarrage rapide (recommandé)</code>.</li>
+      <li>Validez par <strong>« Enregistrer les modifications »</strong>.</li>
+    </ol>
+  </div>
+
+  <!-- SECTION 3 : PARTITIONNEMENT SOUS WINDOWS 11 -->
+  <h2><span class="section-num">03</span> Étape 1 : Partitionnement sous Windows 11 (Libérer 100 Go)</h2>
+  <p>
+    Nous allons réduire la partition système <code>(C:)</code> de Windows afin d'obtenir un bloc libre de <strong>100 Go</strong>.
+  </p>
+
+  <div class="step-card">
+    <div class="step-header">
+      <span class="step-badge">Procédure</span>
+      Réduire le volume C: avec la Gestion des disques
+    </div>
+    <ol>
+      <li>Faites un clic droit sur le menu <strong>Démarrer</strong> (ou <kbd>Win</kbd> + <kbd>X</kbd>) et sélectionnez <strong>« Gestion des disques »</strong> (ou tapez <code>diskmgmt.msc</code> dans <kbd>Win</kbd>+<kbd>R</kbd>).</li>
+      <li>Localisez le disque principal (généralement <em>Disque 0</em>) et faites un clic droit sur la partition principale <code>(C:)</code>.</li>
+      <li>Sélectionnez <strong>« Réduire le volume... »</strong>. Une fenêtre de calcul s'affiche pendant quelques secondes.</li>
+      <li>
+        Dans le champ <strong>« Quantité d'espace à réduire (en Mo) »</strong>, saisissez exactement :
+        <div class="callout callout-info" style="margin: 4px 0; padding: 6px 10px;">
+          $$100 \text{ Go} = 100 \times 1024 \text{ Mo} = \mathbf{102400 \text{ Mo}}$$
+          Tapez : <code>102400</code>.
+        </div>
+      </li>
+      <li>Cliquez sur <strong>« Réduire »</strong>.</li>
+    </ol>
+  </div>
+
+  <h4>Structure du disque obtenue :</h4>
+  <div class="disk-map">
+    <div class="disk-part part-efi">EFI (100 Mo)</div>
+    <div class="disk-part part-msr">MSR</div>
+    <div class="disk-part part-win">Windows 11 (C:) [NTFS Réduit]</div>
+    <div class="disk-part part-unalloc">&starf; 100 Go NON ALLOUÉ (Pour Ubuntu)</div>
+    <div class="disk-part part-recov">Récup.</div>
+  </div>
+  <p style="font-size: 8.3pt; color: #475569; margin-top: 2px;">
+    <strong>Règle essentielle :</strong> Ne faites rien de plus sur cette zone noire marquée <em>« Non alloué »</em>. <strong>Ne créez aucun nouveau volume NTFS</strong>. L'installeur Ubuntu utilisera cet espace vierge pour créer sa propre partition Linux <code>ext4</code>.
+  </p>
+
+  <div class="callout callout-warning">
+    <div class="callout-title">
+      <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
+      Que faire si Windows refuse de réduire de 100 Go ?
+    </div>
+    Si l'espace réductible est inférieur à 102 400 Mo alors que vous avez de l'espace libre sur C:, des fichiers système dits « non déplaçables » bloquent la fin du volume (fichiers d'échange, clichés instantanés). <br/>
+    <strong>Solution :</strong> Ouvrez une Invite de commandes en tant qu'administrateur, saisissez <code>powercfg -h off</code> (désactive l'hibernation), lancez le Nettoyage de disque (<code>cleanmgr</code>), redémarrez le PC et renouvelez l'opération.
+  </div>
+
+  <!-- SECTION 4 : DÉMARRAGE SUR LA CLÉ USB -->
+  <h2><span class="section-num">04</span> Étape 2 : Démarrage (Boot) sur la Clé USB Ubuntu</h2>
+  <p>
+    Insérez la clé USB amorçable fournie dans un port USB 3.0 direct (sans passer par un hub non alimenté).
+  </p>
+
+  <div class="step-card">
+    <div class="step-header">
+      <span class="step-badge">Méthode A</span>
+      Via le Démarrage Avancé de Windows 11 (Recommandé)
+    </div>
+    <ol>
+      <li>Dans Windows 11, rendez-vous dans <strong>Paramètres</strong> &gt; <strong>Système</strong> &gt; <strong>Récupération</strong>.</li>
+      <li>À la ligne <em>Démarrage avancé</em>, cliquez sur <strong>« Redémarrer maintenant »</strong>.</li>
+      <li>Sur l'écran bleu d'options qui s'affiche, cliquez sur <strong>« Utiliser un périphérique »</strong>.</li>
+      <li>Sélectionnez votre clé USB (ex : <code>EFI USB Device</code> ou la référence de la clé).</li>
+    </ol>
+  </div>
+
+  <div class="step-card">
+    <div class="step-header">
+      <span class="step-badge">Méthode B</span>
+      Via la touche directe de Boot Menu au démarrage du PC
+    </div>
+    <p>Éteignez complètement le PC. Rallumez-le en tapotant immédiatement et de façon répétée la touche de menu d'amorçage :</p>
+    <table>
+      <thead>
+        <tr>
+          <th>Marque du PC</th>
+          <th>Touche Boot Menu</th>
+          <th>Touche Setup BIOS</th>
+          <th>Entrée à sélectionner dans la liste</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td><strong>Dell</strong></td>
+          <td><kbd>F12</kbd></td>
+          <td><kbd>F2</kbd></td>
+          <td><code>UEFI BOOT: USB Storage Device</code></td>
+        </tr>
+        <tr>
+          <td><strong>HP</strong></td>
+          <td><kbd>F9</kbd> ou <kbd>Échap</kbd></td>
+          <td><kbd>F10</kbd></td>
+          <td><code>UEFI - USB Hard Drive</code></td>
+        </tr>
+        <tr>
+          <td><strong>Lenovo</strong></td>
+          <td><kbd>F12</kbd> ou <kbd>Fn</kbd>+<kbd>F12</kbd></td>
+          <td><kbd>F1</kbd> / <kbd>F2</kbd></td>
+          <td><code>USB HDD: [Nom de la clé USB]</code></td>
+        </tr>
+        <tr>
+          <td><strong>Asus</strong></td>
+          <td><kbd>F8</kbd> ou <kbd>Échap</kbd></td>
+          <td><kbd>F2</kbd> / <kbd>Suppr</kbd></td>
+          <td><code>UEFI: [Nom de la clé USB], Partition 1</code></td>
+        </tr>
+        <tr>
+          <td><strong>Acer / MSI</strong></td>
+          <td><kbd>F12</kbd> (Acer) / <kbd>F11</kbd> (MSI)</td>
+          <td><kbd>Suppr</kbd> / <kbd>F2</kbd></td>
+          <td><code>UEFI: USB Drive</code></td>
+        </tr>
+      </tbody>
+    </table>
+    <div class="callout callout-info" style="margin-top:6px;">
+      <strong>Note :</strong> Choisissez obligatoirement l'entrée préfixée par <strong>UEFI</strong> pour que le chargeur GRUB s'intègre correctement à côté de l'amorceur UEFI de Windows.
+    </div>
+  </div>
+
+  <!-- SECTION 5 : INSTALLATION D'UBUNTU -->
+  <h2><span class="section-num">05</span> Étape 3 : Installation Pas à Pas d'Ubuntu</h2>
+
+  <div class="step-card">
+    <div class="step-header">
+      <span class="step-badge">Phase 1</span>
+      Lancement &amp; Configuration Régionale
+    </div>
+    <ol>
+      <li>Sur le menu GRUB noir de la clé, sélectionnez <strong>« Try or Install Ubuntu »</strong> et appuyez sur <kbd>Entrée</kbd>.</li>
+      <li>Choisissez la langue <strong>Français</strong>, puis cliquez sur <strong>« Installer Ubuntu »</strong>.</li>
+      <li>Disposition du clavier : sélectionnez <strong>Français (AZERTY)</strong>. Saisissez quelques caractères (ex: <code>a</code>, <code>m</code>, <code>@</code>, <code>#</code>) dans le champ de test pour confirmer.</li>
+      <li>Réseau : connectez-vous au réseau Wi-Fi ou laissez le câble Ethernet branché.</li>
+    </ol>
+  </div>
+
+  <div class="step-card">
+    <div class="step-header">
+      <span class="step-badge">Phase 2</span>
+      Choix des Paquets &amp; Pilotes
+    </div>
+    <ul>
+      <li>Type d'installation : <strong>« Installation standard »</strong>.</li>
+      <li>Cochez : <strong>&check; « Télécharger les mises à jour pendant l'installation d'Ubuntu »</strong>.</li>
+      <li>Cochez : <strong>&check; « Installer un logiciel tiers pour le matériel graphique et le Wi-Fi ainsi que des formats de média supplémentaires »</strong> (indispensable pour activer les pilotes Wi-Fi et graphiques propriétaires).</li>
+      <li>Si l'assistant demande un mot de passe pour <em>Configure Secure Boot</em> (MOK), saisissez un mot de passe temporaire simple (ex : <code>bts2026</code>). Ce mot de passe servira à authentifier les pilotes tiers lors du premier redémarrage.</li>
+    </ul>
+  </div>
+
+  <div class="step-card">
+    <div class="step-header">
+      <span class="step-badge">Phase 3</span>
+      Type d'installation &ndash; Affectation des 100 Go
+    </div>
+    <p>Deux cas de figure se présentent sur l'écran de partitionnement :</p>
+
+    <div style="padding-left: 8px;">
+      <h4 style="color: #0369a1;">Cas A : L'option « Installer Ubuntu à côté de Windows Boot Manager » est proposée</h4>
+      <p>
+        Sélectionnez cette option. L'installeur utilise automatiquement l'espace de 100 Go non alloué créé à l'étape 1. Vérifiez sur la jauge graphique que la taille allouée correspond bien aux 100 Go.
+      </p>
+
+      <h4 style="color: #0369a1;">Cas B : Partitionnement manuel avec « Autre chose » (Recommandé en BTS CIEL)</h4>
+      <p>Si l'option automatique n'apparaît pas ou pour un contrôle total :</p>
+      <ol>
+        <li>Cochez <strong>« Autre chose »</strong> puis cliquez sur <em>Continuer</em>.</li>
+        <li>Dans la liste des partitions, repérez la ligne <strong>« espace libre »</strong> (environ <code>102400 Mo</code>).</li>
+        <li>Cliquez sur le bouton <strong><code>+</code></strong> :
+          <ul>
+            <li><strong>Taille :</strong> <code>102400 Mo</code> (tout l'espace libre).</li>
+            <li><strong>Type de la partition :</strong> Primaire.</li>
+            <li><strong>Emplacement :</strong> Début de cet espace.</li>
+            <li><strong>Utiliser comme :</strong> Système de fichiers journalisé <strong>ext4</strong>.</li>
+            <li><strong>Point de montage :</strong> <code>/</code> (racine).</li>
+          </ul>
+        </li>
+        <li>
+          <strong>Périphérique où sera installé le programme de démarrage :</strong><br/>
+          Sélectionnez la <strong>partition EFI existante</strong> de Windows (type <code>efi</code> ou <code>vfat</code>, ex : <code>/dev/nvme0n1p1</code> ou <code>/dev/sda1</code>). <em>Ne cochez surtout pas la case formater !</em>
+        </li>
+      </ol>
+    </div>
+  </div>
+
+  <div class="step-card">
+    <div class="step-header">
+      <span class="step-badge">Phase 4</span>
+      Création du Compte &amp; Finalisation
+    </div>
+    <ol>
+      <li>Fuseau horaire : validez <strong>Paris</strong>.</li>
+      <li>Renseignez le compte utilisateur :
+        <ul>
+          <li><strong>Nom complet :</strong> <code>Étudiant BTS CIEL</code></li>
+          <li><strong>Nom de votre machine :</strong> <code>pc-ciel-01</code></li>
+          <li><strong>Nom d'utilisateur (login) :</strong> <code>etudiant</code></li>
+          <li><strong>Mot de passe :</strong> Définissez un mot de passe sécurisé et retenez-le (requis pour <code>sudo</code>).</li>
+        </ul>
+      </li>
+      <li>Cliquez sur <strong>« Installer »</strong> et laissez l'installation se dérouler (environ 5 à 10 minutes).</li>
+      <li>À l'invitation finale, cliquez sur <strong>« Redémarrer maintenant »</strong>.</li>
+      <li>Lorsque l'écran affiche : <code>Please remove the installation medium, then press ENTER</code> : <strong>débranchez la clé USB</strong> et appuyez sur la touche <kbd>Entrée</kbd>.</li>
+    </ol>
+  </div>
+
+  <!-- SECTION 6 : CONFIGURATION DU DUAL BOOT (GRUB) -->
+  <h2><span class="section-num">06</span> Étape 4 : Configuration Avancée du Chargeur GRUB</h2>
+  <p>
+    Au redémarrage, la machine démarre sous <strong>Ubuntu</strong>. Nous allons maintenant configurer <strong>GRUB 2</strong> pour <strong>afficher le menu pendant exactement 10 secondes</strong> et <strong>définir le système lancé par défaut</strong> après ce délai.
+  </p>
+
+  <div class="step-card">
+    <div class="step-header">
+      <span class="step-badge">Étape 6.1</span>
+      Ouvrir un Terminal et vérifier la détection de Windows 11
+    </div>
+    <p>
+      Connectez-vous sous Ubuntu et ouvrez le terminal via <kbd>Ctrl</kbd> + <kbd>Alt</kbd> + <kbd>T</kbd>. Depuis GRUB 2.06, l'utilitaire <code>os-prober</code> est désactivé par défaut. Vérifions qu'il détecte bien Windows 11 :
+    </p>
+    <pre><span class="terminal-prompt">etudiant@pc-ciel-01:~$</span> sudo apt update && sudo apt install -y os-prober
+<span class="terminal-prompt">etudiant@pc-ciel-01:~$</span> sudo os-prober
+<span class="terminal-highlight">/dev/nvme0n1p1@/EFI/Microsoft/Boot/bootmgfw.efi:Windows Boot Manager:Windows:efi</span></pre>
+    <p style="font-size: 8.3pt; color: #166534;">
+      &check; La sortie confirme que le chargeur de démarrage de Windows 11 est présent et reconnu.
+    </p>
+  </div>
+
+  <div class="step-card">
+    <div class="step-header">
+      <span class="step-badge">Étape 6.2</span>
+      Modifier le fichier de configuration <code>/etc/default/grub</code>
+    </div>
+    <p>Ouvrez le fichier de configuration principal avec l'éditeur <code>nano</code> :</p>
+    <pre><span class="terminal-prompt">etudiant@pc-ciel-01:~$</span> sudo nano /etc/default/grub</pre>
+
+    <h4>Paramètres indispensables à modifier :</h4>
+    <ul>
+      <li><strong>Temporisation de 10 secondes :</strong><br/>
+        Réglez : <code>GRUB_TIMEOUT=10</code></li>
+      <li><strong>Visibilité du menu :</strong><br/>
+        Définissez : <code>GRUB_TIMEOUT_STYLE=menu</code> (garantit que le menu et le compte à rebours s'affichent à l'écran).</li>
+      <li><strong>Autorisation du scan os-prober :</strong><br/>
+        Ajoutez la ligne : <code>GRUB_DISABLE_OS_PROBER=false</code></li>
+    </ul>
+  </div>
+
+  <div class="step-card">
+    <div class="step-header">
+      <span class="step-badge">Étape 6.3</span>
+      Définir le Système d'Exploitation démarré par défaut après 10 s
+    </div>
+    <p>La directive <code>GRUB_DEFAULT</code> détermine quel OS démarre si aucune touche n'est pressée pendant les 10 secondes. Choisissez l'une des 3 options ci-dessous selon votre besoin :</p>
+
+    <table>
+      <thead>
+        <tr>
+          <th>Choix du Système par Défaut</th>
+          <th>Ligne exacte à inscrire dans <code>/etc/default/grub</code></th>
+          <th>Comportement à l'expiration des 10 secondes</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td><strong>Option A : Windows 11 par défaut</strong><br/><em>(Idéal pour un usage familial partagé)</em></td>
+          <td><code>GRUB_DEFAULT="Windows Boot Manager"</code></td>
+          <td>Le curseur se positionne d'office sur Windows 11 et le lance automatiquement au bout de 10 secondes.</td>
+        </tr>
+        <tr>
+          <td><strong>Option B : Ubuntu par défaut</strong><br/><em>(Idéal pour l'étudiant en développement)</em></td>
+          <td><code>GRUB_DEFAULT=0</code></td>
+          <td>Ubuntu (qui occupe toujours la 1ère position, index 0) démarre automatiquement au bout de 10 secondes.</td>
+        </tr>
+        <tr>
+          <td><strong>Option C : Dernier OS utilisé mémorisé</strong><br/><em>(Recommandé en atelier BTS CIEL)</em></td>
+          <td><code>GRUB_DEFAULT=saved</code><br/>
+          <code>GRUB_SAVEDEFAULT=true</code></td>
+          <td>Si vous avez quitté Windows, Windows redémarrera par défaut. Si vous étiez sous Ubuntu, Ubuntu redémarrera par défaut.</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <div class="step-card">
+    <div class="step-header">
+      <span class="step-badge">Étape 6.4</span>
+      Exemple de fichier <code>/etc/default/grub</code> finalisé (Cas Windows 11 par défaut)
+    </div>
+    <pre><span class="terminal-comment"># Fichier /etc/default/grub - Configuration Dual-Boot BTS CIEL</span>
+<span class="terminal-highlight">GRUB_DEFAULT="Windows Boot Manager"</span>
+<span class="terminal-highlight">GRUB_TIMEOUT_STYLE=menu</span>
+<span class="terminal-highlight">GRUB_TIMEOUT=10</span>
+<span class="terminal-highlight">GRUB_DISTRIBUTOR=`lsb_release -i -s 2> /dev/null || echo Debian`</span>
+<span class="terminal-highlight">GRUB_CMDLINE_LINUX_DEFAULT="quiet splash"</span>
+<span class="terminal-highlight">GRUB_CMDLINE_LINUX=""</span>
+<span class="terminal-highlight">GRUB_DISABLE_OS_PROBER=false</span></pre>
+    <p style="font-size: 8.3pt; color: #475569;">
+      Sous <code>nano</code> : sauvegardez en faisant <kbd>Ctrl</kbd> + <kbd>O</kbd> puis <kbd>Entrée</kbd>, et quittez avec <kbd>Ctrl</kbd> + <kbd>X</kbd>.
+    </p>
+  </div>
+
+  <div class="step-card">
+    <div class="step-header">
+      <span class="step-badge">Étape 6.5</span>
+      Régénération du fichier de démarrage GRUB
+    </div>
+    <p>
+      Pour que les modifications prennent effet dans l'environnement de démarrage UEFI (<code>/boot/grub/grub.cfg</code>), lancez la commande :
+    </p>
+    <pre><span class="terminal-prompt">etudiant@pc-ciel-01:~$</span> sudo update-grub</pre>
+    <p>Le terminal doit afficher la confirmation suivante :</p>
+    <pre>Sourcing file `/etc/default/grub'
+Generating grub configuration file ...
+Found linux image: /boot/vmlinuz-...-generic
+Found initrd image: /boot/initrd.img-...-generic
+<span class="terminal-highlight">Found Windows Boot Manager on /dev/nvme0n1p1@/EFI/Microsoft/Boot/bootmgfw.efi</span>
+Adding boot menu entry for UEFI Firmware Settings ...
+done</pre>
+  </div>
+
+  <!-- SECTION 7 : VALIDATION ET RECETTE -->
+  <h2><span class="section-num">07</span> Étape 5 : Validation et Recette du Dual-Boot</h2>
+  <p>Redémarrez le poste pour tester le fonctionnement en conditions réelles :</p>
+  <pre><span class="terminal-prompt">etudiant@pc-ciel-01:~$</span> sudo reboot</pre>
+
+  <div class="step-card">
+    <div class="step-header">
+      <span class="step-badge">Protocole</span>
+      Grille de Recette &amp; Tests Chronométrés
+    </div>
+    <ul class="checklist">
+      <li>
+        <span class="check-box"></span>
+        <div><strong>Test 1 (Affichage du menu) :</strong> À l'allumage, l'écran GRUB s'affiche avec la liste des systèmes (Ubuntu, Options avancées pour Ubuntu, Windows Boot Manager, UEFI Settings).</div>
+      </li>
+      <li>
+        <span class="check-box"></span>
+        <div><strong>Test 2 (Chronométrage 10 s) :</strong> Le décompte démarre à 10 secondes et défile visiblement en bas de l'écran.</div>
+      </li>
+      <li>
+        <span class="check-box"></span>
+        <div><strong>Test 3 (Démarrage automatique) :</strong> Sans toucher au clavier, au bout de 10 secondes, le système configuré dans <code>GRUB_DEFAULT</code> démarre automatiquement sans aucune erreur.</div>
+      </li>
+      <li>
+        <span class="check-box"></span>
+        <div><strong>Test 4 (Sélection manuelle) :</strong> Redémarrez la machine, appuyez sur une flèche (<kbd>&uarr;</kbd> ou <kbd>&darr;</kbd>) pour figer le compte à rebours, sélectionnez le second OS et appuyez sur <kbd>Entrée</kbd>. Vérifiez que les deux systèmes sont parfaitement opérationnels.</div>
+      </li>
+    </ul>
+  </div>
+
+  <!-- SECTION 8 : FICHE D'INCIDENTS (TROUBLESHOOTING) -->
+  <h2><span class="section-num">08</span> Guide de Dépannage &amp; Résolution d'Incidents Fréquents</h2>
+
+  <table>
+    <thead>
+      <tr>
+        <th style="width: 28%;">Symptôme constaté</th>
+        <th style="width: 32%;">Cause technique</th>
+        <th style="width: 40%;">Procédure de résolution</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><strong>Le PC démarre directement sous Windows 11</strong> sans passer par GRUB.</td>
+        <td>La priorité d'amorçage UEFI en NVRAM a replacé <em>Windows Boot Manager</em> en 1ère position.</td>
+        <td>
+          <strong>Solution A (BIOS) :</strong> Accédez au BIOS (<kbd>F2</kbd>/<kbd>Suppr</kbd>), onglet <em>Boot</em>, et placez <code>ubuntu</code> en tête de liste.<br/>
+          <strong>Solution B (Sous Windows Admin) :</strong> Ouvrez PowerShell en Admin et exécutez :<br/>
+          <code>bcdedit /set {bootmgr} path \EFI\ubuntu\shimx64.efi</code>
+        </td>
+      </tr>
+      <tr>
+        <td><strong>Décalage d'horloge de 1h ou 2h</strong> entre Windows et Ubuntu.</td>
+        <td>Windows lit l'horloge matérielle (RTC) en heure locale, tandis qu'Ubuntu la considère en heure UTC.</td>
+        <td>
+          Sous Ubuntu, forcez l'horloge système en heure locale :<br/>
+          <code>timedatectl set-local-rtc 1 --adjust-system-clock</code><br/>
+          L'heure sera rigoureusement synchronisée sur les deux OS.
+        </td>
+      </tr>
+      <tr>
+        <td><strong>Demande de clé BitLocker</strong> au premier démarrage de Windows 11.</td>
+        <td>La modification de la table des partitions GPT a alerté le module de sécurité TPM 2.0.</td>
+        <td>
+          Saisissez la <strong>clé de récupération de 48 chiffres</strong> notée lors de l'étape préliminaire. Une fois dans Windows, le TPM enregistre la nouvelle empreinte du disque et ne réclamera plus la clé.
+        </td>
+      </tr>
+    </tbody>
+  </table>
+
+  <!-- SECTION 9 : GRILLE D'ÉVALUATION -->
+  <h2><span class="section-num">09</span> Fiche d'Évaluation des Compétences BTS CIEL</h2>
+  <table>
+    <thead>
+      <tr>
+        <th>Compétences &amp; Savoir-Faire visés</th>
+        <th>Critères d'évaluation</th>
+        <th style="text-align:center; width:15%;">Résultat</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><strong>Sécurisation de l'environnement hôte</strong></td>
+        <td>Démarrage rapide désactivé, clé de récupération BitLocker sauvegardée, aucune perte de données.</td>
+        <td style="text-align:center;">&square; Validé</td>
+      </tr>
+      <tr>
+        <td><strong>Gestion du stockage &amp; Partitionnement</strong></td>
+        <td>Réduction exacte de 100 Go (102 400 Mo) sous Windows 11 en espace libre non alloué.</td>
+        <td style="text-align:center;">&square; Validé</td>
+      </tr>
+      <tr>
+        <td><strong>Installation d'un OS GNU/Linux en UEFI</strong></td>
+        <td>Installation réussie d'Ubuntu sur partition ext4 avec bootloader sur la partition EFI existante.</td>
+        <td style="text-align:center;">&square; Validé</td>
+      </tr>
+      <tr>
+        <td><strong>Administration du chargeur GRUB 2</strong></td>
+        <td>Temporisation fixée à 10 secondes avec affichage interactif du menu et os-prober actif.</td>
+        <td style="text-align:center;">&square; Validé</td>
+      </tr>
+      <tr>
+        <td><strong>Gestion du démarrage par défaut</strong></td>
+        <td>Lancement automatique du système désiré après 10 secondes de non-intervention.</td>
+        <td style="text-align:center;">&square; Validé</td>
+      </tr>
+    </tbody>
+  </table>
+
+  <footer style="margin-top: 18px; padding-top: 8px; border-top: 1px solid #cbd5e1; font-size: 7.8pt; color: #64748b; text-align: center;">
+    BTS CIEL &bull; Support Technique d'Atelier &bull; Vincent Hilaire &bull; Rentrée 2026 &bull; Conforme aux référentiels Cybersécurité et Informatique Réseaux
+  </footer>
+
+</body>
+</html>
