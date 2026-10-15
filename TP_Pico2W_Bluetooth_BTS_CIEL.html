@@ -1183,16 +1183,41 @@ void loop() {
   </div>
 
   <div class="callout callout-warning">
-    <div class="callout-title">⚙️ Pourquoi une fonction de réception non-bloquante avec buffer circulaire (Ring Buffer) ?</div>
-    <p><strong>1. Le problème des réceptions bloquantes :</strong><br>
-    À 9600 bauds, la transmission d'un octet prend environ <strong>1,04 ms</strong>. Si votre microcontrôleur tourne à 150 MHz et attend les octets avec une boucle bloquante ou des <code>delay()</code>, le processeur perd des centaines de milliers de cycles d'horloge. L'affichage de l'écran OLED se fige et la lecture des capteurs est interrompue.</p>
-    <p><strong>2. Le principe du Buffer Circulaire (FIFO) :</strong><br>
-    Un tampon circulaire alloue un tableau d'octets de taille fixe (ex : <code>#define BUF_SIZE 64</code>) géré par deux index :
+    <div class="callout-title">⚙️ Comprendre le Buffer Circulaire (Ring Buffer FIFO) : Architecture &amp; Rôle Industriel</div>
+    
+    <p><strong>1. Pourquoi un Buffer Circulaire ? (Le Problème Résolu) :</strong><br>
+    Dans notre pupitre embarqué sur Raspberry Pi Pico 2 W :</p>
     <ul>
-      <li><code>head</code> (tête d'écriture) : incrémenté à chaque octet reçu dès que <code>BT_SERIAL.available() > 0</code> : <code>head = (head + 1) % BUF_SIZE;</code></li>
-      <li><code>tail</code> (queue de lecture) : incrémenté par le programme principal au fur et à mesure que les messages complets sont traités : <code>tail = (tail + 1) % BUF_SIZE;</code></li>
+      <li><strong>Arrivée asynchrone des trames :</strong> À 9600 bauds, un octet arrive toutes les ~1,04 ms. L'opérateur peut envoyer un ordre ou un texte à n'importe quel moment.</li>
+      <li><strong>Multiples tâches matérielles concurrentes :</strong> Le Pico doit rafraîchir l'écran graphique OLED en I²C (durée d'environ 15 à 30 ms), lire l'accéléromètre 3 axes et scanner le clavier numérique.</li>
+      <li><strong>Le danger mortel du mode bloquant :</strong> Si le programme utilisait une fonction bloquante (ex : <code>Serial.readStringUntil('\n')</code>), le microcontrôleur gèlerait son exécution pendant des centaines de milliers de cycles d'horloge. L'écran OLED se figerait et les alertes d'inclinaison seraient manquées.</li>
+      <li><strong>La solution architecturale :</strong> Un <strong>tampon circulaire en mémoire partagée (FIFO)</strong> qui découple totalement la réception d'octets de leur traitement métier.</li>
     </ul>
-    Tant que <code>head != tail</code>, des données sont prêtes à être analysées en arrière-plan sans jamais bloquer la boucle <code>loop()</code> !</p>
+
+    <p style="margin-top: 14px;"><strong>2. Principe de Fonctionnement : Deux Pointeurs et l'Arithmétique Modulo :</strong><br>
+    Le tampon est un tableau en mémoire vive de taille fixe $N$ (ex : <code>#define RING_BUF_SIZE 128</code>), encadré par deux indices :</p>
+    <ul>
+      <li><strong><code>head</code> (Tête d'écriture - Rôle Producteur) :</strong> Pointe vers la prochaine case vide où ranger l'octet qui vient d'entrer sur l'UART Bluetooth.</li>
+      <li><strong><code>tail</code> (Queue de lecture - Rôle Consommateur) :</strong> Pointe vers le plus ancien octet non encore dépilé.</li>
+      <li><strong>La magie de l'opérateur Modulo <code>%</code> :</strong> Lorsque <code>head</code> ou <code>tail</code> atteint la fin du tableau (indice $N-1$), l'opération <code>(index + 1) % N</code> le ramène instantanément à l'indice <code>0</code>. Les deux extrémités du tableau sont reliées pour former un anneau virtuel continu en mémoire vive.</li>
+    </ul>
+
+    <div class="figure-box">
+      <img src="images/ring_buffer_principe.png" alt="Architecture Tampon Circulaire Producteur Consommateur" class="img-tutorial" />
+      <div class="figure-caption">Figure 2.1 : Architecture logicielle du Buffer Circulaire — Découplage Producteur (UART Bluetooth rapide) et Consommateur (Affichage OLED différé)</div>
+    </div>
+
+    <p style="margin-top: 14px;"><strong>3. Les Trois États Caractéristiques du Tampon Circulaire :</strong></p>
+    <ul>
+      <li><strong>État 1 : Buffer Vide (<code>head == tail</code>) :</strong> À l'initialisation ou lorsque tous les messages reçus ont été entièrement traités. Le consommateur ne fait rien.</li>
+      <li><strong>État 2 : Buffer Partiellement Rempli (<code>head != tail</code>) :</strong> Des octets ont été enregistrés par le producteur mais le délimiteur de fin de ligne (<code>\n</code>) n'a pas encore été traité.</li>
+      <li><strong>État 3 : Buffer Plein (<code>(head + 1) % N == tail</code>) :</strong> Une case vide est toujours conservée pour distinguer l'état « plein » de l'état « vide ». Si un nouvel octet arrive, le producteur rejette l'octet pour éviter d'écraser des données non lues (sécurité contre le débordement).</li>
+    </ul>
+
+    <div class="figure-box">
+      <img src="images/ring_buffer_etats.png" alt="Les 3 états caractéristiques du buffer circulaire" class="img-tutorial" />
+      <div class="figure-caption">Figure 2.2 : Représentation mémoire des trois états clés du buffer circulaire (Vide, Partiel, Plein)</div>
+    </div>
   </div>
 
   <h4>Travail demandé :</h4>
@@ -1480,8 +1505,14 @@ void loop() {
         <div class="dotted-line"></div>
       </li>
       <li style="margin-top: 8px;">
-        <strong>Ligne : <code>uint8_t nextHead = (head + 1) % RING_BUF_SIZE;</code></strong><br>
-        Expliquez le rôle de l'opérateur modulo <code>%</code>. Que vaut <code>nextHead</code> lorsque <code>head = 127</code> (taille 128) ? Pourquoi cette arithmétique donne-t-elle au tampon sa structure « circulaire » ?<br>
+        <strong>Ligne : <code>uint8_t nextHead = (head + 1) % RING_BUF_SIZE;</code> — L'opérateur Modulo <code>%</code></strong><br>
+        • Définissez le rôle mathématique et informatique de l'opérateur <strong>modulo (symbole <code>%</code>)</strong>. Quelle valeur renvoie-t-il exactement lors d'une division entière ?<br>
+        • Appliquez le calcul de <code>nextHead = (head + 1) % 128</code> pour les <strong>trois valeurs</strong> d'indice suivantes et déduisez-en pourquoi cette formule empêche tout débordement d'indice hors du tableau :
+        <div style="background: #f1f5f9; border-left: 3px solid #0284c7; padding: 6px 12px; margin: 6px 0; font-family: Consolas, monospace; font-size: 8.8pt;">
+          1) Si <code>head = 0</code>   &rarr; <code>nextHead = (0 + 1) % 128</code> = <strong>.......</strong><br>
+          2) Si <code>head = 64</code>  &rarr; <code>nextHead = (64 + 1) % 128</code> = <strong>.......</strong><br>
+          3) Si <code>head = 127</code> &rarr; <code>nextHead = (127 + 1) % 128</code> = <strong>.......</strong> (Que remarquez-vous sur cette 3<sup>e</sup> valeur ?)
+        </div>
         <div class="dotted-line"></div>
         <div class="dotted-line"></div>
       </li>

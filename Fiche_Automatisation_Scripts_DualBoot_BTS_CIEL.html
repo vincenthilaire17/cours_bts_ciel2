@@ -1,0 +1,455 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="utf-8" />
+  <meta name="generator" content="BTS CIEL - Vincent Hilaire" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Guide d'Automatisation : Déploiement Rapide Dual-Boot Windows 11 &amp; Ubuntu</title>
+  
+  <style>
+    @page {
+      size: A4;
+      margin: 14mm 13mm 14mm 13mm;
+      @bottom-right {
+        content: "Page " counter(page) " / " counter(pages);
+        font-family: 'Segoe UI', Arial, sans-serif;
+        font-size: 8pt;
+        color: #64748b;
+      }
+      @bottom-left {
+        content: "BTS CIEL 2 \2022  Scripts & Déploiement Rapide Dual-Boot";
+        font-family: 'Segoe UI', Arial, sans-serif;
+        font-size: 8pt;
+        color: #64748b;
+      }
+    }
+
+    * { box-sizing: border-box; }
+
+    html {
+      color: #1e293b;
+      background-color: #f8fafc;
+      -webkit-text-size-adjust: 100%;
+    }
+
+    body {
+      font-family: 'Segoe UI', -apple-system, BlinkMacSystemFont, Roboto, Helvetica, Arial, sans-serif;
+      line-height: 1.48;
+      color: #1e293b;
+      max-width: 960px;
+      margin: 0 auto;
+      padding: 18px 24px;
+      font-size: 9.2pt;
+    }
+
+    @media print {
+      html { background-color: white; }
+      body {
+        background-color: transparent;
+        color: #0f172a;
+        font-size: 8.8pt;
+        max-width: 100%;
+        padding: 0;
+      }
+      p, h2, h3 { orphans: 3; widows: 3; }
+      h2, h3, h4 { break-after: avoid; page-break-after: avoid; }
+      pre, blockquote, table, .callout, .step-card { break-inside: avoid; page-break-inside: avoid; }
+    }
+
+    header {
+      margin-bottom: 18px;
+      border-bottom: 2.5px solid #0b3c5d;
+      padding-bottom: 12px;
+    }
+
+    .header-top {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 6px;
+      font-size: 8.2pt;
+      font-weight: 700;
+      color: #475569;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      border-bottom: 1px solid #e2e8f0;
+      padding-bottom: 4px;
+    }
+
+    h1 {
+      font-size: 16.5pt;
+      color: #0b3c5d;
+      margin: 6px 0 4px 0;
+      line-height: 1.25;
+      font-weight: 800;
+    }
+
+    .subtitle {
+      font-size: 9.6pt;
+      color: #334155;
+      font-weight: 500;
+      margin: 2px 0 8px 0;
+    }
+
+    .badge-container {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 5px;
+      margin-top: 8px;
+    }
+
+    .meta-badge {
+      display: inline-block;
+      font-size: 7.8pt;
+      font-weight: 600;
+      padding: 2.5px 8px;
+      border-radius: 10px;
+      border: 1px solid transparent;
+    }
+
+    .badge-navy { background: #0b3c5d; color: #ffffff; }
+    .badge-cyan { background: #e0f2fe; color: #0369a1; border-color: #7dd3fc; }
+    .badge-amber { background: #fef3c7; color: #92400e; border-color: #fcd34d; }
+    .badge-green { background: #dcfce7; color: #166534; border-color: #86efac; }
+
+    h2 {
+      font-size: 11.8pt;
+      color: #0b3c5d;
+      margin-top: 18px;
+      margin-bottom: 8px;
+      border-bottom: 1.5px solid #cbd5e1;
+      padding-bottom: 4px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    h2 .section-num {
+      background: #0b3c5d;
+      color: white;
+      padding: 1px 6px;
+      border-radius: 4px;
+      font-size: 8.8pt;
+      font-weight: 700;
+    }
+
+    h3 {
+      font-size: 10pt;
+      color: #1d5f8a;
+      margin-top: 12px;
+      margin-bottom: 6px;
+      border-left: 3.5px solid #328cc1;
+      padding-left: 8px;
+    }
+
+    p {
+      margin: 5px 0;
+      text-align: justify;
+    }
+
+    ul, ol {
+      margin: 5px 0;
+      padding-left: 20px;
+    }
+
+    li {
+      margin-bottom: 3px;
+    }
+
+    .step-card {
+      background: #ffffff;
+      border: 1px solid #e2e8f0;
+      border-radius: 5px;
+      padding: 10px 12px;
+      margin: 8px 0;
+      box-shadow: 0 1px 2px rgba(0,0,0,0.02);
+      break-inside: avoid;
+      page-break-inside: avoid;
+    }
+
+    .step-header {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      margin-bottom: 6px;
+      font-weight: 700;
+      color: #0b3c5d;
+      font-size: 9.3pt;
+    }
+
+    .step-badge {
+      background: #328cc1;
+      color: #ffffff;
+      padding: 1.5px 7px;
+      border-radius: 10px;
+      font-size: 7.5pt;
+      font-weight: 700;
+    }
+
+    .callout {
+      border-radius: 5px;
+      padding: 8px 12px;
+      margin: 8px 0;
+      font-size: 8.5pt;
+      border-left: 4px solid;
+      line-height: 1.42;
+      break-inside: avoid;
+      page-break-inside: avoid;
+    }
+
+    .callout-info { background-color: #f0f7fc; border-color: #328cc1; color: #1a446c; }
+    .callout-warning { background-color: #fffbeb; border-color: #f59e0b; color: #854d0e; }
+    .callout-danger { background-color: #fef2f2; border-color: #ef4444; color: #991b1b; }
+    .callout-success { background-color: #f0fdf4; border-color: #22c55e; color: #166534; }
+
+    .callout-title {
+      font-weight: 700;
+      margin-bottom: 3px;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      font-size: 8.8pt;
+    }
+
+    table {
+      border-collapse: collapse;
+      width: 100%;
+      margin: 8px 0;
+      font-size: 8.3pt;
+      background-color: #ffffff;
+      break-inside: avoid;
+      page-break-inside: avoid;
+    }
+
+    th, td {
+      border: 1px solid #cbd5e1;
+      padding: 5px 8px;
+      text-align: left;
+      vertical-align: middle;
+    }
+
+    th {
+      background-color: #f1f5f9;
+      color: #0b3c5d;
+      font-weight: 700;
+    }
+
+    tr:nth-child(even) { background-color: #f8fafc; }
+
+    pre {
+      background-color: #1e293b;
+      color: #f8fafc;
+      border-radius: 5px;
+      padding: 8px 12px;
+      font-size: 8pt;
+      line-height: 1.4;
+      overflow-x: auto;
+      font-family: 'Consolas', 'Courier New', Monaco, monospace;
+      margin: 6px 0;
+      border: 1px solid #334155;
+      break-inside: avoid;
+      page-break-inside: avoid;
+    }
+
+    code {
+      background-color: #f1f5f9;
+      padding: 1.5px 4px;
+      border-radius: 3px;
+      font-size: 88%;
+      font-family: 'Consolas', 'Courier New', Monaco, monospace;
+      color: #0369a1;
+      border: 1px solid #e2e8f0;
+    }
+
+    pre code {
+      background-color: transparent;
+      padding: 0;
+      border-radius: 0;
+      font-size: inherit;
+      color: inherit;
+      border: none;
+    }
+
+    .terminal-prompt { color: #38bdf8; font-weight: bold; }
+    .terminal-comment { color: #94a3b8; font-style: italic; }
+    .terminal-highlight { color: #4ade80; font-weight: bold; }
+
+    kbd {
+      background-color: #f8fafc;
+      border: 1px solid #94a3b8;
+      border-bottom-color: #64748b;
+      box-shadow: 0 1px 1px rgba(0, 0, 0, 0.15);
+      border-radius: 3px;
+      color: #334155;
+      display: inline-block;
+      font-size: 7.8pt;
+      font-family: Arial, sans-serif;
+      font-weight: 600;
+      line-height: 1;
+      padding: 2px 4px;
+      white-space: nowrap;
+    }
+  </style>
+</head>
+<body>
+
+  <header>
+    <div class="header-top">
+      <span>BTS CIEL &bull; Cybersécurité, Informatique &amp; Réseaux, Électronique</span>
+      <span>Fiche Solution &bull; Automatisation &amp; Déploiement en Salle</span>
+    </div>
+    <h1>Kit d'Automatisation : Déploiement Rapide Dual-Boot</h1>
+    <div class="subtitle">
+      Procédure réseau, Script PowerShell 1-Clic sous Windows 11 et Script Bash de configuration GRUB sous Ubuntu
+    </div>
+    <div class="badge-container">
+      <span class="meta-badge badge-navy">Script Windows : preparer_dualboot_windows11.ps1</span>
+      <span class="meta-badge badge-cyan">Script Linux : configurer_grub_dualboot.sh</span>
+      <span class="meta-badge badge-amber">Lanceur : LANCER_PREPARATION_DUALBOOT.bat</span>
+      <span class="meta-badge badge-green">Amorçage : Rufus (GPT/UEFI) ou Ventoy</span>
+    </div>
+  </header>
+
+  <!-- SECTION 1 : REPONSE RESEAU ET CONTEXTE -->
+  <h2><span class="section-num">01</span> Déploiement par le Réseau : Possibilités et Limites Techniques</h2>
+  <p>
+    <strong>Question fréquente en atelier :</strong> <em>« Si tous mes postes sont sur le même sous-réseau (ex : <code>192.168.1.0/24</code>), est-il possible de voir les machines et d'injecter directement le Dual-Boot à distance ? »</em>
+  </p>
+  
+  <div class="callout callout-warning">
+    <div class="callout-title">
+      <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
+      Les 3 verrous d'un déploiement 100% à distance sous Windows standard
+    </div>
+    <ol style="margin: 4px 0; padding-left: 18px;">
+      <li><strong>Verrou du noyau Windows en fonctionnement :</strong> Un système d'exploitation ne peut pas partitionner et formater une partition <code>ext4</code> pour y injecter un noyau Linux natif pendant qu'il est lui-même en train de s'exécuter. Il faut nécessairement que l'ordinateur s'amorce sur un environnement Linux (via clé USB ou PXE).</li>
+      <li><strong>Absence de WinRM / SSH par défaut :</strong> Sur Windows 11 Famille, la gestion à distance PowerShell (WinRM) et les partages d'administration (`ADMIN$`) sont désactivés pour des raisons de sécurité grand public.</li>
+      <li><strong>Verrou de sécurité matériel (TPM 2.0 / BitLocker) :</strong> La modification de la table des partitions modifie les registres de mesures (PCR) du TPM 2.0, ce qui déclenche une demande de validation de sécurité au reboot.</li>
+    </ol>
+  </div>
+
+  <p>
+    <strong>La solution optimale en atelier BTS :</strong> Combiner un **script de préparation automatique sous Windows 11** (1-clic) avec le **script de configuration GRUB sous Ubuntu**, permettant de préparer et finaliser un parc de 15 à 30 machines en un temps record.
+  </p>
+
+  <!-- SECTION 2 : PREPARATION DE LA CLE USB -->
+  <h2><span class="section-num">02</span> Préparation de la Clé USB : Faut-il juste copier l'ISO ?</h2>
+  
+  <div class="callout callout-danger">
+    <div class="callout-title">Règle fondamentale</div>
+    <strong>Non, un simple copier-coller du fichier <code>.iso</code> sur une clé USB standard ne fonctionne pas</strong>. Le BIOS/UEFI de la carte mère ne peut pas exécuter un fichier ISO stocké comme un simple fichier de données. La clé doit posséder un secteur d'amorçage EFI.
+  </div>
+
+  <table>
+    <thead>
+      <tr>
+        <th style="width: 25%;">Outil</th>
+        <th style="width: 35%;">Principe de fonctionnement</th>
+        <th style="width: 40%;">Mode opératoire recommandé</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><strong>Rufus</strong><br/><em>(Méthode industrielle)</em></td>
+        <td>Décompresse l'ISO et écrit directement les partitions EFI et ext4 sur la clé.</td>
+        <td>
+          1. Sélectionner l'ISO d'Ubuntu.<br/>
+          2. Schéma de partition : <strong><code>GPT</code></strong>.<br/>
+          3. Système de destination : <strong><code>UEFI (non CSM)</code></strong>.<br/>
+          4. Cliquer sur <em>Démarrer</em> (mode Image ISO).
+        </td>
+      </tr>
+      <tr>
+        <td><strong>Ventoy</strong><br/><em>(Méthode multi-ISO)</em></td>
+        <td>Installe un chargeur UEFI sur la clé qui permet ensuite de <strong>glisser-déposer simplement les fichiers ISO</strong>.</td>
+        <td>
+          1. Installer Ventoy une fois sur la clé via <code>Ventoy2Disk.exe</code>.<br/>
+          2. <strong>Copier-coller directement le fichier <code>.iso</code></strong> d'Ubuntu sur la clé comme un document standard.
+        </td>
+      </tr>
+    </tbody>
+  </table>
+
+  <!-- SECTION 3 : SCRIPT WINDOWS 11 -->
+  <h2><span class="section-num">03</span> Script 1 : Préparation Automatique sous Windows 11</h2>
+  <p>
+    Ce script prépare la machine en moins de 30 secondes sans aucune manipulation manuelle dans la Gestion des disques :
+  </p>
+
+  <div class="step-card">
+    <div class="step-header">
+      <span class="step-badge">Windows 11</span>
+      Fonctionnalités automatisées par <code>preparer_dualboot_windows11.ps1</code>
+    </div>
+    <ul>
+      <li><strong>Auto-élévation UAC :</strong> Si l'utilisateur double-clique sans droits admin, le script s'auto-relance avec élévation.</li>
+      <li><strong>Désactivation du Démarrage Rapide :</strong> Écrit <code>HiberbootEnabled = 0</code> dans le registre et exécute <code>powercfg /h off</code> pour libérer le fichier verrouillé <code>hiberfil.sys</code>.</li>
+      <li><strong>Protection BitLocker / Chiffrement OEM :</strong> Détecte si le volume <code>C:</code> est chiffré, sauvegarde la <strong>clé de secours à 48 chiffres</strong> dans un fichier texte sur le Bureau, et <strong>suspend la protection pour 2 redémarrages</strong> (évite l'écran bleu TPM).</li>
+      <li><strong>Partitionnement automatique :</strong> Calcule la taille et réduit le volume <code>C:</code> de <strong>102 400 Mo (100 Go)</strong> pour générer l'espace noir « Non alloué » prêt pour Ubuntu.</li>
+    </ul>
+  </div>
+
+  <h4>Comment l'exécuter en 1 clic :</h4>
+  <p>
+    Faites simplement un clic droit &gt; <strong>« Exécuter en tant qu'administrateur »</strong> sur le fichier :<br/>
+    <code>LANCER_PREPARATION_DUALBOOT.bat</code> (qui contient : <code>powershell.exe -NoProfile -ExecutionPolicy Bypass -File "%~dp0preparer_dualboot_windows11.ps1"</code>).
+  </p>
+
+  <!-- SECTION 4 : SCRIPT UBUNTU GRUB -->
+  <h2><span class="section-num">04</span> Script 2 : Paramétrage Automatique de GRUB sous Ubuntu</h2>
+  <p>
+    Après avoir installé Ubuntu sur les 100 Go libres, ouvrez le terminal (<kbd>Ctrl</kbd> + <kbd>Alt</kbd> + <kbd>T</kbd>) et lancez :
+  </p>
+  <pre><span class="terminal-prompt">etudiant@pc-ciel-01:~$</span> sudo bash configurer_grub_dualboot.sh</pre>
+
+  <div class="step-card">
+    <div class="step-header">
+      <span class="step-badge">Ubuntu Linux</span>
+      Actions réalisées par <code>configurer_grub_dualboot.sh</code>
+    </div>
+    <ul>
+      <li>Sauvegarde de secours automatique du fichier original dans <code>/etc/default/grub.backup.*</code>.</li>
+      <li>Installation et exécution automatique de <code>os-prober</code> pour détecter Windows 11.</li>
+      <li>Réglage de la temporisation : <code>GRUB_TIMEOUT=10</code> (10 secondes chrono).</li>
+      <li>Affichage visible du menu : <code>GRUB_TIMEOUT_STYLE=menu</code>.</li>
+      <li>Menu interactif demandant l'OS par défaut (<strong>1 = Windows 11</strong>, <strong>2 = Ubuntu</strong>, <strong>3 = Mémoriser le dernier</strong>).</li>
+      <li>Régénération immédiate via <code>update-grub</code>.</li>
+    </ul>
+  </div>
+
+  <!-- SECTION 5 : DEROULEMENT SALLE COMPLETE -->
+  <h2><span class="section-num">05</span> Procédure Express pour Déployer une Salle Complète</h2>
+
+  <table>
+    <thead>
+      <tr>
+        <th>Phase</th>
+        <th>Action à mener sur chaque poste</th>
+        <th>Temps estimé</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><strong>1. Préparation Windows</strong></td>
+        <td>Insérer la clé USB d'outils, double-cliquer sur <code>LANCER_PREPARATION_DUALBOOT.bat</code>.</td>
+        <td><strong>30 secondes</strong></td>
+      </tr>
+      <tr>
+        <td><strong>2. Boot &amp; Install Ubuntu</strong></td>
+        <td>Redémarrer (<kbd>F12</kbd>/<kbd>F9</kbd>/<kbd>F8</kbd>), choisir la clé UEFI, installer sur l'espace libre de 100 Go.</td>
+        <td><strong>6 à 10 minutes</strong></td>
+      </tr>
+      <tr>
+        <td><strong>3. Finalisation GRUB</strong></td>
+        <td>Ouvrir la session Ubuntu, exécuter <code>sudo bash configurer_grub_dualboot.sh</code>.</td>
+        <td><strong>20 secondes</strong></td>
+      </tr>
+    </tbody>
+  </table>
+
+  <footer style="margin-top: 18px; padding-top: 8px; border-top: 1px solid #cbd5e1; font-size: 7.8pt; color: #64748b; text-align: center;">
+    BTS CIEL &bull; Support Déploiement Système &bull; Vincent Hilaire &bull; Rentrée 2026 &bull; Code source et scripts disponibles sur le dépôt Git
+  </footer>
+
+</body>
+</html>
