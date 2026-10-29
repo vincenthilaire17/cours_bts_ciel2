@@ -1,0 +1,1355 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="utf-8" />
+  <meta name="generator" content="BTS CIEL - Vincent Hilaire" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes" />
+  <title>TP Préalable (1h30) : Découverte des Montages Fondamentaux à ALI — Proteus, TI myParts Kit &amp; Digilent AD3 - BTS CIEL 2</title>
+
+  <style>
+    @page {
+      margin: 1.5cm;
+      size: A4;
+    }
+
+    html {
+      color: #1a1a1a;
+      background-color: #fdfdfd;
+      -webkit-text-size-adjust: 100%;
+    }
+
+    body {
+      font-family: 'Segoe UI', -apple-system, BlinkMacSystemFont, Roboto, Helvetica, Arial, sans-serif;
+      line-height: 1.55;
+      color: #1a1a1a;
+      max-width: 960px;
+      margin: 0 auto;
+      padding: 25px 30px;
+      hyphens: auto;
+      overflow-wrap: break-word;
+      text-rendering: optimizeLegibility;
+      font-kerning: normal;
+    }
+
+    @media (max-width: 768px) {
+      body {
+        font-size: 0.95em;
+        padding: 15px;
+      }
+      h1 {
+        font-size: 1.5em !important;
+      }
+      .montage-grid {
+        grid-template-columns: 1fr !important;
+      }
+    }
+
+    @media print {
+      html { background-color: white; }
+      body { background-color: transparent; color: black; font-size: 9.8pt; max-width: 100%; padding: 0; }
+      p, h2, h3 { orphans: 3; widows: 3; }
+      h2, h3, h4 { page-break-after: avoid; }
+      pre, blockquote, table, .figure-box, .student-response, .callout, .montage-card { page-break-inside: avoid; }
+      .no-print { display: none !important; }
+      .step-box { border: 1px solid #94a3b8 !important; box-shadow: none !important; }
+    }
+
+    header {
+      margin-bottom: 2em;
+      text-align: center;
+      border-bottom: 3px solid #0b3c5d;
+      padding-bottom: 16px;
+    }
+
+    .meta-badge {
+      display: inline-block;
+      background: #e1ecf4;
+      color: #0b3c5d;
+      font-size: 0.84em;
+      font-weight: 600;
+      padding: 4px 10px;
+      border-radius: 20px;
+      margin: 3px 4px;
+      border: 1px solid #7aa7c7;
+    }
+
+    .badge-primary { background: #0b3c5d; color: #ffffff; border: 1px solid #0b3c5d; }
+    .badge-alert { background: #fee2e2; color: #991b1b; border: 1px solid #f87171; }
+    .badge-success { background: #dcfce7; color: #166534; border: 1px solid #86efac; }
+    .badge-warning { background: #fef3c7; color: #92400e; border: 1px solid #fcd34d; }
+    .badge-purple { background: #f3e8ff; color: #6b21a8; border: 1px solid #d8b4fe; }
+    .badge-orange { background: #ffedd5; color: #c2410c; border: 1px solid #fdba74; }
+
+    h1, h2, h3, h4 {
+      color: #0b3c5d;
+      font-weight: 700;
+    }
+
+    h1 {
+      font-size: 18.5pt;
+      margin-top: 0.55em;
+      margin-bottom: 0.35em;
+      letter-spacing: -0.4px;
+      line-height: 1.25;
+    }
+
+    h2 {
+      font-size: 14pt;
+      margin-top: 28px;
+      margin-bottom: 12px;
+      border-bottom: 1.5px solid #d0d7de;
+      padding-bottom: 6px;
+    }
+
+    h3 {
+      font-size: 11.5pt;
+      margin-top: 20px;
+      margin-bottom: 8px;
+      border-left: 4.5px solid #328cc1;
+      padding-left: 10px;
+    }
+
+    h4 {
+      font-size: 10.5pt;
+      margin-top: 15px;
+      margin-bottom: 6px;
+      color: #1d5f8a;
+    }
+
+    p {
+      margin: 0.75em 0;
+    }
+
+    ul, ol {
+      padding-left: 1.6em;
+      margin: 0.75em 0;
+    }
+
+    li {
+      margin-bottom: 0.35em;
+    }
+
+    hr {
+      border: 0;
+      border-top: 1px solid #d0d7de;
+      margin: 26px 0;
+    }
+
+    table {
+      border-collapse: collapse;
+      width: 100%;
+      margin: 14px 0;
+      font-size: 9.1pt;
+      background-color: #ffffff;
+      box-shadow: 0 1px 3px rgba(0,0,0,0.05);
+    }
+
+    th, td {
+      border: 1px solid #d0d7de;
+      padding: 7px 10px;
+      text-align: left;
+      vertical-align: middle;
+    }
+
+    th {
+      background-color: #f0f4f8;
+      color: #0b3c5d;
+      font-weight: 700;
+    }
+
+    tr:nth-child(even) {
+      background-color: #f8fafc;
+    }
+
+    code {
+      background-color: #eff1f3;
+      padding: 2px 5px;
+      border-radius: 4px;
+      font-size: 88%;
+      font-family: Consolas, 'Courier New', Monaco, monospace;
+      color: #0969da;
+    }
+
+    .callout {
+      border-radius: 6px;
+      padding: 13px 17px;
+      margin: 16px 0;
+      font-size: 9.4pt;
+      border-left: 5px solid;
+    }
+
+    .callout-info {
+      background-color: #f0f7fc;
+      border-color: #328cc1;
+      color: #1a446c;
+    }
+
+    .callout-warning {
+      background-color: #fffbeb;
+      border-color: #f59e0b;
+      color: #78350f;
+    }
+
+    .callout-danger {
+      background-color: #fef2f2;
+      border-color: #ef4444;
+      color: #7f1d1d;
+    }
+
+    .callout-success {
+      background-color: #f0fdf4;
+      border-color: #22c55e;
+      color: #14532d;
+    }
+
+    .callout-classroom {
+      background-color: #f5f3ff;
+      border-color: #7c3aed;
+      color: #3b0764;
+    }
+
+    .callout-title {
+      font-weight: 700;
+      margin-bottom: 6px;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      font-size: 10pt;
+    }
+
+    .step-box {
+      background-color: #ffffff;
+      border: 1px solid #cbd5e1;
+      border-radius: 8px;
+      padding: 18px 22px;
+      margin: 22px 0;
+      box-shadow: 0 2px 5px rgba(0,0,0,0.04);
+    }
+
+    .step-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 8px;
+      border-bottom: 2px solid #e2e8f0;
+      padding-bottom: 8px;
+      margin-bottom: 14px;
+    }
+
+    .step-title {
+      font-size: 12pt;
+      font-weight: 700;
+      color: #0b3c5d;
+      margin: 0;
+    }
+
+    .timing-badge {
+      background: #0b3c5d;
+      color: #ffffff;
+      font-size: 0.82em;
+      font-weight: 700;
+      padding: 3px 10px;
+      border-radius: 14px;
+      white-space: nowrap;
+    }
+
+    /* Grille et Cartes des 6 Montages Proteus */
+    .montage-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 16px;
+      margin: 16px 0;
+    }
+
+    .montage-card {
+      background: #ffffff;
+      border: 1.5px solid #cbd5e1;
+      border-radius: 8px;
+      overflow: hidden;
+      display: flex;
+      flex-direction: column;
+      box-shadow: 0 2px 4px rgba(0,0,0,0.04);
+    }
+
+    .montage-card-header {
+      background: #0b3c5d;
+      color: #ffffff;
+      padding: 8px 12px;
+      font-size: 9.6pt;
+      font-weight: 700;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .montage-badge {
+      background: #38bdf8;
+      color: #0f172a;
+      font-size: 7.8pt;
+      font-weight: 700;
+      padding: 2px 8px;
+      border-radius: 10px;
+    }
+
+    .montage-img-wrap {
+      background: #0f172a;
+      padding: 8px;
+      text-align: center;
+      border-bottom: 1px solid #cbd5e1;
+    }
+
+    .montage-img-wrap img {
+      width: 100%;
+      height: auto;
+      display: block;
+      border-radius: 4px;
+    }
+
+    .montage-body {
+      padding: 10px 13px;
+      font-size: 8.9pt;
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      gap: 8px;
+    }
+
+    .proteus-trans {
+      background: #f8fafc;
+      border-left: 3px solid #64748b;
+      padding: 6px 9px;
+      font-size: 8.5pt;
+      color: #334155;
+      border-radius: 0 4px 4px 0;
+    }
+
+    .reallife-box {
+      background: #ecfdf5;
+      border: 1px solid #86efac;
+      border-left: 4px solid #16a34a;
+      border-radius: 5px;
+      padding: 8px 10px;
+      color: #14532d;
+      font-size: 8.7pt;
+    }
+
+    .reallife-title {
+      font-weight: 700;
+      color: #15803d;
+      margin-bottom: 3px;
+      display: block;
+    }
+
+    .figure-box {
+      background: #f8fafc;
+      border: 1px solid #cbd5e1;
+      border-radius: 8px;
+      padding: 14px;
+      margin: 18px 0;
+      text-align: center;
+    }
+
+    .figure-caption {
+      font-size: 8.8pt;
+      color: #475569;
+      font-style: italic;
+      margin-top: 8px;
+      font-weight: 600;
+    }
+
+    .svg-container {
+      width: 100%;
+      overflow-x: auto;
+    }
+
+    .formula-box {
+      background: #f8fafc;
+      border: 1px solid #cbd5e1;
+      border-left: 4px solid #0b3c5d;
+      border-radius: 5px;
+      padding: 9px 14px;
+      margin: 10px 0;
+      font-family: 'Segoe UI', sans-serif;
+      font-size: 9.8pt;
+      text-align: center;
+    }
+
+    .frac {
+      display: inline-block;
+      vertical-align: middle;
+      text-align: center;
+      margin: 0 3px;
+    }
+
+    .frac > span {
+      display: block;
+      padding: 1px 5px;
+    }
+
+    .frac span.num {
+      border-bottom: 1.4px solid #1a1a1a;
+    }
+
+    .student-response {
+      background: #fffdf5;
+      border: 1.5px dashed #d97706;
+      border-radius: 6px;
+      padding: 13px 16px;
+      margin: 14px 0;
+      color: #78350f;
+      position: relative;
+    }
+
+    .docs-tag {
+      display: inline-block;
+      background: #2563eb;
+      color: #ffffff;
+      font-size: 0.78em;
+      font-weight: 700;
+      padding: 2px 8px;
+      border-radius: 4px;
+      margin-right: 6px;
+      text-transform: uppercase;
+      letter-spacing: 0.4px;
+    }
+
+    .capture-box {
+      background: #eff6ff;
+      border: 1.5px solid #60a5fa;
+      border-radius: 6px;
+      padding: 10px 14px;
+      margin: 12px 0;
+      color: #1e3a8a;
+      font-size: 9.1pt;
+    }
+
+    .btn-copy-docs {
+      background-color: #1a73e8;
+      color: #ffffff;
+      border: none;
+      border-radius: 6px;
+      padding: 9px 16px;
+      font-size: 9.5pt;
+      font-weight: 700;
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      gap: 7px;
+      box-shadow: 0 2px 4px rgba(26,115,232,0.25);
+      transition: background-color 0.15s ease;
+    }
+
+    .btn-copy-docs:hover {
+      background-color: #1557b0;
+    }
+
+    .btn-copy-small {
+      background-color: #e8f0fe;
+      color: #1967d2;
+      border: 1px solid #aecbfa;
+      border-radius: 4px;
+      padding: 3px 9px;
+      font-size: 8pt;
+      font-weight: 600;
+      cursor: pointer;
+      float: right;
+    }
+
+    .btn-copy-small:hover {
+      background-color: #d2e3fc;
+    }
+
+    .checklist-grid {
+      list-style: none;
+      padding-left: 0;
+    }
+
+    .checklist-grid li {
+      padding: 6px 10px;
+      margin-bottom: 5px;
+      background: #ffffff;
+      border: 1px solid #cbd5e1;
+      border-radius: 5px;
+      display: flex;
+      align-items: flex-start;
+      gap: 8px;
+    }
+  </style>
+</head>
+<body>
+
+<header id="title-block-header">
+  <div style="text-transform: uppercase; font-size: 0.88em; font-weight: 700; letter-spacing: 1px; color: #328cc1; margin-bottom: 4px;">
+    BTS Cybersécurité, Informatique et Réseaux, Électronique (CIEL) — 2<sup>e</sup> Année • Enseignement Technologique (STI)
+  </div>
+  <h1 class="title">TP Préalable : Découverte Pratique des Montages Fondamentaux à ALI — Exemples Interactifs Proteus &amp; Campagne Réelle au Digilent AD3</h1>
+  <div style="margin-top: 10px;">
+    <span class="meta-badge badge-primary">⏱ Durée : 1h30</span>
+    <span class="meta-badge badge-purple">💻 Proteus 8 (OpAmp 1 à 6)</span>
+    <span class="meta-badge badge-warning">🧰 TI Analog myParts Kit</span>
+    <span class="meta-badge badge-orange">🔬 Digilent Analog Discovery 3</span>
+    <span class="meta-badge badge-success">📝 Livrable : Google Docs (Classroom)</span>
+  </div>
+</header>
+
+<!-- ========================================================================= -->
+<!-- ENCADRE GOOGLE CLASSROOM & TRAME COPIABLE                                 -->
+<!-- ========================================================================= -->
+<div class="callout callout-classroom">
+  <div class="callout-title">🎓 Consignes de Rendu — Compte-Rendu Numérique sous Google Classroom (Google Docs)</div>
+  <p style="margin-top: 4px;">Ce TP d'introduction d'<strong>1h30</strong> vous prépare à la prise en main des amplificateurs opérationnels (ALI). Toutes vos réponses aux études (<code>Q1.1</code> à <code>Q3.1</code>), vos tableaux comparatifs (<code>T1</code> et <code>T2</code>) et vos <strong>3 captures d'écran (<code>C1</code> à <code>C3</code>)</strong> sont à compléter dans le document <strong>Google Docs</strong> associé au devoir dans <strong>Google Classroom</strong>.</p>
+  <div class="no-print" style="margin-top: 10px; display: flex; align-items: center; gap: 12px; flex-wrap: wrap;">
+    <button type="button" class="btn-copy-docs" onclick="copierTrameComplete()">
+      📋 Copier toute la trame du Compte-Rendu (pour coller dans Google Docs)
+    </button>
+    <span id="copy-global-feedback" style="font-weight: 700; color: #166534; font-size: 9pt;"></span>
+  </div>
+</div>
+
+<!-- ========================================================================= -->
+<!-- OBJECTIFS STI (SANS CALCULS DE PHYSIQUE COMPLEXES)                        -->
+<!-- ========================================================================= -->
+<div class="callout callout-info">
+  <div class="callout-title">🎯 Objectifs Technologiques (Programme STI — BTS CIEL Option B : C04, C05, C06, C07)</div>
+  <ul>
+    <li><strong>Comprendre le rôle des montages de base à ALI (C04) :</strong> Comparer expérimentalement sous Proteus le fonctionnement <em>sans contre-réaction</em> (comparateur tout-ou-rien) et <em>avec contre-réaction sur l'entrée <code>&minus;</code></em> (suiveur, amplificateur non-inverseur, inverseur), et relier chaque structure à un <strong>usage concret dans la vraie vie</strong>.</li>
+    <li><strong>Lire les potentiels électriques clés sur un schéma (C04/C05) :</strong> Identifier les potentiels d'une alimentation symétrique (<code>+V</code> / <code>0 V</code> / <code>&minus;V</code>), le rôle des résistances talons autour d'un potentiomètre, et observer la règle pratique des entrées <code>IN+</code> et <code>IN&minus;</code> (dont la <em>masse virtuelle à 0 V</em>).</li>
+    <li><strong>Passer du symbole virtuel au boîtier DIP-8 réel (C07/C06) :</strong> Mettre en évidence les <strong>broches d'alimentation cachées</strong> sur les schémas Proteus, alimenter un ALI de la mallette <strong>TI Analog myParts Kit</strong> en <code>+5 V / &minus;5 V</code> avec le <strong>Digilent Analog Discovery 3</strong>, et mener une <strong>campagne de mesures sur un amplificateur inverseur à gain réglable par potentiomètre</strong>.</li>
+  </ul>
+</div>
+
+<hr />
+
+<!-- ========================================================================= -->
+<!-- PARTIE 1 : LES 6 MONTAGES PROTEUS, POTENTIELS & VRAIE VIE (0h40)          -->
+<!-- ========================================================================= -->
+<div class="step-box">
+  <div class="step-header">
+    <span class="step-title">PARTIE 1 : Exploration des 6 Montages sous Proteus, Placement des Potentiels &amp; Applications dans la Vraie Vie</span>
+    <span class="timing-badge">⏱ Durée conseillée : 0h40</span>
+  </div>
+
+  <p>Dans <strong>Proteus 8</strong>, six circuits interactifs permettent de découvrir pas à pas tous les montages classiques à amplificateur opérationnel (ALI). Vous pouvez les ouvrir directement via <em>File &rarr; Open Sample Project &rarr; Interactive Simulation &rarr; Animated Circuits &rarr; OpAmps</em> (ou les câbler rapidement sous ISIS) et agir en direct sur les flèches rouges <strong><code>&uarr;</code></strong> / <strong><code>&darr;</code></strong> des potentiomètres pendant la simulation !</p>
+
+  <!-- SOUS-PARTIE 1.A : MONTAGES 1 & 2 (SANS CONTRE-REACTION) -->
+  <h3>1.A. Sans retour sur l'entrée « &minus; » (Boucle ouverte) : Montages (1) et (2)</h3>
+
+  <div class="montage-grid">
+    <!-- MONTAGE 1 -->
+    <div class="montage-card">
+      <div class="montage-card-header">
+        <span>Montage (1) — Comparateur de Tensions</span>
+        <span class="montage-badge">Boucle ouverte</span>
+      </div>
+      <div class="montage-img-wrap">
+        <img src="images/proteus_opamp_1_comparateur.png" alt="Proteus Operational Amplifiers (1) - Comparateur" />
+      </div>
+      <div class="montage-body">
+        <div class="proteus-trans">
+          <strong>Traduction Proteus :</strong> <em>« L'ALI compare la tension sur son entrée <code>+</code> avec celle sur son entrée <code>&minus;</code>. Si la différence (V<sub>+</sub> &minus; V<sub>&minus;</sub>) est positive, la sortie bascule au rail d'alimentation positif (+12 V) ; si elle est négative, elle bascule au rail négatif (&minus;12 V). »</em>
+        </div>
+        <div class="reallife-box">
+          <span class="reallife-title">🌍 Exemple concret dans la vraie vie :</span>
+          <strong>Thermostat électronique de chauffage ou allumage automatique de phares / lampadaire :</strong> <code>RV2</code> règle le seuil de consigne sur <code>IN&minus;</code> et la sonde (température ou luminosité) arrive sur <code>IN+</code>. Dès que la mesure franchit la consigne, la sortie bascule en « Tout-ou-Rien » au maximum pour enclencher le relais ou allumer le voyant d'alerte !
+        </div>
+      </div>
+    </div>
+
+    <!-- MONTAGE 2 -->
+    <div class="montage-card">
+      <div class="montage-card-header">
+        <span>Montage (2) — Zoom en mV sur le Gain Interne</span>
+        <span class="montage-badge">Gain nu très grand</span>
+      </div>
+      <div class="montage-img-wrap">
+        <img src="images/proteus_opamp_2_boucle_ouverte.png" alt="Proteus Operational Amplifiers (2) - Gain boucle ouverte" />
+      </div>
+      <div class="montage-body">
+        <div class="proteus-trans">
+          <strong>Traduction Proteus :</strong> <em>« En appliquant de toutes petites tensions (en mV) aux entrées, on voit que la sortie vaut la différence (V<sub>+</sub> &minus; V<sub>&minus;</sub>) multipliée par le gain interne (fixé ici à 100 pour la démo, mais compris entre <strong>100 000 et 1 000 000</strong> sur un vrai ALI !). »</em>
+        </div>
+        <div class="reallife-box">
+          <span class="reallife-title">🌍 Exemple concret dans la vraie vie :</span>
+          <strong>Détection d'un déséquilibre infime dans un pont de capteurs (balance de pesage, contrôle de défaut d'isolement) :</strong> ce montage prouve surtout qu'un vrai ALI « nu » (gain &times;100 000) sature dès <code>0,1 mV</code> d'écart ! Il est donc <strong>inutilisable seul pour amplifier de l'audio ou un capteur</strong> sans le stabiliser avec les résistances de retour des montages (3) à (6).
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- FIGURE 1 SVG : GUIDE DE PLACEMENT DES POTENTIELS ELECTRIQUES -->
+  <div class="figure-box">
+    <div class="svg-container">
+      <svg viewBox="0 0 880 235" width="100%" height="auto" xmlns="http://www.w3.org/2000/svg">
+        <rect width="880" height="235" rx="8" fill="#ffffff" stroke="#cbd5e1"/>
+        <rect width="880" height="30" rx="8" fill="#0b3c5d"/>
+        <rect y="18" width="880" height="12" fill="#0b3c5d"/>
+        <text x="440" y="20" fill="#ffffff" font-family="'Segoe UI', sans-serif" font-size="9.2pt" font-weight="bold" text-anchor="middle">Aide Visuelle — Repérage des Potentiels de Tension (en Volts ou mV par rapport au 0 V) à identifier dans Q1.1 et Q1.2</text>
+
+        <!-- Bloc Gauche : Les 2 piles B1 et B2 de 12V avec masse au milieu -->
+        <rect x="16" y="42" width="275" height="180" rx="6" fill="#f8fafc" stroke="#94a3b8"/>
+        <text x="153" y="58" fill="#0b3c5d" font-size="8pt" font-weight="bold" text-anchor="middle">1. Les 2 piles B1 / B2 (présentes partout)</text>
+
+        <!-- Pile B1 -->
+        <line x1="75" y1="74" x2="215" y2="74" stroke="#dc2626" stroke-width="2.4"/>
+        <circle cx="215" cy="74" r="4" fill="#dc2626"/>
+        <rect x="155" y="64" width="52" height="18" rx="4" fill="#fef2f2" stroke="#ef4444"/>
+        <text x="181" y="76" fill="#b91c1c" font-family="Consolas" font-size="7.5pt" font-weight="bold" text-anchor="middle">P1 = ?</text>
+
+        <line x1="75" y1="74" x2="75" y2="96" stroke="#334155" stroke-width="2"/>
+        <line x1="58" y1="96" x2="92" y2="96" stroke="#0f172a" stroke-width="2.5"/>
+        <line x1="66" y1="104" x2="84" y2="104" stroke="#0f172a" stroke-width="3.5"/>
+        <text x="102" y="104" fill="#0f172a" font-family="Consolas" font-size="7.5pt" font-weight="bold">B1 (12V)</text>
+        <line x1="75" y1="104" x2="75" y2="132" stroke="#334155" stroke-width="2"/>
+
+        <!-- Point milieu Masse GND -->
+        <circle cx="75" cy="132" r="4" fill="#16a34a"/>
+        <line x1="75" y1="132" x2="122" y2="132" stroke="#16a34a" stroke-width="2.2"/>
+        <line x1="122" y1="132" x2="122" y2="144" stroke="#16a34a" stroke-width="2.2"/>
+        <line x1="109" y1="144" x2="135" y2="144" stroke="#0f172a" stroke-width="2.2"/>
+        <line x1="114" y1="149" x2="130" y2="149" stroke="#0f172a" stroke-width="1.8"/>
+        <line x1="119" y1="154" x2="125" y2="154" stroke="#0f172a" stroke-width="1.5"/>
+        <rect x="155" y="123" width="52" height="18" rx="4" fill="#ecfdf5" stroke="#22c55e"/>
+        <text x="181" y="135" fill="#15803d" font-family="Consolas" font-size="7.5pt" font-weight="bold" text-anchor="middle">P2 = ?</text>
+
+        <!-- Pile B2 -->
+        <line x1="75" y1="132" x2="75" y2="160" stroke="#334155" stroke-width="2"/>
+        <line x1="58" y1="160" x2="92" y2="160" stroke="#0f172a" stroke-width="2.5"/>
+        <line x1="66" y1="168" x2="84" y2="168" stroke="#0f172a" stroke-width="3.5"/>
+        <text x="102" y="168" fill="#0f172a" font-family="Consolas" font-size="7.5pt" font-weight="bold">B2 (12V)</text>
+        <line x1="75" y1="168" x2="75" y2="196" stroke="#334155" stroke-width="2"/>
+
+        <line x1="75" y1="196" x2="215" y2="196" stroke="#2563eb" stroke-width="2.4"/>
+        <circle cx="215" cy="196" r="4" fill="#2563eb"/>
+        <rect x="155" y="186" width="52" height="18" rx="4" fill="#eff6ff" stroke="#3b82f6"/>
+        <text x="181" y="198" fill="#1d4ed8" font-family="Consolas" font-size="7.5pt" font-weight="bold" text-anchor="middle">P3 = ?</text>
+
+        <!-- Bloc Milieu : Potentiomètre encadré par R_haut et R_bas (Montages 2, 4, 6) -->
+        <rect x="305" y="42" width="270" height="180" rx="6" fill="#f8fafc" stroke="#94a3b8"/>
+        <text x="440" y="58" fill="#0b3c5d" font-size="8pt" font-weight="bold" text-anchor="middle">2. Bornes de RV1 avec résistances talons</text>
+
+        <text x="380" y="74" fill="#dc2626" font-family="Consolas" font-size="7.2pt" font-weight="bold" text-anchor="middle">Rail P1 (+12 V)</text>
+        <line x1="380" y1="78" x2="380" y2="88" stroke="#334155" stroke-width="1.8"/>
+        <rect x="372" y="88" width="16" height="24" fill="#16a34a" stroke="#0f172a" stroke-width="1.3"/>
+        <text x="366" y="103" fill="#0f172a" font-family="Consolas" font-size="6.6pt" text-anchor="end">R_haut</text>
+        <line x1="380" y1="112" x2="380" y2="123" stroke="#334155" stroke-width="1.8"/>
+        <circle cx="380" cy="118" r="3.5" fill="#d97706"/>
+        <line x1="380" y1="118" x2="435" y2="118" stroke="#d97706" stroke-width="1.5" stroke-dasharray="3 2"/>
+        <rect x="438" y="109" width="122" height="18" rx="4" fill="#fffbeb" stroke="#f59e0b"/>
+        <text x="499" y="121" fill="#b45309" font-family="Consolas" font-size="7pt" font-weight="bold" text-anchor="middle">P4 (Haut RV1) = ?</text>
+
+        <rect x="372" y="123" width="16" height="28" fill="#15803d" stroke="#0f172a" stroke-width="1.5"/>
+        <text x="366" y="140" fill="#15803d" font-family="Consolas" font-size="7pt" font-weight="bold" text-anchor="end">RV1</text>
+
+        <line x1="380" y1="151" x2="380" y2="162" stroke="#334155" stroke-width="1.8"/>
+        <circle cx="380" cy="156" r="3.5" fill="#7c3aed"/>
+        <line x1="380" y1="156" x2="435" y2="156" stroke="#7c3aed" stroke-width="1.5" stroke-dasharray="3 2"/>
+        <rect x="438" y="147" width="122" height="18" rx="4" fill="#f3e8ff" stroke="#a855f7"/>
+        <text x="499" y="159" fill="#6b21a8" font-family="Consolas" font-size="7pt" font-weight="bold" text-anchor="middle">P5 (Bas RV1) = ?</text>
+
+        <rect x="372" y="162" width="16" height="24" fill="#16a34a" stroke="#0f172a" stroke-width="1.3"/>
+        <text x="366" y="177" fill="#0f172a" font-family="Consolas" font-size="6.6pt" text-anchor="end">R_bas</text>
+        <line x1="380" y1="186" x2="380" y2="196" stroke="#334155" stroke-width="1.8"/>
+        <text x="380" y="209" fill="#1d4ed8" font-family="Consolas" font-size="7.2pt" font-weight="bold" text-anchor="middle">Rail P3 (-12 V)</text>
+
+        <!-- Bloc Droite : Sonde de potentiel Proteus sur IN- -->
+        <rect x="589" y="42" width="275" height="180" rx="6" fill="#f8fafc" stroke="#94a3b8"/>
+        <text x="726" y="58" fill="#0b3c5d" font-size="8pt" font-weight="bold" text-anchor="middle">3. Nœud clé IN&minus; à sonder sous Proteus</text>
+
+        <!-- Mini ALI avec contre-réaction -->
+        <polygon points="700,95 700,155 760,125" fill="#16a34a" stroke="#0f172a" stroke-width="1.8"/>
+        <text x="708" y="114" fill="#ffffff" font-family="Consolas" font-size="9pt" font-weight="bold">&minus;</text>
+        <text x="708" y="143" fill="#ffffff" font-family="Consolas" font-size="9pt" font-weight="bold">+</text>
+        <line x1="640" y1="110" x2="700" y2="110" stroke="#334155" stroke-width="2"/>
+        <line x1="640" y1="140" x2="700" y2="140" stroke="#334155" stroke-width="2"/>
+        <line x1="760" y1="125" x2="825" y2="125" stroke="#334155" stroke-width="2"/>
+        <!-- Boucle retour R -->
+        <polyline points="670,110 670,76 792,76 792,125" fill="none" stroke="#334155" stroke-width="1.8"/>
+        <rect x="712" y="70" width="38" height="12" fill="#16a34a" stroke="#0f172a"/>
+        <!-- Sonde P6 sur IN- -->
+        <circle cx="670" cy="110" r="4.2" fill="#ef4444"/>
+        <line x1="670" y1="110" x2="652" y2="172" stroke="#ef4444" stroke-width="1.6" stroke-dasharray="3 2"/>
+        <rect x="602" y="172" width="248" height="36" rx="4" fill="#fef2f2" stroke="#f87171"/>
+        <text x="726" y="187" fill="#991b1b" font-family="Consolas" font-size="6.8pt" font-weight="bold" text-anchor="middle">Astuce Proteus : icône Sonde [V] (Probe Mode)</text>
+        <text x="726" y="200" fill="#7f1d1d" font-family="Consolas" font-size="6.5pt" text-anchor="middle">Posez une sonde sur IN&minus; pour voir P6 en direct !</text>
+      </svg>
+    </div>
+    <div class="figure-caption">Figure 1 : Repérage des points stratégiques où placer et relever les potentiels électriques (P1 à P6) sur les schémas Proteus</div>
+  </div>
+
+  <div class="student-response" id="bloc-q1-1">
+    <button type="button" class="btn-copy-small no-print" onclick="copierBloc('bloc-q1-1', this)">📋 Copier pour Docs</button>
+    <span class="docs-tag">Google Docs — Étude Q1.1</span><strong>Potentiels d'alimentation &amp; fonctionnement des Montages (1) et (2) :</strong>
+    <ol>
+      <li><strong>Potentiels des rails d'alimentation (Figure 1 — bloc 1) :</strong> En observant comment les deux batteries <code>B1 (12V)</code> et <code>B2 (12V)</code> sont raccordées au symbole de masse (<code>0 V</code>) situé entre elles, indiquez les potentiels exacts <strong><code>P1</code></strong> (fil du haut), <strong><code>P2</code></strong> (point central de référence) et <strong><code>P3</code></strong> (fil du bas).</li>
+      <li><strong>Analyse du Montage (1) :</strong> Réglez <code>RV2</code> à <code>+2,0 V</code> sur <code>IN&minus;</code> et faites passer <code>RV1</code> (<code>IN+</code>) de <code>+1,9 V</code> à <code>+2,1 V</code>. Quelles sont les deux seules tensions possibles en sortie ? Lorsque la sortie vaut <code>+12 V</code>, expliquez grâce aux potentiels <code>P1</code> et <code>P3</code> pourquoi la lampe du haut reste éteinte alors que la lampe du bas s'allume fort !</li>
+      <li><strong>Potentiels aux bornes de <code>RV1</code> sur le Montage (2) (Figure 1 — bloc 2) :</strong> Pourquoi a-t-on ajouté deux grandes résistances <code>R1 = R2 = 99,5 k&Omega;</code> de part et d'autre de <code>RV1 (1 k&Omega;)</code> ? Relevez sous Proteus (en mettant le curseur de <code>RV1</code> tout en haut puis tout en bas) les potentiels <strong><code>P4</code></strong> et <strong><code>P5</code></strong> en <strong>millivolts (<code>mV</code>)</strong>, et expliquez pourquoi un véritable ALI (gain interne &times;100 000) ne peut pas amplifier un signal musical en boucle ouverte sans l'écraser complètement.</li>
+    </ol>
+  </div>
+
+  <!-- SOUS-PARTIE 1.B : MONTAGES 3 & 4 (CONTRE-REACTION NON-INVERSEUSE) -->
+  <h3>1.B. Avec contre-réaction négative (retour sur « &minus; ») : Montages Non-Inverseurs (3) et (4)</h3>
+
+  <div class="montage-grid">
+    <!-- MONTAGE 3 -->
+    <div class="montage-card">
+      <div class="montage-card-header">
+        <span>Montage (3) — Montage Suiveur (Gain = +1)</span>
+        <span class="montage-badge">Contre-réaction</span>
+      </div>
+      <div class="montage-img-wrap">
+        <img src="images/proteus_opamp_3_suiveur.png" alt="Proteus Operational Amplifiers (3) - Suiveur" />
+      </div>
+      <div class="montage-body">
+        <div class="proteus-trans">
+          <strong>Traduction Proteus :</strong> <em>« Si la sortie de l'ALI est renvoyée vers l'entrée inverseuse (<code>&minus;</code>), la tension de sortie recopie exactement la tension présente sur l'entrée non-inverseuse (<code>+</code>). Ce rebouclage vers l'entrée <code>&minus;</code> s'appelle la <strong>contre-réaction négative</strong>. »</em>
+        </div>
+        <div class="reallife-box">
+          <span class="reallife-title">🌍 Exemple concret dans la vraie vie :</span>
+          <strong>Étage tampon (« Buffer » d'isolement) derrière un capteur fragile :</strong> sonde de pH de piscine, micro de guitare piézoélectrique ou pont diviseur de surveillance d'une batterie Li-Po relié à l'entrée analogique d'un <strong>ESP32 / STM32</strong>. Le suiveur ne prélève aucun courant sur le capteur (qui ne s'écroule pas) tout en fournissant le courant nécessaire à l'étage suivant !
+        </div>
+      </div>
+    </div>
+
+    <!-- MONTAGE 4 -->
+    <div class="montage-card">
+      <div class="montage-card-header">
+        <span>Montage (4) — Amplificateur Non-Inverseur (&times;4)</span>
+        <span class="montage-badge">Gain = (R1+R2)/R2</span>
+      </div>
+      <div class="montage-img-wrap">
+        <img src="images/proteus_opamp_4_non_inverseur.png" alt="Proteus Operational Amplifiers (4) - Amplificateur Non-Inverseur" />
+      </div>
+      <div class="montage-body">
+        <div class="proteus-trans">
+          <strong>Traduction Proteus :</strong> <em>« Si le montage (3) est modifié pour que le retour sur <code>&minus;</code> passe par un pont diviseur de tension (<code>R1 = 3000 &Omega;</code> et <code>R2 = 1000 &Omega;</code>), le circuit multiplie la tension d'entrée par le rapport <code>(R1 + R2) / R2</code> (ici &times;4). »</em>
+        </div>
+        <div class="reallife-box">
+          <span class="reallife-title">🌍 Exemple concret dans la vraie vie :</span>
+          <strong>Préamplificateur de capteur analogique vers microcontrôleur :</strong> un capteur de température <code>LM35</code> ne délivre que <code>10 mV/°C</code> (soit <code>0,25 V</code> à 25 °C). En le multipliant par <code>+4</code> ou <code>+10</code> sans inverser son signe positif, on utilise toute l'échelle <code>0 – 3,3 V</code> du convertisseur analogique-numérique (ADC) pour gagner en précision !
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="student-response" id="bloc-q1-2">
+    <button type="button" class="btn-copy-small no-print" onclick="copierBloc('bloc-q1-2', this)">📋 Copier pour Docs</button>
+    <span class="docs-tag">Google Docs — Étude Q1.2</span><strong>Placement des potentiels et rôle de la contre-réaction sur les Montages (3) et (4) :</strong>
+    <ol>
+      <li><strong>Montage (3) — Suiveur :</strong> Réglez <code>RV1</code> pour avoir <strong><code>+5,0 V</code></strong> sur l'entrée <code>IN+</code>. Quelle tension lisez-vous en sortie ? Placez une sonde de tension Proteus <code>[V]</code> sur la patte <strong><code>IN&minus;</code></strong> (à gauche de <code>R1 = 1000 &Omega;</code>) : quel potentiel <strong><code>P6</code></strong> mesurez-vous ? Que constatez-vous entre les potentiels des deux entrées <code>V+</code> et <code>V&minus;</code> grâce à la contre-réaction ?</li>
+      <li><strong>Montage (4) — Amplificateur Non-Inverseur :</strong>
+        <ul>
+          <li>Avec <code>R3 = 1 k&Omega;</code>, <code>RV1 = 1 k&Omega;</code> et <code>R4 = 1 k&Omega;</code> branchés entre <code>+12 V</code> et <code>&minus;12 V</code>, quels sont les potentiels <strong><code>P4</code></strong> (haut de <code>RV1</code>) et <strong><code>P5</code></strong> (bas de <code>RV1</code>) ? Pourquoi le concepteur a-t-il limité l'entrée entre ces deux valeurs alors que le montage multiplie par 4 ?</li>
+          <li>Réglez l'entrée <code>IN+</code> à <strong><code>+2,0 V</code></strong> : relevez la tension de sortie, puis placez une sonde au nœud entre <code>R1 (3000 &Omega;)</code> et <code>R2 (1000 &Omega;)</code> (broche <strong><code>IN&minus;</code></strong>). Retrouvez-vous toujours l'égalité <strong><code>V&minus; = V+</code></strong> ?</li>
+        </ul>
+      </li>
+    </ol>
+  </div>
+
+  <!-- SOUS-PARTIE 1.C : MONTAGES 5 & 6 (MONTAGES INVERSEURS & MASSE VIRTUELLE) -->
+  <h3>1.C. Montages Inverseurs &amp; Découverte de la « Masse Virtuelle » : Montages (5) et (6)</h3>
+
+  <div class="callout callout-warning">
+    <div class="callout-title">⚠️ Coup d'œil de technicien sur le symbole de l'ALI dans les Montages (5) et (6) !</div>
+    <p style="margin: 0;">Regardez bien le triangle vert des schémas (5) et (6) : le dessinateur l'a retourné verticalement ! L'entrée <strong><code>&minus;</code> est en haut</strong> et l'entrée <strong><code>+</code> est en bas</strong>, directement reliée à la <strong>masse <code>0 V (GND)</code></strong>. Toujours lire les signes <code>+</code> et <code>&minus;</code> inscrits dans le symbole avant de câbler !</p>
+  </div>
+
+  <div class="montage-grid">
+    <!-- MONTAGE 5 -->
+    <div class="montage-card">
+      <div class="montage-card-header">
+        <span>Montage (5) — Inverseur de Signe (Gain = &minus;1)</span>
+        <span class="montage-badge">R1 = R2 = 100 k&Omega;</span>
+      </div>
+      <div class="montage-img-wrap">
+        <img src="images/proteus_opamp_5_inverseur_unitaire.png" alt="Proteus Operational Amplifiers (5) - Inverseur de tension" />
+      </div>
+      <div class="montage-body">
+        <div class="proteus-trans">
+          <strong>Traduction Proteus :</strong> <em>« Dans cette configuration, la tension de sortie est inversée : lorsque la tension d'entrée est positive, la sortie prend exactement la même valeur mais négative, et inversement (Gain = &minus;1). »</em>
+        </div>
+        <div class="reallife-box">
+          <span class="reallife-title">🌍 Exemple concret dans la vraie vie :</span>
+          <strong>Casque audio à réduction active de bruit (ANC — <em>Active Noise Cancelling</em>) :</strong> un petit microphone extérieur capte le bourdonnement du réacteur d'avion ou du train (<code>+V</code>) ; un montage inverseur crée instantanément l'onde exactement opposée (<code>&minus;V</code>, déphasée de 180°) envoyée dans l'écouteur pour annuler le bruit par opposition !
+        </div>
+      </div>
+    </div>
+
+    <!-- MONTAGE 6 -->
+    <div class="montage-card">
+      <div class="montage-card-header">
+        <span>Montage (6) — Amplificateur Inverseur (Gain = &minus;3)</span>
+        <span class="montage-badge">Gain = &minus;R2 / R1</span>
+      </div>
+      <div class="montage-img-wrap">
+        <img src="images/proteus_opamp_6_ampli_inverseur.png" alt="Proteus Operational Amplifiers (6) - Amplificateur Inverseur" />
+      </div>
+      <div class="montage-body">
+        <div class="proteus-trans">
+          <strong>Traduction Proteus :</strong> <em>« L'inverseur du montage (5) peut amplifier la tension d'entrée en choisissant <code>R2</code> plus grande que <code>R1</code> (ici <code>300 k&Omega; / 100 k&Omega;</code>). Le coefficient d'amplification est fixé par <code>&minus;R2 / R1</code>. »</em>
+        </div>
+        <div class="reallife-box">
+          <span class="reallife-title">🌍 Exemple concret dans la vraie vie :</span>
+          <strong>Préamplificateur à gain fixe sur une carte d'acquisition industrielle ou un étage de mixage audio :</strong> les deux résistances fixes <code>R1</code> et <code>R2</code> fixent une amplification constante (<code>&minus;R2 / R1</code>, ici <code>&times;(&minus;3)</code>) pour remettre à niveau un capteur ou une source ligne faible, et le point à <code>0 V</code> sur <code>IN&minus;</code> permet dans une console audio d'additionner plusieurs entrées sur le même ALI sans qu'elles ne se perturbent <em>(ici, <code>RV1</code> à gauche sert uniquement à simuler une tension d'entrée variable en test)</em>.
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="capture-box">
+    <strong>📸 Capture C1 à insérer dans votre Google Docs :</strong><br>
+    • <strong>Capture C1 (Proteus — Potentiels relevés sur un montage bouclé) :</strong> Capture d'écran du <strong>Montage (4)</strong> ou du <strong>Montage (6)</strong> en cours de simulation avec une sonde de tension <code>[V]</code> ajoutée sur la broche <code>IN&minus;</code> mettant en évidence l'égalité des potentiels <code>V&minus; = V+</code>.
+  </div>
+
+  <div class="student-response" id="bloc-q1-3">
+    <button type="button" class="btn-copy-small no-print" onclick="copierBloc('bloc-q1-3', this)">📋 Copier pour Docs</button>
+    <span class="docs-tag">Google Docs — Étude Q1.3 &amp; Tableau Comparatif T1</span><strong>Découverte de la « masse virtuelle » &amp; Synthèse comparative des 6 montages :</strong>
+    <ol>
+      <li><strong>Potentiel sur <code>IN&minus;</code> dans les Montages (5) et (6) :</strong> À quel potentiel fixe est raccordée l'entrée <code>IN+</code> ? Réglez l'entrée à <strong><code>+2,0 V</code></strong> sur le Montage (6), relevez la tension de sortie, puis posez une sonde de tension Proteus <code>[V]</code> sur le fil reliant <code>R1</code>, <code>R2</code> et la patte <strong><code>IN&minus;</code></strong> : quel potentiel <strong><code>P6</code></strong> lisez-vous ? Expliquez en une phrase pourquoi on appelle ce nœud une <strong>« masse virtuelle »</strong> (bien qu'il ne soit pas relié par un fil à la masse !).</li>
+      <li><strong>Tableau Comparatif Général T1 (après vos essais des 6 montages sous Proteus) :</strong> Complétez le tableau récapitulatif ci-dessous :</li>
+    </ol>
+    <table>
+      <thead>
+        <tr>
+          <th>Montage Proteus</th>
+          <th>Retour Sortie &rarr; IN&minus; ? (Oui / Non)</th>
+          <th>Broche recevant l'entrée</th>
+          <th>Relation Sortie / Entrée (Gain mesuré)</th>
+          <th>Signe de la Sortie vs Entrée</th>
+          <th>Application concrète dans la vraie vie</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td><strong>(1) Comparateur</strong></td>
+          <td>............</td>
+          <td><code>IN+</code> et <code>IN&minus;</code></td>
+          <td>Bascule à .......... ou ..........</td>
+          <td>Selon signe (V<sub>+</sub> &minus; V<sub>&minus;</sub>)</td>
+          <td>..................................................</td>
+        </tr>
+        <tr>
+          <td><strong>(2) Boucle ouverte (mV)</strong></td>
+          <td>............</td>
+          <td><code>IN+</code> et <code>IN&minus;</code></td>
+          <td>&times;100 (réel : &times;100 000 !)</td>
+          <td>Selon signe (V<sub>+</sub> &minus; V<sub>&minus;</sub>)</td>
+          <td>..................................................</td>
+        </tr>
+        <tr>
+          <td><strong>(3) Suiveur</strong></td>
+          <td>............</td>
+          <td><code>......</code></td>
+          <td>Gain = ............</td>
+          <td>.........................</td>
+          <td>..................................................</td>
+        </tr>
+        <tr>
+          <td><strong>(4) Ampli Non-Inverseur</strong></td>
+          <td>............</td>
+          <td><code>......</code></td>
+          <td>Gain = ............</td>
+          <td>.........................</td>
+          <td>..................................................</td>
+        </tr>
+        <tr>
+          <td><strong>(5) Inverseur unitaire</strong></td>
+          <td>............</td>
+          <td><code>......</code></td>
+          <td>Gain = ............</td>
+          <td>.........................</td>
+          <td>..................................................</td>
+        </tr>
+        <tr>
+          <td><strong>(6) Ampli Inverseur</strong></td>
+          <td>............</td>
+          <td><code>......</code></td>
+          <td>Gain = ............</td>
+          <td>.........................</td>
+          <td>..................................................</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+</div>
+
+<!-- ========================================================================= -->
+<!-- PARTIE 2 : BROCHES D'ALIMENTATION CACHEES & CABLAGE REEL AD3 (0h20)       -->
+<!-- ========================================================================= -->
+<div class="step-box">
+  <div class="step-header">
+    <span class="step-title">PARTIE 2 : Du Symbole Proteus au Composant Réel (TI myParts Kit) — Les Broches d'Alimentation Cachées &amp; le Digilent AD3</span>
+    <span class="timing-badge">⏱ Durée conseillée : 0h20</span>
+  </div>
+
+  <p>Observez à nouveau les six schémas Proteus de la Partie 1 : le triangle vert de l'amplificateur opérationnel n'affiche que <strong>3 connexions</strong> (<code>+</code>, <code>&minus;</code> et <code>Sortie</code>), et aucun fil ne relie les piles <code>B1/B2</code> au triangle ! Pourtant, comment la sortie pourrait-elle fournir <code>+8 V</code> ou <code>&minus;12 V</code> sans source d'énergie ?</p>
+
+  <div class="callout callout-danger">
+    <div class="callout-title">⚡ Règle Fondamentale en Câblage Réel : Les Broches d'Alimentation « Implicites » d'un ALI !</div>
+    <p>Sur les schémas théoriques et dans certains modèles Proteus, les <strong>deux pattes d'alimentation (<code>V+</code> et <code>V&minus;</code>) sont sous-entendues (cachées)</strong> pour ne pas surcharger le dessin. En réalité, un ALI est un circuit électronique actif rempli de transistors : <strong>si vous oubliez de câbler ses broches d'alimentation sur la breadboard, le composant est totalement inerte !</strong></p>
+  </div>
+
+  <h4>2.1. Les amplificateurs opérationnels et potentiomètres de la mallette <em>TI Analog myParts Kit</em></h4>
+  <table>
+    <thead>
+      <tr>
+        <th>Référence TI myParts Kit</th>
+        <th>Boîtier &amp; Technologie</th>
+        <th>Broches d'Alimentation Réelles</th>
+        <th>Broches de l'ALI utilisé</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><strong><code>LM741CN</code></strong> ou <strong><code>LF356N</code></strong><br><em>(recommandé pour ce TP)</em></td>
+        <td><strong>DIP-8</strong> — <strong>1 seul ALI</strong> intégré<br>(<code>LM741</code> = Bipolaire, <code>LF356</code> = JFET)</td>
+        <td><strong>Broche 7 = <code>V+ (+5 V)</code></strong><br><strong>Broche 4 = <code>V&minus; (&minus;5 V)</code></strong></td>
+        <td><code>IN&minus;</code> = Broche <strong>2</strong> | <code>IN+</code> = Broche <strong>3</strong><br><code>OUT</code> = Broche <strong>6</strong> <em>(1, 5, 8 non reliées)</em></td>
+      </tr>
+      <tr>
+        <td><strong><code>TL072CP</code></strong><br><em>(variante double ALI)</em></td>
+        <td><strong>DIP-8</strong> — <strong>2 ALI</strong> JFET dans le même boîtier</td>
+        <td><strong>Broche 8 = <code>VCC+ (+5 V)</code></strong> ⚠️<br><strong>Broche 4 = <code>VCC&minus; (&minus;5 V)</code></strong></td>
+        <td>ALI n°1 : <code>1IN&minus;</code> = <strong>2</strong> | <code>1IN+</code> = <strong>3</strong> | <code>1OUT</code> = <strong>1</strong> ⚠️</td>
+      </tr>
+      <tr>
+        <td><strong><code>TL074CN</code></strong></td>
+        <td><strong>DIP-14</strong> — <strong>4 ALI</strong> JFET intégrés</td>
+        <td>Broche 4 = <code>VCC+</code> | Broche 11 = <code>VCC&minus;</code></td>
+        <td>4 opérateurs indépendants (quadruple ALI)</td>
+      </tr>
+      <tr>
+        <td><strong>Potentiomètre <code>104</code> (100 k&Omega;)</strong><br><em>(ou <code>103</code> = 10 k&Omega;)</em></td>
+        <td>Trimmer rectangulaire 3 pattes à vis de réglage</td>
+        <td>Composant passif (aucune alimentation)</td>
+        <td>Patte centrale <strong>[2] = Curseur mobile</strong> ; pattes extrêmes <strong>[1]</strong> et <strong>[3]</strong> = piste totale</td>
+      </tr>
+    </tbody>
+  </table>
+
+  <!-- FIGURE 2 SVG : BROCHES D'ALIMENTATION CACHEES & BROCHAGES DIP-8 / POTENTIOMETRE TI -->
+  <div class="figure-box">
+    <div class="svg-container">
+      <svg viewBox="0 0 880 240" width="100%" height="auto" xmlns="http://www.w3.org/2000/svg">
+        <rect width="880" height="240" rx="8" fill="#f8fafc" stroke="#cbd5e1" stroke-width="1.5"/>
+        <rect width="880" height="32" rx="8" fill="#0b3c5d"/>
+        <rect y="18" width="880" height="14" fill="#0b3c5d"/>
+        <text x="440" y="21" fill="#ffffff" font-family="'Segoe UI', sans-serif" font-size="9.4pt" font-weight="bold" text-anchor="middle">Broches d'Alimentation Cachées sous Proteus &amp; Brochages Constructeur des Composants TI myParts Kit</text>
+
+        <!-- Bloc 1 : Les 2 broches cachées sur le triangle Proteus -->
+        <rect x="14" y="42" width="242" height="186" rx="6" fill="#ffffff" stroke="#cbd5e1"/>
+        <text x="135" y="58" fill="#991b1b" font-size="7.6pt" font-weight="bold" text-anchor="middle">1. Symbole Proteus vs Réalité</text>
+
+        <line x1="128" y1="74" x2="128" y2="104" stroke="#dc2626" stroke-width="2.5" stroke-dasharray="4 2"/>
+        <circle cx="128" cy="74" r="3.5" fill="#dc2626"/>
+        <text x="136" y="81" fill="#dc2626" font-family="Consolas" font-size="6.5pt" font-weight="bold">V+ (+5V Rouge AD3)</text>
+
+        <polygon points="96,94 96,154 166,124" fill="#16a34a" stroke="#0f172a" stroke-width="1.8"/>
+        <text x="105" y="114" fill="#ffffff" font-family="Consolas" font-size="9.5pt" font-weight="bold">&minus;</text>
+        <text x="105" y="142" fill="#ffffff" font-family="Consolas" font-size="9.5pt" font-weight="bold">+</text>
+        <line x1="58" y1="109" x2="96" y2="109" stroke="#334155" stroke-width="2"/>
+        <text x="54" y="112" fill="#0f172a" font-family="Consolas" font-size="6.8pt" font-weight="bold" text-anchor="end">IN&minus;</text>
+        <line x1="58" y1="139" x2="96" y2="139" stroke="#334155" stroke-width="2"/>
+        <text x="54" y="142" fill="#0f172a" font-family="Consolas" font-size="6.8pt" font-weight="bold" text-anchor="end">IN+</text>
+        <line x1="166" y1="124" x2="204" y2="124" stroke="#334155" stroke-width="2"/>
+        <text x="208" y="127" fill="#0f172a" font-family="Consolas" font-size="6.8pt" font-weight="bold">OUT</text>
+
+        <line x1="128" y1="144" x2="128" y2="174" stroke="#2563eb" stroke-width="2.5" stroke-dasharray="4 2"/>
+        <circle cx="128" cy="174" r="3.5" fill="#2563eb"/>
+        <text x="136" y="173" fill="#1d4ed8" font-family="Consolas" font-size="6.5pt" font-weight="bold">V&minus; (&minus;5V Blanc AD3)</text>
+
+        <rect x="24" y="186" width="222" height="32" rx="4" fill="#fef2f2" stroke="#fca5a5"/>
+        <text x="135" y="200" fill="#991b1b" font-family="Consolas" font-size="6.2pt" font-weight="bold" text-anchor="middle">Masse 0 V = Fil Noir (&darr;) de l'AD3</text>
+        <text x="135" y="212" fill="#7f1d1d" font-family="Consolas" font-size="6pt" text-anchor="middle">(y relier aussi les fils 1&minus; et 2&minus; du Scope)</text>
+
+        <!-- Bloc 2 : DIP-8 LM741CN / LF356N -->
+        <rect x="266" y="42" width="212" height="186" rx="6" fill="#ffffff" stroke="#cbd5e1"/>
+        <text x="372" y="58" fill="#0b3c5d" font-size="7.6pt" font-weight="bold" text-anchor="middle">2. LM741CN ou LF356N (1 ALI)</text>
+
+        <rect x="334" y="72" width="76" height="114" rx="5" fill="#334155" stroke="#0f172a" stroke-width="1.8"/>
+        <path d="M 362 72 A 10 10 0 0 0 382 72" fill="#ffffff" stroke="#0f172a" stroke-width="1.4"/>
+        <circle cx="346" cy="85" r="3.2" fill="#fcd34d"/>
+        <text x="372" y="124" fill="#fcd34d" font-family="Consolas" font-size="8pt" font-weight="bold" text-anchor="middle">LM741CN</text>
+        <text x="372" y="138" fill="#e2e8f0" font-family="Consolas" font-size="6.8pt" text-anchor="middle">/ LF356N</text>
+
+        <rect x="324" y="82" width="10" height="8" fill="#94a3b8"/><text x="320" y="89" font-family="Consolas" font-size="6.5pt" fill="#64748b" text-anchor="end">NC [1]</text>
+        <rect x="324" y="108" width="10" height="8" fill="#cbd5e1"/><text x="320" y="115" font-family="Consolas" font-size="6.7pt" font-weight="bold" fill="#0f172a" text-anchor="end">IN&minus; [2]</text>
+        <rect x="324" y="134" width="10" height="8" fill="#cbd5e1"/><text x="320" y="141" font-family="Consolas" font-size="6.7pt" font-weight="bold" fill="#0f172a" text-anchor="end">IN+ [3]</text>
+        <rect x="324" y="160" width="10" height="8" fill="#2563eb"/><text x="320" y="167" font-family="Consolas" font-size="6.7pt" font-weight="bold" fill="#1d4ed8" text-anchor="end">&minus;5V [4]</text>
+
+        <rect x="410" y="82" width="10" height="8" fill="#94a3b8"/><text x="424" y="89" font-family="Consolas" font-size="6.5pt" fill="#64748b">[8] NC</text>
+        <rect x="410" y="108" width="10" height="8" fill="#dc2626"/><text x="424" y="115" font-family="Consolas" font-size="6.7pt" font-weight="bold" fill="#dc2626">[7] +5V</text>
+        <rect x="410" y="134" width="10" height="8" fill="#0284c7"/><text x="424" y="141" font-family="Consolas" font-size="6.7pt" font-weight="bold" fill="#0369a1">[6] OUT</text>
+        <rect x="410" y="160" width="10" height="8" fill="#94a3b8"/><text x="424" y="167" font-family="Consolas" font-size="6.5pt" fill="#64748b">[5] NC</text>
+
+        <text x="372" y="210" fill="#b45309" font-family="Consolas" font-size="6.4pt" font-weight="bold" text-anchor="middle">+5 V en [7] • OUT en [6]</text>
+
+        <!-- Bloc 3 : DIP-8 TL072CP -->
+        <rect x="488" y="42" width="212" height="186" rx="6" fill="#ffffff" stroke="#cbd5e1"/>
+        <text x="594" y="58" fill="#0b3c5d" font-size="7.6pt" font-weight="bold" text-anchor="middle">3. TL072CP (2 ALI intégrés)</text>
+
+        <rect x="556" y="72" width="76" height="114" rx="5" fill="#1e293b" stroke="#0f172a" stroke-width="1.8"/>
+        <path d="M 584 72 A 10 10 0 0 0 604 72" fill="#ffffff" stroke="#0f172a" stroke-width="1.4"/>
+        <circle cx="568" cy="85" r="3.2" fill="#38bdf8"/>
+        <text x="594" y="132" fill="#38bdf8" font-family="Consolas" font-size="8.2pt" font-weight="bold" text-anchor="middle">TL072CP</text>
+
+        <rect x="546" y="82" width="10" height="8" fill="#0284c7"/><text x="542" y="89" font-family="Consolas" font-size="6.6pt" font-weight="bold" fill="#0369a1" text-anchor="end">1OUT [1]</text>
+        <rect x="546" y="108" width="10" height="8" fill="#cbd5e1"/><text x="542" y="115" font-family="Consolas" font-size="6.6pt" font-weight="bold" fill="#0f172a" text-anchor="end">1IN&minus; [2]</text>
+        <rect x="546" y="134" width="10" height="8" fill="#cbd5e1"/><text x="542" y="141" font-family="Consolas" font-size="6.6pt" font-weight="bold" fill="#0f172a" text-anchor="end">1IN+ [3]</text>
+        <rect x="546" y="160" width="10" height="8" fill="#2563eb"/><text x="542" y="167" font-family="Consolas" font-size="6.6pt" font-weight="bold" fill="#1d4ed8" text-anchor="end">&minus;5V [4]</text>
+
+        <rect x="632" y="82" width="10" height="8" fill="#dc2626"/><text x="646" y="89" font-family="Consolas" font-size="6.6pt" font-weight="bold" fill="#dc2626">[8] +5V</text>
+        <rect x="632" y="108" width="10" height="8" fill="#94a3b8"/><text x="646" y="115" font-family="Consolas" font-size="6.4pt" fill="#64748b">[7] 2OUT</text>
+        <rect x="632" y="134" width="10" height="8" fill="#94a3b8"/><text x="646" y="141" font-family="Consolas" font-size="6.4pt" fill="#64748b">[6] 2IN&minus;</text>
+        <rect x="632" y="160" width="10" height="8" fill="#94a3b8"/><text x="646" y="167" font-family="Consolas" font-size="6.4pt" fill="#64748b">[5] 2IN+</text>
+
+        <text x="594" y="210" fill="#0369a1" font-family="Consolas" font-size="6.4pt" font-weight="bold" text-anchor="middle">+5 V en [8] • 1OUT en [1]</text>
+
+        <!-- Bloc 4 : Potentiomètre Trimmer 3 pattes -->
+        <rect x="710" y="42" width="156" height="186" rx="6" fill="#ffffff" stroke="#cbd5e1"/>
+        <text x="788" y="58" fill="#0b3c5d" font-size="7.5pt" font-weight="bold" text-anchor="middle">4. Potentiomètre TI</text>
+
+        <rect x="744" y="80" width="88" height="46" rx="4" fill="#1d4ed8" stroke="#1e3a8a" stroke-width="1.6"/>
+        <circle cx="761" cy="103" r="8" fill="#fbbf24" stroke="#92400e" stroke-width="1.2"/>
+        <line x1="756" y1="103" x2="766" y2="103" stroke="#78350f" stroke-width="1.8"/>
+        <text x="801" y="100" fill="#ffffff" font-family="Consolas" font-size="8.2pt" font-weight="bold" text-anchor="middle">104</text>
+        <text x="801" y="114" fill="#bfdbfe" font-family="Consolas" font-size="6.4pt" text-anchor="middle">(100 k&Omega;)</text>
+
+        <line x1="758" y1="126" x2="758" y2="150" stroke="#0f172a" stroke-width="2.5"/>
+        <line x1="788" y1="126" x2="788" y2="150" stroke="#ea580c" stroke-width="2.5"/>
+        <line x1="818" y1="126" x2="818" y2="150" stroke="#94a3b8" stroke-width="2.2"/>
+        <text x="758" y="163" font-family="Consolas" font-size="6.5pt" fill="#0f172a" font-weight="bold" text-anchor="middle">[1]</text>
+        <text x="788" y="163" font-family="Consolas" font-size="6.5pt" fill="#c2410c" font-weight="bold" text-anchor="middle">[2] Curs.</text>
+        <text x="818" y="163" font-family="Consolas" font-size="6.5pt" fill="#64748b" text-anchor="middle">[3]</text>
+
+        <text x="788" y="188" fill="#1e3a8a" font-family="Consolas" font-size="6.2pt" font-weight="bold" text-anchor="middle">Remplace R2 (Montage 6)</text>
+        <text x="788" y="201" fill="#334155" font-family="Consolas" font-size="6.1pt" text-anchor="middle">en câblant [1] et [2]</text>
+        <text x="788" y="214" fill="#64748b" font-family="Consolas" font-size="5.8pt" text-anchor="middle">(si pot. 103=10k, R1=1k)</text>
+      </svg>
+    </div>
+    <div class="figure-caption">Figure 2 : Vue constructeur des broches d'alimentation cachées sous Proteus et brochages des boîtiers DIP-8 et du potentiomètre de la mallette TI Analog myParts Kit</div>
+  </div>
+
+  <h4>2.2. Câblage autonome à partir du schéma du Montage (6) &amp; mise en évidence des alimentations</h4>
+  <ol>
+    <li><strong>À vous de câbler à partir du schéma !</strong> Hors tension, reprenez le schéma électrique de l'<strong>Amplificateur Inverseur — Montage (6)</strong> de la Partie 1 et réalisez-le sur votre breadboard à l'aide des brochages de la <strong>Figure 2</strong> :
+      <ul>
+        <li>Utilisez un <strong><code>LM741CN</code></strong>, un <strong><code>LF356N</code></strong> ou un <strong><code>TL072CP</code></strong> de la mallette TI (repérez bien l'encoche du boîtier DIP-8 !) ;</li>
+        <li>Prenez <strong><code>R1 = 10 k&Omega;</code></strong> (<em>Marron-Noir-Orange-Or</em>) à l'entrée et remplacez la résistance fixe <strong><code>R2</code></strong> par le <strong>potentiomètre ajustable <code>RV = 100 k&Omega;</code></strong> (marquage <code>104</code>, branché entre sa patte centrale <code>[2]</code> et une patte d'extrémité <code>[1]</code>, réglé vers sa mi-course) — <em>astuce : si vous prenez le potentiomètre <code>103</code> (10 k&Omega;), prenez <code>R1 = 1 k&Omega;</code></em> ;</li>
+        <li>Raccordez l'entrée <code>IN+</code> à la masse <code>0 V (GND)</code>, le générateur <strong><code>W1</code></strong> (fil Jaune AD3) à l'entrée de <code>R1</code>, et câblez les <strong>broches d'alimentation</strong> (<code>+5 V</code> fil Rouge <code>V+</code>, <code>&minus;5 V</code> fil Blanc <code>V&minus;</code>, <code>0 V</code> fil Noir <code>&darr;</code> ainsi que les masses <code>1&minus;</code> et <code>2&minus;</code> du <code>Scope</code>).</li>
+      </ul>
+    </li>
+    <li>Lancez <strong>Digilent WaveForms</strong> :
+      <ul>
+        <li>Dans <strong><code>Wavegen 1 (W1)</code></strong>, configurez un signal <code>Sine</code> de fréquence <strong><code>1 kHz</code></strong>, d'amplitude crête <strong><code>500 mV</code></strong> (soit <strong><code>1,0 V<sub>pp</sub></code></strong> crête-à-crête) et d'offset <code>0 V</code> &rarr; cliquez sur <strong>Run</strong>.</li>
+        <li>Ouvrez <strong><code>Scope</code></strong> (<code>1+</code> Orange sur l'entrée, <code>2+</code> Bleu sur la sortie) et cliquez sur <strong>Run</strong> en laissant volontairement l'outil <strong><code>Supplies</code> sur OFF</strong> : observez la trace bleue de sortie !</li>
+        <li>Ouvrez maintenant l'outil <strong><code>Supplies</code></strong> : réglez <code>Positive Supply (V+ Rouge)</code> sur <strong><code>+5 V</code></strong> et <code>Negative Supply (V&minus; Blanc)</code> sur <strong><code>&minus;5 V</code></strong>, puis cliquez sur <strong>Master Enable (ON)</strong> : observez le changement immédiat sur l'oscilloscope !</li>
+      </ul>
+    </li>
+  </ol>
+
+  <div class="student-response" id="bloc-q2-1">
+    <button type="button" class="btn-copy-small no-print" onclick="copierBloc('bloc-q2-1', this)">📋 Copier pour Docs</button>
+    <span class="docs-tag">Google Docs — Étude Technologique Q2.1</span><strong>Du schéma Proteus au boîtier réel sur breadboard :</strong>
+    <ol>
+      <li>Combien de connexions possède le symbole de l'ALI sur les captures Proteus (Montages 1 à 6) et quelles sont les <strong>2 connexions indispensables</strong> qui n'y étaient pas dessinées ? Indiquez leurs numéros de broches sur un <code>LM741CN</code> puis sur un <code>TL072CP</code>.</li>
+      <li>Qu'avez-vous observé sur la sortie au <code>Scope</code> lorsque l'outil <code>Supplies</code> de l'AD3 était sur <strong>OFF</strong>, puis dès son passage sur <strong>ON (<code>+5 V / &minus;5 V</code>)</strong> ? Quels fils de couleur de la nappe AD3 amènent le <code>+5 V</code>, le <code>&minus;5 V</code> et le <code>0 V</code> ?</li>
+    </ol>
+  </div>
+</div>
+
+<!-- ========================================================================= -->
+<!-- PARTIE 3 : CAMPAGNE DE MESURES REELLES GAIN VARIABLE POTENTIOMETRE (0h30) -->
+<!-- ========================================================================= -->
+<div class="step-box">
+  <div class="step-header">
+    <span class="step-title">PARTIE 3 : Campagne de Mesures Réelles au Digilent AD3 — Montage Inverseur à Gain Variable par Potentiomètre</span>
+    <span class="timing-badge">⏱ Durée conseillée : 0h30</span>
+  </div>
+
+  <p>Votre amplificateur inverseur réel (alimenté en <strong><code>+5 V / &minus;5 V</code></strong>, entrée sinusoïdale <strong><code>1,0 V<sub>pp</sub></code> à <code>1 kHz</code></strong>) reproduit à lui seul les Montages Proteus (5) et (6), tout en permettant de faire varier le gain en continu à l'aide d'un petit tournevis sur le potentiomètre <strong><code>RV</code></strong> :</p>
+
+  <div class="formula-box">
+    <strong>Relation constructeur du montage inverseur :</strong>&nbsp;&nbsp;
+    <i>A</i><sub>v</sub> = 
+    <span class="frac">
+      <span class="num"><i>V</i><sub>sortie</sub></span>
+      <span class="den"><i>V</i><sub>entrée</sub></span>
+    </span>
+    = &minus;
+    <span class="frac">
+      <span class="num"><i>R</i><sub>V</sub></span>
+      <span class="den"><i>R</i><sub>1</sub></span>
+    </span>
+    &nbsp;&nbsp;&nbsp;avec <i>R</i><sub>1</sub> = <code>10 k&Omega;</code> et <i>R</i><sub>V</sub> réglable de <code>0 k&Omega;</code> à <code>100 k&Omega;</code>
+    <br><span style="font-size: 8.5pt; color: #475569;"><em>(Le signe « &minus; » signifie que la sinusoïde de sortie est inversée, c'est-à-dire en opposition de phase de 180° par rapport à l'entrée.)</em></span>
+  </div>
+
+  <h4>3.1. Protocole de la campagne en 5 réglages du potentiomètre</h4>
+  <ol>
+    <li>Dans WaveForms <code>Scope</code>, affichez les mesures automatiques crête-à-crête : menu <em>View &rarr; Measurements &rarr; Add &rarr; Defined Measurement &rarr; Channel 1 &rarr; <strong>Peak2Peak</strong></em>, puis faites de même pour <strong>Channel 2 (Peak2Peak)</strong>.</li>
+    <li>Tournez progressivement la vis du potentiomètre <code>RV</code> pour réaliser les <strong>5 points de fonctionnement</strong> du Tableau <code>T2</code> ci-dessous <em>(vous pouvez soit prérégler <code>RV</code> à l'ohmmètre hors circuit en coupant <code>Supplies</code>, soit ajuster directement la vis pour atteindre les valeurs cibles de <code>RV</code> / gain)</em> :
+      <ul>
+        <li><strong>Point 1 — Butée minimale (<code>RV &approx; 0 k&Omega;</code>) :</strong> tournevis en butée sens anti-horaire (ou horaire selon le sens d'implantation) donnant une sortie nulle ;</li>
+        <li><strong>Point 2 — Équivalent du Montage Proteus (5) (<code>RV = 10 k&Omega;</code>) :</strong> sortie d'amplitude égale à l'entrée (<code>1,0 V<sub>pp</sub></code>) mais inversée ;</li>
+        <li><strong>Point 3 — Équivalent du Montage Proteus (6) (<code>RV = 30 k&Omega;</code>) :</strong> sortie multipliée par 3 et inversée ;</li>
+        <li><strong>Point 4 — Mi-course (<code>RV = 50 k&Omega;</code>) :</strong> forte amplification sans déformation ;</li>
+        <li><strong>Point 5 — Butée maximale (<code>RV = 100 k&Omega;</code>) :</strong> observez attentivement la forme du sommet et du bas de la courbe bleue !</li>
+      </ul>
+    </li>
+    <li><strong>Vérification réelle de la « masse virtuelle » sur la maquette :</strong>
+      <ul>
+        <li>Réglez à nouveau le potentiomètre sur le <strong>Point 3 (sortie propre à ~3,0 V<sub>pp</sub>)</strong>.</li>
+        <li>Déplacez provisoirement le fil Bleu <strong><code>2+</code></strong> du <code>Scope</code> pour venir toucher la <strong>broche 2 (<code>IN&minus;</code>)</strong> de votre ALI sur la breadboard : mesurez l'amplitude présente sur <code>IN&minus;</code> !</li>
+        <li>Tout en laissant <code>2+</code> sur la broche 2 (<code>IN&minus;</code>), tournez <code>RV</code> jusqu'en <strong>butée maximale (Point 5, saturé)</strong> : que se passe-t-il sur le potentiel de <code>IN&minus;</code> dès que la sortie sature ?</li>
+      </ul>
+    </li>
+  </ol>
+
+  <div class="capture-box">
+    <strong>📸 Captures C2 &amp; C3 à insérer dans votre Google Docs :</strong><br>
+    • <strong>Capture C2 (WaveForms Scope — Amplification inverseuse propre au Point 3) :</strong> Courbe d'entrée <code>C1</code> (`1,0 Vpp`) et courbe de sortie <code>C2</code> (`~3,0 Vpp`) montrant clairement l'amplification &times;3 ET l'opposition de phase (quand `C1` monte au maximum, `C2` descend au minimum !), avec l'encadré <em>Measurements Peak2Peak</em> visible.<br>
+    • <strong>Capture C3 (WaveForms Scope — Écrêtage / Saturation au Point 5 en butée de potentiomètre) :</strong> Trace de sortie écrêtée autour de &pm;3,6 V lorsque `RV = 100 k&Omega;` sous alimentation AD3 `+5 V / &minus;5 V`.
+  </div>
+
+  <div class="student-response" id="bloc-t2">
+    <button type="button" class="btn-copy-small no-print" onclick="copierBloc('bloc-t2', this)">📋 Copier pour Docs</button>
+    <span class="docs-tag">Google Docs — Campagne de Mesures T2 &amp; Analyse Q3.1</span><strong>Relevés expérimentaux au Digilent AD3 (<i>V</i><sub>entrée</sub> = 1,0 V<sub>pp</sub> à 1 kHz, Alim &pm;5 V) :</strong>
+    <table>
+      <thead>
+        <tr>
+          <th>Réglage du Potentiomètre <i>R</i><sub>V</sub></th>
+          <th>Gain Théorique (&minus;<i>R</i><sub>V</sub> / <i>R</i><sub>1</sub>)</th>
+          <th>Amplitude Entrée <i>V</i><sub>E,pp</sub> (C1)</th>
+          <th>Amplitude Sortie <i>V</i><sub>S,pp</sub> mesurée (C2)</th>
+          <th>Gain Réel Mesuré (<i>V</i><sub>S,pp</sub> / <i>V</i><sub>E,pp</sub>)</th>
+          <th>Forme du Signal &amp; Phase (En phase / Opposé 180° / Écrêté)</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td><strong>1. Butée min (<i>R</i><sub>V</sub> &approx; 0 k&Omega;)</strong></td>
+          <td>0</td>
+          <td>1,0 V<sub>pp</sub></td>
+          <td>.............. V<sub>pp</sub></td>
+          <td>..............</td>
+          <td>........................................</td>
+        </tr>
+        <tr>
+          <td><strong>2. <i>R</i><sub>V</sub> = 10 k&Omega;</strong> <em>(= Montage 5)</em></td>
+          <td>&minus;1</td>
+          <td>1,0 V<sub>pp</sub></td>
+          <td>.............. V<sub>pp</sub></td>
+          <td>..............</td>
+          <td>........................................</td>
+        </tr>
+        <tr>
+          <td><strong>3. <i>R</i><sub>V</sub> = 30 k&Omega;</strong> <em>(= Montage 6)</em></td>
+          <td>&minus;3</td>
+          <td>1,0 V<sub>pp</sub></td>
+          <td>.............. V<sub>pp</sub></td>
+          <td>..............</td>
+          <td>........................................</td>
+        </tr>
+        <tr>
+          <td><strong>4. Mi-course (<i>R</i><sub>V</sub> = 50 k&Omega;)</strong></td>
+          <td>&minus;5</td>
+          <td>1,0 V<sub>pp</sub></td>
+          <td>.............. V<sub>pp</sub></td>
+          <td>..............</td>
+          <td>........................................</td>
+        </tr>
+        <tr>
+          <td><strong>5. Butée max (<i>R</i><sub>V</sub> = 100 k&Omega;)</strong></td>
+          <td>&minus;10 <em>(10 V<sub>pp</sub> th.)</em></td>
+          <td>1,0 V<sub>pp</sub></td>
+          <td>.............. V<sub>pp</sub></td>
+          <td>..............</td>
+          <td>........................................</td>
+        </tr>
+      </tbody>
+    </table>
+
+    <p><strong>Questions d'Analyse Pratique Q3.1 :</strong></p>
+    <ol>
+      <li><strong>Opposition de phase (Capture C2) :</strong> Comment vérifiez-vous d'un seul coup d'œil sur l'écran du <code>Scope</code> que le montage réalise bien un gain <strong>négatif</strong> (inverseur) ?</li>
+      <li><strong>Écrêtage au Point 5 (Capture C3) :</strong> Avec <code>RV = 100 k&Omega;</code> (gain théorique &minus;10) et une entrée de <code>1,0 V<sub>pp</sub></code> (&pm;0,5 V crête), la sortie aurait dû atteindre <strong><code>10 V<sub>pp</sub></code> (&pm;5,0 V crête)</strong>. À quelles tensions haute et basse votre signal réel s'est-il écrêté, et pourquoi ne dépasse-t-il pas l'alimentation fournie par l'AD3 ?</li>
+      <li><strong>Vérification réelle de la masse virtuelle sur la broche 2 (<code>IN&minus;</code>) :</strong> Quelle tension avez-vous mesurée au <code>Scope</code> sur la broche 2 lorsque le montage fonctionnait sans saturer (Point 3), puis qu'est-il apparu sur cette même broche 2 en butée saturée (Point 5) ?</li>
+    </ol>
+  </div>
+</div>
+
+<hr />
+
+<!-- ========================================================================= -->
+<!-- CHECKLIST DE REMISE GOOGLE CLASSROOM & BAREME (/20)                       -->
+<!-- ========================================================================= -->
+<h2>Checklist de Fin de Séance (1h30) &amp; Barème du Compte-Rendu (/20)</h2>
+
+<div class="callout callout-success">
+  <div class="callout-title">✅ Auto-Contrôle avant de cliquer sur « Rendre le devoir » dans Google Classroom</div>
+  <ul class="checklist-grid">
+    <li><input type="checkbox" id="c1"><label for="c1"><strong>Partie 1 (Proteus) :</strong> Potentiels <code>P1</code> à <code>P6</code> identifiés dans <code>Q1.1</code>, <code>Q1.2</code> et <code>Q1.3</code> + <code>Tableau comparatif T1</code> des 6 montages complet (avec un exemple concret de la vraie vie pour chacun) + <strong>Capture C1</strong>.</label></li>
+    <li><input type="checkbox" id="c2"><label for="c2"><strong>Partie 2 (Du virtuel au réel) :</strong> Réponses <code>Q2.1</code> sur les broches d'alimentation cachées (<code>LM741CN</code> vs <code>TL072CP</code>) et l'essai <code>Supplies OFF / ON</code>.</label></li>
+    <li><input type="checkbox" id="c3"><label for="c3"><strong>Partie 3 (Campagne réelle AD3) :</strong> <code>Tableau de mesures T2</code> (5 positions du potentiomètre) rempli avec unités + réponses <code>Q3.1</code> + <strong>Captures C2 (inversion 180°) et C3 (saturation)</strong> + rangement de la mallette <em>TI Analog myParts Kit</em>.</label></li>
+  </ul>
+</div>
+
+<table>
+  <thead>
+    <tr>
+      <th style="width: 20%;">Compétence STI</th>
+      <th style="width: 65%;">Critères d'Évaluation (Séance 1h30 + Document Google Docs)</th>
+      <th style="width: 15%;">Barème</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td><strong>C04 — Analyser</strong></td>
+      <td>Placement juste des potentiels (<code>+12 V / 0 V / &minus;12 V</code>, résistances talons, égalité <code>V&minus; = V+</code> et masse virtuelle <code>0 V</code>) et comparaison pertinente des 6 montages avec leurs applications réelles (<code>Tableau T1</code>).</td>
+      <td><strong>/ 7 pts</strong></td>
+    </tr>
+    <tr>
+      <td><strong>C07 — Réaliser</strong></td>
+      <td>Repérage sans erreur du brochage DIP-8 et des broches d'alimentation cachées (<code>Q2.1</code>), câblage propre et sécurisé sur breadboard (<code>Supplies OFF</code> pendant les modifications, masses communes reliées).</td>
+      <td><strong>/ 5 pts</strong></td>
+    </tr>
+    <tr>
+      <td><strong>C06 — Valider</strong></td>
+      <td>Rigueur de la campagne de mesures avec variation du gain par potentiomètre au Digilent AD3 (<code>Tableau T2</code>, vérification de l'inversion de phase, de la masse virtuelle et de l'écrêtage en <code>Q3.1</code>).</td>
+      <td><strong>/ 5 pts</strong></td>
+    </tr>
+    <tr>
+      <td><strong>C01 — Communiquer</strong></td>
+      <td>Clarté du rapport Google Docs remis sur Classroom, présence et légendage soigné des 3 captures (<code>C1</code>, <code>C2</code>, <code>C3</code>) et respect des unités (V, mV, V<sub>pp</sub>, k&Omega;).</td>
+      <td><strong>/ 3 pts</strong></td>
+    </tr>
+  </tbody>
+</table>
+
+<!-- ========================================================================= -->
+<!-- TRAME CACHEE POUR COPIE EN 1 CLIC DANS GOOGLE DOCS                        -->
+<!-- ========================================================================= -->
+<div id="gdocs-master-template" style="display: none;">
+  <h1>COMPTE-RENDU DE TP PRÉALABLE (1h30) — BTS CIEL 2 (Technologie STI)</h1>
+  <h2>Découverte Pratique des Montages Fondamentaux à ALI (Proteus, TI myParts Kit &amp; Digilent AD3)</h2>
+  <p><strong>Binôme :</strong> NOM 1 Prénom 1 &amp; NOM 2 Prénom 2 &nbsp;|&nbsp; <strong>Date :</strong> ../../2026 &nbsp;|&nbsp; <strong>Poste n° :</strong> ....</p>
+  <hr>
+
+  <h2>PARTIE 1 — Exploration des 6 Montages sous Proteus, Potentiels &amp; Exemples Réels</h2>
+  <h3>Étude Q1.1 : Potentiels d'alimentation &amp; Montages (1) et (2) en boucle ouverte</h3>
+  <ul>
+    <li><strong>1. Potentiels des 3 fils d'alimentation (P1 en haut, P2 masse centrale, P3 en bas) :</strong> P1 = ...... V | P2 = ...... V | P3 = ...... V</li>
+    <li><strong>2. Montage (1) — Tensions de basculement de la sortie et explication de l'allumage d'une seule lampe quand la sortie vaut +12 V :</strong> <em>[Rédiger ici]</em></li>
+    <li><strong>3. Montage (2) — Potentiels P4 (haut de RV1) et P5 (bas de RV1) en mV, et raison pour laquelle un vrai ALI (gain &times;100 000) est inutilisable seul sans retour :</strong> P4 = ...... mV | P5 = ...... mV — <em>[Expliquer ici]</em></li>
+  </ul>
+
+  <h3>Étude Q1.2 : Contre-réaction négative — Montages Non-Inverseurs (3) et (4)</h3>
+  <ul>
+    <li><strong>1. Montage (3) Suiveur (pour V+ = +5,0 V) :</strong> Tension de sortie = ...... V | Potentiel P6 sondé sur IN&minus; = ...... V | Règle observée entre V+ et V&minus; : <em>[Rédiger ici]</em></li>
+    <li><strong>2. Montage (4) Amplificateur Non-Inverseur :</strong> Potentiels extrêmes sur RV1 : P4 = ...... V et P5 = ...... V (intérêt : <em>[Rédiger ici]</em>). Pour V+ = +2,0 V : Sortie = ...... V et potentiel sondé sur IN&minus; = ...... V.</li>
+  </ul>
+
+  <h3>Étude Q1.3 : Masse virtuelle — Montages Inverseurs (5) et (6)</h3>
+  <ul>
+    <li><strong>1. Potentiel de IN+ et potentiel P6 sondé sur IN&minus; (pour V_entrée = +2,0 V sur le Montage 6) :</strong> IN+ = ...... V | Sortie = ...... V | IN&minus; (P6) = ...... V. Pourquoi parle-t-on de « masse virtuelle » ? <em>[Rédiger ici]</em></li>
+  </ul>
+  <p><strong>[Insérer ici la Capture C1 — Proteus : Simulation d'un montage bouclé avec sonde de potentiel [V] posée sur IN&minus;]</strong></p>
+
+  <h3>Tableau Comparatif Synthétique T1 des 6 Montages</h3>
+  <table border="1" cellpadding="6" cellspacing="0" style="border-collapse: collapse; width: 100%;">
+    <tr>
+      <th>Montage Proteus</th>
+      <th>Retour Sortie &rarr; IN&minus; ?</th>
+      <th>Broche d'entrée</th>
+      <th>Gain / Comportement mesuré</th>
+      <th>Signe Sortie vs Entrée</th>
+      <th>Exemple concret dans la vraie vie</th>
+    </tr>
+    <tr><td>(1) Comparateur</td><td></td><td>IN+ et IN&minus;</td><td></td><td></td><td></td></tr>
+    <tr><td>(2) Boucle ouverte (mV)</td><td></td><td>IN+ et IN&minus;</td><td></td><td></td><td></td></tr>
+    <tr><td>(3) Suiveur</td><td></td><td></td><td></td><td></td><td></td></tr>
+    <tr><td>(4) Ampli Non-Inverseur</td><td></td><td></td><td></td><td></td><td></td></tr>
+    <tr><td>(5) Inverseur unitaire</td><td></td><td></td><td></td><td></td><td></td></tr>
+    <tr><td>(6) Ampli Inverseur</td><td></td><td></td><td></td><td></td><td></td></tr>
+  </table>
+
+  <h2>PARTIE 2 — Du Symbole Proteus au Boîtier Réel (Broches d'Alimentation Cachées)</h2>
+  <ul>
+    <li><strong>Q2.1 - 1. Connexions cachées sur le symbole Proteus et numéros de broches sur LM741CN vs TL072CP :</strong> <em>[Rédiger ici]</em></li>
+    <li><strong>Q2.1 - 2. Observation au Scope AD3 avec Supplies OFF puis ON (+5 V / &minus;5 V) et couleurs des fils AD3 :</strong> <em>[Rédiger ici]</em></li>
+  </ul>
+
+  <h2>PARTIE 3 — Campagne de Mesures Réelles au Digilent AD3 (Montage Inverseur à Gain Variable par Potentiomètre)</h2>
+  <p><strong>[Insérer ici la Capture C2 — WaveForms Scope : Amplification inverseuse propre au Point 3 (1 Vpp en entrée, ~3 Vpp inversé en sortie)]</strong></p>
+  <p><strong>[Insérer ici la Capture C3 — WaveForms Scope : Écrêtage de la sortie au Point 5 en butée de potentiomètre]</strong></p>
+
+  <h3>Tableau T2 : Campagne de mesures en faisant varier le potentiomètre RV (Entrée W1 = 1,0 Vpp à 1 kHz, Alim &pm;5 V)</h3>
+  <table border="1" cellpadding="6" cellspacing="0" style="border-collapse: collapse; width: 100%;">
+    <tr>
+      <th>Réglage du Potentiomètre RV</th>
+      <th>Gain Théorique</th>
+      <th>Entrée VE,pp (C1)</th>
+      <th>Sortie VS,pp mesurée (C2)</th>
+      <th>Gain Réel Mesuré</th>
+      <th>Forme du Signal &amp; Phase</th>
+    </tr>
+    <tr><td>1. Butée min (RV &approx; 0 k&Omega;)</td><td>0</td><td>1,0 Vpp</td><td></td><td></td><td></td></tr>
+    <tr><td>2. RV = 10 k&Omega; (= Montage 5)</td><td>&minus;1</td><td>1,0 Vpp</td><td></td><td></td><td></td></tr>
+    <tr><td>3. RV = 30 k&Omega; (= Montage 6)</td><td>&minus;3</td><td>1,0 Vpp</td><td></td><td></td><td></td></tr>
+    <tr><td>4. Mi-course (RV = 50 k&Omega;)</td><td>&minus;5</td><td>1,0 Vpp</td><td></td><td></td><td></td></tr>
+    <tr><td>5. Butée max (RV = 100 k&Omega;)</td><td>&minus;10</td><td>1,0 Vpp</td><td></td><td></td><td></td></tr>
+  </table>
+
+  <h3>Analyse Pratique Q3.1</h3>
+  <ul>
+    <li><strong>1. Vérification visuelle de l'inversion de signe (opposition de phase à 180°) sur l'écran du Scope :</strong> <em>[Rédiger ici]</em></li>
+    <li><strong>2. Tensions d'écrêtage mesurées au Point 5 et lien avec l'alimentation &pm;5 V de l'AD3 :</strong> <em>[Rédiger ici]</em></li>
+    <li><strong>3. Mesure réelle sur la broche 2 (IN&minus;) hors saturation (Point 3) puis en saturation (Point 5) :</strong> <em>[Rédiger ici]</em></li>
+  </ul>
+</div>
+
+<script>
+  async function copierHtmlVersPressePapier(htmlContent, textFallback) {
+    if (navigator.clipboard && window.ClipboardItem) {
+      const blobHtml = new Blob([htmlContent], { type: 'text/html' });
+      const blobText = new Blob([textFallback], { type: 'text/plain' });
+      await navigator.clipboard.write([
+        new ClipboardItem({ 'text/html': blobHtml, 'text/plain': blobText })
+      ]);
+    } else if (navigator.clipboard) {
+      await navigator.clipboard.writeText(textFallback);
+    }
+  }
+
+  async function copierTrameComplete() {
+    const tpl = document.getElementById('gdocs-master-template');
+    const feedback = document.getElementById('copy-global-feedback');
+    try {
+      await copierHtmlVersPressePapier(tpl.innerHTML, tpl.innerText);
+      feedback.textContent = '✔ Trame complète copiée ! Ouvrez votre Google Docs dans Classroom et faites Ctrl + V.';
+      setTimeout(() => { feedback.textContent = ''; }, 6000);
+    } catch (e) {
+      feedback.textContent = 'Sélectionnez le texte manuellement si le navigateur bloque le presse-papiers.';
+    }
+  }
+
+  async function copierBloc(idBloc, btn) {
+    const el = document.getElementById(idBloc);
+    const clone = el.cloneNode(true);
+    const btnInClone = clone.querySelector('button');
+    if (btnInClone) btnInClone.remove();
+    const originalLabel = btn.textContent;
+    try {
+      await copierHtmlVersPressePapier(clone.innerHTML, clone.innerText);
+      btn.textContent = '✔ Copié pour Google Docs !';
+      setTimeout(() => { btn.textContent = originalLabel; }, 3000);
+    } catch (e) {
+      btn.textContent = 'Erreur copie';
+    }
+  }
+</script>
+
+</body>
+</html>

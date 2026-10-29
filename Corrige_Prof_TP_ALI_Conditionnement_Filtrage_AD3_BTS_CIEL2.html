@@ -1,0 +1,601 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="utf-8" />
+  <meta name="generator" content="BTS CIEL - Vincent Hilaire" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes" />
+  <title>CORRIGÉ ENSEIGNANT (STI) — TP Chaîne de Traitement Analogique à ALI, Filtrage &amp; AD3 - BTS CIEL 2</title>
+
+  <style>
+    @page {
+      margin: 1.5cm;
+      size: A4;
+    }
+
+    html {
+      color: #1a1a1a;
+      background-color: #fdfdfd;
+      -webkit-text-size-adjust: 100%;
+    }
+
+    body {
+      font-family: 'Segoe UI', -apple-system, BlinkMacSystemFont, Roboto, Helvetica, Arial, sans-serif;
+      line-height: 1.55;
+      color: #1a1a1a;
+      max-width: 960px;
+      margin: 0 auto;
+      padding: 25px 30px;
+      hyphens: auto;
+      overflow-wrap: break-word;
+      text-rendering: optimizeLegibility;
+      font-kerning: normal;
+    }
+
+    @media (max-width: 768px) {
+      body {
+        font-size: 0.95em;
+        padding: 15px;
+      }
+      h1 {
+        font-size: 1.55em !important;
+      }
+    }
+
+    @media print {
+      html { background-color: white; }
+      body { background-color: transparent; color: black; font-size: 10pt; max-width: 100%; padding: 0; }
+      p, h2, h3 { orphans: 3; widows: 3; }
+      h2, h3, h4 { page-break-after: avoid; }
+      pre, blockquote, table, .teacher-answer, .callout { page-break-inside: avoid; }
+      .no-print { display: none !important; }
+    }
+
+    header {
+      margin-bottom: 2.2em;
+      text-align: center;
+      border-bottom: 3px solid #b91c1c;
+      padding-bottom: 15px;
+    }
+
+    .meta-badge {
+      display: inline-block;
+      background: #e1ecf4;
+      color: #0b3c5d;
+      font-size: 0.85em;
+      font-weight: 600;
+      padding: 4px 10px;
+      border-radius: 20px;
+      margin: 3px 5px;
+      border: 1px solid #7aa7c7;
+    }
+
+    .badge-primary { background: #0b3c5d; color: #ffffff; border: 1px solid #0b3c5d; }
+    .badge-danger { background: #b91c1c; color: #ffffff; border: 1px solid #991b1b; font-weight: 700; }
+    .badge-success { background: #dcfce7; color: #166534; border: 1px solid #86efac; }
+    .badge-warning { background: #fef3c7; color: #92400e; border: 1px solid #fcd34d; }
+    .badge-purple { background: #f3e8ff; color: #6b21a8; border: 1px solid #d8b4fe; }
+    .badge-orange { background: #ffedd5; color: #c2410c; border: 1px solid #fdba74; }
+
+    h1, h2, h3, h4 {
+      color: #0b3c5d;
+      font-weight: 700;
+    }
+
+    h1 {
+      font-size: 18pt;
+      margin-top: 0.6em;
+      margin-bottom: 0.35em;
+      letter-spacing: -0.4px;
+      line-height: 1.25;
+    }
+
+    h2 {
+      font-size: 13.5pt;
+      margin-top: 26px;
+      margin-bottom: 12px;
+      border-bottom: 1.5px solid #d0d7de;
+      padding-bottom: 6px;
+    }
+
+    h3 {
+      font-size: 11pt;
+      margin-top: 18px;
+      margin-bottom: 8px;
+      border-left: 4.5px solid #b91c1c;
+      padding-left: 10px;
+    }
+
+    h4 {
+      font-size: 10pt;
+      margin-top: 14px;
+      color: #1d5f8a;
+    }
+
+    p {
+      margin: 0.75em 0;
+    }
+
+    ul, ol {
+      padding-left: 1.6em;
+      margin: 0.75em 0;
+    }
+
+    li {
+      margin-bottom: 0.35em;
+    }
+
+    hr {
+      border: 0;
+      border-top: 1px solid #d0d7de;
+      margin: 24px 0;
+    }
+
+    table {
+      border-collapse: collapse;
+      width: 100%;
+      margin: 14px 0;
+      font-size: 9pt;
+      background-color: #ffffff;
+      box-shadow: 0 1px 3px rgba(0,0,0,0.05);
+    }
+
+    th, td {
+      border: 1px solid #d0d7de;
+      padding: 7px 10px;
+      text-align: left;
+      vertical-align: middle;
+    }
+
+    th {
+      background-color: #f0f4f8;
+      color: #0b3c5d;
+      font-weight: 700;
+    }
+
+    tr:nth-child(even) {
+      background-color: #f8fafc;
+    }
+
+    code {
+      background-color: #eff1f3;
+      padding: 2px 5px;
+      border-radius: 4px;
+      font-size: 88%;
+      font-family: Consolas, 'Courier New', Monaco, monospace;
+      color: #0969da;
+    }
+
+    .callout {
+      border-radius: 6px;
+      padding: 12px 16px;
+      margin: 16px 0;
+      font-size: 9.3pt;
+      border-left: 5px solid;
+    }
+
+    .callout-info {
+      background-color: #f0f7fc;
+      border-color: #328cc1;
+      color: #1a446c;
+    }
+
+    .callout-warning {
+      background-color: #fffbeb;
+      border-color: #f59e0b;
+      color: #78350f;
+    }
+
+    .callout-danger {
+      background-color: #fef2f2;
+      border-color: #ef4444;
+      color: #7f1d1d;
+    }
+
+    .callout-title {
+      font-weight: 700;
+      margin-bottom: 5px;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      font-size: 10pt;
+    }
+
+    .teacher-answer {
+      background-color: #ecfdf5;
+      border: 1.5px solid #10b981;
+      border-radius: 6px;
+      padding: 14px 18px;
+      margin: 14px 0 20px 0;
+      color: #064e3b;
+    }
+
+    .teacher-answer-title {
+      font-weight: 700;
+      font-size: 10.2pt;
+      color: #047857;
+      margin-bottom: 8px;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .capture-check {
+      background-color: #eff6ff;
+      border: 1.5px solid #60a5fa;
+      border-radius: 6px;
+      padding: 10px 14px;
+      margin: 10px 0 16px 0;
+      color: #1e3a8a;
+      font-size: 9pt;
+    }
+  </style>
+</head>
+<body>
+
+<header id="title-block-header">
+  <div style="text-transform: uppercase; font-size: 0.9em; font-weight: 700; letter-spacing: 1px; color: #b91c1c; margin-bottom: 4px;">
+    BTS CIEL — 2<sup>e</sup> Année • Option B (Électronique et Réseaux) — Technologie STI • DOCUMENT PROFESSEUR
+  </div>
+  <h1 class="title">CORRIGÉ ENSEIGNANT &amp; GUIDE DE SÉANCE — TP Chaîne de Traitement Analogique à ALI, Filtrage &amp; Barrière Optique (AD3)</h1>
+  <div style="margin-top: 10px;">
+    <span class="meta-badge badge-danger">🔒 CORRIGÉ PROFESSEUR (CONFIDENTIEL)</span>
+    <span class="meta-badge badge-purple">💻 CAO Proteus 8 (ISIS)</span>
+    <span class="meta-badge badge-warning">🧰 TI Analog myParts Kit</span>
+    <span class="meta-badge badge-orange">🔬 Digilent Analog Discovery 3</span>
+    <span class="meta-badge badge-primary">⏱ Durée 6h00 • Barème Classroom /20</span>
+  </div>
+</header>
+
+<div class="callout callout-info">
+  <div class="callout-title">📌 Cadrage Référentiel BTS CIEL : Frontière Technologie (STI) vs Physique-Chimie</div>
+  <p>Conformément au Bulletin Officiel du <strong>BTS CIEL Option B</strong> (pages 46–49 du référentiel), les connaissances de l'enseignement technologique STI (repérées par des tirets <code>−</code>) sur l'électronique analogique portent sur :</p>
+  <ul>
+    <li><strong>C04 / C05 :</strong> <em>« Chaîne de traitement du signal (Niv. 3) »</em> et <em>« Composants d'électronique analogique (R, L, C, Diodes, Transistors, ALI) <strong>limités à la symbolique, au rôle et à la technologie du composant (Niv. 2)</strong> »</em>.</li>
+    <li><strong>C07 / C06 :</strong> <em>« Technologies de boîtiers DIP, procédés de prototypage (Niv. 3) »</em> et <em>« Appareils de mesures : oscilloscope, générateurs, analyseur de spectre, banc de test (Niv. 3) »</em>.</li>
+  </ul>
+  <p>Les fonctions de transfert complexes en j&omega;, les démonstrations mathématiques et la synthèse théorique des filtres (puces rondes <code>•</code> du référentiel) relèvent exclusivement du cours de <strong>Physique-Chimie</strong> et ont donc été volontairement exclues de ce TP au profit de la <strong>lecture de datasheets TI, du câblage réel, du dépannage et de l'instrumentation AD3</strong>.</p>
+</div>
+
+<div class="callout callout-danger">
+  <div class="callout-title">🎓 Les 5 Points de Vigilance Pratique en Salle de TP</div>
+  <ol>
+    <li><strong>Piège de brochage DIP-8 et alimentation symétrique <code>+5 V / -5 V</code> (Figures 2, 3 et 5) :</strong> Sur le <code>TL072CP</code>, <code>+5 V</code> est en broche 8 et la sortie 1 en broche 1 ; sur le <code>LM741CN</code>, <code>+5 V</code> est en <strong>broche 7</strong> et la sortie en <strong>broche 6</strong>. Faire vérifier hors tension (<code>Master Enable OFF</code>, voir <strong>Figure 3</strong>) le fil Rouge (<code>V+ = +5 V</code>), le fil Blanc (<code>V- = -5 V</code>) et le pont de masse Noir (<code>0 V</code>) avant d'alimenter.</li>
+    <li><strong>Entrées différentielles de l'AD3 flottantes :</strong> Rappeler aux étudiants de relier <code>1-</code> (Orange/Blanc) et <code>2-</code> (Bleu/Blanc) à <code>GND</code>, sinon l'oscilloscope capte du 50 Hz ambiant.</li>
+    <li><strong>Amplitude non saturante dans l'outil <code>Network</code> :</strong> Vérifier que les binômes règlent bien <strong><code>Wavegen Amplitude = 50 mV</code></strong> (et non <code>1 V</code> par défaut qui sature l'ampli &times;23 à &pm;3,7 V !).</li>
+    <li><strong>Sens du phototransistor IR :</strong> Sur le couple optique de la mallette TI, si la tension en <code>TP1</code> reste à 0 V face à la LED IR, faire simplement permuter les deux pattes du phototransistor (aucun risque grâce à la 10 k&Omega;).</li>
+    <li><strong>Broche 1 (<code>EMIT OUT</code>) du <code>LM311P</code> oubliée (Partie 5) :</strong> Si la broche 1 n'est pas reliée à <code>GND (0 V)</code>, le transistor de sortie à collecteur ouvert ne peut pas tirer la sortie vers 0 V et <code>TP5</code> reste bloqué à +5 V !</li>
+  </ol>
+</div>
+
+<hr />
+
+<!-- ========================================================================= -->
+<!-- CORRIGE PARTIE 1 : TECHNOLOGIE DES ALI & SIMULATION PROTEUS               -->
+<!-- ========================================================================= -->
+<h2>Corrigé Partie 1 : Technologie des ALI (LM741CN vs TL072CP) &amp; Simulation Proteus</h2>
+
+<div class="teacher-answer">
+  <div class="teacher-answer-title">✅ Corrigé Étude Technologique Q1.1 : Rôle des composants, boîtiers DIP-8 et adaptation microcontrôleur</div>
+  <ol>
+    <li><strong>Rôle concret sur le schéma :</strong>
+      <ul>
+        <li>C'est le <strong>condensateur de liaison <i>C</i><sub>liaison</sub> = 100 nF (<code>104</code>)</strong> qui bloque la tension continue (DC) générée par l'éclairage de l'atelier et ne laisse passer que le signal alternatif à 1 kHz.</li>
+        <li><strong>Si un câbleur oublie <i>R</i><sub>pol</sub> = 100 k&Omega; :</strong> l'entrée <code>IN+</code> se retrouve « en l'air » (flottante) derrière le condensateur. Les infimes courants internes d'entrée de l'ALI chargent alors progressivement le condensateur et font dériver la tension d'entrée jusqu'à <strong>bloquer la sortie de l'ALI en saturation (+3,5 V ou &minus;3,5 V)</strong>. <i>R</i><sub>pol</sub> ramène proprement le repos à 0 V.</li>
+      </ul>
+    </li>
+    <li><strong>Comparaison technologique Datasheet TI (<code>LM741CN</code> vs <code>TL072CP</code>) :</strong>
+      <ul>
+        <li><strong>Technologie &amp; rapidité :</strong> Le <code>LM741CN</code> utilise d'anciens transistors d'entrée <strong>bipolaires (BJT)</strong> et est très lent (<em>Slew-Rate</em> = <strong>0,5 V/µs</strong>), tandis que le <code>TL072CP</code> utilise des transistors <strong>JFET</strong> à très haute impédance d'entrée, faible bruit et 26 fois plus rapides (<strong>13 V/µs</strong>).</li>
+        <li><strong>Intégration boîtier :</strong> Le <code>LM741CN</code> est un <em>Single Op-Amp</em> (<strong>1 seul ALI</strong> pour 8 pattes), alors que le <code>TL072CP</code> est un <em>Dual Op-Amp</em> (<strong>2 ALI indépendants</strong> dans le même boîtier DIP-8) : gain de place sur le PCB, coût réduit et une seule paire de broches d'alimentation à découpler.</li>
+        <li><strong>Brochage incompatible :</strong> <code>+5 V</code> en broche <strong>7</strong> et sortie en broche <strong>6</strong> sur le <code>LM741CN</code>, contre <code>+5 V</code> en broche <strong>8</strong> et sorties en broches <strong>1 et 7</strong> sur le <code>TL072CP</code> (impossible d'intervertir les puces sur le même support !).</li>
+      </ul>
+    </li>
+    <li><strong>Intérêt concret de l'amplification avant un microcontrôleur :</strong>
+      <ul>
+        <li>Tension de sortie crête-à-crête : <strong>40 mV<sub>pp</sub> &times; 23 = 920 mV<sub>pp</sub> (&approx; 0,92 V<sub>pp</sub>)</strong>.</li>
+        <li>Sur une entrée analogique <code>0 – 3,3 V</code> de microcontrôleur, un signal brut de 40 mV n'utilise qu'à peine <strong>1,2 % de la plage de mesure</strong> (très mauvaise précision, noyé dans le bruit numérique). Porté à près d'1 V<sub>pp</sub>, il exploite convenablement le convertisseur analogique-numérique tout en gardant une marge de sécurité contre la saturation.</li>
+      </ul>
+    </li>
+  </ol>
+</div>
+
+<div class="capture-check">
+  <strong>🔍 Contrôle rapide des Captures C1 &amp; C2 (Proteus) dans le Google Docs :</strong><br>
+  • <strong>Capture C1 :</strong> Alimentations bien nommées <code>+5V</code> et <code>-5V</code> ; plateau à +27,2 dB autour de 1 kHz, coupure basse vers 16 Hz, et coupure haute vers ~43 kHz (<code>LM741</code>) contre ~135–170 kHz (<code>TL072</code>).<br>
+  • <strong>Capture C2 :</strong> À 50 kHz (130 mV crête), signal déformé en triangle sur le <code>LM741</code> contre belle sinusoïde de ~3 V crête sur le <code>TL072</code>.
+</div>
+
+<div class="teacher-answer">
+  <div class="teacher-answer-title">✅ Corrigé Tableau T1 &amp; Conclusion Technologique Q1.2</div>
+  <table>
+    <thead>
+      <tr>
+        <th>Mesure Réalisée sous Proteus (Alim &pm;5 V, Gain &times;23)</th>
+        <th>Indication Datasheet TI</th>
+        <th>Montage à LM741</th>
+        <th>Montage à TL072</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><strong>Amplitude sortie à 1 kHz (pour 40 mV<sub>pp</sub> en entrée)</strong></td>
+        <td>~920 mV<sub>pp</sub> (+27,2 dB), centré sur 0 V</td>
+        <td><strong>~920 mV<sub>pp</sub> (+27,2 dB), 0 V DC</strong></td>
+        <td><strong>~920 mV<sub>pp</sub> (+27,2 dB), 0 V DC</strong></td>
+      </tr>
+      <tr>
+        <td><strong>Fréquence limite basse (blocage du continu)</strong></td>
+        <td>~16 Hz</td>
+        <td><strong>~16 Hz</strong></td>
+        <td><strong>~16 Hz</strong></td>
+      </tr>
+      <tr>
+        <td><strong>Fréquence limite haute (&minus;3 dB sur le graphe)</strong></td>
+        <td>TL072 3&times; plus large</td>
+        <td><strong>~41 à 45 kHz</strong></td>
+        <td><strong>~135 à 175 kHz</strong></td>
+      </tr>
+      <tr>
+        <td><strong>Tensions max d'écrêtage haut / bas (Essai A)</strong></td>
+        <td>Non Rail-to-Rail (&lt; &pm;5 V)</td>
+        <td><strong>+3,2 V / &minus;3,2 V env.</strong></td>
+        <td><strong>+3,7 V / &minus;3,7 V env.</strong></td>
+      </tr>
+      <tr>
+        <td><strong>Forme du signal et pente à 50 kHz (Essai C)</strong></td>
+        <td>SR<sub>741</sub> = 0,5 V/µs | SR<sub>072</sub> = 13 V/µs</td>
+        <td><strong>Triangle déformé (~0,50 V/µs)</strong></td>
+        <td><strong>Sinusoïde intacte</strong></td>
+      </tr>
+    </tbody>
+  </table>
+  <p><strong>Réponse attendue Q1.2 :</strong> Les transistors internes de sortie provoquent une chute de tension incompressible d'environ 1,3 à 1,8 V par rapport aux rails +5 V et -5 V (<em>tension de déchet</em>) ; pour atteindre quasiment +5 V et -5 V (ou travailler en 0–3,3 V), il faudrait choisir un ALI de technologie <strong>Rail-to-Rail</strong>. On retient le <strong><code>TL072CP</code></strong> car il est rapide, peu bruyant, ne tire aucun courant sur le capteur (entrées JFET) et intègre <strong>les 2 ALI nécessaires (ampli + filtre) dans un seul boîtier DIP-8</strong>.</p>
+</div>
+
+<hr />
+
+<!-- ========================================================================= -->
+<!-- CORRIGE PARTIE 2 : FILTRE ACTIF PASSE-BAS SOUS PROTEUS                    -->
+<!-- ========================================================================= -->
+<h2>Corrigé Partie 2 : Chaîne de Traitement — Filtre Actif Passe-Bas sous Proteus</h2>
+
+<div class="teacher-answer">
+  <div class="teacher-answer-title">✅ Corrigé Étude Technologique Q2.1 : Lecture de schéma, marquage céramique &amp; relevés Proteus</div>
+  <ol>
+    <li><strong>Intégration matérielle &amp; rôle du montage suiveur :</strong> Le boîtier <code>TL072CP</code> étant un <strong>ALI double</strong>, ses alimentations <code>+5 V</code> (broche 8) et <code>-5 V</code> (broche 4) sont déjà câblées et communes aux deux opérateurs : on utilise simplement le second ALI disponible sur les broches 5, 6 et 7 sans ajouter de puce ! La liaison directe entre la sortie <code>2OUT</code> (broche 7) et l'entrée inverseuse <code>2IN-</code> (broche 6) constitue un <strong>montage suiveur</strong> (gain = &times;1) : il sert d'<strong>isolateur / adaptateur d'impédance</strong> pour ne pas décharger les condensateurs du filtre et fournir un signal robuste à l'étage suivant.</li>
+    <li><strong>Décodage des marquages <code>103</code> et <code>104</code> :</strong>
+      <ul>
+        <li><strong><code>103</code></strong> = <code>10</code> suivi de <code>3</code> zéros = <code>10 000 pF</code> = <strong><code>10 nF</code></strong> ;</li>
+        <li><strong><code>104</code></strong> = <code>10</code> suivi de <code>4</code> zéros = <code>100 000 pF</code> = <strong><code>100 nF</code></strong> (soit <code>0,1 µF</code>).</li>
+        <li>En plaçant deux condensateurs en <strong>parallèle</strong>, leurs surfaces d'armatures (et donc leurs capacités) s'additionnent : <code>10 nF + 10 nF = 20 nF</code>.</li>
+      </ul>
+    </li>
+    <li><strong>Relevés directs sous Proteus (Captures C3 &amp; C4) :</strong>
+      <ul>
+        <li>Fréquence de coupure haute lue au curseur (&minus;3 dB sous le plateau de +27,2 dB, soit à +24,2 dB) : <strong>&approx; 2,4 kHz</strong> (2 390 Hz).</li>
+        <li>À <strong>1 kHz</strong> : l'amplitude en <code>TP4</code> vaut <strong>~910 mV<sub>pp</sub></strong> (+27,1 dB), le signal utile passe quasiment sans aucune perte !</li>
+        <li>À <strong>20 kHz</strong> : la courbe chute d'environ <strong>&minus;37 dB</strong> par rapport à `TP3` (sur l'oscilloscope Proteus, le gros brouillage de ~690 mV<sub>pp</sub> visible en `TP3` est réduit à moins de 10 mV<sub>pp</sub> en `TP4` : la sinusoïde redevient parfaitement lisse !).</li>
+      </ul>
+    </li>
+  </ol>
+</div>
+
+<hr />
+
+<!-- ========================================================================= -->
+<!-- CORRIGE PARTIE 3 : CAPTEUR OPTIQUE REEL BRUT AU DIGILENT AD3              -->
+<!-- ========================================================================= -->
+<h2>Corrigé Partie 3 : Caractérisation du Capteur Optique Brut au Digilent AD3</h2>
+
+<div class="teacher-answer">
+  <div class="teacher-answer-title">✅ Valeurs Typiques Attendues au Tableau T2 &amp; Corrigé Q3.1</div>
+  <table>
+    <thead>
+      <tr>
+        <th>Condition Expérimentale sur la Maquette</th>
+        <th>Tension Moyenne DC (<i>V</i><sub>moy</sub>)</th>
+        <th>Amplitude Utile 1 kHz (<i>V</i><sub>pp</sub>)</th>
+        <th>Observation au Scope AD3</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td>Distance <strong><i>d</i> = 3 cm</strong> (sans W2)</td>
+        <td>~80 à 350 mV</td>
+        <td><strong>~110 à 220 mV<sub>pp</sub></strong></td>
+        <td>Sinus 1 kHz visible mais faible et décalé au-dessus de 0 V.</td>
+      </tr>
+      <tr>
+        <td>Distance <strong><i>d</i> = 6 cm</strong> (sans W2)</td>
+        <td>~80 à 350 mV</td>
+        <td><strong>~30 à 55 mV<sub>pp</sub></strong></td>
+        <td>Forte baisse d'amplitude avec l'éloignement optique.</td>
+      </tr>
+      <tr>
+        <td>Distance <strong><i>d</i> = 10 cm</strong> (sans W2)</td>
+        <td>~80 à 350 mV</td>
+        <td><strong>~10 à 20 mV<sub>pp</sub></strong></td>
+        <td>Signal minuscule, difficilement exploitable sans amplifier.</td>
+      </tr>
+      <tr>
+        <td>Distance <strong><i>d</i> = 6 cm</strong> + <strong>Éblouissement lampe</strong></td>
+        <td><strong>+0,8 V à +2,8 V</strong></td>
+        <td>~30 à 55 mV<sub>pp</sub></td>
+        <td>Saut brutal de la tension continue DC sous l'effet de la lampe.</td>
+      </tr>
+      <tr>
+        <td>Distance <strong><i>d</i> = 6 cm</strong> + <strong>Bruit HF W2 (20 kHz)</strong></td>
+        <td>~80 à 350 mV</td>
+        <td>~65 à 85 mV<sub>pp</sub> (brouillé)</td>
+        <td>Trace épaisse et brouillée : le 1 kHz est noyé dans le 20 kHz.</td>
+      </tr>
+    </tbody>
+  </table>
+  <p><strong>Réponse attendue Q3.1 :</strong> Si le capteur ébloui présente par exemple <strong>+1,2 V continu</strong> et qu'on le branche directement sur l'amplificateur &times;23 sans le condensateur <i>C</i><sub>liaison</sub>, l'ALI essaierait de fournir <code>1,2 V &times; 23 = +27,6 V</code> ! Alimenté en +5 V, le <code>TL072CP</code> resterait <strong>bloqué en saturation haute (~ +3,7 V continu)</strong> et le signal à 1 kHz serait complètement écrasé et perdu.</p>
+</div>
+
+<hr />
+
+<!-- ========================================================================= -->
+<!-- CORRIGE PARTIE 4 : MAQUETTE REELLE TL072CP & DUEL LM741CN (AD3)           -->
+<!-- ========================================================================= -->
+<h2>Corrigé Partie 4 : Prototypage Réel de la Chaîne TL072CP &amp; Duel Pratique LM741CN (AD3)</h2>
+
+<div class="teacher-answer">
+  <div class="teacher-answer-title">✅ Tableau Comparatif T3 &amp; Questions Technologiques Q4.1</div>
+  <table>
+    <thead>
+      <tr>
+        <th>Mesure sur la Chaîne Complète (TP1 &rarr; TP4)</th>
+        <th>Attendu Cahier des Charges</th>
+        <th>Simulation Proteus</th>
+        <th>Maquette Réelle AD3 (Typique)</th>
+        <th>Conformité</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><strong>Gain mesuré dans la bande utile à 1 kHz</strong></td>
+        <td>&times;23 (&approx; +27,1 dB)</td>
+        <td>+27,1 dB</td>
+        <td><strong>+26,8 à +27,4 dB</strong></td>
+        <td>Conforme</td>
+      </tr>
+      <tr>
+        <td><strong>Fréquence de coupure basse (blocage DC)</strong></td>
+        <td>~16 Hz</td>
+        <td>15,9 Hz</td>
+        <td><strong>14,5 à 17,5 Hz</strong></td>
+        <td>Conforme</td>
+      </tr>
+      <tr>
+        <td><strong>Fréquence de coupure haute du filtre (<code>TP4</code>)</strong></td>
+        <td>~2,4 kHz</td>
+        <td>2,39 kHz</td>
+        <td><strong>2,20 à 2,60 kHz</strong></td>
+        <td>Conforme</td>
+      </tr>
+      <tr>
+        <td><strong>Réduction du parasite 20 kHz par le filtre</strong></td>
+        <td>&approx; &minus;37 dB (divisé par ~70)</td>
+        <td>&minus;36,8 dB</td>
+        <td><strong>&minus;35 à &minus;38 dB</strong></td>
+        <td>Conforme</td>
+      </tr>
+      <tr>
+        <td><strong>Écart Signal 1 kHz / Bruit 20 kHz au <code>Spectrum</code> FFT</strong></td>
+        <td>Nettoyage franc sur <code>TP4</code></td>
+        <td>—</td>
+        <td>Avant : ~ +2 à +4 dB<br>Après : <strong>~ +38 à +41 dB</strong></td>
+        <td><strong>Gain &approx; +36 dB !</strong></td>
+      </tr>
+      <tr>
+        <td><strong>Slew-Rate mesuré sur le <code>LM741CN</code> réel (à 50 kHz)</strong></td>
+        <td>~0,5 V/µs (Datasheet TI)</td>
+        <td>~0,50 V/µs</td>
+        <td><strong>0,42 à 0,58 V/µs</strong></td>
+        <td>Conforme (Triangulé)</td>
+      </tr>
+    </tbody>
+  </table>
+  <p><strong>Réponses attendues Q4.1 :</strong></p>
+  <ol>
+    <li><strong>Tolérances des composants réels :</strong> L'anneau <strong>Or</strong> des résistances correspond à une tolérance de fabrication de <strong>&pm;5 %</strong>, et les petits condensateurs céramiques <code>103</code>/<code>104</code> ont une tolérance de <strong>&pm;10 % à &pm;20 %</strong> (auxquelles s'ajoutent quelques picofarads parasites entre les lames de la breadboard). Il est donc tout à fait normal d'observer un léger décalage de 5 à 10 % sur les fréquences de coupure réelles par rapport aux composants idéaux de Proteus.</li>
+    <li><strong>Rôle des condensateurs de découplage <code>100 nF</code> (<code>104</code>) :</strong> Placés au ras des pattes d'alimentation <code>+5 V</code> et <code>-5 V</code> vers la masse, ils absorbent les appels de courant rapides du circuit intégré, filtrent les parasites amenés par les fils d'alimentation et <strong>empêchent l'amplificateur d'entrer en auto-oscillation</strong>.</li>
+  </ol>
+</div>
+
+<hr />
+
+<!-- ========================================================================= -->
+<!-- CORRIGE PARTIE 5 : INTERFACE LOGIQUE LM311P & DECOUVERTE INA217AIP        -->
+<!-- ========================================================================= -->
+<h2>Corrigé Partie 5 : Interface Numérique LM311P &amp; Découverte de l'INA217AIP</h2>
+
+<div class="teacher-answer">
+  <div class="teacher-answer-title">✅ Corrigé Études Technologiques Q5.1 (LM311P) &amp; Q5.2 (INA217AIP)</div>
+  <ol>
+    <li><strong>Corrigé Q5.1 — Comparateur <code>LM311P</code> :</strong>
+      <ul>
+        <li><strong>Transformation du signal :</strong> Il reçoit en <code>TP4</code> un signal <strong>analogique sinusoïdal alternatif</strong> (centré sur 0 V) et délivre en <code>TP5</code> un signal <strong>numérique rectangulaire binaire <code>0 V / +5 V</code></strong> directement exploitable par une entrée logique de comptage ou d'interruption.</li>
+        <li><strong>Nécessité absolue du filtrage en amont (Capture C9) :</strong> Branché avant le filtre (en <code>TP3</code>), le brouillage à 20 kHz fait franchir le seuil 0 V plusieurs fois par période : le comparateur génère des salves d'impulsions parasites qui fausseraient complètement le comptage de pièces ! Branché après le filtre (en <code>TP4</code>), on obtient exactement une impulsion propre par période à 1 kHz.</li>
+        <li><strong>Adaptation immédiate à un GPIO <code>3,3 V</code> (ESP32 / Raspberry Pi Pico) :</strong> Grâce à la sortie à collecteur ouvert, il suffit de <strong>débrancher le haut de la résistance de pull-up <i>R</i><sub>pull</sub> = 4,7 k&Omega; du <code>+5 V</code> et de la relier à la broche d'alimentation <code>+3,3 V</code> du microcontrôleur</strong> ! Le signal carré oscillera alors proprement entre <code>0 V</code> et <code>+3,3 V</code> sans risquer de griller l'entrée GPIO.</li>
+      </ul>
+    </li>
+    <li><strong>Corrigé Q5.2 — Amplificateur d'instrumentation <code>INA217AIP</code> :</strong>
+      <ul>
+        <li><strong>Simplicité matérielle :</strong> Une <strong>seule résistance externe <i>R</i><sub>G</sub></strong> suffit pour fixer précisément le gain, câblée entre les <strong>broches 1 (<code>RG1</code>) et 8 (<code>RG2</code>)</strong> du boîtier DIP-8 (comme indiqué sur la Figure 2).</li>
+        <li><strong>Choix de <i>R</i><sub>G</sub> pour un gain de <code>101</code> :</strong> D'après la formule constructeur <code>1 + (10 000 / R_G) = 101</code>, on a <code>10 000 / R_G = 100</code>, soit <strong><code>R_G = 100 &Omega;</code></strong> (résistance standard <em>Marron-Noir-Marron-Or</em> directement présente dans la mallette <em>TI Analog myParts Kit</em> !).</li>
+      </ul>
+    </li>
+  </ol>
+</div>
+
+<hr />
+
+<!-- ========================================================================= -->
+<!-- GRILLE SOMMATIVE DETAILLEE STI (/20)                                      -->
+<!-- ========================================================================= -->
+<h2>Barème Détaillé de Correction des Rapports Google Classroom (/20 — Spécial Technologie STI)</h2>
+
+<table>
+  <thead>
+    <tr>
+      <th style="width: 16%;">Compétence STI</th>
+      <th style="width: 68%;">Détail des Points (Questions Technologiques / Captures / Câblage)</th>
+      <th style="width: 16%;">Sous-total</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td><strong>C04 — Analyser</strong></td>
+      <td>
+        • <strong>Q1.1 (1 &amp; 2) :</strong> Rôle de <i>C</i><sub>liaison</sub> / <i>R</i><sub>pol</sub> (0,75 pt) + comparaison technologique <code>LM741CN</code> vs <code>TL072CP</code> (BJT/JFET, boîtier double, brochage) (1 pt).<br>
+        • <strong>Q1.2 :</strong> Notion de tension de déchet vs ALI <em>Rail-to-Rail</em> et justification du choix du <code>TL072CP</code> (0,75 pt).<br>
+        • <strong>Q2.1 (1 &amp; 2) :</strong> Rôle du suiveur d'isolement + décodage des marquages <code>103</code>/<code>104</code> et mise en parallèle (0,75 pt).<br>
+        • <strong>Q4.1 :</strong> Tolérances réelles des composants (&pm;5 %, &pm;10–20 %) et rôle pratique du découplage 100 nF (0,75 pt).
+      </td>
+      <td><strong>/ 4,0 pts</strong></td>
+    </tr>
+    <tr>
+      <td><strong>C05 — Concevoir</strong></td>
+      <td>
+        • <strong>Q1.1 (3) &amp; Q3.1 :</strong> Calcul simple &times;23 (920 mV<sub>pp</sub>), intérêt pour le CAN 0–3,3 V et saturation sans condensateur (1 pt).<br>
+        • <strong>Simulations CAO Proteus (Captures C1, C2, C3, C4 + Tableau T1 + Q2.1-3) :</strong> Schémas ISIS propres et relevés curseurs cohérents (2 pts).<br>
+        • <strong>Q5.1 &amp; Q5.2 :</strong> Adaptation pull-up vers GPIO 3,3 V (0,5 pt) + lecture datasheet <code>INA217AIP</code> (<i>R</i><sub>G</sub> = 100 &Omega; entre broches 1 et 8) (0,5 pt).
+      </td>
+      <td><strong>/ 4,0 pts</strong></td>
+    </tr>
+    <tr>
+      <td><strong>C07 — Réaliser</strong></td>
+      <td>
+        • Sécurité hors tension respectée, aucun circuit intégré inversé (brochages <code>TL072CP</code> / <code>LM741CN</code> / <code>LM311P</code> maîtrisés) (1,5 pt).<br>
+        • Implantation soignée sur breadboard, condensateurs de découplage <code>104</code> bien câblés au ras des broches d'alimentation (1,5 pt).<br>
+        • Alignement fonctionnel de la barrière optique IR et rangement impeccable de la mallette <em>TI myParts Kit</em> (1 pt).
+      </td>
+      <td><strong>/ 4,0 pts</strong></td>
+    </tr>
+    <tr>
+      <td><strong>C06 — Valider</strong></td>
+      <td>
+        • <strong>Partie 3 (Tableau T2 + Capture C5) :</strong> Relevés expérimentaux du capteur brut au <code>Scope</code> AD3 (1 pt).<br>
+        • <strong>Partie 4 Scope &amp; FFT (Capture C6) :</strong> Mise en évidence du débruitage réel et lecture FFT sous <code>Spectrum</code> (1,25 pt).<br>
+        • <strong>Partie 4 Traceur Network (Capture C7 + Tableau T3) :</strong> Courbe fréquentielle non saturée (50 mV) et tableau comparatif complet (1,5 pt).<br>
+        • <strong>Duel LM741CN &amp; Comparateur LM311P (Captures C8 &amp; C9) :</strong> Mesure du Slew-Rate réel (~0,5 V/µs) et validation du signal carré 0–5 V (1,25 pt).
+      </td>
+      <td><strong>/ 5,0 pts</strong></td>
+    </tr>
+    <tr>
+      <td><strong>C01 — Communiquer</strong></td>
+      <td>
+        • Structuration claire du document Google Docs sur Google Classroom (en-tête, sommaire, orthographe) (1 pt).<br>
+        • Présence complète, recadrage lisible (fond clair conseillé) et légendage commenté des 9 captures (<code>C1</code> à <code>C9</code>) (1,5 pt).<br>
+        • Présence systématique des unités (mV, V, Hz, kHz, dB, V/µs) et synthèse finale pertinente (0,5 pt).
+      </td>
+      <td><strong>/ 3,0 pts</strong></td>
+    </tr>
+  </tbody>
+</table>
+
+</body>
+</html>
