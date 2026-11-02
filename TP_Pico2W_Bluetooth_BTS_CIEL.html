@@ -1907,12 +1907,85 @@ if __name__ == "__main__":
   </table>
 
   <div class="callout callout-info">
-    <div class="callout-title">📐 Calcul Mathématique du Checksum XOR (Longitudinal Redundancy Check - LRC)</div>
+    <div class="callout-title">📐 Intérêt Industriel du Checksum &amp; Détection d'Erreurs par Redondance</div>
+    <p><strong>1. Pourquoi un Checksum est-il indispensable dans une liaison industrielle ?</strong></p>
+    <ul>
+      <li><strong>Le problème des perturbations physiques (Bruits &amp; Parasites CEM) :</strong> Dans un atelier de production, une armoire électrique ou un environnement médical, les signaux de communication (sans fil Bluetooth 2,4 GHz ou liaisons séries) sont exposés à des bruits électromagnétiques générés par les moteurs, variateurs, commutations de relais ou décharges électrostatiques. Une perturbation transitoire peut corrompre le signal physique et provoquer une <strong>inversion intempestive de bits</strong> (<em>bit-flip</em> : un <code>0</code> devient <code>1</code> ou inversement).</li>
+      <li><strong>Le danger critique d'une commande corrompue sans contrôle :</strong> Si un octet de commande est altéré sans mécanisme de détection (par exemple l'ordre <code>0x10</code> signifiant <em>« Marche normale »</em> qui se transforme en <code>0x11</code> ou <code>0x90</code>), le récepteur applique aveuglément l'ordre erroné. Cela peut provoquer un emballement mécanique, une fausse manœuvre d'actionneur ou la mise en danger des opérateurs.</li>
+      <li><strong>Le principe de la redondance mathématique :</strong>
+        <ul>
+          <li>L'<strong>émetteur</strong> calcule une signature mathématique condensée (le <strong>Checksum</strong>) sur l'ensemble des octets utiles (ID, CMD, LEN, Data) et l'annexe à la fin de la trame avant le délimiteur de fin (<code>#</code>).</li>
+          <li>Le <strong>récepteur (Raspberry Pi Pico 2 W)</strong> extrait le checksum reçu, puis <strong>recalcule lui-même</strong> le checksum sur les octets reçus avec la même fonction mathématique.</li>
+          <li>Si <i>Checksum</i><sub>recalculé</sub> == <i>Checksum</i><sub>reçu</sub> &rarr; La trame est intègre : l'automate exécute l'action et renvoie un accusé de réception positif (<code>ACK</code>).</li>
+          <li>Si <i>Checksum</i><sub>recalculé</sub> &ne; <i>Checksum</i><sub>reçu</sub> &rarr; Une anomalie a corrompu la transmission : la trame est <strong>rejetée immédiatement</strong> (<code>NACK_CHECKSUM_ERROR</code>) sans aucune exécution d'ordre.</li>
+        </ul>
+      </li>
+    </ul>
+
+    <p style="margin-top: 14px;"><strong>2. Calcul Mathématique du Checksum XOR (Longitudinal Redundancy Check - LRC) :</strong></p>
     <p>Le Checksum XOR consiste à appliquer l'opération logique <strong>OU Exclusif (&oplus;)</strong> bit à bit sur l'ensemble des octets constituant la charge utile et l'en-tête de la trame :</p>
     <div class="formula-box">
       <i>Checksum</i> = <i>ID</i> &oplus; <i>CMD</i> &oplus; <i>LEN</i> &oplus; <i>Data</i>[0] &oplus; <i>Data</i>[1] &oplus; ... &oplus; <i>Data</i>[<i>N</i>−1]
     </div>
-    <p><strong>Propriétés clés :</strong> Cette méthode est très rapide à exécuter sur un microcontrôleur embarqué, nécessite très peu de mémoire, et permet de détecter tout changement d'un nombre impair de bits sur une même position binaire.</p>
+
+    <p style="margin-top: 14px;"><strong>3. Exemple Concret : Transmission Nominale vs Détection d'une Erreur (Bit-Flip) :</strong></p>
+    <table>
+      <thead>
+        <tr>
+          <th>Situation</th>
+          <th>Octets transmis</th>
+          <th>Calcul du Checksum</th>
+          <th>Comportement du Récepteur (Pico 2 W)</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td><strong>Cas 1 : Transmission Nominale (Aucune perturbation)</strong></td>
+          <td>
+            <code>ID = 0x01</code><br>
+            <code>CMD = 0x10</code> (Ordre ON)<br>
+            <code>LEN = 0x02</code><br>
+            <code>Data = 'O', 'N' (0x4F, 0x4E)</code><br>
+            Trame émise : <code>$ 01 10 02 4F 4E 12 #</code>
+          </td>
+          <td>
+            0x01 &oplus; 0x10 = 0x11<br>
+            0x11 &oplus; 0x02 = 0x13<br>
+            0x13 &oplus; 0x4F = 0x5C<br>
+            0x5C &oplus; 0x4E = <strong>0x12</strong><br>
+            &rarr; <i>Checksum émis = 0x12</i>
+          </td>
+          <td>
+            Le Pico 2 W recalcule le checksum sur les octets reçus : <strong>0x12</strong>.<br>
+            Comparaison : <code>0x12 == 0x12</code> &rarr; <strong>SUCCÈS</strong>.<br>
+            L'automate FSM valide l'intégrité, exécute l'ordre <code>0x10</code> et répond <code>ACK_FRAME_VALID</code>.
+          </td>
+        </tr>
+        <tr>
+          <td><strong>Cas 2 : Transmission Bruitée (Erreur d'1 bit sur le Code Commande)</strong></td>
+          <td>
+            Un parasite radio inverse le bit b0 de CMD :<br>
+            <code>0x10</code> (0001 0000<sub>2</sub>) devient <code>0x11</code> (0001 0001<sub>2</sub>).<br>
+            Trame reçue : <code>$ 01 <strong>11</strong> 02 4F 4E 12 #</code><br>
+            <em>(Le checksum reçu dans la trame vaut toujours 0x12)</em>
+          </td>
+          <td>
+            Le Pico recalcule le checksum sur la trame altérée :<br>
+            0x01 &oplus; <strong>0x11</strong> = 0x10<br>
+            0x10 &oplus; 0x02 = 0x12<br>
+            0x12 &oplus; 0x4F = 0x5D<br>
+            0x5D &oplus; 0x4E = <strong>0x13</strong><br>
+            &rarr; <i>Checksum recalculé = 0x13</i>
+          </td>
+          <td>
+            Comparaison par le Pico :<br>
+            <i>Checksum recalculé</i> (<strong>0x13</strong>) &ne; <i>Checksum reçu</i> (<strong>0x12</strong>).<br>
+            &rarr; <strong>DISCORDANCE IMMÉDIATEMENT DÉTECTÉE !</strong><br>
+            La FSM rejette la commande, aucune action erronée n'est exécutée, et le Pico répond <code>NACK_CHECKSUM_ERROR</code>.
+          </td>
+        </tr>
+      </tbody>
+    </table>
   </div>
 
   <!-- FIGURE 4 : DIAGRAMME DE LA MACHINE A ETATS FSM -->
@@ -1998,9 +2071,20 @@ if __name__ == "__main__":
   </div>
 
   <div class="student-response">
-    <strong>Question 4.1 :</strong> Calculez manuellement la somme de contrôle XOR (LRC) de la trame suivante :<br>
+    <strong>Question 4.1 (Calcul nominal du Checksum) :</strong><br>
+    Calculez manuellement la somme de contrôle XOR (LRC) de la trame suivante :<br>
     Octets : <code>[ID: 0x01] ^ [CMD: 0x20] ^ [LEN: 0x01] ^ [DATA: 0x41 ('A')]</code> = <strong>0x.......</strong><br>
     Détaillez le calcul binaire bit à bit sur les 8 bits.
+    <div class="dotted-line"></div>
+    <div class="dotted-line"></div>
+  </div>
+
+  <div class="student-response">
+    <strong>Question 4.2 (Mise en situation d'une perturbation et détection d'erreur) :</strong><br>
+    La trame valide calculée à la question 4.1 est transmise par Bluetooth : <code>$ 01 20 01 41 61 #</code>.<br>
+    Supposons qu'un parasite électromagnétique en atelier inverse le bit b1 de l'octet de données <code>DATA</code> : <code>0x41</code> (0100 0001<sub>2</sub>, caractère 'A') devient <code>0x43</code> (0100 0011<sub>2</sub>, caractère 'C').<br>
+    1. Quel est le nouveau checksum recalculé par le Raspberry Pi Pico 2 W à la réception sur les octets altérés <code>0x01 ^ 0x20 ^ 0x01 ^ 0x43</code> ?<br>
+    2. Que conclut l'automate FSM lors de l'étape <code>VERIF_CHECKSUM</code> lorsqu'il compare ce résultat avec le checksum reçu (<code>0x61</code>) ? Quelle réponse est renvoyée au superviseur ?
     <div class="dotted-line"></div>
     <div class="dotted-line"></div>
   </div>
@@ -2070,7 +2154,7 @@ void traiterOctetRecu(uint8_t c) {
 <!-- ETAPE 5 -->
 <div class="step-box">
   <div class="step-header">
-    <span class="step-title">PARTIE 5 : Recette Industrielle, Essai de Portée Radio (Distance), Débit 10 000 octets &amp; Synthèse</span>
+    <span class="step-title">PARTIE 5 : Recette Industrielle, Essai de Portée Radio (Distance) &amp; Synthèse</span>
     <span class="timing-badge">Durée estimée : 0h45</span>
   </div>
 
@@ -2079,9 +2163,8 @@ void traiterOctetRecu(uint8_t c) {
     <p>Dans un cycle de développement industriel (Compétence <strong>C06 - Valider une structure matérielle et logicielle</strong>), la conformité fonctionnelle ne suffit pas : vous devez qualifier les limites physiques et opérationnelles du pupitre sous contraintes réelles :</p>
     <ul>
       <li><strong>1. Essai de portée radio en distance (Range Test) :</strong> En milieu industriel (atelier, entrepôt, bloc médical), l'opérateur se déplace avec sa tablette ou son PC de maintenance. Il est impératif de déterminer la <em>distance de décrochage</em> en champ libre et d'évaluer l'atténuation causée par les obstacles (murs, portes métalliques, corps humain).</li>
-      <li><strong>2. Essai de débit utile en charge (Transfert massif de 10 000 octets) :</strong> Valider le comportement du système lors du téléversement d'un journal d'événements ou d'une mise à jour de paramètres sans saturation des mémoires tampons ni perte de paquets.</li>
-      <li><strong>3. Essai comparatif d'architecture système (Bluetooth externe vs interne CYW43439) :</strong> Argumenter techniquement le choix entre un module modulaire pré-certifié et une solution monopuce intégrée au silicium.</li>
-      <li><strong>4. Audit de cybersécurité :</strong> Identifier les vulnérabilités de la liaison sans fil face aux exigences de l'ANSSI.</li>
+      <li><strong>2. Essai comparatif d'architecture système (Bluetooth externe vs interne CYW43439) :</strong> Argumenter techniquement le choix entre un module modulaire pré-certifié et une solution monopuce intégrée au silicium.</li>
+      <li><strong>3. Audit de cybersécurité :</strong> Identifier les vulnérabilités de la liaison sans fil face aux exigences de l'ANSSI.</li>
     </ul>
   </div>
 
@@ -2144,80 +2227,16 @@ void traiterOctetRecu(uint8_t c) {
   </table>
 
   <div class="student-response">
-    <strong>Question 5.0 (Analyse de la portée radio) :</strong><br>
+    <strong>Question 5.1 (Analyse de la portée radio &amp; propagation) :</strong><br>
     • Relevez la distance maximale obtenue avant décrochage définitif en champ libre : <strong>......................... mètres</strong>.<br>
     • Le module Grove Bluetooth relève de la <strong>Classe 2 Bluetooth</strong> (puissance d'émission nominale de 2,5 mW soit +4 dBm, portée théorique de 10 m). Les résultats obtenus en pratique sont-ils conformes à cette spécification ? Comment expliquez-vous l'impact des cloisons sur les ondes radio à 2,4 GHz ?
     <div class="dotted-line"></div>
     <div class="dotted-line"></div>
   </div>
 
-  <h4>5.2. Mesure du débit utile effectif sur un bloc massif de 10 000 octets :</h4>
-  <div class="callout callout-info">
-    <div class="callout-title">📋 Comment réaliser le test de transfert des 10 000 octets ?</div>
-    <p>Pour mesurer rigoureusement le débit utile sans saturation manuelle :</p>
-    <ol>
-      <li><strong>Préparation du fichier test sur le PC :</strong> Créez sur votre ordinateur un fichier texte nommé <code>test_10k.txt</code> contenant exactement 10 000 caractères ASCII (par exemple 100 lignes de 100 caractères).</li>
-      <li><strong>Côté Pico 2 W :</strong> Intégrez la routine de mesure temporelle :
-        <pre><code>unsigned long t_start = 0, t_end = 0;
-long octetsRecus = 0;
-
-void loop() {
-  while (BT_SERIAL.available() > 0) {
-    char c = BT_SERIAL.read();
-    if (octetsRecus == 0) t_start = millis();
-    octetsRecus++;
-    if (octetsRecus >= 10000) {
-      t_end = millis();
-      unsigned long duree_ms = t_end - t_start;
-      float debit_kbit = (10000.0 * 8.0) / (float)duree_ms; // kbit/s
-      Serial.print("Duree totale : "); Serial.print(duree_ms); Serial.println(" ms");
-      Serial.print("Debit utile effectif : "); Serial.print(debit_kbit); Serial.println(" kbit/s");
-      octetsRecus = 0;
-    }
-  }
-}</code></pre>
-      </li>
-      <li><strong>Transmission du fichier depuis l'ordinateur :</strong>
-        <p>Pour transférer le fichier test de 10 000 octets vers le Pico 2 W via la liaison Bluetooth, utilisez l'une des méthodes opérationnelles suivantes :</p>
-        <ul>
-          <li><strong>Méthode 1 (Menu Natif Windows « Envoyer un fichier ») :</strong>
-            <ol>
-              <li>Faites un clic droit sur l'icône Bluetooth dans la barre des tâches (zone de notification) &rarr; cliquez sur <strong>« Envoyer un fichier »</strong>.</li>
-              <li>Sélectionnez votre module <code>CIEL_PUPITRE_X</code> dans la liste des périphériques appairés.</li>
-              <li>Parcourez et sélectionnez votre fichier <code>test_10k.txt</code>, puis validez l'envoi.</li>
-              <li>Windows négocie le canal OBEX / RFCOMM et transfère le bloc complet en continu vers le Pico 2 W.</li>
-            </ol>
-          </li>
-          <li><strong>Méthode 2 (Via le port COM virtuel sortant sous Tera Term / CoolTerm) :</strong>
-            <p>Ouvrez le port COM Bluetooth identifié à la Partie 2 (ex : <strong>COM8</strong>) à 9600 bauds. Dans le menu <em>File &rarr; Send File...</em>, sélectionnez <code>test_10k.txt</code> pour transmettre le bloc complet.</p>
-          </li>
-          <li><strong>Méthode 3 (Application Microsoft Store « Bluetooth RFCOMM Monitor ») :</strong>
-            <p>Ouvrez l'application, connectez-vous au module appairé, utilisez la fonction <em>Send File / Send Text Block</em> pour injecter les 10 000 octets.</p>
-          </li>
-          <li><strong>Méthode 4 (Smartphone avec Serial Bluetooth Terminal) :</strong> Menu <em>Send &rarr; File</em> ou macro répétant un bloc de 500 octets.</li>
-        </ul>
-      </li>
-    </ol>
-  </div>
-
+  <h4>5.2. Architecture Système : Comparaison avec le Bluetooth Interne CYW43439 :</h4>
   <div class="student-response">
-    <strong>Mesures relevées lors du transfert de 10 000 octets :</strong><br>
-    • Durée totale mesurée : <strong>......................... ms</strong>.<br>
-    • Débit utile effectif calculé :
-    <div class="formula-box">
-      <i>D</i><sub>utile</sub> = 
-      <span class="frac">
-        <span class="num">10 000 × 8 bits</span>
-        <span class="den">Durée (s)</span>
-      </span>
-      = <strong>......................... kbit/s</strong>
-    </div><br>
-    Comparez ce résultat au débit théorique de la liaison UART (9600 bauds = 9,6 kbit/s brut). Quel est le rendement utile de la transmission ?
-    <div class="dotted-line"></div>
-  </div>
-
-  <div class="student-response">
-    <strong>Question 5.1 (Mise en œuvre et Comparaison avec le Bluetooth Interne CYW43439) :</strong><br>
+    <strong>Question 5.2 (Mise en œuvre et Comparaison avec le Bluetooth Interne CYW43439) :</strong><br>
     Le Raspberry Pi Pico 2 W embarque le composant radio <strong>Infineon CYW43439</strong> capable de gérer nativement le Bluetooth 5.2 (Classic SPP et BLE via la pile logicielle BTstack).<br><br>
     
     <strong>Exemple de code C++ pour activer le Bluetooth interne (BTstack) sur Pico 2 W :</strong>
@@ -2282,7 +2301,7 @@ void loop() {
   </div>
 
   <div class="student-response">
-    <strong>Question 5.2 (Synthèse Cybersécurité &amp; Vulnérabilité du PIN) :</strong> 
+    <strong>Question 5.3 (Synthèse Cybersécurité &amp; Vulnérabilité du PIN) :</strong> 
     Dans le TP précédent sur l'ESP32S3, nous avions mis en œuvre un chiffrement <strong>TLS/HTTPS (Port 443)</strong> avec des certificats X.509.<br>
     Identifiez deux vulnérabilités majeures du protocole Bluetooth Classique SPP avec code PIN fixe (4 chiffres) tel que déployé ici par rapport à TLS, et proposez deux mesures de remédiation conformes aux recommandations de l'ANSSI.<br><br>
     <em>Pour approfondir et manipuler le mécanisme d'attaque par force brute et de dérivation cryptographique E22/SAFER+ en moins de 0,1 seconde, consultez l'activité d'extension :</em><br>
@@ -2329,7 +2348,7 @@ void loop() {
     </tr>
     <tr>
       <td><strong>C06 - Validation</strong></td>
-      <td>Mesure rigoureuse du débit sur 10 000 octets, instrumentation WaveForms et comparatif technique Bluetooth interne vs externe.</td>
+      <td>Qualification expérimentale de la portée radio Bluetooth (mesures LOS / obstacles), instrumentation WaveForms et comparatif technique Bluetooth interne vs externe.</td>
       <td>/4 pts</td>
       <td></td>
     </tr>
