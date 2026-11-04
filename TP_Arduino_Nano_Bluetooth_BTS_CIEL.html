@@ -342,6 +342,69 @@
       max-width: 870px;
       margin: 0 auto;
     }
+    img {
+      max-width: 100%;
+      height: auto;
+      border-radius: 6px;
+    }
+    
+    .image-grid {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 16px;
+      justify-content: center;
+      align-items: stretch;
+      margin: 16px 0;
+    }
+    
+    .image-card {
+      flex: 1 1 340px;
+      max-width: 460px;
+      background: #ffffff;
+      border: 1px solid #cbd5e1;
+      border-radius: 8px;
+      padding: 12px;
+      text-align: center;
+      box-shadow: 0 2px 5px rgba(0,0,0,0.04);
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+    }
+    
+    .image-card img {
+      width: 100%;
+      height: 220px;
+      object-fit: contain;
+      background-color: #fafbfc;
+      border-radius: 6px;
+      border: 1px solid #e2e8f0;
+      padding: 6px;
+      transition: transform 0.2s ease-in-out;
+    }
+    
+    .image-card img:hover {
+      transform: scale(1.02);
+    }
+    
+    .image-card .card-caption {
+      font-size: 8.5pt;
+      color: #334155;
+      font-weight: 600;
+      margin-top: 8px;
+    }
+    
+    .pin-badge {
+      display: inline-block;
+      padding: 2px 6px;
+      font-size: 8pt;
+      font-weight: bold;
+      border-radius: 4px;
+      font-family: Consolas, monospace;
+    }
+    .pin-yellow { background: #fef08a; color: #854d0e; border: 1px solid #facc15; }
+    .pin-white { background: #f1f5f9; color: #334155; border: 1px solid #cbd5e1; }
+    .pin-red { background: #fee2e2; color: #991b1b; border: 1px solid #f87171; }
+    .pin-black { background: #1e293b; color: #f8fafc; border: 1px solid #0f172a; }
   </style>
 </head>
 <body>
@@ -353,16 +416,16 @@
   <h1 class="title">TP : Communication Bluetooth (SPP), Bus I²C & Instrumentation Digilent Analog Discovery 3</h1>
   <div style="margin-top: 10px;">
     <span class="meta-badge badge-primary">⏱ Durée : 5h00 (Séance complète)</span>
-    <span class="meta-badge badge-purple">🎯 Cible : Arduino Nano v3 (ATmega328P) & Grove Shield</span>
+    <span class="meta-badge badge-purple">🎯 Cible : Arduino Nano v3 (ATmega328P) & Carrier ASX00061</span>
     <span class="meta-badge badge-orange">🔬 Mesures : Digilent Analog Discovery 3 (WaveForms)</span>
-    <span class="meta-badge badge-cyan">📡 Liaison : Bluetooth SPP (SoftwareSerial D2/D3) & Bus I²C (A4/A5)</span>
+    <span class="meta-badge badge-cyan">📡 Liaison : Bluetooth SPP (SoftwareSerial A0/A1) & Bus I²C (A4/A5)</span>
   </div>
 </header>
 
 <div class="callout callout-info">
   <div class="callout-title">📋 Contexte Industriel du Projet</div>
   <p>Dans les environnements industriels et biomédicaux, la maintenance et le paramétrage d'équipements scellés ou difficiles d'accès s'effectuent sans liaison physique, au moyen d'un lien sans fil sécurisé à courte portée (Bluetooth). Vous êtes chargé de développer et de qualifier le sous-système de communication d'un <strong>pupitre de télé-exploitation sécurisé</strong>.</p>
-  <p>Le système embarqué repose sur une carte <strong>Arduino Nano v3</strong> (microcontrôleur ATmega328P 16 MHz, 5V TTL), enfichée sur son <strong>Grove Shield pour Arduino Nano</strong>. Elle dialogue avec un <strong>module Grove Serial Bluetooth</strong> connecté sur le port numérique <strong>D2 (D2=RX / D3=TX)</strong> via la bibliothèque <code>SoftwareSerial</code>, et un <strong>Grove I²C Hub</strong> mutualisant un <strong>clavier capacitif 12 touches</strong>, un <strong>écran OLED</strong> et une <strong>matrice de LED 8x8</strong>. La qualification temporelle et le décodage de trames sont réalisés avec l'analyseur logique mixte <strong>Digilent Analog Discovery 3</strong> piloté par la suite logicielle <strong>WaveForms</strong>.</p>
+  <p>Le système embarqué repose sur une carte <strong>Arduino Nano v3</strong> (microcontrôleur ATmega328P 16 MHz, 5V TTL), enfichée sur sa platine support d'extension officielle <strong>Arduino Nano Connector Carrier (ASX00061)</strong>. Elle dialogue avec un <strong>module Grove Serial Bluetooth v3.0</strong> connecté sur le port Grove analogique/numérique <strong>J7 (A0/A1)</strong> via la bibliothèque <code>SoftwareSerial</code> (résolvant le conflit matériel avec le port USB natif D0/D1), et un <strong>Grove I²C Hub</strong> mutualisant un <strong>clavier capacitif 12 touches</strong>, un <strong>écran OLED</strong> et une <strong>matrice de LED 8x8</strong>. La qualification temporelle et le décodage de trames sont réalisés avec l'analyseur logique mixte <strong>Digilent Analog Discovery 3</strong> piloté par la suite logicielle <strong>WaveForms</strong>.</p>
 </div>
 
 <div class="callout callout-warning">
@@ -403,7 +466,7 @@
       <td><strong>Analyser une structure matérielle et logicielle</strong></td>
       <td>
         • Décoder les chronogrammes des liaisons série asynchrones (UART/SoftwareSerial) et synchrones (I²C).<br>
-        • Justifier l'arbitrage matériel entre l'UART matériel USB (D0/D1) et le port série logiciel <code>SoftwareSerial</code> sur D2/D3.<br>
+        • Justifier l'arbitrage matériel entre l'UART matériel USB (D0/D1) et le port série logiciel <code>SoftwareSerial</code> sur A0/A1 (connecteur J7 du carrier ASX00061).<br>
         • Analyser le protocole de commandes AT brutes sans caractère de terminaison (mode <em>No line ending</em>).
       </td>
     </tr>
@@ -430,7 +493,7 @@
       <td><strong>C07</strong></td>
       <td><strong>Réaliser des maquettes et prototypes</strong></td>
       <td>
-        • Câbler les sous-ensembles modulaires Grove sur le shield Arduino Nano et le Hub I²C, et raccorder les sondes MTE de l'Analog Discovery 3 en respectant la masse commune (GND).
+        • Câbler les sous-ensembles modulaires Grove sur le carrier Arduino Nano ASX00061 et le Hub I²C, et raccorder les sondes MTE de l'Analog Discovery 3 en respectant la masse commune (GND).
       </td>
     </tr>
   </tbody>
@@ -445,9 +508,10 @@
 
 <h3>2.1. Matériel utilisé</h3>
 <ul>
-  <li><strong>1x Carte microcontrôleur :</strong> <strong>Arduino Nano v3</strong> (ATmega328P 8 bits, 16 MHz, 5V TTL) enfichée sur son <strong>Grove Shield pour Arduino Nano</strong>.</li>
-  <li><strong>1x Module sans fil :</strong> <strong>Grove - Serial Bluetooth v3.0</strong> (liaison série UART, profil SPP, connecté sur le port numérique <strong>D2</strong>).</li>
-  <li><strong>1x Hub d'extension I²C :</strong> <strong>Grove - I2C Hub (4 ports)</strong> (démultiplicateur de bus I²C).</li>
+  <li><strong>1x Carte microcontrôleur :</strong> <strong>Arduino Nano v3</strong> (ATmega328P 8 bits, 16 MHz, 5V TTL, architecture Harvard AVR).</li>
+  <li><strong>1x Platine d'extension :</strong> <strong>Arduino Nano Connector Carrier (Réf. ASX00061)</strong> intégrant 4 connecteurs Grove, 1 port Qwiic I²C 3.3V, 1 lecteur microSD SPI et un sélecteur de niveau logique S1 (+3.3V / +5V).</li>
+  <li><strong>1x Module sans fil :</strong> <strong>Grove - Serial Bluetooth v3.0</strong> (liaison série UART, profil SPP esclave, connecté sur le port Grove <strong>J7 : A0/A1</strong>).</li>
+  <li><strong>1x Hub d'extension I²C :</strong> <strong>Grove - I2C Hub (4 ports)</strong> (démultiplicateur passif de bus I²C).</li>
   <li><strong>1x Clavier de saisie :</strong> <strong>Grove - 12 Key Capacitive I2C Touch Keypad</strong> (contrôleur I²C MPR121, adresse <code>0x5B</code>).</li>
   <li><strong>1x Afficheur graphique :</strong> <strong>Grove - OLED Display 0.96"</strong> (128x64 pixels, contrôleur SSD1306, adresse I²C <code>0x3C</code>).</li>
   <li><strong>1x Afficheur d'état :</strong> <strong>Grove - Matrice LED 8x8</strong> (contrôleur I²C HT16K33, adresse <code>0x70</code>).</li>
@@ -455,23 +519,154 @@
   <li><strong>1x Terminal client distant :</strong> Smartphone Android/iOS avec l'application <em>Serial Bluetooth Terminal</em> (ou PC avec adaptateur Bluetooth).</li>
 </ul>
 
-<div class="callout callout-info">
-  <div class="callout-title">💡 Architecture Matérielle Arduino Nano : UART Matériel vs SoftwareSerial</div>
-  <p><strong>1. Conflit sur l'UART matériel (D0/D1) :</strong><br>
-  Sur l'Arduino Nano, les broches <code>D0 (RX)</code> et <code>D1 (TX)</code> sont reliées directement au convertisseur USB-Série de la carte (CH340 ou FTDI). Si on y connectait le module Bluetooth, il y aurait un conflit électrique direct entre le PC et le Bluetooth lors du téléversement et du débogage.<br>
-  <strong>Solution :</strong> On utilise la bibliothèque <strong><code>SoftwareSerial</code></strong> sur le connecteur Grove <strong>D2</strong> du shield (broche D2 = RX Arduino, broche D3 = TX Arduino). L'USB (<code>Serial</code>) reste ainsi 100% disponible pour la console du PC à 115200 bauds.</p>
-  <p><strong>2. Mutualisation du Bus I²C (A4/A5) et Point de Test :</strong><br>
-  Le port <strong>I2C</strong> du Grove Shield Nano (broches A4=SDA, A5=SCL) alimente le <strong>Grove I2C Hub</strong>. Les 3 périphériques I²C (OLED, Clavier, Matrice) y sont branchés en parallèle. Le 4<sup>e</sup> port disponible du Hub constitue un <strong>point de test (Test Point)</strong> pour brancher les sondes de l'Analog Discovery 3 (DIO 2 et DIO 3) sans risque de faux contact.</p>
+<!-- IMAGES ARDUINO NANO V3 -->
+<div class="image-grid">
+  <div class="image-card">
+    <img src="images/arduino_nano_board.png" alt="Carte Arduino Nano v3 originale" />
+    <div class="card-caption">Carte Arduino Nano v3 originale (ATmega328P @ 16 MHz, Mini-USB / CH340 / FTDI)</div>
+  </div>
+  <div class="image-card">
+    <img src="images/arduino_nano_pinout.png" alt="Brochage officiel Arduino Nano v3 (A000005)" />
+    <div class="card-caption">Brochage officiel Arduino Nano (Broches D0/D1 UART, D2-D13 GPIO, A0-A7 Analog/Digital)</div>
+  </div>
 </div>
 
-<h3>2.2. Plan de câblage complet et sondes Digilent AD3</h3>
+<h3>2.2. Carte d'extension Arduino Nano Connector Carrier (ASX00061)</h3>
+<p>L'<strong>Arduino Nano Connector Carrier</strong> (référence officielle <strong>ASX00061</strong>) est une carte porteuse conçue pour accueillir les cartes au facteur de forme Arduino Nano. Elle met à disposition des connecteurs standardisés <strong>Grove (Seeed Studio)</strong> et <strong>Qwiic (SparkFun)</strong>, évitant les erreurs de raccordement sur plaque d'essai (breadboard).</p>
+
+<!-- IMAGES CARRIER ASX00061 -->
+<div class="image-grid">
+  <div class="image-card">
+    <img src="images/asx00061_carrier_top.png" alt="Arduino Nano Connector Carrier ASX00061" />
+    <div class="card-caption">Platine Arduino Nano Connector Carrier (ASX00061) - Vue de dessus</div>
+  </div>
+  <div class="image-card">
+    <img src="images/asx00061_carrier_pinout.png" alt="Brochage des connecteurs du Carrier ASX00061" />
+    <div class="card-caption">Brochage et implantation des 4 connecteurs Grove, du port Qwiic et du slot microSD</div>
+  </div>
+</div>
+
+<h4>Description normalisée des connecteurs de la carte porteuse (ASX00061) :</h4>
+<p>Tous les connecteurs Grove possèdent 4 broches standardisées (Broche 1 = Jaune, Broche 2 = Blanc, Broche 3 = Rouge/VDD, Broche 4 = Noir/GND). Le tableau ci-dessous, issu du schéma structurel officiel (<code>ASX00061-schematics.pdf</code>), détaille l'affectation de chaque port :</p>
+
+<table>
+  <thead>
+    <tr>
+      <th>Désignation</th>
+      <th>Type & Rôle</th>
+      <th>Broche 1 (Fil Jaune)</th>
+      <th>Broche 2 (Fil Blanc)</th>
+      <th>Broche 3 (Rouge)</th>
+      <th>Broche 4 (Noir)</th>
+      <th>Remarques d'utilisation & Compatibilité</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td><strong>J4</strong></td>
+      <td><strong>Grove UART</strong></td>
+      <td><span class="pin-badge pin-yellow">RX</span> (D0 Nano)</td>
+      <td><span class="pin-badge pin-white">TX</span> (D1 Nano)</td>
+      <td><span class="pin-badge pin-red">VSWITCH</span> (5V)</td>
+      <td><span class="pin-badge pin-black">GND</span></td>
+      <td><span style="color:#b91c1c; font-weight:bold;">⚠️ CONFLIT USB :</span> Relié en direct au convertisseur USB de l'Arduino Nano. <em>Ne pas brancher le Bluetooth ici !</em></td>
+    </tr>
+    <tr>
+      <td><strong>J7</strong></td>
+      <td><strong>Grove Analog / Digital (A0, A1)</strong></td>
+      <td><span class="pin-badge pin-yellow">A0</span> (PORTC 0 / D14)</td>
+      <td><span class="pin-badge pin-white">A1</span> (PORTC 1 / D15)</td>
+      <td><span class="pin-badge pin-red">VSWITCH</span> (5V)</td>
+      <td><span class="pin-badge pin-black">GND</span></td>
+      <td><span style="color:#15803d; font-weight:bold;">✅ PORT RETENU POUR LE BLUETOOTH :</span> Exploité en port série logiciel via <code>SoftwareSerial</code>.</td>
+    </tr>
+    <tr>
+      <td><strong>J5</strong></td>
+      <td><strong>Grove Analog / Digital (A2, A3)</strong></td>
+      <td><span class="pin-badge pin-yellow">A2</span> (PORTC 2 / D16)</td>
+      <td><span class="pin-badge pin-white">A3</span> (PORTC 3 / D17)</td>
+      <td><span class="pin-badge pin-red">VSWITCH</span> (5V)</td>
+      <td><span class="pin-badge pin-black">GND</span></td>
+      <td>Disponible pour d'autres capteurs analogiques ou une seconde liaison série logicielle.</td>
+    </tr>
+    <tr>
+      <td><strong>J6</strong></td>
+      <td><strong>Grove I²C</strong></td>
+      <td><span class="pin-badge pin-yellow">SCL</span> (A5 Nano)</td>
+      <td><span class="pin-badge pin-white">SDA</span> (A4 Nano)</td>
+      <td><span class="pin-badge pin-red">VSWITCH</span> (5V)</td>
+      <td><span class="pin-badge pin-black">GND</span></td>
+      <td>Bus I²C matériel standard (relié au <strong>Grove I2C Hub</strong> pour mutualiser l'OLED, le clavier et la matrice).</td>
+    </tr>
+    <tr>
+      <td><strong>J8</strong></td>
+      <td><strong>Qwiic I²C (JST-SH 4 broches)</strong></td>
+      <td><span class="pin-badge pin-black">GND</span></td>
+      <td><span class="pin-badge pin-red">+3.3V</span></td>
+      <td><span class="pin-badge pin-white">SDA</span> (traduit 3.3V)</td>
+      <td><span class="pin-badge pin-yellow">SCL</span> (traduit 3.3V)</td>
+      <td>Connecteur 3.3V avec adaptateur de niveau logique bidirectionnel (pour capteurs Modulino / Qwiic).</td>
+    </tr>
+    <tr>
+      <td><strong>J9</strong></td>
+      <td><strong>Lecteur microSD</strong></td>
+      <td colspan="4">Lignes SPI : MOSI (D11), MISO (D12), SCK (D13), CS (D10) + translation push-pull</td>
+      <td>Slot pour carte mémoire microSD (datalogging embarqué).</td>
+    </tr>
+    <tr>
+      <td><strong>S1</strong></td>
+      <td><strong>Sélecteur de tension VSWITCH</strong></td>
+      <td colspan="4">Interrupteur à glissière deux positions : <strong>+3.3V</strong> ou <strong>+5V</strong></td>
+      <td><strong>RÉGLAGE IMPÉRATIF :</strong> À positionner sur <strong>5V</strong> pour l'Arduino Nano classique (ATmega328P).</td>
+    </tr>
+  </tbody>
+</table>
+
+<h3>2.3. Justification technique : Pourquoi déclarer la liaison Bluetooth sur A0 / A1 plutôt que sur le port UART (D0 / D1) ?</h3>
+
+<div class="callout callout-danger">
+  <div class="callout-title">⚠️ Le Conflit Matériel sur l'UART Natif D0/D1</div>
+  <p>Sur l'Arduino Nano classique (ATmega328P), le seul port série matériel (USART0) est physiquement raccordé aux broches <strong>D0 (RX)</strong> et <strong>D1 (TX)</strong>. Ces mêmes broches sont également reliées, à travers des résistances de 1 kΩ, au convertisseur USB-Série de la carte (CH340 ou FTDI FT232RL) qui communique avec votre ordinateur.</p>
+  <p>Si vous branchez le module Bluetooth sur le port Grove UART (J4) de la carte porteuse :</p>
+  <ul>
+    <li><strong>Le téléversement de programme devient impossible :</strong> le module Bluetooth impose ses niveaux logiques sur les broches D0/D1, ce qui perturbe le bootloader Arduino lors du flash (l'IDE affiche l'erreur fatale <code>avrdude: stk500_recv(): programmer is not responding</code>). Vous seriez obligé de débrancher physiquement le module Bluetooth à chaque téléversement !</li>
+    <li><strong>Impossibilité de déboguer avec le Moniteur Série :</strong> les trames émises par le PC sur l'USB et celles émises par le Bluetooth entrent en collision directe sur la broche RX de l'ATmega328P, provoquant une corruption totale des données reçues.</li>
+  </ul>
+</div>
+
+<div class="callout callout-success">
+  <div class="callout-title">💡 La Solution : Émulation UART avec SoftwareSerial sur les broches A0 et A1 (Connecteur J7)</div>
+  <p><strong>1. Polyvalence des broches analogiques de l'ATmega328P :</strong><br>
+  Sur le microcontrôleur ATmega328P, les broches repérées <strong>A0 à A5</strong> ne sont pas limitées aux mesures analogiques de l'ADC : ce sont de véritables broches d'entrée/sortie numériques appartenant au <strong>PORT C (PC0 à PC5)</strong>, avec des registres de direction (<code>DDRC</code>) et de données (<code>PORTC / PINC</code>). Elles correspondent aux broches numériques <strong>D14 à D19</strong>.</p>
+  <p>De plus, les broches A0 à A5 intègrent le support des interruptions sur changement d'état (<strong>Pin Change Interrupts : PCINT8 à PCINT13</strong>). La bibliothèque standard <strong><code>SoftwareSerial</code></strong> exploite précisément ces interruptions pour détecter le front descendant du bit de START sur la ligne de réception (RX). Les broches A0 et A1 sont donc 100% compatibles pour une émulation série logicielle fiable.</p>
+
+  <p><strong>2. Raccordement direct avec le câble Grove 4 broches sur J7 :</strong><br>
+  Le module <strong>Grove - Serial Bluetooth v3.0</strong> respecte le brochage standard des capteurs Grove UART :
+  <ul>
+    <li>Broche 1 du module (Fil Jaune) : entrée <strong>RX</strong> du module Bluetooth.</li>
+    <li>Broche 2 du module (Fil Blanc) : sortie <strong>TX</strong> du module Bluetooth.</li>
+  </ul>
+  En reliant directement ce module au connecteur <strong>J7 (A0 / A1)</strong> de la carte porteuse ASX00061 :
+  <ul>
+    <li>Le fil <strong>Jaune</strong> relie la broche <strong>A0</strong> de la Nano à l'entrée <strong>RX</strong> du module Bluetooth &rarr; <strong>A0 joue le rôle de TX pour l'Arduino Nano</strong>.</li>
+    <li>Le fil <strong>Blanc</strong> relie la broche <strong>A1</strong> de la Nano à la sortie <strong>TX</strong> du module Bluetooth &rarr; <strong>A1 joue le rôle de RX pour l'Arduino Nano</strong>.</li>
+  </ul>
+  Le constructeur de <code>SoftwareSerial</code> prenant en argument <code>(rxPin, txPin)</code>, la déclaration logicielle dans notre programme s'écrit donc naturellement :
+  <pre><code>// SoftwareSerial(rxPin, txPin);
+// A1 = RX (reçoit du TX du Bluetooth via le fil blanc)
+// A0 = TX (émet vers le RX du Bluetooth via le fil jaune)
+SoftwareSerial BT_SERIAL(A1, A0);</code></pre>
+  <em>Cette configuration garantit l'indépendance totale entre l'USB (surveillance console & téléversement) et la liaison Bluetooth sans aucune manipulation de câble !</em>
+</div>
+
+<h3>2.4. Plan de câblage complet et sondes Digilent AD3</h3>
 
 <table>
   <thead>
     <tr>
       <th>Signal / Fonction</th>
       <th>Broche Arduino Nano</th>
-      <th>Port Grove Shield / Hub</th>
+      <th>Port Carrier ASX00061 / Hub</th>
       <th>Sonde Digilent AD3 (Nappe MTE)</th>
       <th>Rôle & Format</th>
     </tr>
@@ -480,23 +675,23 @@
     <tr>
       <td><strong>Masse commune (GND)</strong></td>
       <td>GND</td>
-      <td>GND (Hub I²C ou Shield)</td>
+      <td>GND (Carrier ou Hub)</td>
       <td><strong>GND (Fil Noir - flèche ▼)</strong></td>
       <td>Référence de potentiel 0V <em>(INDISPENSABLE)</em></td>
     </tr>
     <tr>
       <td><strong>Bluetooth TX (Module) / RX (Nano)</strong></td>
-      <td>D2 (Software RX)</td>
-      <td>Port D2 (Broche Jaune)</td>
+      <td>A1 (Software RX)</td>
+      <td>Port J7 (Broche Blanche)</td>
       <td><strong>DIO 0 (Fil Rose / Orange 0)</strong></td>
-      <td>Capture des réponses émises par le Bluetooth</td>
+      <td>Capture des réponses émises par le Bluetooth vers l'Arduino</td>
     </tr>
     <tr>
       <td><strong>Bluetooth RX (Module) / TX (Nano)</strong></td>
-      <td>D3 (Software TX)</td>
-      <td>Port D2 (Broche Blanche)</td>
+      <td>A0 (Software TX)</td>
+      <td>Port J7 (Broche Jaune)</td>
       <td><strong>DIO 1 (Fil Vert / Vert-Blanc 1)</strong></td>
-      <td>Capture des commandes émises par l'Arduino</td>
+      <td>Capture des commandes émises par l'Arduino vers le Bluetooth</td>
     </tr>
     <tr>
       <td><strong>Bus I²C - Horloge (SCL)</strong></td>
@@ -514,10 +709,10 @@
     </tr>
     <tr>
       <td><strong>Signal Analogique TX (Scope)</strong></td>
-      <td>D3 (TX Nano)</td>
-      <td>Port D2 (Broche Blanche)</td>
+      <td>A0 (TX Nano)</td>
+      <td>Port J7 (Broche Jaune)</td>
       <td><strong>1+ (Fil Orange) & 1- (Orange/Blanc à GND)</strong></td>
-      <td>Oscilloscope Voie 1 (Niveau 5V TTL et temps de montée)</td>
+      <td>Oscilloscope Voie 1 (Niveau 5V TTL et temps de montée sur la ligne d'émission)</td>
     </tr>
   </tbody>
 </table>
@@ -591,35 +786,47 @@
         <text x="105" y="251" fill="#ffffff" font-size="6.5pt" text-anchor="middle">USB vers PC</text>
       </g>
 
-      <!-- ARDUINO NANO & GROVE SHIELD NANO (CENTRE) -->
-      <g transform="translate(270, 45)" filter="url(#shadow)">
-        <rect width="230" height="280" rx="10" fill="url(#nanoShieldGrad)" stroke="#0284c7" stroke-width="2"/>
-        <text x="115" y="24" fill="#ffffff" font-family="'Segoe UI', sans-serif" font-size="10pt" font-weight="bold" text-anchor="middle">Grove Shield Arduino Nano</text>
+      <!-- ARDUINO NANO & CARRIER ASX00061 (CENTRE) -->
+      <g transform="translate(265, 45)" filter="url(#shadow)">
+        <rect width="245" height="280" rx="10" fill="url(#nanoShieldGrad)" stroke="#0284c7" stroke-width="2"/>
+        <text x="122" y="22" fill="#ffffff" font-family="'Segoe UI', sans-serif" font-size="9pt" font-weight="bold" text-anchor="middle">Carrier ASX00061 + Nano v3</text>
         
-        <!-- Arduino Nano Board enfichée au centre -->
-        <rect x="55" y="45" width="120" height="135" rx="5" fill="url(#nanoBoardGrad)" stroke="#005c5f" stroke-width="1.5" />
-        <rect x="90" y="40" width="50" height="16" rx="3" fill="#cbd5e1" stroke="#475569" stroke-width="1" />
-        <text x="115" y="52" fill="#1e293b" font-family="Consolas" font-size="6.5pt" text-anchor="middle">Mini-USB</text>
-        <rect x="85" y="90" width="60" height="40" rx="3" fill="#1e293b" />
-        <text x="115" y="113" fill="#ffffff" font-family="Consolas" font-size="7pt" text-anchor="middle">ATmega328P</text>
-        
-        <!-- Port Grove D2 (D2=RX, D3=TX) -->
-        <rect x="15" y="200" width="90" height="55" rx="5" fill="#f1f5f9" stroke="#94a3b8" stroke-width="1.5" />
-        <text x="60" y="216" fill="#0f172a" font-family="Consolas" font-size="7pt" font-weight="bold" text-anchor="middle">Port Grove D2</text>
-        <text x="60" y="228" fill="#334155" font-family="Consolas" font-size="6pt" text-anchor="middle">D2 (RX) / D3 (TX)</text>
-        <circle cx="30" cy="242" r="3" fill="#f43f5e" /><!-- D2 RX -->
-        <circle cx="50" cy="242" r="3" fill="#22c55e" /><!-- D3 TX -->
-        <circle cx="70" cy="242" r="3" fill="#ef4444" /><!-- VCC 5V -->
-        <circle cx="90" cy="242" r="3" fill="#000000" /><!-- GND -->
+        <!-- Sélecteur de tension S1 (5V) -->
+        <rect x="15" y="28" width="60" height="15" rx="3" fill="#1e293b" />
+        <text x="45" y="39" fill="#38bdf8" font-family="Consolas" font-size="5.5pt" text-anchor="middle">S1: 5V (OK)</text>
 
-        <!-- Port Grove I2C (A4=SDA, A5=SCL) -->
-        <rect x="125" y="200" width="90" height="55" rx="5" fill="#f1f5f9" stroke="#94a3b8" stroke-width="1.5" />
-        <text x="170" y="216" fill="#0f172a" font-family="Consolas" font-size="7pt" font-weight="bold" text-anchor="middle">Port Grove I2C</text>
-        <text x="170" y="228" fill="#334155" font-family="Consolas" font-size="6pt" text-anchor="middle">A5 (SCL) / A4 (SDA)</text>
-        <circle cx="140" cy="242" r="3" fill="#3b82f6" /><!-- SCL -->
-        <circle cx="160" cy="242" r="3" fill="#eab308" /><!-- SDA -->
-        <circle cx="180" cy="242" r="3" fill="#ef4444" /><!-- VCC 5V -->
-        <circle cx="200" cy="242" r="3" fill="#000000" /><!-- GND -->
+        <!-- Port J4 UART barré (Conflit USB) -->
+        <rect x="165" y="28" width="65" height="15" rx="3" fill="#7f1d1d" stroke="#ef4444" stroke-width="1"/>
+        <text x="197" y="39" fill="#fee2e2" font-family="Consolas" font-size="5pt" text-anchor="middle">J4 UART (Conflit!)</text>
+
+        <!-- Arduino Nano Board enfichée au centre -->
+        <rect x="62" y="48" width="120" height="135" rx="5" fill="url(#nanoBoardGrad)" stroke="#005c5f" stroke-width="1.5" />
+        <rect x="97" y="43" width="50" height="16" rx="3" fill="#cbd5e1" stroke="#475569" stroke-width="1" />
+        <text x="122" y="55" fill="#1e293b" font-family="Consolas" font-size="6.5pt" text-anchor="middle">Mini-USB</text>
+        <rect x="92" y="92" width="60" height="40" rx="3" fill="#1e293b" />
+        <text x="122" y="115" fill="#ffffff" font-family="Consolas" font-size="7pt" text-anchor="middle">ATmega328P</text>
+        
+        <!-- Port Grove J7 (A0=TX / A1=RX) -->
+        <rect x="15" y="195" width="105" height="65" rx="5" fill="#f1f5f9" stroke="#94a3b8" stroke-width="1.5" />
+        <text x="67" y="210" fill="#0f172a" font-family="Consolas" font-size="6.8pt" font-weight="bold" text-anchor="middle">Port J7 (A0 / A1)</text>
+        <text x="67" y="222" fill="#0369a1" font-family="Consolas" font-size="5.8pt" font-weight="bold" text-anchor="middle">A0(TX) / A1(RX)</text>
+        <circle cx="30" cy="242" r="3" fill="#22c55e" /><!-- A0 TX Nano -->
+        <text x="30" y="254" fill="#334155" font-size="5pt" text-anchor="middle">A0</text>
+        <circle cx="50" cy="242" r="3" fill="#f43f5e" /><!-- A1 RX Nano -->
+        <text x="50" y="254" fill="#334155" font-size="5pt" text-anchor="middle">A1</text>
+        <circle cx="70" cy="242" r="3" fill="#ef4444" /><!-- VCC 5V -->
+        <text x="70" y="254" fill="#334155" font-size="5pt" text-anchor="middle">5V</text>
+        <circle cx="90" cy="242" r="3" fill="#000000" /><!-- GND -->
+        <text x="90" y="254" fill="#334155" font-size="5pt" text-anchor="middle">GND</text>
+
+        <!-- Port Grove J6 I2C (A4=SDA, A5=SCL) -->
+        <rect x="130" y="195" width="100" height="65" rx="5" fill="#f1f5f9" stroke="#94a3b8" stroke-width="1.5" />
+        <text x="180" y="210" fill="#0f172a" font-family="Consolas" font-size="6.8pt" font-weight="bold" text-anchor="middle">Port J6 (I²C)</text>
+        <text x="180" y="222" fill="#334155" font-family="Consolas" font-size="5.8pt" text-anchor="middle">A5(SCL) / A4(SDA)</text>
+        <circle cx="145" cy="242" r="3" fill="#3b82f6" /><!-- SCL -->
+        <circle cx="165" cy="242" r="3" fill="#eab308" /><!-- SDA -->
+        <circle cx="185" cy="242" r="3" fill="#ef4444" /><!-- VCC 5V -->
+        <circle cx="205" cy="242" r="3" fill="#000000" /><!-- GND -->
       </g>
 
       <!-- MODULE GROVE BLUETOOTH (BAS GAUCHE) -->
@@ -696,13 +903,13 @@
       </g>
 
       <!-- LIAISONS ET CABLAGES -->
-      <!-- DIO 0 (Rose) : AD3 vers D2 (RX Nano / TX Bluetooth) -->
+      <!-- DIO 0 (Rose) : AD3 vers A1 (RX Nano / TX Bluetooth - Fil Blanc) -->
       <path d="M 70 155 C 70 190, 200 220, 285 287" fill="none" stroke="#f43f5e" stroke-width="2.5" stroke-dasharray="4 2"/>
-      <!-- DIO 1 (Vert) : AD3 vers D3 (TX Nano / RX Bluetooth) -->
+      <!-- DIO 1 (Vert) : AD3 vers A0 (TX Nano / RX Bluetooth - Fil Jaune) -->
       <path d="M 100 155 C 100 230, 260 260, 310 287" fill="none" stroke="#22c55e" stroke-width="2.5"/>
       <!-- Câble Grove Nano I2C vers Hub Port 1 -->
       <path d="M 440 255 C 470 255, 500 100, 555 75" fill="none" stroke="#0ea5e9" stroke-width="3"/>
-      <!-- Câble Grove Nano D2 vers Bluetooth -->
+      <!-- Câble Grove Nano Port J7 A0/A1 vers Bluetooth -->
       <path d="M 330 255 C 330 290, 300 295, 270 300" fill="none" stroke="#6366f1" stroke-width="3"/>
       <!-- Hub Port 4 vers AD3 (DIO 2 Bleu & DIO 3 Jaune) -->
       <path d="M 575 295 C 400 370, 150 350, 130 155" fill="none" stroke="#3b82f6" stroke-width="2.5"/>
@@ -711,7 +918,7 @@
       <path d="M 190 155 C 190 270, 340 320, 360 287" fill="none" stroke="#000000" stroke-width="2.5"/>
     </svg>
   </div>
-  <div class="figure-caption">Figure 1 : Schéma d'instrumentation - Raccordement du Digilent AD3, de l'Arduino Nano sur Grove Shield, du Grove I²C Hub et des modules périphériques</div>
+  <div class="figure-caption">Figure 1 : Schéma d'instrumentation - Raccordement du Digilent AD3, de l'Arduino Nano sur Carrier ASX00061 (Port J7 A0/A1), du Grove I²C Hub et des périphériques</div>
 </div>
 
 <hr />
@@ -737,8 +944,8 @@
     <li>Ajoutez un décodeur de protocole : cliquez sur <strong>+ (Add)</strong> &rarr; <strong>UART</strong>.</li>
     <li>Configurez les propriétés du protocole UART dans le volet :
       <ul>
-        <li><strong>TX (Émission Nano vers Bluetooth) :</strong> Sélectionner <code>DIO 1</code> (Broche D3 de l'Arduino Nano).</li>
-        <li><strong>RX (Réception réponse Bluetooth) :</strong> Sélectionner <code>DIO 0</code> (Broche D2 de l'Arduino Nano).</li>
+        <li><strong>TX (Émission Nano vers Bluetooth) :</strong> Sélectionner <code>DIO 1</code> (Broche <strong>A0</strong> de l'Arduino Nano - Fil Jaune).</li>
+        <li><strong>RX (Réception réponse Bluetooth) :</strong> Sélectionner <code>DIO 0</code> (Broche <strong>A1</strong> de l'Arduino Nano - Fil Blanc).</li>
         <li><strong>Baud Rate :</strong> <code>9600</code> bauds.</li>
         <li><strong>Format :</strong> <code>8 Bits</code>, <strong>Parity :</strong> <code>None</code>, <strong>Stop :</strong> <code>1 Bit</code>.</li>
       </ul>
@@ -761,7 +968,7 @@
         <rect width="850" height="330" rx="8" fill="#ffffff" stroke="#cbd5e1" stroke-width="2"/>
         <!-- Barre de titre -->
         <rect width="850" height="36" rx="8" fill="url(#wfHeader)"/>
-        <text x="20" y="24" fill="#ffffff" font-family="'Segoe UI', sans-serif" font-size="10.5pt" font-weight="bold">Digilent WaveForms — Logic Analyzer [Analog Discovery 3 - Arduino Nano D2/D3]</text>
+        <text x="20" y="24" fill="#ffffff" font-family="'Segoe UI', sans-serif" font-size="10.5pt" font-weight="bold">Digilent WaveForms — Logic Analyzer [Analog Discovery 3 - Arduino Nano A0/A1 (Carrier ASX00061)]</text>
         <circle cx="820" cy="18" r="6" fill="#ef4444" />
         <circle cx="800" cy="18" r="6" fill="#f59e0b" />
         <circle cx="780" cy="18" r="6" fill="#10b981" />
@@ -779,8 +986,8 @@
         <!-- Volet de configuration UART (Gauche) -->
         <rect x="10" y="76" width="220" height="240" fill="#f8fafc" stroke="#cbd5e1" rx="4"/>
         <text x="20" y="98" fill="#0b3c5d" font-family="'Segoe UI', sans-serif" font-size="9pt" font-weight="bold">Configuration Décodeur UART</text>
-        <text x="20" y="125" fill="#334155" font-family="Consolas" font-size="8pt">• Signal TX: DIO 1 (D3 Nano)</text>
-        <text x="20" y="150" fill="#334155" font-family="Consolas" font-size="8pt">• Signal RX: DIO 0 (D2 Nano)</text>
+        <text x="20" y="125" fill="#334155" font-family="Consolas" font-size="8pt">• Signal TX: DIO 1 (A0 Nano)</text>
+        <text x="20" y="150" fill="#334155" font-family="Consolas" font-size="8pt">• Signal RX: DIO 0 (A1 Nano)</text>
         <text x="20" y="175" fill="#334155" font-family="Consolas" font-size="8pt">• Débit: 9600 Baud</text>
         <text x="20" y="200" fill="#334155" font-family="Consolas" font-size="8pt">• Format: 8 Bits / No Parity</text>
         <text x="20" y="225" fill="#334155" font-family="Consolas" font-size="8pt">• Stop bits: 1</text>
@@ -807,12 +1014,12 @@
         <rect x="430" y="93" width="70" height="20" rx="3" fill="#4338ca"/>
         <text x="465" y="107" fill="#ffffff" font-family="Consolas" font-size="8pt" text-anchor="middle">'T' (0x54)</text>
 
-        <!-- Signal Digital DIO 1 (TX Nano D3) -->
-        <text x="250" y="160" fill="#4ade80" font-family="Consolas" font-size="8.5pt">DIO 1 (D3/TX)</text>
+        <!-- Signal Digital DIO 1 (TX Nano A0) -->
+        <text x="250" y="160" fill="#4ade80" font-family="Consolas" font-size="8.5pt">DIO 1 (A0/TX)</text>
         <path d="M 330 145 L 350 145 L 350 170 L 360 170 L 360 145 L 380 145 L 380 170 L 400 170 L 400 145 L 430 145 L 430 170 L 450 170 L 450 145 L 470 145 L 470 170 L 510 170 L 510 145 L 820 145" fill="none" stroke="#22c55e" stroke-width="2"/>
 
-        <!-- Signal Digital DIO 0 (RX Nano D2) -->
-        <text x="250" y="235" fill="#f43f5e" font-family="Consolas" font-size="8.5pt">DIO 0 (D2/RX)</text>
+        <!-- Signal Digital DIO 0 (RX Nano A1) -->
+        <text x="250" y="235" fill="#f43f5e" font-family="Consolas" font-size="8.5pt">DIO 0 (A1/RX)</text>
         <path d="M 330 220 L 560 220 L 560 245 L 575 245 L 575 220 L 590 220 L 590 245 L 610 245 L 610 220 L 650 220 L 650 245 L 670 245 L 670 220 L 820 220" fill="none" stroke="#f43f5e" stroke-width="2"/>
 
         <!-- Curseur de mesure X1 / X2 -->
@@ -826,21 +1033,30 @@
   </div>
 
   <h4>3.2. Code Passerelle USB-Série pour Arduino Nano &amp; Configuration :</h4>
-  <p>L'Arduino Nano exécute le programme passerelle ci-dessous en exploitant <strong><code>SoftwareSerial</code></strong> sur les broches <strong>D2 (RX)</strong> et <strong>D3 (TX)</strong> :</p>
+  <p>L'Arduino Nano exécute le programme passerelle ci-dessous en exploitant <strong><code>SoftwareSerial</code></strong> sur les broches <strong>A1 (RX)</strong> et <strong>A0 (TX)</strong> reliées au connecteur <strong>J7</strong> du support <strong>ASX00061</strong> :</p>
 
   <pre><code>/* =========================================================================
    BTS CIEL - Passerelle de commandes AT pour Arduino Nano & Grove Bluetooth
-   Matériel : Arduino Nano v3 + Grove Shield (Module sur le port D2)
-   Broches  : D2 (RX Nano <- TX Bluetooth), D3 (TX Nano -> RX Bluetooth)
+   Matériel : Arduino Nano v3 + Carrier ASX00061 (Module sur le port J7 : A0/A1)
+   Broches  : A1 (RX Nano <- TX Bluetooth - Fil Blanc)
+              A0 (TX Nano -> RX Bluetooth - Fil Jaune)
+   Raison   : Évite le conflit matériel avec le port USB (D0/D1) de la Nano.
    ========================================================================= */
 
 #include &lt;SoftwareSerial.h&gt;
 
-// D2 = RX (reçoit du Bluetooth TX), D3 = TX (émet vers Bluetooth RX)
-SoftwareSerial BT_SERIAL(2, 3); 
+// Définition des broches de communication logicielle
+// Sur le connecteur Grove J7 (A0/A1) du carrier ASX00061 :
+// - Pin 1 (Jaune) = Broche A0 Nano -> reliée au RX du module Bluetooth (Nano émet)
+// - Pin 2 (Blanc) = Broche A1 Nano -> reliée au TX du module Bluetooth (Nano reçoit)
+const uint8_t PIN_BT_RX = A1; // Reçoit les données émises par le Bluetooth (TX BT)
+const uint8_t PIN_BT_TX = A0; // Émet les commandes vers le Bluetooth (RX BT)
 
-const long BAUD_PC = 115200;  // Vitesse de la console série du PC (USB natif)
-const long BAUD_BT = 9600;    // Vitesse d'usine du module Grove Bluetooth
+// Instanciation de la liaison série logicielle : SoftwareSerial(rxPin, txPin)
+SoftwareSerial BT_SERIAL(PIN_BT_RX, PIN_BT_TX); 
+
+const long BAUD_PC = 115200;  // Vitesse de la console série du PC (USB natif D0/D1)
+const long BAUD_BT = 9600;    // Vitesse d'usine standard du module Grove Bluetooth v3.0
 
 void setup() {
   // 1. Démarrage de la liaison série USB matérielle vers le PC
@@ -849,14 +1065,15 @@ void setup() {
   // 2. Démarrage de la liaison série logicielle reliée au module Bluetooth
   BT_SERIAL.begin(BAUD_BT);
 
-  Serial.println(F("\r\n================================================"));
-  Serial.println(F("    Arduino Nano - Passerelle Commandes AT"));
-  Serial.println(F("================================================"));
-  Serial.println(F("Module Bluetooth connecte sur port D2/D3"));
+  Serial.println(F("\r\n======================================================="));
+  Serial.println(F("  Arduino Nano + Carrier ASX00061 - Passerelle AT"));
+  Serial.println(F("======================================================="));
+  Serial.println(F("Module Bluetooth connecte sur Port Grove J7 [A0(TX)/A1(RX)]"));
+  Serial.println(F("Liaison USB native (D0/D1) 100% libre pour console & flash"));
   Serial.println(F("Vitesse Bluetooth : 9600 bauds"));
   Serial.println(F("Pret ! Tapez 'AT' et appuyez sur Entree."));
   Serial.println(F("Important : Selectionner 'No line ending' ci-dessous !"));
-  Serial.println(F("------------------------------------------------"));
+  Serial.println(F("-------------------------------------------------------"));
 }
 
 void loop() {
@@ -934,7 +1151,7 @@ void loop() {
 
   <div class="student-response">
     <strong>Question 1.3 (Mesure analogique avec l'oscilloscope WaveForms Scope) :</strong><br>
-    Basculez sur l'instrument <strong>Scope</strong> de WaveForms (Voie 1+ connectée sur D3/TX). Relevez le temps de montée <i>t</i><sub>r</sub> (rise time 10% - 90%) et le niveau haut <i>V</i><sub>OH</sub>. Le niveau mesuré respecte-t-il la tolérance TTL 5V du microcontrôleur ATmega328P ?
+    Basculez sur l'instrument <strong>Scope</strong> de WaveForms (Voie 1+ connectée sur A0/TX (Pin Jaune du port J7)). Relevez le temps de montée <i>t</i><sub>r</sub> (rise time 10% - 90%) et le niveau haut <i>V</i><sub>OH</sub>. Le niveau mesuré respecte-t-il la tolérance TTL 5V du microcontrôleur ATmega328P ?
     <div class="dotted-line"></div>
   </div>
 </div>
@@ -1141,13 +1358,13 @@ void loop() {
   <tbody>
     <tr>
       <td><strong>C07 - Réalisation</strong></td>
-      <td>Câblage soigné sur le Shield Arduino Nano et le Hub I²C, raccordement correct des sondes MTE de l'Analog Discovery 3 et de la masse commune (GND).</td>
+      <td>Câblage soigné sur le carrier Arduino Nano ASX00061 et le Hub I²C, raccordement correct des sondes MTE de l'Analog Discovery 3 et de la masse commune (GND).</td>
       <td>/3 pts</td>
       <td></td>
     </tr>
     <tr>
       <td><strong>C04 - Analyse</strong></td>
-      <td>Justesse de l'analyse temporelle UART sous WaveForms, compréhension du port SoftwareSerial D2/D3 et absence de terminateur (No line ending).</td>
+      <td>Justesse de l'analyse temporelle UART sous WaveForms, compréhension du port SoftwareSerial A0/A1 sur carrier ASX00061 et absence de terminateur (No line ending).</td>
       <td>/4 pts</td>
       <td></td>
     </tr>
