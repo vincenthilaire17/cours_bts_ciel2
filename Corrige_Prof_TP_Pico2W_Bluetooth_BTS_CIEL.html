@@ -588,6 +588,23 @@ void loop() {
 ------------------------------------
 = Checksum final : 0110 0001 (0x61 = caractère ASCII 'a')</code></pre>
   <p>Le Checksum attendu est donc <strong><code>0x61</code></strong> (valeur décimale 97).</p>
+</div>
+
+<div class="teacher-answer">
+  <div class="teacher-answer-title">✅ Question 4.2 : Détection d'Erreur de Transmission par Discordance de Checksum</div>
+  <p>• <strong>Calcul du nouveau Checksum recalculé par le récepteur avec l'octet altéré <code>DATA = 0x43 ('C')</code> :</strong></p>
+  <pre><code>  Résultat int.2 : 0010 0000 (0x20)   [issu de ID ^ CMD ^ LEN]
+^ Octet 4 (DATA) : 0100 0011 (0x43)   ['C' altéré au lieu de 'A']
+------------------------------------
+= Checksum recalculé : 0110 0011 (0x63)</code></pre>
+  <p>• <strong>Analyse et réaction de la Machine à États Finis (FSM) :</strong></p>
+  <ul>
+    <li>Le Pico 2 W extrait le checksum contenu dans la trame reçue : <code>checksumRecu = 0x61</code>.</li>
+    <li>Le Pico 2 W calcule le checksum sur les octets de charge utile reçus : <code>ckCalcule = 0x63</code>.</li>
+    <li>Dans l'état <code>VERIF_CHECKSUM</code>, le test d'égalité <code>(ckCalcule == checksumRecu)</code> est <strong>FAUX</strong> (<code>0x63 != 0x61</code>).</li>
+    <li><strong>Conséquence opérationnelle :</strong> La commande n'est <strong>PAS exécutée</strong>. L'automate bascule directement vers l'état initial <code>WAIT_START</code> en émettant vers le superviseur le message de rejet : <code>NACK_CHECKSUM_ERROR
+</code>. Cela garantit qu'aucune commande corrompue par des parasites ne viendra actionner l'équipement.</li>
+  </ul>
 
   <p><strong>Code complet de l'automate FSM et du contrôle d'intégrité :</strong></p>
   <pre><code>uint8_t calculerChecksum(const uint8_t* buffer, uint8_t longueur) {
@@ -658,10 +675,10 @@ void traiterOctet(uint8_t c) {
 <!-- ========================================================================= -->
 <!-- CORRIGE PARTIE 5 : DEBIT 10 000 OCTETS & BLUETOOTH INTERNE                -->
 <!-- ========================================================================= -->
-<h2>Corrigé Partie 5 : Recette Industrielle, Portée Radio, Débit 10 000 octets &amp; Bluetooth Interne</h2>
+<h2>Corrigé Partie 5 : Recette Industrielle, Portée Radio (Distance) &amp; Bluetooth Interne</h2>
 
 <div class="teacher-answer">
-  <div class="teacher-answer-title">✅ Question 5.0 : Essai de Portée Radio (Distance) &amp; Analyse de Propagation</div>
+  <div class="teacher-answer-title">✅ Question 5.1 : Essai de Portée Radio (Distance) &amp; Analyse de Propagation</div>
   <p>• <strong>Valeurs expérimentales de référence (Module Grove Bluetooth Classe 2) :</strong></p>
   <ul>
     <li><strong>En champ libre (Ligne de vue directe / LOS) :</strong> Liaison parfaitement stable de <code>0 à 10 mètres</code> (RSSI &gt; -75 dBm). Apparition de légères latences entre <code>12 et 15 mètres</code>. Décrochage définitif (déconnexion) constaté entre <code>15 et 20 mètres</code> selon l'environnement.</li>
@@ -676,32 +693,7 @@ void traiterOctet(uint8_t c) {
 </div>
 
 <div class="teacher-answer">
-  <div class="teacher-answer-title">✅ Mesure de Débit sur 10 000 octets &amp; Rendement utile</div>
-  <p>• <strong>Calcul de la durée théorique de transmission :</strong><br>
-  À 9600 bauds avec le format 8N1 (1 bit start, 8 bits data, 1 bit stop = 10 bits transmis par octet utile) :</p>
-  <div class="formula-box">
-    <i>Durée</i><sub>th</sub> = 
-    <span class="frac"><span class="num">10 000 octets × 10 bits</span><span class="den">9600 bauds</span></span>
-    = <strong>10,417 s</strong> = 10 417 ms
-  </div>
-  <p>• <strong>Débit utile théorique :</strong></p>
-  <div class="formula-box">
-    <i>D</i><sub>utile_th</sub> = 
-    <span class="frac"><span class="num">10 000 × 8 bits</span><span class="den">10,417 s</span></span>
-    = 7680 bit/s = <strong>7,68 kbit/s</strong>
-  </div>
-  <p>• <strong>Rendement utile du protocole physique :</strong></p>
-  <div class="formula-box">
-    <i>Rendement</i> = 
-    <span class="frac"><span class="num">8 bits utiles</span><span class="den">10 bits physiques</span></span>
-    = <strong>80 %</strong>
-  </div>
-  <p><strong>Note d'évaluation &amp; Aspects pratiques sous Windows :</strong> Les étudiants relèvent en pratique une durée d'environ 10,5 à 10,8 secondes, due à la légère gigue logicielle et aux accusés radio Bluetooth.<br>
-  <em>Rappel technique :</em> Pour utiliser le Moniteur Série d'Arduino IDE, le port COM virtuel sortant doit être déclaré dans <em>Paramètres Bluetooth &rarr; Plus de paramètres Bluetooth &rarr; Ports COM</em> (ex : <code>COM8</code>). L'ouverture de ce port dans Arduino IDE ou Tera Term déclenche la liaison RFCOMM. Pour l'envoi du bloc massif de 10 000 octets, les étudiants peuvent utiliser le menu Windows <em>« Envoyer un fichier »</em>, un terminal série (<em>File &rarr; Send file</em>) ou l'application <em>Bluetooth RFCOMM Monitor</em>.</p>
-</div>
-
-<div class="teacher-answer">
-  <div class="teacher-answer-title">✅ Question 5.1 : Comparatif Bluetooth Externe UART vs Interne CYW43439</div>
+  <div class="teacher-answer-title">✅ Question 5.2 : Comparatif Bluetooth Externe UART vs Interne CYW43439</div>
   <p><strong>Synthèse comparative :</strong></p>
   <ul>
     <li><strong>Avantages du module externe Grove UART :</strong>
@@ -724,7 +716,7 @@ void traiterOctet(uint8_t c) {
 </div>
 
 <div class="teacher-answer">
-  <div class="teacher-answer-title">✅ Question 5.2 : Synthèse Cybersécurité (Bluetooth SPP vs TLS)</div>
+  <div class="teacher-answer-title">✅ Question 5.3 : Synthèse Cybersécurité (Bluetooth SPP vs TLS)</div>
   <p><strong>1. Deux vulnérabilités majeures de la solution Bluetooth SPP déployée :</strong></p>
   <ol>
     <li><strong>Faiblesse du PIN fixe à 4 chiffres (Authentification faible) :</strong> L'espace des clés est restreint à 10<sup>4</sup> = 10 000 combinaisons possibles. Une attaque par force brute ou écoute passive de l'échange de clés (E0 stream cipher) permet de casser le secret en quelques secondes.</li>
@@ -783,7 +775,7 @@ void traiterOctet(uint8_t c) {
     <tr>
       <td><strong>C06 - Validation</strong></td>
       <td>
-        • Mesure expérimentale du débit effectif sur 10 000 octets et calcul de rendement (1,5 pt)<br>
+        • Qualification expérimentale de la portée radio et analyse de propagation (1,5 pt)<br>
         • Analyse comparative technique Bluetooth externe vs interne CYW43439 (1,5 pt)<br>
         • Analyse critique de cybersécurité et propositions de remédiation ANSSI (1 pt)
       </td>
