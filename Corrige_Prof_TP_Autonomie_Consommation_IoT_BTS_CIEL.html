@@ -1,0 +1,973 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="utf-8" />
+  <meta name="generator" content="BTS CIEL - Vincent Hilaire" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes" />
+  <title>CORRIGÉ ENSEIGNANT - TP Autonomie, Modes de Veille, Watchdog &amp; Comparatif Multi-Radios (Bluetooth, Wi-Fi, LoRa) - BTS CIEL</title>
+
+  <style>
+    @page {
+      margin: 1.4cm;
+      size: A4 portrait;
+    }
+
+    html {
+      color: #1a1a1a;
+      background-color: #f8fafc;
+      -webkit-text-size-adjust: 100%;
+    }
+
+    body {
+      font-family: 'Segoe UI', -apple-system, BlinkMacSystemFont, Roboto, Helvetica, Arial, sans-serif;
+      line-height: 1.55;
+      color: #1e293b;
+      max-width: 980px;
+      margin: 0 auto;
+      padding: 25px 32px;
+      hyphens: auto;
+      overflow-wrap: break-word;
+      text-rendering: optimizeLegibility;
+      background-color: #ffffff;
+      box-shadow: 0 4px 16px rgba(0,0,0,0.06);
+    }
+
+    @media (max-width: 768px) {
+      body {
+        font-size: 0.95em;
+        padding: 15px;
+      }
+      h1 {
+        font-size: 1.5em !important;
+      }
+      .btn-bar {
+        flex-direction: column;
+        gap: 8px;
+      }
+    }
+
+    @media print {
+      html { background-color: #ffffff; }
+      body {
+        background-color: transparent;
+        color: #000000;
+        font-size: 9.6pt;
+        max-width: 100%;
+        padding: 0;
+        box-shadow: none;
+      }
+      p, h2, h3 { orphans: 3; widows: 3; }
+      h2, h3, h4 { page-break-after: avoid; }
+      pre, blockquote, table, .figure-box, .formula-box, .callout, .teacher-answer { page-break-inside: avoid; }
+      .page-break { page-break-before: always; }
+      .no-print { display: none !important; }
+      a { color: #000000; text-decoration: none; }
+    }
+
+    .btn-bar {
+      position: sticky;
+      top: 10px;
+      z-index: 1000;
+      background: rgba(255, 255, 255, 0.96);
+      backdrop-filter: blur(8px);
+      padding: 10px 16px;
+      border-radius: 8px;
+      border: 1px solid #cbd5e1;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 22px;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.07);
+    }
+
+    .btn {
+      background-color: #b91c1c;
+      color: #ffffff;
+      border: none;
+      padding: 8px 14px;
+      border-radius: 6px;
+      font-weight: 600;
+      font-size: 8.8pt;
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      transition: background 0.2s, transform 0.1s;
+    }
+
+    .btn:hover {
+      background-color: #991b1b;
+    }
+
+    .btn-secondary {
+      background-color: #0b3c5d;
+    }
+
+    .btn-secondary:hover {
+      background-color: #08293f;
+    }
+
+    header {
+      margin-bottom: 2em;
+      text-align: center;
+      border-bottom: 3px solid #b91c1c;
+      padding-bottom: 16px;
+    }
+
+    .super-title {
+      text-transform: uppercase;
+      font-size: 0.88em;
+      font-weight: 700;
+      letter-spacing: 1.2px;
+      color: #b91c1c;
+      margin-bottom: 5px;
+    }
+
+    h1, h2, h3, h4 {
+      color: #0b3c5d;
+      font-weight: 700;
+    }
+
+    h1 {
+      font-size: 18.5pt;
+      margin-top: 0.4em;
+      margin-bottom: 0.35em;
+      letter-spacing: -0.4px;
+      line-height: 1.25;
+    }
+
+    .subtitle {
+      font-size: 10.5pt;
+      color: #475569;
+      margin-bottom: 12px;
+      font-weight: 500;
+    }
+
+    .meta-badge {
+      display: inline-block;
+      background: #e1ecf4;
+      color: #0b3c5d;
+      font-size: 0.82em;
+      font-weight: 600;
+      padding: 4px 10px;
+      border-radius: 20px;
+      margin: 3px 4px;
+      border: 1px solid #7aa7c7;
+    }
+
+    .badge-primary { background: #0b3c5d; color: #ffffff; border: 1px solid #0b3c5d; }
+    .badge-alert   { background: #fee2e2; color: #991b1b; border: 1px solid #f87171; }
+    .badge-danger  { background: #b91c1c; color: #ffffff; border: 1px solid #991b1b; font-weight: 700; }
+    .badge-success { background: #dcfce7; color: #166534; border: 1px solid #86efac; }
+    .badge-warning { background: #fef3c7; color: #92400e; border: 1px solid #fcd34d; }
+    .badge-purple  { background: #f3e8ff; color: #6b21a8; border: 1px solid #d8b4fe; }
+    .badge-cyan    { background: #e0f2fe; color: #0369a1; border: 1px solid #7dd3fc; }
+    .badge-orange  { background: #ffedd5; color: #c2410c; border: 1px solid #fdba74; }
+
+    h2 {
+      font-size: 13.5pt;
+      margin-top: 28px;
+      margin-bottom: 12px;
+      border-bottom: 2px solid #cbd5e1;
+      padding-bottom: 6px;
+    }
+
+    h3 {
+      font-size: 11pt;
+      margin-top: 18px;
+      margin-bottom: 8px;
+      border-left: 4.5px solid #b91c1c;
+      padding-left: 10px;
+    }
+
+    h4 {
+      font-size: 10pt;
+      margin-top: 14px;
+      margin-bottom: 6px;
+      color: #1d5f8a;
+    }
+
+    p {
+      margin: 0.75em 0;
+    }
+
+    ul, ol {
+      padding-left: 1.6em;
+      margin: 0.7em 0;
+    }
+
+    li {
+      margin-bottom: 0.35em;
+    }
+
+    hr {
+      border: 0;
+      border-top: 1px solid #cbd5e1;
+      margin: 24px 0;
+    }
+
+    .callout {
+      border-radius: 6px;
+      padding: 12px 16px;
+      margin: 15px 0;
+      font-size: 9.3pt;
+      border-left: 5px solid;
+    }
+
+    .callout-info    { background-color: #f0f7fc; border-color: #328cc1; color: #1a446c; }
+    .callout-warning { background-color: #fffbeb; border-color: #f59e0b; color: #78350f; }
+    .callout-danger  { background-color: #fef2f2; border-color: #ef4444; color: #7f1d1d; }
+    .callout-success { background-color: #f0fdf4; border-color: #22c55e; color: #14532d; }
+    .callout-purple  { background-color: #faf5ff; border-color: #9333ea; color: #581c87; }
+
+    .callout-title {
+      font-weight: 700;
+      margin-bottom: 5px;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      font-size: 9.8pt;
+    }
+
+    table {
+      border-collapse: collapse;
+      width: 100%;
+      margin: 14px 0;
+      font-size: 8.9pt;
+      background-color: #ffffff;
+      box-shadow: 0 1px 3px rgba(0,0,0,0.05);
+    }
+
+    th, td {
+      border: 1px solid #cbd5e1;
+      padding: 7px 10px;
+      text-align: left;
+      vertical-align: middle;
+    }
+
+    th {
+      background-color: #f0f4f8;
+      color: #0b3c5d;
+      font-weight: 700;
+    }
+
+    tr:nth-child(even) {
+      background-color: #f8fafc;
+    }
+
+    tr:hover {
+      background-color: #f1f5f9;
+    }
+
+    pre {
+      background-color: #0f172a;
+      color: #f8fafc;
+      border: 1px solid #334155;
+      border-radius: 6px;
+      padding: 12px 15px;
+      font-size: 8.6pt;
+      line-height: 1.45;
+      overflow-x: auto;
+      font-family: Consolas, 'Courier New', Monaco, monospace;
+      margin: 12px 0;
+    }
+
+    code {
+      background-color: #eff6ff;
+      color: #0969da;
+      padding: 2px 5px;
+      border-radius: 4px;
+      font-size: 88%;
+      font-family: Consolas, 'Courier New', Monaco, monospace;
+      border: 1px solid #dbeafe;
+    }
+
+    pre code {
+      background-color: transparent;
+      padding: 0;
+      border-radius: 0;
+      font-size: inherit;
+      color: inherit;
+      border: none;
+    }
+
+    .kw { color: #ff7b72; font-weight: bold; }
+    .dt { color: #79c0ff; font-weight: 600; }
+    .st { color: #a5d6ff; }
+    .co { color: #8b949e; font-style: italic; }
+    .pp { color: #ffa657; font-weight: 600; }
+    .fu { color: #d2a8ff; }
+    .dv { color: #79c0ff; }
+
+    .formula-box {
+      background: #f1f5f9;
+      border: 1px solid #cbd5e1;
+      border-radius: 6px;
+      padding: 10px 16px;
+      margin: 10px 0;
+      font-family: 'Cambria Math', 'DejaVu Serif', 'Times New Roman', Georgia, serif;
+      font-size: 10.5pt;
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      color: #0f172a;
+    }
+
+    .frac {
+      display: inline-flex;
+      flex-direction: column;
+      vertical-align: middle;
+      text-align: center;
+      padding: 0 5px;
+      font-size: 0.95em;
+    }
+
+    .frac > .num {
+      border-bottom: 1.5px solid #1e293b;
+      padding-bottom: 2px;
+    }
+
+    .frac > .den {
+      padding-top: 2px;
+    }
+
+    .teacher-answer {
+      background: #fdfdfd;
+      border: 1.5px solid #cbd5e1;
+      border-left: 6px solid #16a34a;
+      border-radius: 6px;
+      padding: 14px 18px;
+      margin: 16px 0 22px 0;
+      box-shadow: 0 2px 6px rgba(0,0,0,0.03);
+    }
+
+    .teacher-answer-title {
+      font-weight: 700;
+      color: #15803d;
+      font-size: 10.2pt;
+      margin-bottom: 8px;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .pedago-note {
+      background: #fffbeb;
+      border-left: 5px solid #f59e0b;
+      padding: 10px 14px;
+      margin: 10px 0;
+      font-size: 8.8pt;
+      color: #92400e;
+      border-radius: 4px;
+    }
+
+    .pedago-note strong {
+      color: #78350f;
+    }
+
+    .step-box {
+      background: #ffffff;
+      border: 1.5px solid #cbd5e1;
+      border-radius: 8px;
+      padding: 16px 20px;
+      margin: 20px 0;
+      box-shadow: 0 2px 5px rgba(0,0,0,0.03);
+    }
+
+    .step-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 8px;
+      border-bottom: 2px solid #e2e8f0;
+      padding-bottom: 8px;
+      margin-bottom: 14px;
+    }
+
+    .step-title {
+      font-weight: 700;
+      font-size: 11.5pt;
+      color: #0b3c5d;
+    }
+
+    .timing-badge {
+      background: #0b3c5d;
+      color: #ffffff;
+      font-size: 8.2pt;
+      padding: 4px 10px;
+      border-radius: 12px;
+      font-weight: 600;
+    }
+  </style>
+</head>
+<body>
+
+  <!-- BARRE D'OUTILS INTERACTIVE -->
+  <div class="btn-bar no-print">
+    <div>
+      <span style="font-weight: 700; color: #b91c1c; font-size: 9.5pt;">BTS CIEL 2<sup>e</sup> Année</span>
+      <span style="color: #64748b; font-size: 8.8pt;"> | DOCUMENT ENSEIGNANT CONFIDENTIEL</span>
+    </div>
+    <div style="display: flex; gap: 8px; flex-wrap: wrap;">
+      <a href="TP_Autonomie_Consommation_IoT_BTS_CIEL.html" class="btn btn-secondary">📄 Voir le Sujet Étudiant (HTML)</a>
+      <button class="btn" onclick="window.print()">🖨️ Imprimer / Exporter en PDF</button>
+    </div>
+  </div>
+
+  <!-- EN-TETE PRINCIPAL -->
+  <header id="title-block-header">
+    <div class="super-title">
+      BTS CIEL — 2<sup>e</sup> Année • Option A (IR) &amp; Option B (ER) • DOCUMENT PROFESSEUR
+    </div>
+    <h1 class="title">CORRIGÉ OFFICIEL &amp; GUIDE D'ÉVALUATION TP ÉNERGIE, AUTONOMIE, VEILLE &amp; MULTI-RADIOS</h1>
+    <div class="subtitle">
+      Mesures types au banc Digilent AD3 • Validation Proteus VSM • Diagnostic Powerbank Varta 5000 mAh • Dimensionnement 3 ans
+    </div>
+    <div>
+      <span class="meta-badge badge-danger">🔒 CORRIGÉ PROFESSEUR (CONFIDENTIEL)</span>
+      <span class="meta-badge badge-purple">🎯 Cibles : Arduino Nano + ESP32-S3/Pico 2W + LoRa</span>
+      <span class="meta-badge badge-orange">🔬 Banc : Digilent Analog Discovery 3 &amp; Proteus</span>
+      <span class="meta-badge badge-warning">🔋 Énergie : Powerbank Varta 5000 mAh (18,5 Wh)</span>
+      <span class="meta-badge badge-primary">⏱ Séance 6h00 • Barème /20</span>
+    </div>
+  </header>
+
+  <div class="callout callout-danger">
+    <div class="callout-title">⚠️ Guide Pédagogique &amp; Objectifs de l'Épreuve Sommative</div>
+    <p>Ce document fournit aux enseignants de BTS CIEL les résultats types attendus, les pièges classiques rencontrés par les étudiants sur paillasse, les démonstrations de calculs rigoureuses, le code complet du maintien de charge (<em>Keep-Alive</em>), ainsi que la grille d'évaluation sommative critériée sur 20 points alignée sur le référentiel officiel (<strong>C01, C04, C05, C06, C07/C09</strong>).</p>
+  </div>
+
+  <hr />
+
+  <!-- ========================================================================= -->
+  <!-- CORRIGE PARTIE 1 : PROTEUS VSM, VEILLE & WATCHDOG                         -->
+  <!-- ========================================================================= -->
+  <h2>Corrigé Partie 1 : Modélisation Proteus VSM, Veille Profonde, Watchdog &amp; Power Gating</h2>
+
+  <div class="teacher-answer">
+    <div class="teacher-answer-title">✅ Tableau Comparatif des Essais sous Proteus VSM</div>
+    <table>
+      <thead>
+        <tr>
+          <th>Configuration simulée</th>
+          <th>Courant actif simulé</th>
+          <th>Courant repos / veille</th>
+          <th>Analyse physique &amp; comportementale</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td><strong>Essai A :</strong> <code>delay(8000)</code> + Radio alimentée en permanence</td>
+          <td>~48 mA</td>
+          <td><strong>~48 mA permanent</strong></td>
+          <td>Aucune économie d'énergie. Le CPU ATmega328P tourne à 16 MHz (~15 mA) et le module radio émulé reste sous tension (~33 mA).</td>
+        </tr>
+        <tr>
+          <td><strong>Essai B :</strong> <code>SLEEP_MODE_PWR_DOWN</code> seul (sans Power Gating)</td>
+          <td>~48 mA</td>
+          <td><strong>~33,02 mA</strong></td>
+          <td>Le CPU s'endort bien sous <code>&lt; 5 µA</code>, mais le module radio reste alimenté en direct sur le +5V et continue de dissiper 33 mA en pure perte.</td>
+        </tr>
+        <tr>
+          <td><strong>Essai C :</strong> <code>PWR_DOWN</code> + <strong>Power Gating MOSFET</strong> + <code>TX/RX en INPUT</code></td>
+          <td>~48 mA (créneau de 190 ms)</td>
+          <td><strong>~4,5 µA à 15 µA</strong></td>
+          <td><strong>Gain optimal (&divide; 3000)</strong>. Le MOSFET coupe la branche radio et les broches UART désactivées éliminent tout courant de fuite ESD.</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <div class="teacher-answer">
+    <div class="teacher-answer-title">✅ Question 1.1 : Rôle de la résistance de tirage vers le bas (Pull-Down 100 kΩ) sur la grille du MOSFET</div>
+    <p>Au moment de la mise sous tension ou lors d'un Reset du microcontrôleur, toutes les broches GPIO de l'ATmega328P sont configurées par défaut en <strong>entrées haute impédance (High-Z)</strong> avant que le code utilisateur n'exécute <code>pinMode(D4, OUTPUT)</code>.</p>
+    <p>La grille (Gate) d'un MOSFET présente une capacité d'entrée parasite $C_{iss}$ (de l'ordre de quelques dizaines de picofarads). Sans résistance de tirage à la masse, cette grille est « flottante » et capte les charges électrostatiques environnantes, amenant $V_{GS}$ à un potentiel indéterminé qui peut faire commuter le transistor en zone linéaire ou saturée de façon aléatoire.</p>
+    <p>La résistance de <code>100 kΩ</code> reliée entre la grille et le 0V (GND) force le potentiel de repos à <strong>$V_{GS} = 0\text{ V} &lt; V_{GS(th)}$</strong>, garantissant avec certitude que le MOSFET est <strong>bloqué (OFF)</strong> dès la mise sous tension du montage.</p>
+  </div>
+
+  <div class="teacher-answer">
+    <div class="teacher-answer-title">✅ Question 1.2 : Registre WDTCSR — Rôle de WDIE vs WDE et Sommeil Cyclique de 15 Minutes</div>
+    <p>• <strong>Différence entre <code>WDIE</code> et <code>WDE</code> :</strong></p>
+    <ul>
+      <li><code>WDE = 1, WDIE = 0</code> (<em>Watchdog System Reset Mode</em>) : Le Watchdog sert de <strong>chien de garde anti-plantage</strong>. Si le compteur expire sans remise à zéro par <code>wdt_reset()</code>, le microcontrôleur subit un <strong>Reset matériel complet</strong> (redémarrage au début de <code>setup()</code>).</li>
+      <li><code>WDIE = 1, WDE = 0</code> (<em>Watchdog Interrupt Mode</em>) : Le Watchdog sert de <strong>réveil autonome</strong>. À l'expiration du temps, le microcontrôleur exécute l'interruption vectorielle <code>ISR(WDT_vect)</code> et <strong>reprend son exécution à l'instruction suivant immédiatement <code>sleep_cpu()</code></strong>, sans réinitialiser la mémoire RAM ni les variables.</li>
+    </ul>
+
+    <p>• <strong>Algorithme pour endormir le système pendant 15 minutes (900 s) :</strong><br>
+    Le prédiviseur maximal du Watchdog de l'ATmega328P est limité à <strong>8,0 secondes</strong> ($WDP3=1, WDP0=1$). Pour obtenir un sommeil de 15 minutes ($900\text{ s}$), on calcule le nombre d'itérations nécessaires :</p>
+    <div class="formula-box">
+      <i>N</i><sub>cycles</sub> = <span class="frac"><span class="num">900 s</span><span class="den">8 s</span></span> = <strong>112,5 cycles</strong> &approx; <strong>112 ou 113 cycles de 8 secondes</strong>
+    </div>
+    <p><strong>Code algorithmique recommandé :</strong></p>
+<pre><code><span class="kw">volatile</span> <span class="dt">uint16_t</span> compteur_wdt = <span class="dv">0</span>;
+<span class="fu">ISR</span>(WDT_vect) {
+  compteur_wdt++;
+}
+
+<span class="dt">void</span> <span class="fu">sommeil_15_minutes</span>() {
+  compteur_wdt = <span class="dv">0</span>;
+  <span class="kw">while</span> (compteur_wdt &lt; <span class="dv">112</span>) { <span class="co">// 112 * 8s = 896s (~15 min)</span>
+    <span class="fu">dormir_profond_8s</span>();
+    <span class="co">// Au réveil WDT, le CPU ne fait qu'incrémenter le compteur</span>
+    <span class="co">// sans allumer la radio ni les capteurs, puis se rendort aussitôt !</span>
+  }
+}</code></pre>
+  </div>
+
+  <div class="teacher-answer">
+    <div class="teacher-answer-title">✅ Question 1.3 : Phénomène de rétro-alimentation (Back-Powering) sur les broches série UART</div>
+    <p>Tous les circuits intégrés CMOS intègrent des diodes de protection contre les décharges électrostatiques (ESD) reliant chaque broche d'entrée/sortie au rail d'alimentation interne du composant (vers son $V_{CC}$ interne et vers $GND$).</p>
+    <p>Au repos, une ligne série UART est maintenue à l'état HAUT ($+5\text{ V}$). Si l'on coupe le rail $V_{CC}$ du module radio par le MOSFET mais que la broche <code>D3 (TX)</code> de l'Arduino reste configurée en sortie à l'état HAUT ($+5\text{ V}$), le courant s'échappe de <code>D3</code>, traverse la diode de protection ESD supérieure de la broche RX du module radio, et vient réalimenter le circuit interne du module par sa propre diode !</p>
+    <p><strong>Remédiation :</strong> Avant de plonger en veille, désactiver l'UART (<code>radioSerial.end()</code>) et basculer impérativement les broches numériques <code>TX</code> et <code>RX</code> en <strong>entrées haute impédance sans pull-up</strong> (<code>pinMode(PIN_BT_TX, INPUT)</code>) pour annuler tout courant de fuite.</p>
+  </div>
+
+  <hr />
+
+  <!-- ========================================================================= -->
+  <!-- CORRIGE PARTIE 2 : BANQUE DE MESURES AD3 & AUDIT ARDUINO NANO            -->
+  <!-- ========================================================================= -->
+  <h2>Corrigé Partie 2 : Métrologie par Shunt Différentiel AD3 &amp; Diagnostic de la Carte Arduino Nano</h2>
+
+  <div class="teacher-answer">
+    <div class="teacher-answer-title">✅ Relevés Réels Typiques à l'Oscilloscope AD3 (Arduino Nano v3 seule sous 5,0 V)</div>
+    <table>
+      <thead>
+        <tr>
+          <th>Mode de fonctionnement (Nano v3 réelle)</th>
+          <th>Résistance Shunt</th>
+          <th>Tension différentielle $U_{\text{shunt}}$</th>
+          <th>Courant mesuré réel</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td><strong>Boucle active 16 MHz</strong> (<code>delay()</code>)</td>
+          <td>10,0 &Omega;</td>
+          <td>150 à 180 mV</td>
+          <td><strong>15,0 à 18,0 mA</strong></td>
+        </tr>
+        <tr>
+          <td><strong>Sommeil léger</strong> (<code>SLEEP_MODE_IDLE</code>)</td>
+          <td>10,0 &Omega;</td>
+          <td>105 à 120 mV</td>
+          <td><strong>10,5 à 12,0 mA</strong></td>
+        </tr>
+        <tr>
+          <td><strong>Veille profonde</strong> (<code>SLEEP_MODE_PWR_DOWN</code>)</td>
+          <td>10,0 &Omega;</td>
+          <td><strong>52 à 65 mV</strong></td>
+          <td><strong>5,2 à 6,5 mA</strong> (au lieu de 5 µA !)</td>
+        </tr>
+      </tbody>
+    </table>
+
+    <div class="pedago-note">
+      <strong>Point d'attention pour l'enseignant :</strong> Vérifiez impérativement que les élèves ont <strong>débranché le câble USB du PC</strong> de l'Arduino Nano lors de la mesure. Si le câble USB reste connecté, le +5V USB de l'ordinateur alimente la carte en parallèle du shunt, induisant un courant mesuré proche de 0 mA ou erratique !
+    </div>
+  </div>
+
+  <div class="teacher-answer">
+    <div class="teacher-answer-title">✅ Question 2.1 : Diagnostic des 3 composants responsables de la surconsommation en veille sur le PCB Nano</div>
+    <p>L'écart flagrant entre la simulation ATmega328P nu sous Proteus (~5 µA) et la carte commerciale Nano v3 réelle (~5,5 mA) s'explique par trois éléments périphériques intégrés sur le circuit imprimé :</p>
+    <ol>
+      <li><strong>La diode LED témoin d'alimentation « PWR » (avec sa résistance de tirage) :</strong><br>
+        Une LED verte ou rouge est connectée en permanence entre le rail <code>+5V</code> et le <code>GND</code> à travers une résistance de <code>1 kΩ</code> (marquage « 102 »).<br>
+        $$I_{\text{LED}} = \frac{U_{\text{alim}} - V_F}{R} = \frac{5{,}0\text{ V} - 2{,}0\text{ V}}{1000\ \Omega} \approx \mathbf{3{,}0\ \text{mA}}$$
+        À elle seule, cette simple LED témoin consomme 600 fois plus de courant que tout le microcontrôleur en veille profonde !</li>
+      <li><strong>Le circuit d'interface USB-Série (CH340G ou FTDI FT232RL) :</strong><br>
+        Ce composant est alimenté en direct par le rail <code>+5V</code> interne de la Nano. Même si aucun câble USB n'est raccordé au PC, le circuit CH340 reste sous tension et son oscillateur/étage interne absorbe un courant de repos résiduel de <strong>1,5 à 2,5 mA</strong>.</li>
+      <li><strong>Le régulateur de tension linéaire LDO (AMS1117-5.0 ou LM1117) :</strong><br>
+        Même lorsqu'on injecte directement 5V sur la broche <code>5V</code>, ou lorsqu'on passe par la broche <code>VIN</code> (7-12V), le courant de repos propre (<em>Quiescent Current</em> $I_q$) au niveau de la broche de masse du régulateur AMS1117 est compris entre <strong>5 et 11 mA</strong> (valeur très élevée typique des régulateurs bipolaires économiques).</li>
+    </ol>
+
+    <p><strong>Pistes d'amélioration matérielle pour descendre sous 20 µA :</strong></p>
+    <ul>
+      <li>Dessouder la LED <code>PWR</code> ou couper sa piste d'alimentation à l'aide d'un scalpel.</li>
+      <li>Couper la broche d'alimentation $V_{CC}$ de la puce CH340.</li>
+      <li><strong>Solution industrielle :</strong> Utiliser une carte <strong>Arduino Pro Mini 3,3 V (8 MHz)</strong> sans convertisseur USB intégré, alimentée directement par batterie via un régulateur LDO ultra-basse consommation (ex. <em>Microchip MCP1700</em> avec $I_q = 1{,}6\ \mu\text{A}$).</li>
+    </ul>
+  </div>
+
+  <hr />
+
+  <!-- ========================================================================= -->
+  <!-- CORRIGE PARTIE 3 : CAMPAGNE COMPARATIVE MULTI-RADIOS                      -->
+  <!-- ========================================================================= -->
+  <h2>Corrigé Partie 3 : Campagne Comparative Multi-Radios (Bluetooth vs Wi-Fi vs LoRa)</h2>
+
+  <div class="teacher-answer">
+    <div class="teacher-answer-title">✅ Grand Tableau Comparatif Énergétique (Trame utile normalisée = 22 octets)</div>
+    <table>
+      <thead>
+        <tr>
+          <th>Technologie / Standard Radio</th>
+          <th>Tension $U_{\text{alim}}$</th>
+          <th>Courant de veille</th>
+          <th>Pic crête $I_{\text{max}}$</th>
+          <th>$I_{\text{moy\_actif}}$</th>
+          <th>Durée active $\Delta t$</th>
+          <th>Charge $Q_{\text{cycle}}$</th>
+          <th>Énergie $E_{\text{cycle}}$</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td><strong>Bluetooth SPP</strong> (Non appairé / Inquiry scan)</td>
+          <td>5,0 V</td>
+          <td>— (actif continu)</td>
+          <td>38 mA</td>
+          <td>~18,5 mA</td>
+          <td>Permanent</td>
+          <td>—</td>
+          <td><strong>~92,5 mW permanent</strong></td>
+        </tr>
+        <tr>
+          <td><strong>Bluetooth SPP</strong> (Envoi trame + Power Gating)</td>
+          <td>5,0 V</td>
+          <td>~15 µA (avec PG)</td>
+          <td>35 mA</td>
+          <td>~26,0 mA</td>
+          <td><strong>190 ms</strong></td>
+          <td><strong>1,37 µAh</strong></td>
+          <td><strong>24,7 mJ</strong></td>
+        </tr>
+        <tr>
+          <td><strong>Wi-Fi 802.11 b/g/n</strong> (Réveil + WPA2 + DHCP + UDP)</td>
+          <td>3,3 V</td>
+          <td>~20 µA (Deep Sleep)</td>
+          <td><strong>285 mA</strong></td>
+          <td><strong>~112 mA</strong></td>
+          <td><strong>2400 ms</strong></td>
+          <td><strong>74,7 µAh</strong></td>
+          <td><strong>887 mJ</strong></td>
+        </tr>
+        <tr>
+          <td><strong>LoRa 868 MHz — SF7</strong> (BW 125 kHz, +14 dBm)</td>
+          <td>3,3 V</td>
+          <td>~1,5 µA (Sleep)</td>
+          <td>44 mA</td>
+          <td>~42,0 mA</td>
+          <td><strong>56,6 ms</strong></td>
+          <td><strong>0,66 µAh</strong></td>
+          <td><strong>7,85 mJ</strong></td>
+        </tr>
+        <tr>
+          <td><strong>LoRa 868 MHz — SF12</strong> (BW 125 kHz, +14 dBm)</td>
+          <td>3,3 V</td>
+          <td>~1,5 µA (Sleep)</td>
+          <td>44 mA</td>
+          <td>~42,0 mA</td>
+          <td><strong>1319 ms</strong></td>
+          <td><strong>15,39 µAh</strong></td>
+          <td><strong>182,8 mJ</strong></td>
+        </tr>
+      </tbody>
+    </table>
+
+    <div class="pedago-note">
+      <strong>Rappels de calcul :</strong><br>
+      $Q_{\text{cycle}} [\mu\text{Ah}] = \frac{I_{\text{moy\_actif}} [\text{mA}] \times \Delta t [\text{s}]}{3{,}6}$ &emsp;|&emsp;
+      $E_{\text{cycle}} [\text{mJ}] = U_{\text{alim}} [\text{V}] \times I_{\text{moy\_actif}} [\text{mA}] \times \Delta t [\text{s}]$.
+    </div>
+  </div>
+
+  <div class="teacher-answer">
+    <div class="teacher-answer-title">✅ Question 3.1 : Réglementation Européenne ETSI (Bande 868 MHz — Duty Cycle 1%)</div>
+    <p>La réglementation européenne des télécommunications (norme ETSI EN 300 220) impose dans la sous-bande ISM $868{,}0\text{ à }868{,}6\text{ MHz}$ un temps d'occupation maximal du canal (<em>Duty Cycle</em>) de <strong>1 % par heure glissante</strong> :</p>
+    <div class="formula-box">
+      <i>T</i><sub>ToA_max</sub> = 1\% \times 3600\text{ s} = \mathbf{36\ \text{secondes par heure}}
+    </div>
+
+    <ul>
+      <li><strong>En LoRa SF7 ($T_{\text{ToA}} \approx 56{,}6\text{ ms} = 0{,}0566\text{ s}$) :</strong><br>
+        $$N_{\text{max\_SF7}} = \frac{36\text{ s}}{0{,}0566\text{ s}} = \mathbf{636\ \text{trames par heure}}\quad (\text{soit plus de 10 trames par minute})$$</li>
+      <li><strong>En LoRa SF12 ($T_{\text{ToA}} \approx 1319\text{ ms} = 1{,}319\text{ s}$) :</strong><br>
+        $$N_{\text{max\_SF12}} = \frac{36\text{ s}}{1{,}319\text{ s}} = \mathbf{27\ \text{trames par heure}}\quad (\text{soit au maximum 1 trame toutes les 133 secondes})$$</li>
+    </ul>
+    <p><strong>Conclusion :</strong> Le passage en SF12 pour augmenter la portée divise par 23 le nombre légal de transmissions autorisées par heure et multiplie l'énergie consommée par trame par plus de 23 !</p>
+  </div>
+
+  <div class="teacher-answer">
+    <div class="teacher-answer-title">✅ Question 3.2 : Paradoxe Énergétique Wi-Fi — Trame de 22 octets vs Fichier volumineux de 500 ko</div>
+    <ul>
+      <li><strong>Pour une trame courte (22 octets) :</strong><br>
+        Le Wi-Fi présente un <strong>overhead protocolaire colossal</strong> : avant de pouvoir pousser les 22 octets en UDP, il doit réveiller le frontend RF 2,4 GHz, scanner les canaux, exécuter l'authentification et l'échange de clés 4-Way Handshake WPA2, puis la négociation DHCP (DORA en 4 trames). Cette phase prend <strong>2 à 3 secondes</strong> sous un courant moyen de <strong>~110 mA</strong> ($E \approx 887\text{ mJ}$). Le LoRa, lui, module directement ses chirps RF en <strong>56 ms</strong> ($E \approx 7{,}85\text{ mJ}$). Le Wi-Fi consomme donc <strong>113 fois plus d'énergie</strong> que le LoRa SF7 pour envoyer la même petite mesure !</li>
+      <li><strong>Pour un fichier lourd (500 ko = 4 000 000 bits) :</strong><br>
+        Le Wi-Fi offre un débit utile élevé (typiquement 20 Mbit/s). Le transfert effectif des 500 ko ne dure que :
+        $$t_{\text{transfert}} = \frac{4\text{ Mbit}}{20\text{ Mbit/s}} = 0{,}2\text{ s}$$
+        L'énergie totale consommée (phase de connexion comprise) est d'environ :
+        $$E_{\text{WiFi\_500k}} = 3{,}3\text{ V} \times 130\text{ mA} \times (2{,}4 + 0{,}2)\text{ s} \approx 1{,}11\ \text{Joules}\quad \left(\approx \mathbf{2{,}2\ \mu\text{J / bit}}\right)$$
+        En LoRa (débit plafonné à ~5 kbit/s en SF7), le transfert de 500 ko nécessiterait <strong>800 secondes d'émission</strong>, violerait dramatiquement le Duty Cycle de 36 s/heure et consommerait plus de <strong>110 Joules</strong> !<br>
+        <strong>Conclusion :</strong> Le LoRa est roi pour les micro-messages intermittents (télémétrie) ; le Wi-Fi est imbattable sur le coût en <strong>Joules par Mégaoctet</strong> pour les flux de données denses (streaming vidéo, images, mises à jour OTA).</li>
+    </ul>
+  </div>
+
+  <hr />
+
+  <!-- ========================================================================= -->
+  <!-- CORRIGE PARTIE 4 : AUDIT POWERBANK VARTA 5000 mAh                         -->
+  <!-- ========================================================================= -->
+  <h2>Corrigé Partie 4 : Audit de la Powerbank Varta 5000 mAh &amp; Circuit Keep-Alive</h2>
+
+  <div class="teacher-answer">
+    <div class="teacher-answer-title">✅ Question 4.1 : Inscriptions réglementaires, Calcul de l'énergie en Wh et Rendement Boost</div>
+    <ul>
+      <li><strong>Inscriptions relevées sur la coque de la Varta Energy 5000 :</strong>
+        <ul>
+          <li>Cellule interne : Li-Polymère 3,7 V nominal, 5000 mAh.</li>
+          <li>Énergie stockée : $E_{\text{cell}} = 3{,}7\text{ V} \times 5{,}0\text{ Ah} = \mathbf{18{,}5\ \text{Wh}}$.</li>
+          <li>Capacité nominale délivrée sous 5,0 V annoncée : <strong>~3050 mAh</strong> (soit <code>15,25 Wh</code>).</li>
+        </ul>
+      </li>
+      <li><strong>Calcul du rendement énergétique global $\eta_{\text{boost}}$ :</strong>
+        <div class="formula-box">
+          &eta;<sub>boost</sub> = <span class="frac"><span class="num"><i>E</i><sub>sortie_5V</sub></span><span class="den"><i>E</i><sub>cellule_3.7V</sub></span></span> = <span class="frac"><span class="num">5{,}0 V &times; 3{,}05 Ah</span><span class="den">18{,}5 Wh</span></span> = <span class="frac"><span class="num">15{,}25 Wh</span><span class="den">18{,}5 Wh</span></span> &approx; <strong>82,43 %</strong>
+        </div>
+      </li>
+    </ul>
+    <p>Ce rendement d'environ <strong>82 %</strong> confirme que 18 % de l'énergie stockée est irrémédiablement dissipée sous forme de chaleur dans le hacheur Boost interne.</p>
+  </div>
+
+  <div class="teacher-answer">
+    <div class="teacher-answer-title">✅ Question 4.2 : Mesures d'Auto-Shutoff et Piège de la Coupure Automatique</div>
+    <ul>
+      <li><strong>Délai avant coupure automatique $T_{\text{timeout}}$ :</strong> Mesuré entre <strong>22 s et 28 s</strong> (typiquement <strong>25 secondes</strong> sur la série Varta Energy).</li>
+      <li><strong>Courant seuil de détection $I_{\text{seuil}}$ :</strong> Mesuré entre <strong>55 mA et 70 mA</strong>.
+        <ul>
+          <li>Avec $R = 100\ \Omega$ ($I = 50\text{ mA}$) : la Powerbank se coupe au bout de 25 secondes.</li>
+          <li>Avec $R = 68\ \Omega$ ($I \approx 73\text{ mA}$) ou deux résistances de $100\ \Omega$ en parallèle ($50\ \Omega \rightarrow 100\text{ mA}$) : la Powerbank reste allumée indéfiniment.</li>
+        </ul>
+      </li>
+    </ul>
+  </div>
+
+  <div class="teacher-answer">
+    <div class="teacher-answer-title">✅ Question 4.3 : Bilan du Circuit Keep-Alive &amp; Autonomie Maximale Plafonnée</div>
+    <p>• <strong>Surconsommation moyenne de l'impulsion Keep-Alive :</strong><br>
+    Une impulsion de $I_{\text{pulse}} = 100\text{ mA}$ pendant $t_{\text{pulse}} = 80\text{ ms}$ ($0{,}08\text{ s}$) répétée toutes les $T_{\text{rep}} = 16\text{ s}$ induit un courant moyen additionnel de :</p>
+    <div class="formula-box">
+      <i>I</i><sub>moy_ka</sub> = <span class="frac"><span class="num">100 mA &times; 0{,}08 s</span><span class="den">16 s</span></span> = <strong>0,50 mA = 500 &mu;A</strong>
+    </div>
+
+    <p>• <strong>Le vice caché du hacheur Boost maintenu allumé 24h/24 :</strong><br>
+    Pour rester prête à fournir du 5V, la puce élévatrice Boost interne de la Powerbank consomme un courant de repos à vide (<em>Quiescent Current</em>) d'environ <strong>6 à 10 mA continus</strong> sur sa cellule Li-Po !</p>
+    <p>En ajoutant le courant de veille de la carte, du circuit Keep-Alive et du régulateur Boost, la consommation minimale permanente au niveau de la cellule Li-Po est d'au moins :</p>
+    $$I_{\text{vide\_total}} \approx 8{,}5\ \text{mA}$$
+    <p>L'autonomie maximale de la Powerbank Varta 5000 mAh maintenue en veille est donc plafonnée à :</p>
+    $$T_{\text{max}} = \frac{5000\text{ mAh}}{8{,}5\text{ mA}} \approx 588\ \text{heures} \approx \mathbf{24{,}5\ \text{jours !}}$$
+    <p><strong>Verdict de l'ingénieur :</strong> Même si l'Arduino Nano et son capteur consommaient 0 µA absolu, <strong>la Powerbank Varta 5000 mAh s'autodécharge totalement en moins d'un mois</strong> à cause de son électronique interne de conversion 5V ! Une Powerbank commerciale USB est donc <strong>totalement inadaptée pour alimenter une balise autonome devant fonctionner pendant 3 ans</strong>.</p>
+  </div>
+
+  <div class="teacher-answer">
+    <div class="teacher-answer-title">✅ Code C++ de Démonstration du Keep-Alive sur Broche D5 (Arduino Nano)</div>
+<pre><code><span class="kw">const</span> <span class="dt">uint8_t</span> PIN_KEEP_ALIVE = <span class="dv">5</span>; <span class="co">// D5 : Grille MOSFET commutant R=50 Ohms (100 mA)</span>
+<span class="kw">volatile</span> <span class="dt">uint8_t</span> cycle_ka = <span class="dv">0</span>;
+
+<span class="fu">ISR</span>(WDT_vect) {
+  cycle_ka++;
+}
+
+<span class="dt">void</span> <span class="fu">loop</span>() {
+  <span class="co">// Toutes les 16 secondes (2 cycles Watchdog de 8s) :</span>
+  <span class="kw">if</span> (cycle_ka &gt;= <span class="dv">2</span>) {
+    <span class="fu">digitalWrite</span>(PIN_KEEP_ALIVE, HIGH); <span class="co">// Appel de 100 mA</span>
+    <span class="fu">delay</span>(<span class="dv">80</span>);                          <span class="co">// Impulsion de 80 ms</span>
+    <span class="fu">digitalWrite</span>(PIN_KEEP_ALIVE, LOW);  <span class="co">// Fin d'impulsion</span>
+    cycle_ka = <span class="dv">0</span>;
+  }
+
+  <span class="co">// Endort le microcontrôleur pendant 8s</span>
+  <span class="fu">dormir_profond_8s</span>();
+}</code></pre>
+  </div>
+
+  <hr />
+
+  <!-- ========================================================================= -->
+  <!-- CORRIGE PARTIE 5 : DIMENSIONNEMENT BATTERIE 3 ANS (« PROJET SENTINELLE ») -->
+  <!-- ========================================================================= -->
+  <h2>Corrigé Partie 5 : Bureau d'Études — Dimensionnement de Batterie sur 3 Ans</h2>
+
+  <div class="teacher-answer">
+    <div class="teacher-answer-title">✅ Tableau Comparatif des 4 Architectures Calculées sur 3 Ans ($T_{\text{cycle}} = 900\text{ s}$, $k_{\text{sécu}} = 0{,}70$)</div>
+    <table>
+      <thead>
+        <tr>
+          <th>Scénario étudié</th>
+          <th>$I_{\text{actif}}$ / $t_{\text{actif}}$</th>
+          <th>$I_{\text{veille}}$</th>
+          <th>$I_{\text{moy\_lissé}}$</th>
+          <th>Conso / jour</th>
+          <th>Capacité min. 3 ans ($C_{\text{bat\_min}}$)</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td><strong>Cas 1 :</strong> Prototype Nano brute + LoRa SF7</td>
+          <td>45 mA / 0,15 s</td>
+          <td><strong>5,20 mA</strong></td>
+          <td><strong>5,207 mA</strong></td>
+          <td>125,0 mAh/j</td>
+          <td><strong>195 490 mAh</strong> (195,5 Ah !)</td>
+        </tr>
+        <tr>
+          <td><strong>Cas 2A :</strong> MCU optimisé 3,3V + <strong>LoRa SF7</strong></td>
+          <td>42 mA / 0,12 s</td>
+          <td><strong>15 µA</strong></td>
+          <td><strong>20,60 µA</strong></td>
+          <td>0,494 mAh/j</td>
+          <td><strong>773 mAh</strong></td>
+        </tr>
+        <tr>
+          <td><strong>Cas 2B :</strong> MCU optimisé 3,3V + <strong>LoRa SF12</strong></td>
+          <td>42 mA / 1,35 s</td>
+          <td><strong>15 µA</strong></td>
+          <td><strong>78,00 µA</strong></td>
+          <td>1,872 mAh/j</td>
+          <td><strong>2 928 mAh</strong></td>
+        </tr>
+        <tr>
+          <td><strong>Cas 2C :</strong> MCU optimisé 3,3V + <strong>Wi-Fi</strong></td>
+          <td>112 mA / 2,40 s</td>
+          <td><strong>15 µA</strong></td>
+          <td><strong>313,6 µA</strong></td>
+          <td>7,526 mAh/j</td>
+          <td><strong>11 774 mAh</strong></td>
+        </tr>
+      </tbody>
+    </table>
+
+    <div class="pedago-note">
+      <strong>Détail de calcul type pour le Cas 2A (LoRa SF7) :</strong><br>
+      $$I_{\text{moy}} = \frac{42\text{ mA} \times 0{,}12\text{ s} + 0{,}015\text{ mA} \times 899{,}88\text{ s}}{900\text{ s}} = \frac{5{,}04 + 13{,}498}{900} = \mathbf{0{,}0206\ \text{mA}} = \mathbf{20{,}6\ \mu\text{A}}$$
+      $$C_{\text{bat\_min}} = \frac{I_{\text{moy}} \times 26\,280\text{ h}}{k_{\text{sécu}}} = \frac{0{,}0206\text{ mA} \times 26\,280\text{ h}}{0{,}70} \approx \mathbf{773\ \text{mAh}}$$
+    </div>
+  </div>
+
+  <div class="teacher-answer">
+    <div class="teacher-answer-title">✅ Choix d'Ingénieur Argumenté pour le Projet « Sentinelle »</div>
+    <p><strong>1. Choix du Protocole Radio : LoRa 868 MHz (SF7 à SF9 selon bilan de liaison) :</strong></p>
+    <ul>
+      <li><strong>Portée :</strong> Le Bluetooth est éliminé d'office ($&lt; 30\text{ m}$). Le Wi-Fi n'est pas disponible sur ce site isolé rural et nécessiterait 11 774 mAh de batterie. Le LoRa couvre sans encombre 1,8 km en champ libre périurbain avec une sensibilité de $-137\text{ dBm}$.</li>
+      <li><strong>Consommation :</strong> En SF7, la balise ne réclame que <strong>773 mAh</strong> sur 3 ans, permettant un encombrement minimal.</li>
+    </ul>
+
+    <p><strong>2. Choix de la Technologie de Batterie : Pile primaire Lithium-Chlorure de Thionyle ($\text{Li-SOCl}_2$) 3,6 V :</strong></p>
+    <ul>
+      <li><strong>Référence recommandée :</strong> <strong>1x Pile Saft LS14500 (Format AA — 3,6 V, 2600 mAh)</strong> ou <strong>Saft LS26500 (Format C — 7700 mAh)</strong> si fonctionnement permanent en SF12.</li>
+      <li><strong>Justification par rapport au cahier des charges :</strong>
+        <ol>
+          <li><strong>Autodécharge exceptionnelle :</strong> Moins de <strong>1 % par an</strong> à $20\,^\circ\text{C}$ (perte de seulement 3 % sur 3 ans, contre 15 à 20 % par an pour des accumulateurs Li-Ion 18650 rechargeables).</li>
+          <li><strong>Tenue thermique extrême :</strong> Fonctionnement certifié de <strong>$-60\,^\circ\text{C}$ à $+85\,^\circ\text{C}$</strong>. À la température minimale de consigne ($-10\,^\circ\text{C}$ en hiver), l'électrolyte ne gèle pas et la capacité disponible reste supérieure à 85 %, alors qu'un accu Li-Po standard s'effondre en dessous de 0 °C.</li>
+          <li><strong>Tension nominale idéale de 3,6 V :</strong> Permet d'alimenter directement l'électronique 3,3 V via un LDO à courant de repos négligeable (ex. <em>Microchip MCP1700</em>, $I_q = 1{,}6\ \mu\text{A}$) ou une simple diode Schottky anti-inversion ($V_F \approx 0{,}25\text{ V}$ &rarr; tension utile $\approx 3{,}35\text{ V}$, sans aucun régulateur !).</li>
+        </ol>
+      </li>
+    </ul>
+
+    <p><strong>3. Aménagement Matériel Indispensable (Condensateur Hybride / Supercapa) :</strong><br>
+    Les piles $\text{Li-SOCl}_2$ présentent un phénomène de <strong>passivation chimique</strong> de l'anode au repos et une résistance interne relativement élevée limitant le courant de décharge continu nominal à environ $50\text{ mA}$. Pour fournir les pics d'émission radio de $45\text{ à }100\text{ mA}$ sans affaissement de tension (<em>voltage dip</em>), on place en parallèle sur la pile un <strong>condensateur électrolytique à faible résistance série équivalente (Low-ESR de 1000 µF)</strong> ou un <strong>condensateur hybride (HLC de 20 à 50 mF)</strong> qui absorbe l'impulsion RF en quelques dizaines de millisecondes puis se recharge lentement à travers la pile.</p>
+  </div>
+
+  <hr />
+
+  <!-- ========================================================================= -->
+  <!-- GRILLE SOMMATIVE D'EVALUATION /20                                          -->
+  <!-- ========================================================================= -->
+  <h2>Grille d'Évaluation Sommative des Compétences BTS CIEL (Barème /20)</h2>
+
+  <table>
+    <thead>
+      <tr>
+        <th style="width: 15%;">Compétence B.O.</th>
+        <th style="width: 45%;">Critères &amp; Indicateurs d'Évaluation Détaillés</th>
+        <th style="width: 25%;">Niveau d'Acquisition Attendu</th>
+        <th style="width: 15%;">Points</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><strong>C04 — Analyser</strong></td>
+        <td>
+          • Identification des 3 composants dissipatifs de l'Arduino Nano (LED, CH340, LDO).<br>
+          • Maîtrise des registres AVR (<code>SMCR</code>, <code>WDTCSR</code> : rôle de WDIE vs WDE).<br>
+          • Démonstration physique de la conservation de l'énergie (mAh vs Wh) et du rendement du hacheur Boost Varta.<br>
+          • Explication du phénomène de rétro-alimentation (Back-Powering) sur l'UART.
+        </td>
+        <td>
+          <em>A : Diagnostic précis et calculs d'énergie exacts.<br>
+          B : 2 causes matérielles identifiées, calculs corrects.<br>
+          C : Confusions entre mAh et Wh ou registres mal maîtrisés.<br>
+          D : Aucune analyse critique.</em>
+        </td>
+        <td><strong>/ 4 pts</strong></td>
+      </tr>
+      <tr>
+        <td><strong>C05 — Concevoir</strong></td>
+        <td>
+          • Schéma structurel Proteus VSM fonctionnel avec Power Gating MOSFET.<br>
+          • Algorithme du réveil cyclique par Watchdog et extinction propre des périphériques.<br>
+          • Méthodologie rigoureuse de calcul du budget énergétique moyen et dimensionnement sur 3 ans.<br>
+          • Pertinence du choix industriel final (Radio LoRa + Pile $\text{Li-SOCl}_2$ + condo tampon).
+        </td>
+        <td>
+          <em>A : Simulation parfaite, calculs Cas 1 &amp; Cas 2 sans faute, choix optimal justifié.<br>
+          B : Simulation fonctionnelle, erreurs mineures d'unités de calcul.<br>
+          C : Power gating non fonctionnel ou dimensionnement incomplet.<br>
+          D : Absence de code ou schéma invalide.</em>
+        </td>
+        <td><strong>/ 6 pts</strong></td>
+      </tr>
+      <tr>
+        <td><strong>C06 — Valider</strong></td>
+        <td>
+          • Câblage et configuration de l'entrée différentielle AD3 (voie Math <code>I = U/R</code>, calibres 10 &Omega; et 1 &Omega;).<br>
+          • Rigueur des oscillogrammes WaveForms (curseurs temporels, mesures <i>I</i><sub>moy</sub>, <i>I</i><sub>max</sub>).<br>
+          • Précision du grand tableau comparatif (Bluetooth, Wi-Fi, LoRa SF7/SF12).<br>
+          • Application exacte de la réglementation européenne ETSI Duty Cycle 1%.
+        </td>
+        <td>
+          <em>A : Voie Math calibrée, 4 oscillogrammes nets annotés, tableau complet et exact.<br>
+          B : Mesures correctes mais oubli des curseurs ou du Duty Cycle.<br>
+          C : Confusion sur le calibre de shunt ou erreurs de voie Math.<br>
+          D : Mesures non exploitables.</em>
+        </td>
+        <td><strong>/ 5 pts</strong></td>
+      </tr>
+      <tr>
+        <td><strong>C07 / C09 — Réaliser</strong></td>
+        <td>
+          • Câblage soigné sur breadboard, raccordement propre des sondes MTE de l'AD3 et respect strict du GND commun.<br>
+          • Respect des calibres de dissipation thermique des résistances de charge.<br>
+          • Mise en œuvre et validation expérimentale du circuit <em>Keep-Alive</em> sur la Powerbank Varta.
+        </td>
+        <td>
+          <em>A : Montage propre, mesure opérationnelle, Keep-Alive validé en direct.<br>
+          B : Montage fonctionnel avec aide mineure sur paillasse.<br>
+          C : Faux contacts répétés, masses non communes.<br>
+          D : Court-circuit ou échauffement de composants.</em>
+        </td>
+        <td><strong>/ 3 pts</strong></td>
+      </tr>
+      <tr>
+        <td><strong>C01 — Communiquer</strong></td>
+        <td>
+          • Clarté et structure du rapport numérique déposé dans Google Docs (Google Classroom).<br>
+          • Qualité des captures d'écran (recadrées, lisibles, légendées).<br>
+          • Rigueur de la rédaction scientifique (formules littérales avec unités normalisées, orthographe).
+        </td>
+        <td>
+          <em>A : Rapport professionnel complet, équations propres, figures soignées.<br>
+          B : Rapport satisfaisant avec quelques manques d'illustrations.<br>
+          C : Présentation brouillonne ou tableaux incomplets.<br>
+          D : Rendu hors délai ou rapport bâclé.</em>
+        </td>
+        <td><strong>/ 2 pts</strong></td>
+      </tr>
+    </tbody>
+  </table>
+
+</body>
+</html>
