@@ -1381,6 +1381,49 @@ SoftwareSerial BT_SERIAL(A1, A0);</code></pre>
     <li>Téléversez le programme sur votre carte ESP32 Plus. Le microcontrôleur crée un service (UUID <code>4fafc201-1fb5-459e-8fcc-c5c9c331914b</code>) et une caractéristique notifiable (UUID <code>beb5483e-36e1-4688-b7f5-ea07361b26a8</code>) avec descripteur CCCD (<code>BLE2902</code>).</li>
   </ul>
 
+  <div class="callout callout-info" style="margin: 12px 0;">
+    <div class="callout-title">💡 Bonnes pratiques d'architecture BLE : Standardisation des UUID & Analogie des capteurs de santé (Cardio)</div>
+    <p><strong>Faut-il générer des UUID différents pour chaque ESP32 de la classe ? Non, c'est l'inverse !</strong><br>
+    Dans le standard Bluetooth SIG, un <strong>UUID (128 bits ou 16 bits)</strong> ne sert pas à numéroter un circuit physique, mais définit un <strong>contrat sémantique de données</strong> (un « profil métier » commun) :</p>
+    <ul>
+      <li><strong>Exemple concret des cardiofréquencemètres du commerce :</strong> Toutes les ceintures et montres cardio du marché mondial (Polar, Garmin, Apple Watch, etc.) partagent rigoureusement le même <code>SERVICE_UUID</code> officiel (<code>0x180D</code> &ndash; <em>Heart Rate Service</em>) et la même <code>CHARACTERISTIC_UUID</code> (<code>0x2A37</code> &ndash; <em>Heart Rate Measurement</em>). N'importe quelle application smartphone ou montre de sport sait ainsi dialoguer avec n'importe quelle marque de capteur sans modifier une seule ligne de code.</li>
+      <li><strong>Application en salle de TP :</strong> Tous les ESP32 de la classe partagent le même <code>SERVICE_UUID</code> et la même <code>CHARACTERISTIC_UUID</code>. Un script Python central ou un tableau de bord de supervision Node-RED peut ainsi découvrir et interroger l'ensemble des modules de la salle avec un algorithme de traitement unique.</li>
+    </ul>
+
+    <table style="margin-top: 10px; margin-bottom: 4px;">
+      <thead>
+        <tr>
+          <th style="width: 25%;">Paramètre BLE</th>
+          <th style="width: 25%;">Dans la salle de TP</th>
+          <th style="width: 50%;">Rôle & Signification technique</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td><strong><code>SERVICE_UUID</code></strong></td>
+          <td><span style="color: #0369a1; font-weight: bold;">Identique</span> pour tous</td>
+          <td>Identifie le type de service (ex. télémétrie / groupe de mesures de la classe).</td>
+        </tr>
+        <tr>
+          <td><strong><code>CHARACTERISTIC_UUID</code></strong></td>
+          <td><span style="color: #0369a1; font-weight: bold;">Identique</span> pour tous</td>
+          <td>Identifie la donnée transmise (ex. la mesure ou le compteur incrémenté).</td>
+        </tr>
+        <tr>
+          <td><strong>Nom d'annonce (<code>BLEDevice::init</code>)</strong></td>
+          <td><span style="color: #b45309; font-weight: bold;">Différent</span> (<code>ESP32_B1</code>, <code>ESP32_B2</code>...)</td>
+          <td>Permet aux binômes de repérer visuellement leur carte lors du scan sur PC ou smartphone.</td>
+        </tr>
+        <tr>
+          <td><strong>Adresse MAC (BT Address)</strong></td>
+          <td><span style="color: #15803d; font-weight: bold;">Unique</span> par carte (matériel)</td>
+          <td>Identifiant réseau physique 48 bits gravé en usine, utilisé par la couche radio.</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+
   <h4>7.2. Analyse du balisage publicitaire (Advertisement Monitor) :</h4>
   <p>Lancez l'application officielle Microsoft <strong>Bluetooth LE Explorer</strong> (disponible sur le Microsoft Store) et sélectionnez l'onglet <strong>Advertisement Monitor</strong> :</p>
 
@@ -2095,6 +2138,7 @@ asyncio.run(main())</code></pre>
     <li><strong>GAP (Generic Access Profile) :</strong> Rôles de <em>Broadcaster</em> (Diffuseur), <em>Observer</em> (Observateur), <em>Peripheral</em> (Périphérique) et <em>Central</em> (Central). Quel rôle a été attribué à l'ESP32 et quel rôle a été attribué au PC Windows lors de l'étape 7 ?</li>
     <li><strong>GATT (Generic Attribute Profile) :</strong> Définissez la hiérarchie entre <em>Profil</em>, <em>Service</em> et <em>Caractéristique</em>. Pourquoi utilise-t-on des identifiants <strong>UUID</strong> sur 128 bits pour les services personnalisés, alors que les services standards (ex: Generic Access 0x1800) n'utilisent que 16 bits ?</li>
     <li><strong>Modes de transfert GATT :</strong> Quelle est la différence fondamentale entre une lecture par scrutation (<code>READ / POLL</code>) et un mécanisme d'alerte événementiel par <strong><code>NOTIFICATION</code></strong> ? En quoi la notification est-elle plus économe en énergie pour un capteur sur batterie ?</li>
+    <li><strong>Standardisation des UUIDs (Analogie capteurs de santé / cardio) :</strong> En vous appuyant sur l'exemple des cardiofréquencemètres (Service officiel <code>0x180D</code>, Caractéristique <code>0x2A37</code>), justifiez l'intérêt d'utiliser un <code>SERVICE_UUID</code> et une <code>CHARACTERISTIC_UUID</code> identiques pour tous les ESP32 de la salle, et expliquez comment le récepteur (PC/Central) différencie physiquement chaque module.</li>
   </ul>
   <div class="dotted-line"></div>
   <div class="dotted-line"></div>
