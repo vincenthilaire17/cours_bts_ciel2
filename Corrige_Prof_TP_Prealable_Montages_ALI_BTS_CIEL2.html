@@ -1,0 +1,260 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="utf-8" />
+  <meta name="generator" content="BTS CIEL - Vincent Hilaire" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes" />
+  <title>CORRIGÉ ENSEIGNANT (STI) — TP Préalable (1h30) Découverte des Montages à ALI - BTS CIEL 2</title>
+
+  <style>
+    @page { margin: 1.5cm; size: A4; }
+    html { color: #1a1a1a; background-color: #fdfdfd; }
+    body {
+      font-family: 'Segoe UI', -apple-system, BlinkMacSystemFont, Roboto, Helvetica, Arial, sans-serif;
+      line-height: 1.55;
+      color: #1a1a1a;
+      max-width: 960px;
+      margin: 0 auto;
+      padding: 25px 30px;
+    }
+    @media print {
+      html { background-color: white; }
+      body { background-color: transparent; color: black; font-size: 9.8pt; max-width: 100%; padding: 0; }
+      table, .teacher-answer, .callout { page-break-inside: avoid; }
+    }
+    header {
+      margin-bottom: 2em;
+      text-align: center;
+      border-bottom: 3px solid #b91c1c;
+      padding-bottom: 14px;
+    }
+    .meta-badge {
+      display: inline-block;
+      background: #e1ecf4;
+      color: #0b3c5d;
+      font-size: 0.84em;
+      font-weight: 600;
+      padding: 4px 10px;
+      border-radius: 20px;
+      margin: 3px 4px;
+      border: 1px solid #7aa7c7;
+    }
+    .badge-danger { background: #b91c1c; color: #ffffff; border: 1px solid #991b1b; font-weight: 700; }
+    .badge-primary { background: #0b3c5d; color: #ffffff; border: 1px solid #0b3c5d; }
+    .badge-purple { background: #f3e8ff; color: #6b21a8; border: 1px solid #d8b4fe; }
+    .badge-warning { background: #fef3c7; color: #92400e; border: 1px solid #fcd34d; }
+    .badge-orange { background: #ffedd5; color: #c2410c; border: 1px solid #fdba74; }
+    h1, h2, h3 { color: #0b3c5d; font-weight: 700; }
+    h1 { font-size: 17.5pt; margin: 0.5em 0 0.35em 0; line-height: 1.25; }
+    h2 { font-size: 13.5pt; margin-top: 24px; border-bottom: 1.5px solid #d0d7de; padding-bottom: 5px; }
+    table { border-collapse: collapse; width: 100%; margin: 12px 0; font-size: 9pt; background: #fff; }
+    th, td { border: 1px solid #d0d7de; padding: 7px 9px; text-align: left; vertical-align: middle; }
+    th { background: #f0f4f8; color: #0b3c5d; font-weight: 700; }
+    tr:nth-child(even) { background: #f8fafc; }
+    code { background: #eff1f3; padding: 2px 5px; border-radius: 4px; font-size: 88%; font-family: Consolas, monospace; color: #0969da; }
+    .callout { border-radius: 6px; padding: 12px 16px; margin: 15px 0; font-size: 9.3pt; border-left: 5px solid; }
+    .callout-danger { background: #fef2f2; border-color: #ef4444; color: #7f1d1d; }
+    .callout-title { font-weight: 700; margin-bottom: 5px; font-size: 10pt; }
+    .teacher-answer {
+      background-color: #ecfdf5;
+      border: 1.5px solid #10b981;
+      border-radius: 6px;
+      padding: 13px 17px;
+      margin: 14px 0 20px 0;
+      color: #064e3b;
+      font-size: 9.3pt;
+    }
+    .teacher-answer-title { font-weight: 700; font-size: 10pt; color: #047857; margin-bottom: 8px; }
+  </style>
+</head>
+<body>
+
+<header>
+  <div style="text-transform: uppercase; font-size: 0.88em; font-weight: 700; letter-spacing: 1px; color: #b91c1c; margin-bottom: 4px;">
+    BTS CIEL — 2<sup>e</sup> Année • Enseignement Technologique (STI) • DOCUMENT PROFESSEUR
+  </div>
+  <h1>CORRIGÉ ENSEIGNANT — TP Préalable (1h30) : Découverte des Montages Fondamentaux à ALI (Proteus, TI myParts Kit &amp; Digilent AD3)</h1>
+  <div>
+    <span class="meta-badge badge-danger">🔒 CORRIGÉ PROFESSEUR</span>
+    <span class="meta-badge badge-purple">💻 Proteus OpAmp (1) à (6)</span>
+    <span class="meta-badge badge-warning">🧰 TI Analog myParts Kit</span>
+    <span class="meta-badge badge-orange">🔬 Digilent AD3</span>
+    <span class="meta-badge badge-primary">⏱ 1h30 • Barème /20</span>
+  </div>
+</header>
+
+<div class="callout callout-danger">
+  <div class="callout-title">🎓 Points de Vigilance Rapides en Séance (1h30)</div>
+  <ol style="margin: 4px 0;">
+    <li><strong>Emplacement des fichiers exemples dans Proteus 8 :</strong> <em>File &rarr; Open Sample Project &rarr; Interactive Simulation &rarr; Animated Circuits &rarr; OpAmps</em> (fichiers <code>OpAmp01</code> à <code>OpAmp06</code>).</li>
+    <li><strong>Brochage DIP-8 selon la puce choisie dans la mallette TI :</strong> Avec un <code>LM741CN</code> ou un <code>LF356N</code> (1 ALI), <code>+5 V</code> est en <strong>broche 7</strong> et <code>OUT</code> en <strong>broche 6</strong>. Si un binôme prend un <code>TL072CP</code> (2 ALI), <code>+5 V</code> est en <strong>broche 8</strong> et <code>1OUT</code> en <strong>broche 1</strong> (voir les brochages comparés de la Figure 2).</li>
+    <li><strong>Sens du potentiomètre 3 pattes (<code>104</code> = 100 k&Omega; ou <code>103</code> = 10 k&Omega;) :</strong> Utiliser impérativement la <strong>patte centrale [2] (curseur)</strong> et l'une des deux pattes d'extrémité ([1] ou [3]). Si l'étudiant branche les deux pattes extrêmes [1] et [3], la résistance reste bloquée à 100 k&Omega; quelle que soit la rotation du tournevis !</li>
+  </ol>
+</div>
+
+<h2>Corrigé Partie 1 : Potentiels Électriques &amp; Comparaison des 6 Montages Proteus</h2>
+
+<div class="teacher-answer">
+  <div class="teacher-answer-title">✅ Corrigé Q1.1, Q1.2 &amp; Q1.3 — Placement des Potentiels (P1 à P6)</div>
+  <ul>
+    <li><strong>Q1.1 (1) — Potentiels des rails <code>B1 / B2</code> :</strong> Le point milieu entre les deux batteries de 12 V étant relié à la masse, on obtient une alimentation symétrique : <strong><code>P1 = +12 V</code></strong> (rail supérieur), <strong><code>P2 = 0 V</code></strong> (masse centrale), <strong><code>P3 = &minus;12 V</code></strong> (rail inférieur).</li>
+    <li><strong>Q1.1 (2) — Montage (1) Comparateur :</strong> La sortie ne prend que deux valeurs extrêmes : <strong><code>+12 V</code></strong> (si V<sub>+</sub> &gt; V<sub>&minus;</sub>) ou <strong><code>&minus;12 V</code></strong> (si V<sub>+</sub> &lt; V<sub>&minus;</sub>). Lorsque la sortie est à <code>+12 V</code> :
+      <ul>
+        <li>la <strong>lampe du haut</strong> est branchée entre <code>+12 V</code> (rail haut) et <code>+12 V</code> (sortie) &rarr; différence de potentiel = <strong><code>0 V</code> (éteinte)</strong> ;</li>
+        <li>la <strong>lampe du bas</strong> est branchée entre <code>+12 V</code> (sortie) et <code>&minus;12 V</code> (rail bas) &rarr; elle reçoit <strong><code>24 V</code> (allumée)</strong> !</li>
+      </ul>
+    </li>
+    <li><strong>Q1.1 (3) — Montage (2) Boucle ouverte en mV :</strong> Les résistances talons <code>99,5 k&Omega;</code> encadrant <code>RV1 = 1 k&Omega;</code> forment un diviseur par 200 sur les 24 V totaux (<code>24 V &times; 1 k&Omega; / 200 k&Omega; = 0,12 V = 120 mV</code> centrés sur 0 V) : on relève donc <strong><code>P4 = +60 mV</code></strong> en haut de <code>RV1</code> et <strong><code>P5 = &minus;60 mV</code></strong> en bas de <code>RV1</code>. Sur un vrai ALI du commerce (gain &times;100 000), un écart d'à peine <code>0,12 mV</code> suffit à le saturer à &pm;12 V : il transformerait n'importe quel son en signal carré saturé !</li>
+    <li><strong>Q1.2 (1) — Montage (3) Suiveur (pour V<sub>+</sub> = +5,0 V) :</strong> Sortie = <strong><code>+5,0 V</code></strong> et potentiel sondé sur <code>IN&minus;</code> : <strong><code>P6 = +5,0 V</code></strong>. Grâce à la contre-réaction sur l'entrée <code>&minus;</code>, l'ALI ajuste automatiquement sa sortie pour maintenir en permanence <strong><code>V&minus; = V+</code></strong> !</li>
+    <li><strong>Q1.2 (2) — Montage (4) Non-Inverseur (&times;4) :</strong> Avec trois résistances égales de <code>1 k&Omega;</code> entre +12 V et &minus;12 V (24 V divisés en 3 parts de 8 V), on a <strong><code>P4 = +4,0 V</code></strong> et <strong><code>P5 = &minus;4,0 V</code></strong> : cela évite de dépasser trop vite les rails &pm;12 V avec un gain de &times;4 (car <code>3 V &times; 4 = 12 V</code>). Pour <code>V+ = +2,0 V</code> : Sortie = <strong><code>+8,0 V</code></strong>, et la sonde entre <code>R1 (3 k&Omega;)</code> et <code>R2 (1 k&Omega;)</code> affiche <strong><code>V&minus; = +2,0 V = V+</code></strong> !</li>
+    <li><strong>Q1.3 (1) — Montages (5) et (6) Inverseurs (Masse virtuelle) :</strong> L'entrée <code>IN+</code> est reliée à la masse donc <strong><code>V+ = 0 V</code></strong>. Pour <code>V_entrée = +2,0 V</code> sur le Montage (6), la sortie vaut <strong><code>&minus;6,0 V</code></strong>, et la sonde placée sur <code>IN&minus;</code> indique <strong><code>P6 = 0,0 V</code></strong> ! On l'appelle <strong>« masse virtuelle »</strong> car la contre-réaction maintient ce point exactement à <code>0 V</code> (comme `V+`) sans qu'aucun fil ne le relie physiquement à la masse.</li>
+  </ul>
+</div>
+
+<div class="teacher-answer">
+  <div class="teacher-answer-title">✅ Corrigé Tableau Comparatif Général T1 (6 Montages Proteus)</div>
+  <table>
+    <thead>
+      <tr>
+        <th>Montage Proteus</th>
+        <th>Retour &rarr; IN&minus; ?</th>
+        <th>Broche d'entrée</th>
+        <th>Gain / Comportement mesuré</th>
+        <th>Signe Sortie vs Entrée</th>
+        <th>Exemple concret dans la vraie vie</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><strong>(1) Comparateur</strong></td>
+        <td><strong>Non</strong></td>
+        <td><code>IN+</code> et <code>IN&minus;</code></td>
+        <td>Bascule saturée (<code>+12 V</code> ou <code>&minus;12 V</code>)</td>
+        <td>Signe de (V<sub>+</sub> &minus; V<sub>&minus;</sub>)</td>
+        <td>Thermostat électronique, allumage crépusculaire, alerte seuil batterie</td>
+      </tr>
+      <tr>
+        <td><strong>(2) Boucle ouverte</strong></td>
+        <td><strong>Non</strong></td>
+        <td><code>IN+</code> et <code>IN&minus;</code></td>
+        <td>&times;100 (démo) / &times;100 000 (réel)</td>
+        <td>Signe de (V<sub>+</sub> &minus; V<sub>&minus;</sub>)</td>
+        <td>Détection d'infimes déséquilibres sur pont de capteurs (inutilisable seul en audio)</td>
+      </tr>
+      <tr>
+        <td><strong>(3) Suiveur</strong></td>
+        <td><strong>Oui</strong> (direct)</td>
+        <td><code>IN+</code></td>
+        <td><strong>Gain = +1</strong> (<code>V_S = V_E</code>)</td>
+        <td>Même signe (en phase)</td>
+        <td>Adaptateur d'impédance (« Buffer ») derrière sonde pH, micro piézo ou pont batterie</td>
+      </tr>
+      <tr>
+        <td><strong>(4) Non-Inverseur</strong></td>
+        <td><strong>Oui</strong> (pont R1/R2)</td>
+        <td><code>IN+</code></td>
+        <td><strong>Gain = +4</strong> (<code>1 + R1/R2</code>)</td>
+        <td>Même signe (en phase)</td>
+        <td>Préamplification d'un capteur analogique (ex. sonde température LM35) vers ADC 3,3 V</td>
+      </tr>
+      <tr>
+        <td><strong>(5) Inverseur (&minus;1)</strong></td>
+        <td><strong>Oui</strong> (R2 = R1)</td>
+        <td><code>IN&minus;</code> (via R1)</td>
+        <td><strong>Gain = &minus;1</strong> (<code>V_S = &minus;V_E</code>)</td>
+        <td><strong>Signe opposé (180°)</strong></td>
+        <td>Création de l'onde « anti-bruit » opposée dans un casque à réduction active de bruit (ANC)</td>
+      </tr>
+      <tr>
+        <td><strong>(6) Ampli Inverseur</strong></td>
+        <td><strong>Oui</strong> (R2 = 3&times;R1)</td>
+        <td><code>IN&minus;</code> (via R1)</td>
+        <td><strong>Gain = &minus;3</strong> (<code>&minus;R2/R1</code>)</td>
+        <td><strong>Signe opposé (180°)</strong></td>
+        <td>Préampli à gain fixe sur carte d'acquisition industrielle ou sommateur de pistes audio</td>
+      </tr>
+    </tbody>
+  </table>
+</div>
+
+<h2>Corrigé Parties 2 &amp; 3 : Broches d'Alimentation Cachées &amp; Campagne Réelle AD3</h2>
+
+<div class="teacher-answer">
+  <div class="teacher-answer-title">✅ Corrigé Q2.1 — Broches d'alimentation et mise sous tension AD3</div>
+  <ol>
+    <li>Le symbole Proteus ne montre que <strong>3 connexions</strong> (`IN+`, `IN−`, `OUT`) et omet les <strong>2 broches d'alimentation symétrique (`V+` et `V−`)</strong>. Sur un boîtier DIP-8 réel :
+      <ul>
+        <li><strong><code>LM741CN</code> ou <code>LF356N</code> :</strong> <code>+5 V</code> en <strong>broche 7</strong> et <code>&minus;5 V</code> en <strong>broche 4</strong> (sortie en broche 6).</li>
+        <li><strong><code>TL072CP</code> :</strong> <code>+5 V</code> en <strong>broche 8</strong> et <code>&minus;5 V</code> en <strong>broche 4</strong> (sortie 1 en broche 1).</li>
+      </ul>
+    </li>
+    <li>Lorsque `Supplies` est sur **OFF**, la sortie reste quasiment plate à **0 V** (l'ALI n'a aucune énergie pour amplifier, seul un minuscule résidu de quelques millivolts traverse passivement les résistances). Dès que `Supplies` passe sur **ON**, la sinusoïde amplifiée apparaît instantanément. Couleurs AD3 : **Fil Rouge (`V+`) = `+5 V`**, **Fil Blanc (`V−`) = `−5 V`**, **Fils Noirs (`↓`) = `0 V (GND)`**.</li>
+  </ol>
+</div>
+
+<div class="teacher-answer">
+  <div class="teacher-answer-title">✅ Corrigé Tableau T2 &amp; Analyse Q3.1 — Campagne Réelle sur Montage Inverseur (V_E = 1,0 Vpp à 1 kHz, Alim &pm;5 V)</div>
+  <table>
+    <thead>
+      <tr>
+        <th>Réglage du Potentiomètre <i>R</i><sub>V</sub></th>
+        <th>Gain Théorique</th>
+        <th>Entrée <i>V</i><sub>E,pp</sub></th>
+        <th>Sortie <i>V</i><sub>S,pp</sub> Typique Mesurée</th>
+        <th>Gain Réel (|<i>A</i><sub>v</sub>|)</th>
+        <th>Forme du Signal &amp; Phase au Scope</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><strong>1. Butée min (~0 k&Omega;)</strong></td>
+        <td>0</td>
+        <td>1,0 V<sub>pp</sub></td>
+        <td><strong>~0,00 à 0,02 V<sub>pp</sub></strong></td>
+        <td><strong>~0</strong></td>
+        <td>Trace plate à 0 V</td>
+      </tr>
+      <tr>
+        <td><strong>2. <i>R</i><sub>V</sub> = 10 k&Omega;</strong> (Montage 5)</td>
+        <td>&minus;1</td>
+        <td>1,0 V<sub>pp</sub></td>
+        <td><strong>~0,98 à 1,02 V<sub>pp</sub></strong></td>
+        <td><strong>~1,0</strong></td>
+        <td>Sinusoïde propre, <strong>opposée de 180°</strong></td>
+      </tr>
+      <tr>
+        <td><strong>3. <i>R</i><sub>V</sub> = 30 k&Omega;</strong> (Montage 6)</td>
+        <td>&minus;3</td>
+        <td>1,0 V<sub>pp</sub></td>
+        <td><strong>~2,9 à 3,1 V<sub>pp</sub></strong></td>
+        <td><strong>~3,0</strong></td>
+        <td>Sinusoïde propre, <strong>opposée de 180°</strong></td>
+      </tr>
+      <tr>
+        <td><strong>4. Mi-course (50 k&Omega;)</strong></td>
+        <td>&minus;5</td>
+        <td>1,0 V<sub>pp</sub></td>
+        <td><strong>~4,9 à 5,1 V<sub>pp</sub></strong></td>
+        <td><strong>~5,0</strong></td>
+        <td>Sinusoïde propre (&pm;2,5 V crête), <strong>opposée de 180°</strong></td>
+      </tr>
+      <tr>
+        <td><strong>5. Butée max (100 k&Omega;)</strong></td>
+        <td>&minus;10 (10 V<sub>pp</sub> th.)</td>
+        <td>1,0 V<sub>pp</sub></td>
+        <td><strong>~6,4 à 7,5 V<sub>pp</sub> (plafonné !)</strong></td>
+        <td>Limité (~6,8)</td>
+        <td><strong>Signal écrêté (aplati)</strong> vers &pm;3,2 V à &pm;3,7 V !</td>
+      </tr>
+    </tbody>
+  </table>
+  <p><strong>Réponses attendues Q3.1 :</strong></p>
+  <ol>
+    <li><strong>Opposition de phase visuelle :</strong> Lorsque la courbe orange d'entrée (`C1`) atteint son **sommet positif** (`+0,5 V`), la courbe bleue de sortie (`C2`) est simultanément à son **creux négatif** (`-1,5 V` au Point 3), et inversement.</li>
+    <li><strong>Saturation au Point 5 :</strong> Un ALI ne peut jamais délivrer une tension supérieure à son alimentation (`+5 V / -5 V`). De plus, un `LM741CN` ou `TL072CP` n'étant pas *Rail-to-Rail*, ses transistors internes perdent ~1,3 V à 1,8 V de tension de déchet : la sortie plafonne donc vers **+3,4 V et −3,4 V** (soit ~6,8 V<sub>pp</sub> au lieu des 10 V<sub>pp</sub> théoriques).</li>
+    <li><strong>Vérification réelle de la masse virtuelle sur la broche 2 (`IN−`) :</strong> Au Point 3 (non saturé), la trace mesurée sur la broche 2 est **quasiment plate à 0 V (`< 5 mVpp`)** : la masse virtuelle existe réellement ! En revanche, au Point 5 (saturé), dès que la sortie plafonne et ne peut plus compenser le courant d'entrée, **la masse virtuelle disparaît pendant les paliers de saturation** et de petits pics apparaissent sur la broche 2.</li>
+  </ol>
+</div>
+
+</body>
+</html>

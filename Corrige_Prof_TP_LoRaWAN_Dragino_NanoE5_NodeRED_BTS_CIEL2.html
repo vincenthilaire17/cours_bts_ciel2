@@ -1,0 +1,668 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="utf-8" />
+  <meta name="generator" content="BTS CIEL - Vincent Hilaire" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes" />
+  <title>CORRIGÉ ENSEIGNANT (STI) — TP (3h) Liaison LoRaWAN : Dragino LPS8v3, Arduino Nano + Grove LoRa-E5, Node-RED &amp; AD3 - BTS CIEL 2</title>
+  <style>
+@page {
+      margin: 1.5cm;
+      size: A4;
+    }
+
+    html {
+      color: #1a1a1a;
+      background-color: #fdfdfd;
+      -webkit-text-size-adjust: 100%;
+    }
+
+    body {
+      font-family: 'Segoe UI', -apple-system, BlinkMacSystemFont, Roboto, Helvetica, Arial, sans-serif;
+      line-height: 1.55;
+      color: #1a1a1a;
+      max-width: 960px;
+      margin: 0 auto;
+      padding: 25px 30px;
+      hyphens: auto;
+      overflow-wrap: break-word;
+      text-rendering: optimizeLegibility;
+      font-kerning: normal;
+    }
+
+    @media (max-width: 768px) {
+      body {
+        font-size: 0.95em;
+        padding: 15px;
+      }
+      h1 {
+        font-size: 1.5em !important;
+      }
+      .montage-grid {
+        grid-template-columns: 1fr !important;
+      }
+    }
+
+    @media print {
+      html { background-color: white; }
+      body { background-color: transparent; color: black; font-size: 9.8pt; max-width: 100%; padding: 0; }
+      p, h2, h3 { orphans: 3; widows: 3; }
+      h2, h3, h4 { page-break-after: avoid; }
+      pre, blockquote, table, .figure-box, .student-response, .callout, .montage-card { page-break-inside: avoid; }
+      .no-print { display: none !important; }
+      .step-box { border: 1px solid #94a3b8 !important; box-shadow: none !important; }
+    }
+
+    header {
+      margin-bottom: 2em;
+      text-align: center;
+      border-bottom: 3px solid #0b3c5d;
+      padding-bottom: 16px;
+    }
+
+    .meta-badge {
+      display: inline-block;
+      background: #e1ecf4;
+      color: #0b3c5d;
+      font-size: 0.84em;
+      font-weight: 600;
+      padding: 4px 10px;
+      border-radius: 20px;
+      margin: 3px 4px;
+      border: 1px solid #7aa7c7;
+    }
+
+    .badge-primary { background: #0b3c5d; color: #ffffff; border: 1px solid #0b3c5d; }
+    .badge-alert { background: #fee2e2; color: #991b1b; border: 1px solid #f87171; }
+    .badge-success { background: #dcfce7; color: #166534; border: 1px solid #86efac; }
+    .badge-warning { background: #fef3c7; color: #92400e; border: 1px solid #fcd34d; }
+    .badge-purple { background: #f3e8ff; color: #6b21a8; border: 1px solid #d8b4fe; }
+    .badge-orange { background: #ffedd5; color: #c2410c; border: 1px solid #fdba74; }
+
+    h1, h2, h3, h4 {
+      color: #0b3c5d;
+      font-weight: 700;
+    }
+
+    h1 {
+      font-size: 18.5pt;
+      margin-top: 0.55em;
+      margin-bottom: 0.35em;
+      letter-spacing: -0.4px;
+      line-height: 1.25;
+    }
+
+    h2 {
+      font-size: 14pt;
+      margin-top: 28px;
+      margin-bottom: 12px;
+      border-bottom: 1.5px solid #d0d7de;
+      padding-bottom: 6px;
+    }
+
+    h3 {
+      font-size: 11.5pt;
+      margin-top: 20px;
+      margin-bottom: 8px;
+      border-left: 4.5px solid #328cc1;
+      padding-left: 10px;
+    }
+
+    h4 {
+      font-size: 10.5pt;
+      margin-top: 15px;
+      margin-bottom: 6px;
+      color: #1d5f8a;
+    }
+
+    p {
+      margin: 0.75em 0;
+    }
+
+    ul, ol {
+      padding-left: 1.6em;
+      margin: 0.75em 0;
+    }
+
+    li {
+      margin-bottom: 0.35em;
+    }
+
+    hr {
+      border: 0;
+      border-top: 1px solid #d0d7de;
+      margin: 26px 0;
+    }
+
+    table {
+      border-collapse: collapse;
+      width: 100%;
+      margin: 14px 0;
+      font-size: 9.1pt;
+      background-color: #ffffff;
+      box-shadow: 0 1px 3px rgba(0,0,0,0.05);
+    }
+
+    th, td {
+      border: 1px solid #d0d7de;
+      padding: 7px 10px;
+      text-align: left;
+      vertical-align: middle;
+    }
+
+    th {
+      background-color: #f0f4f8;
+      color: #0b3c5d;
+      font-weight: 700;
+    }
+
+    tr:nth-child(even) {
+      background-color: #f8fafc;
+    }
+
+    code {
+      background-color: #eff1f3;
+      padding: 2px 5px;
+      border-radius: 4px;
+      font-size: 88%;
+      font-family: Consolas, 'Courier New', Monaco, monospace;
+      color: #0969da;
+    }
+
+    .callout {
+      border-radius: 6px;
+      padding: 13px 17px;
+      margin: 16px 0;
+      font-size: 9.4pt;
+      border-left: 5px solid;
+    }
+
+    .callout-info {
+      background-color: #f0f7fc;
+      border-color: #328cc1;
+      color: #1a446c;
+    }
+
+    .callout-warning {
+      background-color: #fffbeb;
+      border-color: #f59e0b;
+      color: #78350f;
+    }
+
+    .callout-danger {
+      background-color: #fef2f2;
+      border-color: #ef4444;
+      color: #7f1d1d;
+    }
+
+    .callout-success {
+      background-color: #f0fdf4;
+      border-color: #22c55e;
+      color: #14532d;
+    }
+
+    .callout-classroom {
+      background-color: #f5f3ff;
+      border-color: #7c3aed;
+      color: #3b0764;
+    }
+
+    .callout-title {
+      font-weight: 700;
+      margin-bottom: 6px;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      font-size: 10pt;
+    }
+
+    .step-box {
+      background-color: #ffffff;
+      border: 1px solid #cbd5e1;
+      border-radius: 8px;
+      padding: 18px 22px;
+      margin: 22px 0;
+      box-shadow: 0 2px 5px rgba(0,0,0,0.04);
+    }
+
+    .step-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 8px;
+      border-bottom: 2px solid #e2e8f0;
+      padding-bottom: 8px;
+      margin-bottom: 14px;
+    }
+
+    .step-title {
+      font-size: 12pt;
+      font-weight: 700;
+      color: #0b3c5d;
+      margin: 0;
+    }
+
+    .timing-badge {
+      background: #0b3c5d;
+      color: #ffffff;
+      font-size: 0.82em;
+      font-weight: 700;
+      padding: 3px 10px;
+      border-radius: 14px;
+      white-space: nowrap;
+    }
+
+    /* Grille et Cartes des 6 Montages Proteus */
+    .montage-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 16px;
+      margin: 16px 0;
+    }
+
+    .montage-card {
+      background: #ffffff;
+      border: 1.5px solid #cbd5e1;
+      border-radius: 8px;
+      overflow: hidden;
+      display: flex;
+      flex-direction: column;
+      box-shadow: 0 2px 4px rgba(0,0,0,0.04);
+    }
+
+    .montage-card-header {
+      background: #0b3c5d;
+      color: #ffffff;
+      padding: 8px 12px;
+      font-size: 9.6pt;
+      font-weight: 700;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .montage-badge {
+      background: #38bdf8;
+      color: #0f172a;
+      font-size: 7.8pt;
+      font-weight: 700;
+      padding: 2px 8px;
+      border-radius: 10px;
+    }
+
+    .montage-img-wrap {
+      background: #0f172a;
+      padding: 8px;
+      text-align: center;
+      border-bottom: 1px solid #cbd5e1;
+    }
+
+    .montage-img-wrap img {
+      width: 100%;
+      height: auto;
+      display: block;
+      border-radius: 4px;
+    }
+
+    .montage-body {
+      padding: 10px 13px;
+      font-size: 8.9pt;
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      gap: 8px;
+    }
+
+    .proteus-trans {
+      background: #f8fafc;
+      border-left: 3px solid #64748b;
+      padding: 6px 9px;
+      font-size: 8.5pt;
+      color: #334155;
+      border-radius: 0 4px 4px 0;
+    }
+
+    .reallife-box {
+      background: #ecfdf5;
+      border: 1px solid #86efac;
+      border-left: 4px solid #16a34a;
+      border-radius: 5px;
+      padding: 8px 10px;
+      color: #14532d;
+      font-size: 8.7pt;
+    }
+
+    .reallife-title {
+      font-weight: 700;
+      color: #15803d;
+      margin-bottom: 3px;
+      display: block;
+    }
+
+    .figure-box {
+      background: #f8fafc;
+      border: 1px solid #cbd5e1;
+      border-radius: 8px;
+      padding: 14px;
+      margin: 18px 0;
+      text-align: center;
+    }
+
+    .figure-caption {
+      font-size: 8.8pt;
+      color: #475569;
+      font-style: italic;
+      margin-top: 8px;
+      font-weight: 600;
+    }
+
+    .svg-container {
+      width: 100%;
+      overflow-x: auto;
+    }
+
+    .formula-box {
+      background: #f8fafc;
+      border: 1px solid #cbd5e1;
+      border-left: 4px solid #0b3c5d;
+      border-radius: 5px;
+      padding: 9px 14px;
+      margin: 10px 0;
+      font-family: 'Segoe UI', sans-serif;
+      font-size: 9.8pt;
+      text-align: center;
+    }
+
+    .frac {
+      display: inline-block;
+      vertical-align: middle;
+      text-align: center;
+      margin: 0 3px;
+    }
+
+    .frac > span {
+      display: block;
+      padding: 1px 5px;
+    }
+
+    .frac span.num {
+      border-bottom: 1.4px solid #1a1a1a;
+    }
+
+    .student-response {
+      background: #fffdf5;
+      border: 1.5px dashed #d97706;
+      border-radius: 6px;
+      padding: 13px 16px;
+      margin: 14px 0;
+      color: #78350f;
+      position: relative;
+    }
+
+    .docs-tag {
+      display: inline-block;
+      background: #2563eb;
+      color: #ffffff;
+      font-size: 0.78em;
+      font-weight: 700;
+      padding: 2px 8px;
+      border-radius: 4px;
+      margin-right: 6px;
+      text-transform: uppercase;
+      letter-spacing: 0.4px;
+    }
+
+    .capture-box {
+      background: #eff6ff;
+      border: 1.5px solid #60a5fa;
+      border-radius: 6px;
+      padding: 10px 14px;
+      margin: 12px 0;
+      color: #1e3a8a;
+      font-size: 9.1pt;
+    }
+
+    .btn-copy-docs {
+      background-color: #1a73e8;
+      color: #ffffff;
+      border: none;
+      border-radius: 6px;
+      padding: 9px 16px;
+      font-size: 9.5pt;
+      font-weight: 700;
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      gap: 7px;
+      box-shadow: 0 2px 4px rgba(26,115,232,0.25);
+      transition: background-color 0.15s ease;
+    }
+
+    .btn-copy-docs:hover {
+      background-color: #1557b0;
+    }
+
+    .btn-copy-small {
+      background-color: #e8f0fe;
+      color: #1967d2;
+      border: 1px solid #aecbfa;
+      border-radius: 4px;
+      padding: 3px 9px;
+      font-size: 8pt;
+      font-weight: 600;
+      cursor: pointer;
+      float: right;
+    }
+
+    .btn-copy-small:hover {
+      background-color: #d2e3fc;
+    }
+
+    .checklist-grid {
+      list-style: none;
+      padding-left: 0;
+    }
+
+    .checklist-grid li {
+      padding: 6px 10px;
+      margin-bottom: 5px;
+      background: #ffffff;
+      border: 1px solid #cbd5e1;
+      border-radius: 5px;
+      display: flex;
+      align-items: flex-start;
+      gap: 8px;
+    }
+    pre.code { background:#0f172a; color:#e2e8f0; border-radius:6px; padding:10px 12px; font-family:Consolas,monospace; font-size:8.2pt; overflow-x:auto; white-space:pre; }
+    @media print { pre.code { white-space: pre-wrap; } }
+  </style>
+</head>
+<body>
+
+<header id="title-block-header">
+  <div style="text-transform: uppercase; font-size: 0.9em; font-weight: 700; letter-spacing: 1px; color: #b91c1c; margin-bottom: 4px;">
+    BTS CIEL — 2<sup>e</sup> Année • Technologie STI • DOCUMENT PROFESSEUR
+  </div>
+  <h1 class="title">CORRIGÉ ENSEIGNANT &amp; GUIDE DE SÉANCE — TP (3h) Liaison LoRaWAN : passerelle Dragino LPS8v3, Arduino Nano + Grove LoRa-E5, Node-RED &amp; AD3</h1>
+  <div style="margin-top: 10px;">
+    <span class="meta-badge badge-danger">🔒 CORRIGÉ PROFESSEUR (CONFIDENTIEL)</span>
+    <span class="meta-badge badge-purple">📡 LoRaWAN EU868</span>
+    <span class="meta-badge badge-warning">🧰 Nano + Grove LoRa-E5</span>
+    <span class="meta-badge badge-orange">🔬 Digilent AD3</span>
+    <span class="meta-badge badge-primary">⏱ 3h00 • Barème /20</span>
+  </div>
+</header>
+
+<div class="callout callout-info">
+  <div class="callout-title">📌 Cadrage Référentiel BTS CIEL (Technologie STI)</div>
+  <ul style="margin: 4px 0;">
+    <li><strong>C06 Valider</strong> (connaissances) : « Réseaux informatiques (protocoles TCP-UDP/IP, <strong>LPWAN</strong>…) Niveau 3 », « Caractéristiques des communications », « Appareils de mesure et bancs de test » et « Mesures et incertitudes » (Niveau 3).</li>
+    <li><strong>C09 Installer</strong> : « <strong>IOT (incl. LPWAN) Niveau 3</strong> », « Modèle OSI/IP et protocoles usuels », « WPAN (Zigbee, bluetooth…) Niveau 3 » (comparaison).</li>
+    <li><strong>C05 Concevoir</strong> : « Principes et techniques de transmission en espace libre ou guidée dans les réseaux » ; <strong>C07 Réaliser</strong> : « le logiciel est codé et débogué », « la carte est fonctionnelle et le logiciel embarqué fonctionnel ».</li>
+    <li>Aucune démonstration de physique du signal n'est exigée : les valeurs de sensibilité, de durées d'émission et de débits sont <strong>lues sur la fiche</strong> (tableau 0.2) ; seuls des calculs arithmétiques simples (marge = RSSI − sensibilité ; autonomie) sont demandés.</li>
+  </ul>
+</div>
+
+<div class="callout callout-danger">
+  <div class="callout-title">🛠️ Préparation enseignant avant la séance (≈ 45 min la première fois)</div>
+  <ol style="margin: 4px 0;">
+    <li><strong>Serveur réseau LoRaWAN (ChirpStack v4)</strong> sur un PC / VM du lycée (dépôt officiel <code>chirpstack-docker</code> : ChirpStack + <em>gateway-bridge</em> UDP 1700 + broker Mosquitto + PostgreSQL + Redis). Activer la région <code>eu868</code>. Ports ouverts sur le PC serveur : <code>8080/tcp</code> (interface), <code>1700/udp</code> (passerelle), <code>1883/tcp</code> (MQTT, accessible aux PC élèves).</li>
+    <li><strong>Profil d'équipement</strong> (Device profile) : région <strong>EU868</strong>, <strong>LoRaWAN 1.0.3</strong>, <em>Regional parameters revision A</em>, classe A, <strong>OTAA</strong>, <em>Uplink interval</em> 60 s. Créer <strong>une Application</strong> (ex. <code>lycee-lora</code>) avec l'intégration MQTT activée (par défaut dans ChirpStack v4).</li>
+    <li><strong>Fiche de la salle</strong> : une AppKey de 32 caractères hexadécimaux par binôme (générée aléatoirement), les adresses IP, comptes, nom des équipements (<code>groupe-1</code>, <code>groupe-2</code>…).</li>
+    <li><strong>Passerelle Dragino LPS8v3 (EU868, EC25)</strong> : la mettre à jour si besoin, noter son IP (DHCP ou réseau Wi-Fi propre <code>dragino-xxxxxx</code>, mot de passe usine de la gamme Dragino : <code>dragino+dragino</code>, compte <code>root</code>). <strong>Remplacer le mot de passe usine</strong>. Pré-déclarer la passerelle dans ChirpStack avec son Gateway EUI (ou faire faire cette étape par le binôme rapporteur).</li>
+    <li><strong>Câble de mesure</strong> (1 ou 2 pour la classe) : câble USB-A/mini-USB dont le fil rouge (+5 V) est coupé et rebouclé par une résistance de <code>1,1 &Omega;</code> du <em>TI myParts Kit</em>, fils de reprise de part et d'autre pour les pointes de l'AD3 (isoler soigneusement).</li>
+    <li><strong>Postes élèves</strong> : Arduino IDE (carte « Arduino Nano », processeur ATmega328P — <em>Old Bootloader</em> pour les clones), Node-RED + <code>node-red-dashboard</code>, dossier <code>C:/LoRa</code> créé (ou laisser Node-RED le créer).</li>
+    <li><strong>Test préalable obligatoire</strong> : faire joindre un nœud de test, vérifier l'événement <code>up</code> dans ChirpStack et la réception dans Node-RED.</li>
+  </ol>
+</div>
+
+<div class="callout callout-warning">
+  <div class="callout-title">⚠️ Points de vigilance en séance (retours d'expérience probables)</div>
+  <ol style="margin: 4px 0;">
+    <li><strong>Pas de réponse à <code>AT</code></strong> : (a) fin de ligne du moniteur série ≠ « NL et CR » ; (b) RX/TX inversés → essayer <code>SoftwareSerial lora(3, 2)</code> ; (c) module sur un autre connecteur Grove que <code>D2</code> (adapter les numéros) ; (d) alimentation USB insuffisante.</li>
+    <li><strong>Le JOIN échoue (<code>Join failed</code>)</strong> : DevEUI mal recopié dans ChirpStack, AppKey différente, profil non EU868, passerelle absente ou hors ligne, nœud trop loin / antenne oubliée. Dans ChirpStack, l'onglet <em>LoRaWAN frames</em> de la passerelle montre si la demande de join est reçue (si elle l'est mais qu'aucune réponse n'est émise : clé erronée).</li>
+    <li><strong>Plusieurs binômes, une seule passerelle</strong> : chaque équipement a son DevEUI propre (pas de conflit). Vérifier que chaque groupe a bien renseigné <code>MON_DEVICE</code> dans Node-RED, sinon les graphes mélangent les nœuds.</li>
+    <li><strong>Duty cycle</strong> : tolérer 60 s minimum entre trames ; en SF12 la période de 60 s est inférieure à l'intervalle mini théorique de 132 s pour <em>un canal</em>, mais le nœud répartit ses trames sur plusieurs canaux ; faire constater et discuter (limite réglementaire par sous-bande).</li>
+    <li><strong>Powerbank qui s'éteint</strong> : courant trop faible (&lt; 50 à 100 mA selon modèles). Vérifier le modèle disponible ; solution de repli : alimenter le Nano par une prise USB du PC ou de l'AD3, ou ajouter une charge factice.</li>
+    <li><strong>Mesure au shunt</strong> : ne pas alimenter en même temps par le PC et la Powerbank. Pointes AD3 : <code>1−</code> n'est <em>pas</em> à la masse (mesure différentielle) ; si l'AD3 indique du bruit, utiliser la fonction de moyenne (<em>Average</em>) et le mode de déclenchement <em>Single</em>.</li>
+  </ol>
+</div>
+
+<hr />
+
+<h2>Corrigé Partie 0 : Pourquoi LoRa ?</h2>
+<div class="teacher-answer">
+  <div class="teacher-answer-title">✅ Corrigé Q0.1 &amp; Q0.2</div>
+  <ul>
+    <li><strong>Q0.1 —</strong> Critères attendus (3 au choix, chiffrés) : <strong>portée</strong> 2–5 km (ville) à 10–15 km (rural) contre 30–100 m pour Wi-Fi et 10–100 m pour BLE ; <strong>consommation / autonomie</strong> : mois à années sur pile (veille de quelques µA) contre heures/jours en Wi-Fi (100–300 mA) ; <strong>coût d'usage</strong> : pas d'abonnement (réseau privé) contre SIM + abonnement en 4G ; <strong>bande 868 MHz libre</strong> et mieux pénétrante dans les murs ; <strong>une passerelle</strong> pour tout le campus (topologie en étoile). <strong>Inconvénient</strong> : faible débit (0,3–5,5 kbit/s) et messages courts (51–222 octets), duty cycle ≤ 1 %, latence (Classe A).</li>
+    <li><strong>Q0.2 —</strong> Durée ≈ <strong>× 25,6</strong> (1 319 ms / 51,5 ms) ; gain de sensibilité <strong>14 dB</strong> (−123 → −137 dBm) ; énergie par trame ≈ × 25 (même courant, durée 25 fois plus longue) donc batterie épuisée plus vite ; intervalle mini passe de <strong>5,2 s à 132 s</strong> (1 % de duty cycle) : on gagne en portée mais on perd en débit et en fréquence d'émission. Règle pratique : choisir le <strong>plus petit SF</strong> qui assure une marge de liaison suffisante (c'est le principe de l'ADR).</li>
+  </ul>
+</div>
+
+<h2>Corrigé Partie 1 : Passerelle Dragino</h2>
+<div class="teacher-answer">
+  <div class="teacher-answer-title">✅ Corrigé T1 &amp; Q1.1 – Q1.3</div>
+  <table>
+    <thead><tr><th>Paramètre</th><th>Valeur attendue</th></tr></thead>
+    <tbody>
+      <tr><td>Gateway EUI</td><td>16 caractères hexadécimaux (étiquette / page d'état), ex. <code>A840411E96744150</code></td></tr>
+      <tr><td>Liaison vers le serveur</td><td>Ethernet (ou Wi-Fi client) ; la 4G <code>EC25</code> sert de secours / site isolé</td></tr>
+      <tr><td>Serveur &amp; port</td><td>IP du serveur ChirpStack, <strong>UDP 1700</strong> montant et descendant</td></tr>
+      <tr><td>Plan de fréquences</td><td><strong>EU868</strong> : 868,1 / 868,3 / 868,5 MHz (+ canaux additionnels éventuels, 125 kHz)</td></tr>
+      <tr><td>Mode LoRaWAN</td><td><strong>Public</strong> (mot de synchronisation LoRaWAN public)</td></tr>
+    </tbody>
+  </table>
+  <ul>
+    <li><strong>Q1.1 —</strong> <strong>Non</strong> : la passerelle ne déchiffre rien (chiffrement AES-128 entre le nœud et le serveur) ; elle <strong>recopie</strong> la trame radio dans un paquet IP sans l'interpréter : elle est « transparente ».</li>
+    <li><strong>Q1.2 —</strong> UDP : liaison <strong>sans connexion</strong>, légère, adaptée à un flux régulier de petits paquets (pas de poignée de main TCP à chaque trame) ; la fiabilité est assurée plus haut dans le protocole LoRaWAN (compteur de trames). La passerelle ajoute : <strong>RSSI, SNR, horodatage, fréquence, SF/DR</strong>, identifiant de la passerelle.</li>
+    <li><strong>Q1.3 —</strong> (1) Alimentation / LED <code>SYS</code> et liaison réseau (câble, IP) ; (2) paramètres du transfert : adresse du serveur, port UDP <code>1700</code>, <em>Gateway ID</em> identique à celui déclaré dans ChirpStack ; (3) côté serveur : services ChirpStack / gateway-bridge démarrés, pare-feu laissant passer <code>1700/udp</code>.</li>
+  </ul>
+</div>
+
+<h2>Corrigé Partie 2 : Nœud capteur</h2>
+<div class="teacher-answer">
+  <div class="teacher-answer-title">✅ Corrigé T2, T3 &amp; Q2.1 – Q2.3</div>
+  <table>
+    <thead><tr><th>Commande</th><th>Réponse typique</th><th>Rôle</th></tr></thead>
+    <tbody>
+      <tr><td><code>AT</code></td><td><code>+AT: OK</code></td><td>Test de la liaison série avec le modem</td></tr>
+      <tr><td><code>AT+VER</code></td><td><code>+VER: 4.0.x</code> (selon firmware)</td><td>Version du firmware du modem</td></tr>
+      <tr><td><code>AT+ID</code></td><td><code>+ID: DevAddr…</code>, <code>+ID: DevEui, xx:xx:…</code>, <code>+ID: AppEui…</code></td><td>Identifiants LoRaWAN du modem</td></tr>
+      <tr><td><code>AT+DR</code></td><td><code>+DR: EU868</code> (région) et débit courant</td><td>Région / débit utilisé</td></tr>
+      <tr><td><code>AT+CH</code></td><td>liste de canaux, ex. 868,1 / 868,3 / 868,5 MHz</td><td>Canaux radio disponibles</td></tr>
+    </tbody>
+  </table>
+  <ul>
+    <li><strong>Q2.1 —</strong> Le <strong>DevEUI</strong> (64 bits) est l'identifiant unique de l'équipement ; le serveur s'en sert pour <strong>reconnaître</strong> le nœud lors du join, retrouver sa clé (AppKey) et lui associer ses données.</li>
+    <li><strong>T3 (valeurs typiques) :</strong> join en <strong>≈ 5 à 8 s</strong> (la réponse du réseau est émise 5 s après la demande, fenêtre RX1/RX2) ; 1<sup>re</sup> trame ex. <code>data = APUTigc=</code> ↔ <code>00 F5 13 8A 07</code> ; fréquence parmi <strong>868,1 / 868,3 / 868,5 MHz</strong> (saut de canal à chaque trame) ; <strong>SF7 / DR5</strong> ; RSSI de −50 à −90 dBm, SNR de +8 à +12 dB en salle.</li>
+    <li><strong>Q2.2 —</strong> <code>00F5</code> = 245 → <strong>24,5 °C</strong> ; <code>138A</code> = 19 × 256 + 138 = <strong>5 002 mV</strong> (≈ 5,0 V) ; <code>07</code> = <strong>trame n° 7</strong>. Bonus : <code>FFEC</code> = 65 516 non signé = <strong>−20</strong> en complément à 2 → <strong>−2,0 °C</strong>.</li>
+    <li><strong>Q2.3 —</strong> 5 octets contre 11 caractères : trame radio plus courte (18 octets contre 24 sur le canal), donc <strong>durée d'émission réduite d'environ 17 % en SF7</strong> (51,5 ms contre ≈ 61,7 ms) et davantage en SF élevé ; moins d'énergie, moins de duty cycle consommé, plus de marge pour émettre souvent. Le décodage est fait côté serveur / supervision.</li>
+  </ul>
+</div>
+
+<h2>Corrigé Partie 3 : Node-RED &amp; fichier</h2>
+<div class="teacher-answer">
+  <div class="teacher-answer-title">✅ Corrigé T4 &amp; Q3.1 – Q3.2</div>
+  <table>
+    <thead><tr><th>Liaison</th><th>Support / protocole</th><th>Information transportée</th></tr></thead>
+    <tbody>
+      <tr><td>① → ②</td><td>Câble Grove, entrée analogique (CAN 10 bits)</td><td>Tension image de la température (0–5 V)</td></tr>
+      <tr><td>② → ③</td><td>Liaison série UART 9600 Bd (<code>SoftwareSerial</code>)</td><td>Commandes AT (<code>AT+MSGHEX=…</code>)</td></tr>
+      <tr><td>③ → ④</td><td>Radio <strong>LoRa 868 MHz</strong> (LoRaWAN, AES-128)</td><td>Trame chiffrée de 18 octets</td></tr>
+      <tr><td>④ → ⑤</td><td>Ethernet / 4G, <strong>UDP/IP port 1700</strong> (packet forwarder)</td><td>Trame radio + RSSI, SNR, horodatage</td></tr>
+      <tr><td>⑤ → ⑥</td><td><strong>MQTT</strong> sur TCP 1883, JSON</td><td>Événement <code>up</code> : <code>data</code> (base64), métadonnées radio</td></tr>
+    </tbody>
+  </table>
+  <ul>
+    <li><strong>Q3.1 —</strong> Dans le <strong>nœud <em>function</em> « Décoder la trame »</strong> de Node-RED (<code>Buffer.from(data,'base64')</code> puis lecture des octets). Le serveur ne connaît pas le format des octets définis par le concepteur du nœud ; il faudrait lui ajouter un <em>décodeur</em> (codec JavaScript ChirpStack) pour obtenir directement <code>object</code>.</li>
+    <li><strong>Q3.2 —</strong> Le <strong>RSSI/SNR</strong> permettent de surveiller la qualité de la liaison et d'anticiper une perte de couverture ; la <strong>tension</strong> du nœud prévient d'une batterie faible ; l'archivage permet l'exploitation dans un tableur, la traçabilité et la maintenance prédictive.</li>
+  </ul>
+</div>
+
+<h2>Corrigé Partie 4 : Campagne de mesures</h2>
+<div class="teacher-answer">
+  <div class="teacher-answer-title">✅ Corrigé T5, T6 &amp; Q4.1 – Q4.3 (valeurs indicatives : elles dépendent du site, de la Powerbank et du Nano)</div>
+  <table>
+    <thead><tr><th>Lieu</th><th>Distance</th><th>Trames reçues</th><th>RSSI</th><th>SNR</th><th>Marge (SF7 : −123 dBm)</th></tr></thead>
+    <tbody>
+      <tr><td>A — Salle de TP</td><td>10–50 m</td><td>3 / 3</td><td>−60 à −90 dBm</td><td>+8 à +12 dB</td><td>+33 à +63 dB</td></tr>
+      <tr><td>B — Autre bâtiment</td><td>100–300 m</td><td>3 / 3</td><td>−95 à −110 dBm</td><td>+2 à +8 dB</td><td>+13 à +28 dB</td></tr>
+      <tr><td>C — Point éloigné</td><td>300 m et plus</td><td>2–3 / 3</td><td>−110 à −120 dBm</td><td>−5 à +3 dB</td><td>+3 à +13 dB</td></tr>
+    </tbody>
+  </table>
+  <table>
+    <thead><tr><th>Réglage</th><th>I<sub>veille</sub></th><th>I<sub>TX</sub> max</th><th>Durée mesurée</th><th>Théorique</th></tr></thead>
+    <tbody>
+      <tr><td>DR5 / SF7</td><td>≈ 25 à 45 mA (Nano + LEDs + modem)</td><td>surcharge de quelques dizaines de mA visible sur le shunt (≈ 20 à 100 mA au total)</td><td>≈ 50 à 60 ms</td><td>51,5 ms</td></tr>
+      <tr><td>DR0 / SF12</td><td>idem</td><td>idem</td><td>≈ 1,3 s</td><td>1 319 ms</td></tr>
+    </tbody>
+  </table>
+  <ul>
+    <li><strong>Remarque métrologie :</strong> avec le shunt de 1,1 Ω, <code>I = U / 1,1</code> ; un courant de 100 mA donne 110 mV. Les deux fenêtres RX1 (+1 s) et RX2 (+2 s) apparaissent comme de petits paliers de quelques mA après l'émission (classe A).</li>
+    <li><strong>Q4.1 —</strong> Résolution de lecture des curseurs (largeur de trait, quelques ms), <strong>tolérance de la résistance</strong> (±5 % sur 1,1 Ω → ±5 % sur I), bruit de mesure et résolution verticale de l'AD3 (20 mV/div), horloge du modem et temps de commutation avant/après l'émission.</li>
+    <li><strong>Q4.2 —</strong> Exemple : <code>C = 5 000 mAh</code>, <code>I<sub>veille</sub> = 30 mA</code>, <code>I<sub>TX</sub> = 90 mA</code>. SF7 : <code>I<sub>moy</sub> = 30 + 60 × 0,0515/60 ≈ 30,05 mA</code> → autonomie <code>0,7 × 5000 / 30,05 ≈ 116 h ≈ 4,9 jours</code>. SF12 : <code>I<sub>moy</sub> = 30 + 60 × 1,319/60 ≈ 31,3 mA</code> → <code>≈ 112 h</code>. <strong>La radio représente moins de 5 % du courant moyen</strong> : la consommation est dominée par le <strong>Nano et le modem laissés actifs en permanence</strong> (<code>I<sub>veille</sub></code>). Solution : mise en veille profonde (<code>PWR_DOWN</code> + réveil par <em>Watchdog</em>, déjà vu au TP « Autonomie ») et mise en veille du modem (<code>AT+LOWPOWER</code>) : courant moyen de l'ordre de quelques centaines de µA, soit plusieurs mois voire années. Énergie d'une trame SF7 : <code>5 V × 90 mA × 51,5 ms ≈ 23 mJ</code> seulement.</li>
+    <li><strong>Q4.3 —</strong> <strong>Avantages</strong> : portée (liaison encore fiable avec marge positive au point C, là où le Wi-Fi n'accroche pas) ; faible énergie par trame (quelques dizaines de mJ) ; <strong>une seule passerelle</strong> pour tout le campus, sans abonnement ; installation simple (OTAA, aucune configuration réseau côté nœud) ; chiffrement intégré. <strong>Limites</strong> : débit et taille de trame (5 octets utiles ici), <strong>duty cycle</strong> (SF12 ≈ 1,3 s par trame), latence (classe A : le nœud n'écoute qu'après émission), dépendance à la passerelle/serveur. Pour une <strong>image toutes les 10 s</strong> : <strong>Wi-Fi</strong> (ou 4G si hors portée) car LoRaWAN est inadapté aux gros volumes de données.</li>
+  </ul>
+</div>
+
+<h2>Barème détaillé (/20)</h2>
+<table>
+  <thead><tr><th style="width: 18%;">Compétence</th><th style="width: 68%;">Détail des points</th><th style="width: 14%;">Sous-total</th></tr></thead>
+  <tbody>
+    <tr><td><strong>C04 — Analyser</strong></td><td>Q0.1 : 3 critères chiffrés + 1 inconvénient (1 pt) ; Q1.1–Q1.3 : passerelle transparente, UDP, diagnostic (1 pt) ; Q2.2 : décodage correct hexadécimal → décimal (1 pt) ; Q2.3 / T4 : binaire vs texte et chaîne complète (1 pt).</td><td><strong>/ 4</strong></td></tr>
+    <tr><td><strong>C05 — Concevoir</strong></td><td>Q0.2 : compromis SF lu sur la Figure 3 (1 pt) ; Q4.2 : calcul d'autonomie et identification du poste dominant (1 pt) ; Q4.3 : synthèse argumentée avantages/limites et choix de technologie alternative (1 pt).</td><td><strong>/ 3</strong></td></tr>
+    <tr><td><strong>C06 — Valider</strong></td><td>T5 : marche test complète avec marge de liaison (2 pts) ; T6 + C7 + C8 : mesures AD3 correctes avec curseurs (3 pts) ; Q4.1 : sources d'incertitude (1 pt).</td><td><strong>/ 6</strong></td></tr>
+    <tr><td><strong>C07 / C09 — Réaliser / Installer</strong></td><td>T1 + C1 + C2 : passerelle paramétrée et vue du serveur (1,5 pt) ; join réussi C3 + C4 (1,5 pt) ; Node-RED + CSV opérationnels C5 + C6 (1,5 pt) ; câblage soigné, antenne et règles de sécurité radio respectées (0,5 pt).</td><td><strong>/ 5</strong></td></tr>
+    <tr><td><strong>C01 — Communiquer</strong></td><td>Google Docs structuré (1 pt) ; captures lisibles, légendées, avec unités (1 pt).</td><td><strong>/ 2</strong></td></tr>
+  </tbody>
+</table>
+
+<h2>Annexes enseignant</h2>
+
+<div class="callout callout-info">
+  <div class="callout-title">📎 Annexe A — Variante The Things Network (TTN) au lieu de ChirpStack</div>
+  <ul style="margin: 4px 0;">
+    <li>Passerelle : même mode <em>Semtech UDP</em>, serveur <code>eu1.cloud.thethings.network</code>, ports <code>1700</code> ; déclarer la passerelle (Gateway EUI) dans la console TTN, créer une application et les équipements (DevEUI, JoinEUI, AppKey, plan EU868, LoRaWAN 1.0.3).</li>
+    <li>Node-RED : s'abonner au broker TTN (<code>eu1.cloud.thethings.network:1883</code>, identifiant = <code>application-id@ttn</code>, mot de passe = clé API) sur le sujet <code>v3/+/devices/+/up</code>. Adapter le nœud de décodage :</li>
+  </ul>
+  <pre class="code">const m = msg.payload;
+const b = Buffer.from(m.uplink_message.frm_payload, 'base64');
+const rx = m.uplink_message.rx_metadata[0];
+const sf = m.uplink_message.settings.data_rate.lora.spreading_factor;
+// puis : temperature = b.readInt16BE(0)/10 ; rssi = rx.rssi ; snr = rx.snr ; device = m.end_device_ids.device_id</pre>
+</div>
+
+<div class="callout callout-info">
+  <div class="callout-title">📎 Annexe B — Pistes d'extension (élèves en avance)</div>
+  <ul style="margin: 4px 0;">
+    <li>Passer en <code>AT+ADR=ON</code> et observer le SF choisi par le réseau en fonction de la qualité de la liaison.</li>
+    <li>Ajouter un décodeur JavaScript dans ChirpStack (<em>Device profile → Codec</em>) pour faire apparaître <code>object.temperature</code> dans les événements.</li>
+    <li>Mise en veille du Nano (<code>PWR_DOWN</code> + Watchdog) et du modem (<code>AT+LOWPOWER</code>) puis nouvelle mesure de <code>I<sub>veille</sub></code> à l'AD3.</li>
+    <li>Envoi d'une alarme (<code>unconfirmed</code> → <code>AT+CMSGHEX</code> confirmé) lorsque la température franchit un seuil, et comparaison de la consommation.</li>
+  </ul>
+</div>
+
+</body>
+</html>

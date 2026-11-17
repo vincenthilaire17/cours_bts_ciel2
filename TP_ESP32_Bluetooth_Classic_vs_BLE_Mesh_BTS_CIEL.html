@@ -1,0 +1,1459 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="utf-8" />
+  <meta name="generator" content="BTS CIEL - Vincent Hilaire" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes" />
+  <title>TP : Comparatif Bluetooth Classic vs BLE & Topologies Réseaux (Piconet, Broadcast, Mesh) sur ESP32 - BTS CIEL</title>
+  
+  <style>
+    @page {
+      margin: 1.5cm;
+      size: A4;
+    }
+    
+    html {
+      color: #1a1a1a;
+      background-color: #fdfdfd;
+      -webkit-text-size-adjust: 100%;
+    }
+    
+    body {
+      font-family: 'Segoe UI', -apple-system, BlinkMacSystemFont, Roboto, Helvetica, Arial, sans-serif;
+      line-height: 1.55;
+      color: #1a1a1a;
+      max-width: 960px;
+      margin: 0 auto;
+      padding: 25px 30px;
+      hyphens: auto;
+      overflow-wrap: break-word;
+      text-rendering: optimizeLegibility;
+      font-kerning: normal;
+    }
+    
+    @media (max-width: 768px) {
+      body {
+        font-size: 0.95em;
+        padding: 15px;
+      }
+      h1 {
+        font-size: 1.55em !important;
+      }
+    }
+    
+    @media print {
+      html { background-color: white; }
+      body { background-color: transparent; color: black; font-size: 10pt; max-width: 100%; padding: 0; }
+      p, h2, h3 { orphans: 3; widows: 3; }
+      h2, h3, h4 { page-break-after: avoid; }
+      pre, blockquote, table, .figure-box { page-break-inside: avoid; }
+      .no-print { display: none; }
+    }
+    
+    header {
+      margin-bottom: 2.2em;
+      text-align: center;
+      border-bottom: 3px solid #0b3c5d;
+      padding-bottom: 15px;
+    }
+    
+    .meta-badge {
+      display: inline-block;
+      background: #e1ecf4;
+      color: #0b3c5d;
+      font-size: 0.85em;
+      font-weight: 600;
+      padding: 4px 10px;
+      border-radius: 20px;
+      margin: 3px 6px;
+      border: 1px solid #7aa7c7;
+    }
+    
+    .badge-primary { background: #0b3c5d; color: #ffffff; border: 1px solid #0b3c5d; }
+    .badge-alert { background: #fee2e2; color: #991b1b; border: 1px solid #f87171; }
+    .badge-success { background: #dcfce7; color: #166534; border: 1px solid #86efac; }
+    .badge-warning { background: #fef3c7; color: #92400e; border: 1px solid #fcd34d; }
+    .badge-purple { background: #f3e8ff; color: #6b21a8; border: 1px solid #d8b4fe; }
+    .badge-cyan { background: #e0f2fe; color: #0369a1; border: 1px solid #7dd3fc; }
+    .badge-orange { background: #ffedd5; color: #c2410c; border: 1px solid #fdba74; }
+    
+    h1, h2, h3, h4 {
+      color: #0b3c5d;
+      font-weight: 700;
+    }
+    
+    h1 {
+      font-size: 18pt;
+      margin-top: 0.6em;
+      margin-bottom: 0.3em;
+      letter-spacing: -0.5px;
+    }
+    
+    h2 {
+      font-size: 13.5pt;
+      margin-top: 26px;
+      margin-bottom: 12px;
+      border-bottom: 1.5px solid #d0d7de;
+      padding-bottom: 6px;
+    }
+    
+    h3 {
+      font-size: 11pt;
+      margin-top: 18px;
+      margin-bottom: 8px;
+      border-left: 4.5px solid #328cc1;
+      padding-left: 10px;
+    }
+    
+    h4 {
+      font-size: 10pt;
+      margin-top: 14px;
+      color: #1d5f8a;
+    }
+    
+    p {
+      margin: 0.8em 0;
+    }
+    
+    a {
+      color: #0969da;
+      text-decoration: none;
+    }
+    
+    a:hover {
+      text-decoration: underline;
+    }
+    
+    ul, ol {
+      padding-left: 1.6em;
+      margin: 0.8em 0;
+    }
+    
+    li {
+      margin-bottom: 0.35em;
+    }
+    
+    hr {
+      border: 0;
+      border-top: 1px solid #d0d7de;
+      margin: 22px 0;
+    }
+    
+    .callout {
+      border-radius: 6px;
+      padding: 12px 16px;
+      margin: 16px 0;
+      font-size: 9.3pt;
+      border-left: 5px solid;
+    }
+    
+    .callout-info {
+      background-color: #f0f7fc;
+      border-color: #328cc1;
+      color: #1a446c;
+    }
+    
+    .callout-warning {
+      background-color: #fffbeb;
+      border-color: #f59e0b;
+      color: #78350f;
+    }
+    
+    .callout-danger {
+      background-color: #fef2f2;
+      border-color: #ef4444;
+      color: #7f1d1d;
+    }
+    
+    .callout-success {
+      background-color: #f0fdf4;
+      border-color: #22c55e;
+      color: #14532d;
+    }
+    
+    .callout-title {
+      font-weight: 700;
+      margin-bottom: 4px;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+    
+    table {
+      border-collapse: collapse;
+      width: 100%;
+      margin: 14px 0;
+      font-size: 9pt;
+      background-color: #ffffff;
+      box-shadow: 0 1px 3px rgba(0,0,0,0.05);
+    }
+    
+    th, td {
+      border: 1px solid #d0d7de;
+      padding: 7px 10px;
+      text-align: left;
+      vertical-align: middle;
+    }
+    
+    th {
+      background-color: #f0f4f8;
+      color: #0b3c5d;
+      font-weight: 700;
+    }
+    
+    tr:nth-child(even) {
+      background-color: #f8fafc;
+    }
+    
+    tr:hover {
+      background-color: #f1f5f9;
+    }
+    
+    pre {
+      background-color: #f6f8fa;
+      border: 1px solid #d0d7de;
+      border-radius: 6px;
+      padding: 12px 14px;
+      font-size: 8.8pt;
+      line-height: 1.45;
+      overflow-x: auto;
+      font-family: Consolas, 'Courier New', Monaco, monospace;
+      color: #24292f;
+      margin: 14px 0;
+    }
+    
+    code {
+      background-color: #eff1f3;
+      padding: 2px 5px;
+      border-radius: 4px;
+      font-size: 88%;
+      font-family: Consolas, 'Courier New', Monaco, monospace;
+      color: #0969da;
+    }
+    
+    pre code {
+      background-color: transparent;
+      padding: 0;
+      border-radius: 0;
+      font-size: inherit;
+      color: inherit;
+    }
+    
+    .student-response {
+      background: #fafbfc;
+      border: 1.5px dashed #7aa7c7;
+      border-radius: 6px;
+      padding: 12px 16px;
+      margin: 14px 0 18px 0;
+      color: #334155;
+    }
+    
+    .formula-box {
+      background: #f1f5f9;
+      border: 1px solid #cbd5e1;
+      border-radius: 6px;
+      padding: 8px 14px;
+      margin: 8px 0;
+      font-family: 'Cambria Math', 'DejaVu Serif', 'Times New Roman', Georgia, serif;
+      font-size: 10.5pt;
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      color: #0f172a;
+    }
+    
+    .frac {
+      display: inline-flex;
+      flex-direction: column;
+      vertical-align: middle;
+      text-align: center;
+      padding: 0 4px;
+      font-size: 0.95em;
+    }
+    
+    .frac > .num {
+      border-bottom: 1.5px solid #1e293b;
+      padding-bottom: 2px;
+    }
+    
+    .frac > .den {
+      padding-top: 2px;
+    }
+    
+    .dotted-line {
+      border-bottom: 1px dotted #94a3b8;
+      height: 22px;
+      margin-bottom: 5px;
+    }
+    
+    .step-box {
+      background: #ffffff;
+      border: 1px solid #cbd5e1;
+      border-radius: 8px;
+      padding: 14px 18px;
+      margin: 18px 0;
+      box-shadow: 0 2px 4px rgba(0,0,0,0.03);
+    }
+    
+    .step-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      border-bottom: 1px solid #e2e8f0;
+      padding-bottom: 8px;
+      margin-bottom: 12px;
+    }
+    
+    .step-title {
+      font-weight: 700;
+      font-size: 11pt;
+      color: #0b3c5d;
+    }
+    
+    .timing-badge {
+      background: #e2e8f0;
+      color: #334155;
+      font-size: 8pt;
+      padding: 3px 8px;
+      border-radius: 12px;
+      font-weight: 600;
+    }
+    
+    .figure-box {
+      margin: 18px 0;
+      padding: 12px;
+      background-color: #ffffff;
+      border: 1px solid #cbd5e1;
+      border-radius: 8px;
+      text-align: center;
+      box-shadow: 0 2px 5px rgba(0,0,0,0.04);
+    }
+    
+    .figure-caption {
+      font-size: 8.8pt;
+      color: #475569;
+      font-weight: 600;
+      margin-top: 8px;
+    }
+    
+    .svg-container {
+      width: 100%;
+      max-width: 890px;
+      margin: 0 auto;
+    }
+    
+    .pin-badge {
+      display: inline-block;
+      padding: 2px 6px;
+      font-size: 8pt;
+      font-weight: bold;
+      border-radius: 4px;
+      font-family: Consolas, monospace;
+    }
+    .pin-yellow { background: #fef08a; color: #854d0e; border: 1px solid #facc15; }
+    .pin-blue { background: #dbeafe; color: #1e40af; border: 1px solid #93c5fd; }
+    .pin-green { background: #dcfce7; color: #166534; border: 1px solid #86efac; }
+    .pin-red { background: #fee2e2; color: #991b1b; border: 1px solid #f87171; }
+    .pin-black { background: #1e293b; color: #f8fafc; border: 1px solid #0f172a; }
+  </style>
+</head>
+<body>
+
+<header id="title-block-header">
+  <div style="text-transform: uppercase; font-size: 0.9em; font-weight: 700; letter-spacing: 1px; color: #328cc1; margin-bottom: 4px;">
+    BTS CIEL — 2<sup>e</sup> Année • Option A (IR) & Option B (ER)
+  </div>
+  <h1 class="title">TP : Comparatif Bluetooth Classic vs BLE & Topologies Réseaux (Piconet, Broadcast, Mesh) sur ESP32</h1>
+  <div style="margin-top: 10px;">
+    <span class="meta-badge badge-primary">⏱ Durée : 5h00 (Séance complète)</span>
+    <span class="meta-badge badge-purple">🎯 Cible : Modules ESP32 Dual-Core (Wi-Fi & Dual-Mode BT 4.2 / BLE)</span>
+    <span class="meta-badge badge-cyan">📡 Piles : Bluetooth Classic (SPP/RFCOMM) & BLE (GAP / GATT)</span>
+    <span class="meta-badge badge-orange">🌐 Topologies : Piconet (Étoile), Broadcast (Beacon) & Mesh (Maillé)</span>
+  </div>
+</header>
+
+<div class="callout callout-info">
+  <div class="callout-title">📋 Contexte Industriel : Écosystème Connecté d'Atelier Logistique 4.0</div>
+  <p>Dans un entrepôt logistique et de production automatisée, coexistent plusieurs besoins critiques en communication sans fil à courte et moyenne portée :</p>
+  <ul>
+    <li><strong>Maintenance d'équipements lourds :</strong> un technicien doit télécharger en continu des journaux d'événements et dialoguer en mode console avec un robot filoguidé (flux continu bidirectionnel rapide type RS-232).</li>
+    <li><strong>Traçabilité d'outillage nomade (Asset Tracking) :</strong> des balises autonomes sans fil doivent émettre sans connexion préalable leur identifiant et des métadonnées vers des bornes de passage pour être localisées.</li>
+    <li><strong>Télémétrie d'ambiance et sécurité sur pile :</strong> des capteurs de température/gaz doivent communiquer ponctuellement sur batterie avec une consommation énergétique ultra-faible.</li>
+    <li><strong>Réseau maillé étendu (Mesh) :</strong> au sein d'un grand hangar avec rayonnages métalliques masquant la ligne de vue, les alertes d'arrêt d'urgence ou de dépassement de seuil doivent se propager de proche en proche par relais successifs sans dépendre d'une passerelle Wi-Fi centrale.</li>
+  </ul>
+  <p>Votre équipe d'ingénierie BTS CIEL doit <strong>qualifier, prototyper et comparer expérimentalement</strong> les technologies <strong>Bluetooth Classic</strong> et <strong>Bluetooth Low Energy (BLE)</strong> à l'aide de microcontrôleurs <strong>ESP32</strong>, puis valider la mise en œuvre de trois topologies majeures : <strong>Piconet</strong>, <strong>Broadcast</strong> et <strong>Réseau Maillé (Mesh)</strong>.</p>
+</div>
+
+<hr />
+
+<!-- ========================================================================= -->
+<!-- 1. REFERENTIEL BTS CIEL & COMPETENCES VISEES                             -->
+<!-- ========================================================================= -->
+<h2>1. Référentiel BTS CIEL & Compétences Visées</h2>
+
+<table>
+  <thead>
+    <tr>
+      <th style="width: 15%;">Code</th>
+      <th style="width: 35%;">Compétence du Référentiel</th>
+      <th style="width: 50%;">Critères de Réussite & Tâches associées dans ce TP</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td><strong>C04</strong></td>
+      <td><strong>Analyser une structure matérielle et logicielle</strong></td>
+      <td>
+        • Différencier l'architecture en couches du Bluetooth Classic (RFCOMM/SPP) et du Bluetooth Low Energy (GAP/GATT).<br>
+        • Comparer les caractéristiques de couche physique : canaux radio (79 canaux de 1 MHz vs 40 canaux de 2 MHz), sauts de fréquence (FHSS) et canaux d'annonces (37, 38, 39).<br>
+        • Analyser sous <strong>Wireshark</strong> l'arrivée d'une trame BLE (PDU Header, Advertising Address AdvA, AD Data) et décoder les mécanismes d'identification de l'expéditeur (Public, Random Static, Resolvable Private Address avec clé IRK).<br>
+        • Identifier les avantages et contraintes des topologies Piconet, Broadcast (balises) et Maillée (modèle Publish/Subscribe & Managed Flooding).
+      </td>
+    </tr>
+    <tr>
+      <td><strong>C05</strong></td>
+      <td><strong>Concevoir une structure matérielle et logicielle</strong></td>
+      <td>
+        • Développer un service Bluetooth Classic SPP sur ESP32 via la bibliothèque <code>BluetoothSerial</code>.<br>
+        • Concevoir un profil serveur GATT BLE avec Service propriétaire et Caractéristiques (UUID 128 bits, modes <em>Read, Write, Notify</em>).<br>
+        • Implémenter un émetteur BLE Broadcaster (iBeacon / Manufacturer Data) et un scanner récepteur (Observer).<br>
+        • Programmer un protocole de relais multi-sauts pour réseau maillé (Mesh flooding) avec décrémentation de TTL et table anti-boucle.
+      </td>
+    </tr>
+    <tr>
+      <td><strong>C06</strong></td>
+      <td><strong>Valider une structure matérielle et logicielle</strong></td>
+      <td>
+        • Analyser les trames publicitaires (Advertising Packets) et les services GATT à l'aide de <strong>nRF Connect for Mobile</strong> et du logiciel <strong>Wireshark</strong> (dissection PDU, filtres <code>btle</code>).<br>
+        • Mesurer le débit utile réel (kbit/s) et la latence moyenne en Classic SPP vs BLE GATT.<br>
+        • Valider la portée et la propagation d'une alerte à travers au moins un nœud relais dans le réseau maillé.
+      </td>
+    </tr>
+    <tr>
+      <td><strong>C07</strong></td>
+      <td><strong>Réaliser des maquettes et prototypes</strong></td>
+      <td>
+        • Flasher et interconnecter plusieurs cartes ESP32 en respectant les rôles réseau (Maître/Esclave, Serveur/Client, Nœuds Mesh).
+      </td>
+    </tr>
+    <tr>
+      <td><strong>C01</strong></td>
+      <td><strong>Communiquer</strong></td>
+      <td>
+        • Rédiger une synthèse comparative argumentée préconisant la technologie sans fil adaptée pour chaque cahier des charges.
+      </td>
+    </tr>
+  </tbody>
+</table>
+
+<hr />
+
+<!-- ========================================================================= -->
+<!-- 2. FONDEMENTS THEORIQUES : BLUETOOTH CLASSIC VS BLE & TOPOLOGIES        -->
+<!-- ========================================================================= -->
+<h2>2. Fondements Théoriques : Bluetooth Classic vs BLE & Topologies</h2>
+
+<h3>2.1. Comparaison des Piles Protocolaires et Couches Physiques</h3>
+
+<table>
+  <thead>
+    <tr>
+      <th>Paramètre</th>
+      <th>Bluetooth Classic (BR/EDR 2.1 / 3.0)</th>
+      <th>Bluetooth Low Energy (BLE 4.2 / 5.x)</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td><strong>Bande de fréquences ISM</strong></td>
+      <td>2,402 GHz à 2,480 GHz (79 canaux de 1 MHz)</td>
+      <td>2,402 GHz à 2,480 GHz (40 canaux de 2 MHz)</td>
+    </tr>
+    <tr>
+      <td><strong>Canaux spécifiques</strong></td>
+      <td>Sauts pseudo-aléatoires sur l'ensemble des 79 canaux (FHSS, 1600 sauts/s)</td>
+      <td><strong>3 canaux de Broadcast/Advertising</strong> (37, 38, 39) et <strong>37 canaux de données</strong></td>
+    </tr>
+    <tr>
+      <td><strong>Philosophie d'échange</strong></td>
+      <td>Orienté <strong>connexion permanente continue</strong> (flux de streaming audio ou port série RS-232 émulé)</td>
+      <td>Orienté <strong>états éphémères</strong> (sommeil profond 99% du temps, réveils ultracourts &lt; 5 ms pour quelques octets)</td>
+    </tr>
+    <tr>
+      <td><strong>Couche d'abstraction haute</strong></td>
+      <td><strong>RFCOMM</strong> (émulation liaison série RS-232), L2CAP, profils SPP, A2DP, HID</td>
+      <td><strong>GATT</strong> (Generic Attribute Profile) basé sur <strong>ATT</strong> (Attribute Protocol) et <strong>GAP</strong></td>
+    </tr>
+    <tr>
+      <td><strong>Consommation moyenne</strong></td>
+      <td>Élevée : 25 mA à 45 mA en permanence (inadapté aux petites piles boutons)</td>
+      <td>Très faible : &lt; 15 µA en veille, pics de 10 à 15 mA pendant quelques millisecondes</td>
+    </tr>
+    <tr>
+      <td><strong>Débit utile mesuré</strong></td>
+      <td>Élevé : 700 kbit/s à 2,1 Mbit/s (EDR)</td>
+      <td>Modéré : 100 kbit/s à 800 kbit/s (selon PHY 1M ou 2M)</td>
+    </tr>
+    <tr>
+      <td><strong>Temps de connexion</strong></td>
+      <td>Assez long : 1 à 3 secondes (négociation de lien, sauts de fréquence)</td>
+      <td>Quasi-instantané : quelques millisecondes (&lt; 10 ms)</td>
+    </tr>
+  </tbody>
+</table>
+
+<h3>2.2. Caractéristiques Principales & Différences Fondamentales avec le Bluetooth Classique</h3>
+<div class="callout callout-info">
+  <div class="callout-title">📋 Fiche Technique : Caractéristiques Principales du Bluetooth Low Energy (BLE)</div>
+  <ul>
+    <li><strong>Fréquence :</strong> Bande ISM 2,4 GHz (2402 MHz à 2480 MHz, partagée avec le Wi-Fi et le Bluetooth classique).</li>
+    <li><strong>Consommation :</strong> <strong>Jusqu'à 10 fois inférieure</strong> à celle du Bluetooth classique, permettant une autonomie de plusieurs années sur une simple pile bouton (CR2032).</li>
+    <li><strong>Débit binaire :</strong> Environ <strong>1 Mbit/s</strong> en couche physique standard (jusqu'à <strong>2 Mbit/s</strong> avec le mode PHY 2M introduit par Bluetooth 5.0).</li>
+    <li><strong>Portée radio :</strong> De <strong>10 à 30 mètres</strong> en usage courant d'atelier, et jusqu'à <strong>plusieurs centaines de mètres</strong> en milieu ouvert avec les versions récentes (Bluetooth 5.0+ exploitant la modulation longue portée <em>LE Coded PHY</em>).</li>
+    <li><strong>Mode de fonctionnement :</strong> Envoi de données par <strong>courtes rafales (paquets)</strong> plutôt qu'un flux continu permanent.</li>
+  </ul>
+</div>
+
+<h4>Différences d'usage avec le Bluetooth classique :</h4>
+<ul>
+  <li><strong>Bluetooth classique (BR/EDR) :</strong> Conçu pour un flux continu de données volumineuses (streaming audio/vidéo, casques, liaisons série continues à fort débit). Il consomme plus de batterie et maintient la liaison radio active en permanence.</li>
+  <li><strong>Bluetooth LE :</strong> Conçu pour des transferts ponctuels de petites quantités de données (capteurs de température, télémétrie, objets connectés). Il reste en <strong>mode veille prolongée la majeure partie du temps</strong> et ne se réveille que quelques millisecondes pour émettre ou écouter.</li>
+</ul>
+
+<h3>2.3. Modes de Fonctionnement et Gestion de l'Appairage en Bluetooth LE</h3>
+<p>En Bluetooth LE (Low Energy), l'absence d'appairage traditionnel dépend directement du mode de fonctionnement utilisé par l'appareil :</p>
+<ul>
+  <li><strong>Le mode « Broadcast » (Diffusion / Beacon) :</strong> L'appareil envoie des données en continu à tout le monde (comme une balise iBeacon ou Eddystone) sans jamais demander d'autorisation ni s'apparier. N'importe quel récepteur situé à portée radio peut lire immédiatement les informations diffusées.</li>
+  <li><strong>Le mode « Connection-based » sans sécurité / Just Works :</strong> L'appareil accepte une connexion directe pour échanger des données, mais sans procédure de liaison complexe ni saisie de code PIN (souvent utilisé pour des capteurs industriels simples, des badges ou des bracelets connectés).</li>
+  <li><strong>Le mode « Connection-based » sécurisé avec authentification / chiffrement :</strong> Appairage avec échange de clés de chiffrement (Passkey Entry, Numeric Comparison, OOB) pour établir une liaison chiffrée AES-CCM et générer des clés de liaison pérennes (<em>Bonding</em>).</li>
+</ul>
+
+<h3>2.4. Le Modèle d'Échange Publish / Subscribe du Réseau Maillé (Bluetooth Mesh)</h3>
+<p>Contrairement aux réseaux Bluetooth traditionnels en étoile (Piconet) limités à un seul bond radio autour d'un équipement central, le <strong>Bluetooth Mesh</strong> s'appuie sur le paradigme <strong>Publish / Subscribe (Éditeur / Abonné)</strong> :</p>
+<ul>
+  <li><strong>Publisher (Émetteur) :</strong> Nœud générant une information ou une commande (ex : une tablette de supervision ou un capteur d'alarme) et la publiant vers une adresse de groupe spécifique.</li>
+  <li><strong>Nœuds Relais (Relay Nodes) :</strong> Équipements du maillage (nœuds bleus dans le schéma) qui réémettent le message sans négociation de route complexe, selon le principe de l'<strong>inondation contrôlée (Managed Flooding)</strong>.</li>
+  <li><strong>Subscribers (Abonnés) :</strong> Nœuds configurés pour écouter cette adresse de groupe (ex : <em>Subscriber 1</em> et <em>Subscriber 2</em>). Ils interceptent le message relayé et exécutent l'action requise (affichage, commutation de relais, signalisation sonore).</li>
+</ul>
+
+<!-- FIGURE : ARCHITECTURE PUBLISH / SUBSCRIBE BLUETOOTH MESH -->
+<div class="figure-box">
+  <img src="images/bluetooth_mesh_pub_sub.png" alt="Modèle Publish / Subscribe du réseau maillé Bluetooth Mesh" style="max-width: 680px; width: 100%; border-radius: 8px; box-shadow: 0 2px 6px rgba(0,0,0,0.1);" />
+  <div class="figure-caption">Figure 1 : Modèle d'échange Publish / Subscribe en Bluetooth Mesh — Les messages émis par le Publisher sont propagés de proche en proche par les nœuds relais vers les Subscribers</div>
+</div>
+
+<!-- FIGURE 2 : SVG COMPARATIF DES 3 TOPOLOGIES -->
+<div class="figure-box">
+  <div class="svg-container">
+    <svg viewBox="0 0 880 370" width="100%" height="auto" xmlns="http://www.w3.org/2000/svg">
+      <defs>
+        <linearGradient id="picoGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+          <stop offset="0%" stop-color="#0284c7" />
+          <stop offset="100%" stop-color="#0369a1" />
+        </linearGradient>
+        <linearGradient id="bcastGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+          <stop offset="0%" stop-color="#059669" />
+          <stop offset="100%" stop-color="#047857" />
+        </linearGradient>
+        <linearGradient id="meshGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+          <stop offset="0%" stop-color="#7c3aed" />
+          <stop offset="100%" stop-color="#6d28d9" />
+        </linearGradient>
+        <filter id="boxShadow" x="-5%" y="-5%" width="110%" height="110%">
+          <feDropShadow dx="2" dy="3" stdDeviation="3" flood-opacity="0.2"/>
+        </filter>
+      </defs>
+
+      <!-- =================================================================== -->
+      <!-- PANNEAU 1 : BLUETOOTH CLASSIQUE / PICONET                           -->
+      <!-- =================================================================== -->
+      <g transform="translate(15, 15)" filter="url(#boxShadow)">
+        <rect width="270" height="335" rx="8" fill="#ffffff" stroke="#cbd5e1" stroke-width="1.5"/>
+        
+        <!-- En-tête panneau avec badge technologique -->
+        <rect width="270" height="52" rx="8" fill="url(#picoGrad)"/>
+        <text x="135" y="20" fill="#ffffff" font-family="'Segoe UI', sans-serif" font-size="8.8pt" font-weight="bold" text-anchor="middle">1. TOPOLOGIE PICONET (Étoile)</text>
+        <rect x="25" y="26" width="220" height="18" rx="9" fill="#e0f2fe"/>
+        <text x="135" y="38" fill="#0369a1" font-family="'Segoe UI', sans-serif" font-size="7.2pt" font-weight="bold" text-anchor="middle">🔷 BLUETOOTH CLASSIQUE (BR/EDR)</text>
+        
+        <!-- Nœud Central / Master -->
+        <circle cx="135" cy="115" r="28" fill="#0284c7" stroke="#0369a1" stroke-width="2"/>
+        <text x="135" y="112" fill="#ffffff" font-family="'Segoe UI', sans-serif" font-size="7.5pt" font-weight="bold" text-anchor="middle">MAÎTRE</text>
+        <text x="135" y="124" fill="#e0f2fe" font-family="Consolas" font-size="6.5pt" text-anchor="middle">(Central)</text>
+
+        <!-- Esclaves 1, 2, 3 -->
+        <circle cx="50" cy="210" r="21" fill="#f8fafc" stroke="#0284c7" stroke-width="2"/>
+        <text x="50" y="214" fill="#0b3c5d" font-family="Consolas" font-size="6.8pt" font-weight="bold" text-anchor="middle">Slave 1</text>
+
+        <circle cx="135" cy="238" r="21" fill="#f8fafc" stroke="#0284c7" stroke-width="2"/>
+        <text x="135" y="242" fill="#0b3c5d" font-family="Consolas" font-size="6.8pt" font-weight="bold" text-anchor="middle">Slave 2</text>
+
+        <circle cx="220" cy="210" r="21" fill="#f8fafc" stroke="#0284c7" stroke-width="2"/>
+        <text x="220" y="214" fill="#0b3c5d" font-family="Consolas" font-size="6.8pt" font-weight="bold" text-anchor="middle">Slave 3</text>
+
+        <!-- Liens bidirectionnels maîtres-esclaves (arrêtés aux bords des cercles) -->
+        <line x1="115" y1="137" x2="67" y2="192" stroke="#0284c7" stroke-width="2" stroke-dasharray="3 2"/>
+        <line x1="135" y1="143" x2="135" y2="217" stroke="#0284c7" stroke-width="2" stroke-dasharray="3 2"/>
+        <line x1="155" y1="137" x2="203" y2="192" stroke="#0284c7" stroke-width="2" stroke-dasharray="3 2"/>
+
+        <!-- Caractéristiques synthétiques au bas du panneau -->
+        <text x="135" y="278" fill="#334155" font-family="'Segoe UI', sans-serif" font-size="7pt" text-anchor="middle">Liaison continue point-à-point (RFCOMM/SPP)</text>
+        <text x="135" y="291" fill="#0369a1" font-family="'Segoe UI', sans-serif" font-size="7pt" font-weight="bold" text-anchor="middle">Max 7 esclaves actifs par Piconet</text>
+        <text x="135" y="304" fill="#475569" font-family="'Segoe UI', sans-serif" font-size="6.8pt" text-anchor="middle">Consommation continue (25-45 mA)</text>
+        <text x="135" y="317" fill="#0b3c5d" font-family="'Segoe UI', sans-serif" font-size="6.8pt" font-style="italic" text-anchor="middle">Streaming audio, console série RS-232</text>
+      </g>
+
+      <!-- =================================================================== -->
+      <!-- PANNEAU 2 : BLUETOOTH LOW ENERGY / BROADCAST                        -->
+      <!-- =================================================================== -->
+      <g transform="translate(305, 15)" filter="url(#boxShadow)">
+        <rect width="270" height="335" rx="8" fill="#ffffff" stroke="#cbd5e1" stroke-width="1.5"/>
+        
+        <!-- En-tête panneau avec badge technologique -->
+        <rect width="270" height="52" rx="8" fill="url(#bcastGrad)"/>
+        <text x="135" y="20" fill="#ffffff" font-family="'Segoe UI', sans-serif" font-size="8.8pt" font-weight="bold" text-anchor="middle">2. TOPOLOGIE BROADCAST (Diffusion)</text>
+        <rect x="25" y="26" width="220" height="18" rx="9" fill="#d1fae5"/>
+        <text x="135" y="38" fill="#065f46" font-family="'Segoe UI', sans-serif" font-size="7.2pt" font-weight="bold" text-anchor="middle">🟢 BLUETOOTH LOW ENERGY (BLE)</text>
+
+        <!-- Émetteur Broadcaster (Beacon) -->
+        <circle cx="135" cy="112" r="26" fill="#059669" stroke="#047857" stroke-width="2"/>
+        <text x="135" y="109" fill="#ffffff" font-family="'Segoe UI', sans-serif" font-size="7.5pt" font-weight="bold" text-anchor="middle">BEACON</text>
+        <text x="135" y="121" fill="#d1fae5" font-family="Consolas" font-size="6pt" text-anchor="middle">Broadcaster</text>
+
+        <!-- Ondes radio d'annonces périodiques -->
+        <path d="M 90 112 A 45 45 0 0 0 180 112" fill="none" stroke="#10b981" stroke-width="2"/>
+        <path d="M 70 112 A 65 65 0 0 0 200 112" fill="none" stroke="#34d399" stroke-width="1.5" stroke-dasharray="3 2"/>
+
+        <!-- Observateurs passifs (Scanners) avec texte lisible -->
+        <circle cx="50" cy="222" r="20" fill="#f8fafc" stroke="#059669" stroke-width="2"/>
+        <text x="50" y="226" fill="#065f46" font-family="Consolas" font-size="6.5pt" font-weight="bold" text-anchor="middle">Scanner 1</text>
+
+        <circle cx="135" cy="222" r="20" fill="#f8fafc" stroke="#059669" stroke-width="2"/>
+        <text x="135" y="226" fill="#065f46" font-family="Consolas" font-size="6.5pt" font-weight="bold" text-anchor="middle">Scanner 2</text>
+
+        <circle cx="220" cy="222" r="20" fill="#f8fafc" stroke="#059669" stroke-width="2"/>
+        <text x="220" y="226" fill="#065f46" font-family="Consolas" font-size="6.5pt" font-weight="bold" text-anchor="middle">Scanner 3</text>
+
+        <!-- Flèches unidirectionnelles (arrêtées proprement avant les cercles) -->
+        <line x1="112" y1="128" x2="65" y2="204" stroke="#10b981" stroke-width="1.5"/>
+        <line x1="135" y1="138" x2="135" y2="202" stroke="#10b981" stroke-width="1.5"/>
+        <line x1="158" y1="128" x2="205" y2="204" stroke="#10b981" stroke-width="1.5"/>
+
+        <!-- Caractéristiques synthétiques au bas du panneau -->
+        <text x="135" y="278" fill="#334155" font-family="'Segoe UI', sans-serif" font-size="7pt" text-anchor="middle">Diffusion 1 vers N sans aucun appairage</text>
+        <text x="135" y="291" fill="#065f46" font-family="'Segoe UI', sans-serif" font-size="7pt" font-weight="bold" text-anchor="middle">Canaux d'annonces 37, 38 et 39</text>
+        <text x="135" y="304" fill="#475569" font-family="'Segoe UI', sans-serif" font-size="6.8pt" text-anchor="middle">Nombre de récepteurs illimité (Écoute passive)</text>
+        <text x="135" y="317" fill="#064e3b" font-family="'Segoe UI', sans-serif" font-size="6.8pt" font-style="italic" text-anchor="middle">Traçabilité d'outillage, balises iBeacon/Eddystone</text>
+      </g>
+
+      <!-- =================================================================== -->
+      <!-- PANNEAU 3 : BLUETOOTH MESH                                          -->
+      <!-- =================================================================== -->
+      <g transform="translate(595, 15)" filter="url(#boxShadow)">
+        <rect width="270" height="335" rx="8" fill="#ffffff" stroke="#cbd5e1" stroke-width="1.5"/>
+        
+        <!-- En-tête panneau avec badge technologique -->
+        <rect width="270" height="52" rx="8" fill="url(#meshGrad)"/>
+        <text x="135" y="20" fill="#ffffff" font-family="'Segoe UI', sans-serif" font-size="8.8pt" font-weight="bold" text-anchor="middle">3. TOPOLOGIE MESH (Maillée)</text>
+        <rect x="25" y="26" width="220" height="18" rx="9" fill="#ede9fe"/>
+        <text x="135" y="38" fill="#5b21b6" font-family="'Segoe UI', sans-serif" font-size="7.2pt" font-weight="bold" text-anchor="middle">🟣 BLUETOOTH MESH (BLE MESH)</text>
+
+        <!-- Obstacle RF (Rayonnage métallique) -->
+        <rect x="98" y="70" width="12" height="48" rx="2" fill="#ef4444" opacity="0.85"/>
+        <text x="115" y="88" fill="#b91c1c" font-size="5.5pt" font-weight="bold" font-family="Consolas">Obstacle RF</text>
+        <text x="115" y="99" fill="#7f1d1d" font-size="5pt" font-family="Consolas">(Masquage)</text>
+
+        <!-- Nœud Émetteur A (Publisher) -->
+        <circle cx="50" cy="98" r="20" fill="#7c3aed" stroke="#5b21b6" stroke-width="2"/>
+        <text x="50" y="95" fill="#ffffff" font-family="Consolas" font-size="6.5pt" font-weight="bold" text-anchor="middle">Nœud A</text>
+        <text x="50" y="106" fill="#e9d5ff" font-family="Consolas" font-size="5.2pt" text-anchor="middle">(Publisher)</text>
+
+        <!-- Nœud Relais B -->
+        <circle cx="145" cy="142" r="22" fill="#8b5cf6" stroke="#6d28d9" stroke-width="2"/>
+        <text x="145" y="139" fill="#ffffff" font-family="Consolas" font-size="6.5pt" font-weight="bold" text-anchor="middle">Relais B</text>
+        <text x="145" y="150" fill="#ede9fe" font-family="Consolas" font-size="5.2pt" text-anchor="middle">(Relay)</text>
+        <rect x="115" y="168" width="60" height="13" rx="3" fill="#4c1d95" opacity="0.85"/>
+        <text x="145" y="177" fill="#f3e8ff" font-size="5.5pt" font-family="Consolas" text-anchor="middle">TTL = TTL - 1</text>
+
+        <!-- Nœud Relais C -->
+        <circle cx="85" cy="225" r="20" fill="#8b5cf6" stroke="#6d28d9" stroke-width="2"/>
+        <text x="85" y="222" fill="#ffffff" font-family="Consolas" font-size="6.5pt" font-weight="bold" text-anchor="middle">Relais C</text>
+        <text x="85" y="233" fill="#ede9fe" font-family="Consolas" font-size="5.2pt" text-anchor="middle">(Relay)</text>
+
+        <!-- Nœud Destinataire D (Subscriber - Hors de portée directe de A) -->
+        <circle cx="225" cy="190" r="22" fill="#a855f7" stroke="#7e22ce" stroke-width="2"/>
+        <text x="225" y="187" fill="#ffffff" font-family="Consolas" font-size="6.5pt" font-weight="bold" text-anchor="middle">Nœud D</text>
+        <text x="225" y="198" fill="#fdf4ff" font-family="Consolas" font-size="5.2pt" text-anchor="middle">(Subscriber)</text>
+
+        <!-- Liens maillés multi-sauts -->
+        <line x1="68" y1="107" x2="125" y2="134" stroke="#7c3aed" stroke-width="2"/>
+        <line x1="56" y1="117" x2="78" y2="206" stroke="#7c3aed" stroke-width="2"/>
+        <line x1="165" y1="152" x2="205" y2="178" stroke="#7c3aed" stroke-width="2"/>
+        <line x1="104" y1="218" x2="204" y2="198" stroke="#7c3aed" stroke-width="2"/>
+        <line x1="133" y1="161" x2="97" y2="207" stroke="#7c3aed" stroke-width="1.5" stroke-dasharray="3 2"/>
+
+        <!-- Caractéristiques synthétiques au bas du panneau -->
+        <text x="135" y="278" fill="#334155" font-family="'Segoe UI', sans-serif" font-size="7pt" text-anchor="middle">Inondation contrôlée (Managed Flooding)</text>
+        <text x="135" y="291" fill="#6d28d9" font-family="'Segoe UI', sans-serif" font-size="7pt" font-weight="bold" text-anchor="middle">Extension de portée sans fil par rebonds</text>
+        <text x="135" y="304" fill="#475569" font-family="'Segoe UI', sans-serif" font-size="6.8pt" text-anchor="middle">Modèle Publish / Subscribe & Auto-cicatrisation</text>
+        <text x="135" y="317" fill="#4c1d95" font-family="'Segoe UI', sans-serif" font-size="6.8pt" font-style="italic" text-anchor="middle">Éclairage connecté, alertes d'ateliers étendus</text>
+      </g>
+    </svg>
+  </div>
+  <div class="figure-caption">Figure 2 : Comparatif des 3 architectures et technologies associées — Bluetooth Classique (Piconet), Bluetooth Low Energy (Broadcast) et Bluetooth Mesh (Maillé)</div>
+</div>
+
+<hr />
+
+<!-- ========================================================================= -->
+<!-- 3. DEROULEMENT DU TP - ACTIVITES PRATIQUES ET MESURES                     -->
+<!-- ========================================================================= -->
+<h2>3. Déroulement du TP — Activités Pratiques et Mesures</h2>
+
+<!-- ETAPE 1 -->
+<div class="step-box">
+  <div class="step-header">
+    <span class="step-title">PARTIE 1 : Bluetooth Classic (SPP) sur ESP32 — Liaison Série Transparente et Topologie Piconet</span>
+    <span class="timing-badge">Durée estimée : 1h00</span>
+  </div>
+
+  <p>L'ESP32 intègre un contrôleur radio Bluetooth double mode. Nous allons d'abord exploiter le profil <strong>Bluetooth Classic SPP (Serial Port Profile)</strong>, idéal pour remplacer un câble RS-232 sans modifier la structure applicative.</p>
+
+  <h4>3.1. Code ESP32 : Pont série bidirectionnel Bluetooth Classic</h4>
+  <p>Téléversez le programme suivant sur votre carte ESP32. Il initialise le périphérique sous le nom personnalisé <code>ESP32_BT_CIEL_X</code> (remplacez <code>X</code> par votre numéro de binôme) :</p>
+
+  <pre><code>/* =========================================================================
+   BTS CIEL - PARTIE 1 : Bluetooth Classic SPP sur ESP32
+   Bibliothèque standard ESP32 Arduino Core : BluetoothSerial
+   ========================================================================= */
+#include "BluetoothSerial.h"
+
+#if !defined(CONFIG_BT_ENABLED) || !defined(CONFIG_BLUEDROID_ENABLED)
+#error "Le Bluetooth doit être activé dans le menu de configuration du composant !"
+#endif
+
+BluetoothSerial SerialBT;
+
+const char* DEVICE_NAME = "ESP32_CLASSIC_B1"; // Modifier selon votre binôme
+unsigned long lastHeartbeat = 0;
+uint32_t messageCounter = 0;
+
+void setup() {
+  Serial.begin(115200);
+  
+  // Démarrage du Bluetooth Classic en mode esclave (détectable par un Maître/Smartphone)
+  SerialBT.begin(DEVICE_NAME);
+  
+  Serial.println(F("\n======================================================="));
+  Serial.println(F("  ESP32 Bluetooth Classic SPP - Pret"));
+  Serial.println(F("======================================================="));
+  Serial.printf("Périphérique visible sous le nom : %s\n", DEVICE_NAME);
+  Serial.println(F("Ouvrez 'Serial Bluetooth Terminal' sur smartphone et connectez-vous."));
+}
+
+void loop() {
+  // 1. Relais des données reçues depuis la console USB du PC vers le Bluetooth
+  while (Serial.available() > 0) {
+    char c = Serial.read();
+    SerialBT.write(c);
+  }
+
+  // 2. Relais des données reçues depuis le Bluetooth vers la console USB du PC
+  while (SerialBT.available() > 0) {
+    char c = SerialBT.read();
+    Serial.write(c);
+  }
+
+  // 3. Télémétrie périodique (émission toutes les 2 secondes)
+  if (millis() - lastHeartbeat >= 2000) {
+    lastHeartbeat = millis();
+    messageCounter++;
+    if (SerialBT.hasClient()) {
+      SerialBT.printf("TELEMETRY:ID=%u;UPTIME=%lu ms;STATUS=OK\r\n", messageCounter, millis());
+    }
+  }
+}</code></pre>
+
+  <h4>3.2. Expérimentations et mesures :</h4>
+  <ol>
+    <li>Activez le Bluetooth sur votre smartphone Android/iOS, lancez l'application <strong>Serial Bluetooth Terminal</strong>, scannez et associez le module <code>ESP32_CLASSIC_BX</code>.</li>
+    <li>Observez la connexion : vérifiez que les trames de télémétrie s'affichent toutes les 2 secondes sur votre smartphone.</li>
+    <li>Depuis le smartphone, envoyez une commande texte (ex : <code>LED_ON</code> ou un texte long). Vérifiez la réception instantanée sur le moniteur série de l'ordinateur.</li>
+    <li><strong>Topologie Piconet (Interconnexion inter-binômes) :</strong>
+      Deux binômes voisins doivent tenter de connecter <strong>simultanément</strong> leurs deux smartphones à un seul et même ESP32 en Bluetooth Classic SPP. Que constatez-vous ?
+    </li>
+  </ol>
+
+  <div class="student-response">
+    <strong>Question 1.1 :</strong> Dans la topologie Bluetooth Classic, quel rôle (<em>Master</em> ou <em>Slave</em>) joue le smartphone ? Quel rôle joue l'ESP32 ?
+    Est-il possible dans ce mode qu'un deuxième smartphone se connecte au même ESP32 pour recevoir la télémétrie en simultané ? Justifiez en rappelant les règles d'un canal logique RFCOMM.
+    <div class="dotted-line"></div>
+    <div class="dotted-line"></div>
+  </div>
+
+  <div class="student-response">
+    <strong>Question 1.2 (Mesure du débit utile maximal en Bluetooth Classic) :</strong><br>
+    À l'aide de l'outil "Send File" ou d'une boucle émettant 10 000 octets sans délai (<code>SerialBT.write()</code>), chronométrez la durée totale du transfert vers le smartphone :<br>
+    • Taille des données : <strong>10 000 octets</strong> (soit 80 000 bits).<br>
+    • Durée mesurée (&Delta;<i>t</i>) : <strong>......................... ms</strong>.<br>
+    • Calcul du débit binaire utile réel :
+    <div class="formula-box">
+      <i>D</i><sub>utile</sub> = 
+      <span class="frac"><span class="num">80 000 bits</span><span class="den">&Delta;<i>t</i> (s)</span></span>
+      = <strong>......................... kbit/s</strong>
+    </div>
+  </div>
+</div>
+
+<!-- ETAPE 2 -->
+<div class="step-box">
+  <div class="step-header">
+    <span class="step-title">PARTIE 2 : Bluetooth Low Energy (BLE) — Architecture GATT & Profil de Télémétrie</span>
+    <span class="timing-badge">Durée estimée : 1h15</span>
+  </div>
+
+  <p>Le <strong>Bluetooth Low Energy (BLE)</strong> ne s'appuie plus sur une liaison série continue, mais sur une base de données d'attributs structurée : l'architecture <strong>GATT (Generic Attribute Profile)</strong>. Les informations sont organisées selon la hiérarchie : <strong>Profil &rarr; Service &rarr; Caractéristique &rarr; Descripteur</strong>.</p>
+
+  <h4>Format des UUIDs normalisés :</h4>
+  <p>Chaque service et caractéristique est identifié par un <strong>UUID</strong> (<em>Universally Unique Identifier</em>). Pour des besoins industriels personnalisés, on génère des UUIDs sur 128 bits (16 octets).</p>
+
+  <h4>3.3. Code ESP32 : Serveur GATT BLE avec Caractéristique Notify</h4>
+  <pre><code>/* =========================================================================
+   BTS CIEL - PARTIE 2 : Serveur GATT BLE sur ESP32
+   Service de télémétrie industrielle avec notification et commande
+   ========================================================================= */
+#include &lt;BLEDevice.h&gt;
+#include &lt;BLEServer.h&gt;
+#include &lt;BLEUtils.h&gt;
+#include &lt;BLE2902.h&gt;
+
+// UUIDs 128 bits générés pour notre pupitre industriel
+#define SERVICE_UUID        "4fafc201-1fb5-459e-8fcc-c5c9c331914b"
+#define CHAR_TELEMETRY_UUID "beb5483e-36e1-4688-b7f5-ea07361b26a8" // NOTIFY + READ
+#define CHAR_COMMAND_UUID   "1c95d5e3-d8f7-413a-bf3d-7a2e5d7be87e" // WRITE
+
+BLEServer* pServer = nullptr;
+BLECharacteristic* pCharTelemetry = nullptr;
+BLECharacteristic* pCharCommand = nullptr;
+bool deviceConnected = false;
+uint32_t valCapteur = 0;
+
+// Gestionnaire d'événements de connexion
+class MyServerCallbacks: public BLEServerCallbacks {
+    void onConnect(BLEServer* pServer) {
+      deviceConnected = true;
+      Serial.println(F("[BLE] Client connecté !"));
+    };
+    void onDisconnect(BLEServer* pServer) {
+      deviceConnected = false;
+      Serial.println(F("[BLE] Client déconnecté - Reprise des annonces..."));
+      // Relance automatique de la publicité après déconnexion
+      BLEDevice::startAdvertising();
+    }
+};
+
+// Gestionnaire d'écriture sur la caractéristique de commande
+class CommandCallbacks: public BLECharacteristicCallbacks {
+    void onWrite(BLECharacteristic *pCharacteristic) {
+      String rxValue = pCharacteristic->getValue();
+      if (rxValue.length() > 0) {
+        Serial.print(F("[BLE REÇU] Commande reçue : "));
+        Serial.println(rxValue);
+      }
+    }
+};
+
+void setup() {
+  Serial.begin(115200);
+  Serial.println(F("Démarrage du Serveur BLE GATT ESP32..."));
+
+  // 1. Initialisation du périphérique BLE
+  BLEDevice::init("ESP32_BLE_GATT_B1");
+
+  // 2. Création du Serveur BLE
+  pServer = BLEDevice::createServer();
+  pServer->setCallbacks(new MyServerCallbacks());
+
+  // 3. Création du Service Primaire
+  BLEService *pService = pServer->createService(SERVICE_UUID);
+
+  // 4. Création de la Caractéristique de Télémétrie (Lecture + Notification)
+  pCharTelemetry = pService->createCharacteristic(
+                      CHAR_TELEMETRY_UUID,
+                      BLECharacteristic::PROPERTY_READ |
+                      BLECharacteristic::PROPERTY_NOTIFY
+                    );
+  // Ajout du descripteur standard 0x2902 indispensable pour autoriser les Notifications
+  pCharTelemetry->addDescriptor(new BLE2902());
+
+  // 5. Création de la Caractéristique de Commande (Écriture)
+  pCharCommand = pService->createCharacteristic(
+                    CHAR_COMMAND_UUID,
+                    BLECharacteristic::PROPERTY_WRITE
+                  );
+  pCharCommand->setCallbacks(new CommandCallbacks());
+
+  // 6. Démarrage du service et des annonces (Advertising)
+  pService->start();
+  BLEAdvertising *pAdvertising = BLEDevice::getAdvertising();
+  pAdvertising->addServiceUUID(SERVICE_UUID);
+  pAdvertising->setScanResponse(true);
+  pAdvertising->setMinPreferred(0x06); // Optimisation pour connexion iOS
+  BLEDevice::startAdvertising();
+  
+  Serial.println(F("Serveur BLE actif et en attente de connexions..."));
+}
+
+void loop() {
+  if (deviceConnected) {
+    valCapteur++;
+    char buffer[32];
+    snprintf(buffer, sizeof(buffer), "TEMP:%lu;ALARM=0", 20 + (valCapteur % 15));
+    
+    // Mise à jour de la valeur et émission de la notification vers le client connecté
+    pCharTelemetry->setValue(buffer);
+    pCharTelemetry->notify();
+    
+    Serial.printf("[NOTIFICATION ÉMISE] %s\n", buffer);
+    delay(1000); // Cadence de transmission
+  }
+}</code></pre>
+
+  <h4>3.4. Travail demandé avec nRF Connect :</h4>
+  <ol>
+    <li>Installez l'application <strong>nRF Connect for Mobile</strong> (Nordic Semiconductor) sur votre smartphone.</li>
+    <li>Lancez un <strong>Scan</strong> : repérez votre ESP32 dans la liste des périphériques découverts. Relevez son adresse MAC et la puissance du signal (RSSI).</li>
+    <li>Cliquez sur <strong>CONNECT</strong>. Observez l'arborescence GATT :
+      <ul>
+        <li>Localisez le service primaire avec l'UUID <code>4fafc201-...</code>.</li>
+        <li>Activez la réception des notifications en cliquant sur l'icône à trois flèches descendantes (<strong>&darr;&darr;&darr;</strong>) de la caractéristique de télémétrie. Observez l'arrivée régulière des valeurs.</li>
+        <li>Cliquez sur l'icône d'écriture (flèche vers le haut <strong>&uarr;</strong>) de la caractéristique de commande. Saisissez <code>RESET</code> en UTF-8 et validez. Vérifiez la réception sur la console série de l'ESP32.</li>
+      </ul>
+    </li>
+  </ol>
+
+  <div class="student-response">
+    <strong>Question 2.1 :</strong> Dans le protocole BLE, expliquez la différence fondamentale entre une lecture par scrutation (<strong>Polling / Read</strong>) et une émission par événement (<strong>Notify</strong>). Quel est l'intérêt déterminant du mode <em>Notify</em> pour la durée de vie d'une batterie dans un objet connecté ?
+    <div class="dotted-line"></div>
+    <div class="dotted-line"></div>
+  </div>
+
+  <div class="student-response">
+    <strong>Question 2.2 :</strong> Relevez la valeur du descripteur <strong>Client Characteristic Configuration Descriptor (CCCD - UUID 0x2902)</strong> dans nRF Connect :<br>
+    • Lorsque les notifications sont désactivées : <code>0x............</code><br>
+    • Lorsque les notifications sont activées : <code>0x............</code> (Expliquez le rôle de ce descripteur).
+    <div class="dotted-line"></div>
+  </div>
+</div>
+
+<!-- ETAPE 3 -->
+<div class="step-box">
+  <div class="step-header">
+    <span class="step-title">PARTIE 3 : Mode Broadcast & Balisage sans Connexion (BLE Beacon / Observer)</span>
+    <span class="timing-badge">Durée estimée : 1h00</span>
+  </div>
+
+  <p>Certains cas d'usage industriels (géolocalisation d'outils, traçabilité de palettes, diffusion d'alertes générales) ne nécessitent aucune connexion préalable. Le mode <strong>Broadcast</strong> utilise uniquement les <strong>trois canaux d'annonces (canaux 37, 38 et 39)</strong> pour diffuser des données vers une infinité de récepteurs en écoute passive.</p>
+
+  <h4>Format des paquets d'Advertising BLE (31 octets utiles) :</h4>
+  <p>Une trame d'annonce standard transporte jusqu'à 31 octets découpés en blocs <code>[Longueur | Type AD | Données]</code>. Le champ <code>0xFF</code> (<em>Manufacturer Specific Data</em>) permet d'injecter des données brutes propriétaires (ex : identifiant d'atelier, température, statut de machine).</p>
+
+  <h4>3.5. Code ESP32 N°1 : Émetteur Balise (Broadcaster / Beacon)</h4>
+  <pre><code>/* =========================================================================
+   BTS CIEL - PARTIE 3 : Émetteur Balise BLE Broadcast (ESP32 N°1)
+   Diffusion de télémétrie sans aucune connexion
+   ========================================================================= */
+#include &lt;BLEDevice.h&gt;
+#include &lt;BLEUtils.h&gt;
+#include &lt;BLEAdvertising.h&gt;
+
+BLEAdvertising *pAdvertising;
+uint16_t sequenceNumber = 0;
+
+void setup() {
+  Serial.begin(115200);
+  Serial.println(F("Démarrage du Beacon Broadcast BLE..."));
+
+  BLEDevice::init("BEACON_ATELIER_01");
+  pAdvertising = BLEDevice::getAdvertising();
+}
+
+void loop() {
+  sequenceNumber++;
+  int16_t temperature = 235; // 23.5 °C en dixièmes de degré
+
+  // Construction de la charge utile constructeur (Manufacturer Data - Type 0xFF)
+  // Format : [ID Entreprise (2 octets)] [ID Balise (1 octet)] [Température (2 octets)] [Compteur (2 octets)]
+  std::string mData = "";
+  mData += (char)0xFF;       // Type AD: Manufacturer Data
+  mData += (char)0xFF; mData += (char)0x01; // ID Fabricant (ex: 0x01FF)
+  mData += (char)0x0A;       // ID Balise #10
+  mData += (char)(temperature >> 8);
+  mData += (char)(temperature & 0xFF);
+  mData += (char)(sequenceNumber >> 8);
+  mData += (char)(sequenceNumber & 0xFF);
+
+  BLEAdvertisementData advData;
+  advData.setFlags(0x06);    // Mode LE General Discoverable + BR/EDR Not Supported
+  advData.setName("BEACON_01");
+  advData.addData(mData);
+
+  pAdvertising->setAdvertisementData(advData);
+  pAdvertising->start();
+  
+  Serial.printf("[BROADCAST ÉMIS] Séquence #%u | Temp = 23.5 C\n", sequenceNumber);
+  delay(1000); // Période d'annonce (Advertising Interval)
+  pAdvertising->stop();
+  delay(500);  // Sommeil entre deux salves d'annonces
+}</code></pre>
+
+  <h4>3.6. Code ESP32 N°2 : Récepteur Écouteur Passif (Observer / Scanner)</h4>
+  <pre><code>/* =========================================================================
+   BTS CIEL - PARTIE 3 : Scanner / Observer BLE Broadcast (ESP32 N°2)
+   Écoute passive des annonces sur les canaux 37, 38 et 39
+   ========================================================================= */
+#include &lt;BLEDevice.h&gt;
+#include &lt;BLEUtils.h&gt;
+#include &lt;BLEScan.h&gt;
+#include &lt;BLEAdvertisedDevice.h&gt;
+
+int scanTime = 2; // Durée de scan en secondes
+BLEScan* pBLEScan;
+
+class MyAdvertisedDeviceCallbacks: public BLEAdvertisedDeviceCallbacks {
+    void onResult(BLEAdvertisedDevice advertisedDevice) {
+      if (advertisedDevice.haveName() && advertisedDevice.getName() == "BEACON_01") {
+        Serial.printf("\n[BEACON DÉTECTÉ] MAC : %s | RSSI : %d dBm\n",
+                      advertisedDevice.getAddress().toString().c_str(),
+                      advertisedDevice.getRSSI());
+        
+        if (advertisedDevice.haveManufacturerData()) {
+          std::string strData = advertisedDevice.getManufacturerData();
+          Serial.printf("  Données brutes reçues (%d octets) : ", strData.length());
+          for (size_t i = 0; i < strData.length(); i++) {
+            Serial.printf("%02X ", (uint8_t)strData[i]);
+          }
+          Serial.println();
+        }
+      }
+    }
+};
+
+void setup() {
+  Serial.begin(115200);
+  Serial.println(F("Démarrage du Scanner BLE Observer..."));
+
+  BLEDevice::init("");
+  pBLEScan = BLEDevice::getScan();
+  pBLEScan->setAdvertisedDeviceCallbacks(new MyAdvertisedDeviceCallbacks());
+  pBLEScan->setActiveScan(true); // Active scan pour demander le Scan Response
+  pBLEScan->setInterval(100);
+  pBLEScan->setWindow(99);       // Fenêtre de réception quasi-permanente
+}
+
+void loop() {
+  pBLEScan->start(scanTime, false);
+  pBLEScan->clearResults();   // Libération de la mémoire
+  delay(500);
+}</code></pre>
+
+  <div class="student-response">
+    <strong>Question 3.1 :</strong> En mode Broadcast, pourquoi le nombre de récepteurs (Scanners) pouvant intercepter les informations émises par une seule balise est-il théoriquement <strong>illimité</strong> ? Comparez cette propriété avec la limitation à 7 esclaves du Piconet Bluetooth Classic étudié en Partie 1.
+    <div class="dotted-line"></div>
+    <div class="dotted-line"></div>
+  </div>
+
+  <div class="student-response">
+    <strong>Question 3.2 (Analyse Cybersécurité) :</strong> Les trames d'annonces Broadcast sont diffusées en clair sans aucune négociation de clé de chiffrement. Quel risque de cybersécurité cela engendre-t-il pour un système industriel ? Proposez une solution logicielle pour authentifier les trames reçues sans établir de connexion (ex : signature HMAC-SHA256 tronquée sur quelques octets).
+    <div class="dotted-line"></div>
+    <div class="dotted-line"></div>
+  </div>
+
+  <h4>3.7. Analyse Protocollaire sous Wireshark : Dissection d'une Trame BLE et Mécanismes d'Identification de l'Expéditeur</h4>
+  <p>L'analyseur de protocoles <strong>Wireshark</strong> est l'outil de référence en BTS CIEL pour décortiquer les trames réseau. En Bluetooth LE, la capture peut être réalisée soit au moyen d'un dongle sniffer radio (ex : <em>nRF Sniffer for Bluetooth LE</em> sur les canaux 37, 38, 39), soit via le <strong>journal de surveillance Bluetooth HCI</strong> (<em>btsnoop_hci.log</em>) exportable depuis n'importe quel smartphone Android en mode développeur.</p>
+
+  <p>Voici l'arbre de dissection protocolaire réel d'une trame d'annonce (Advertising Packet) émise par notre balise ESP32 et capturée sous Wireshark :</p>
+
+  <pre><code>Frame 142: 44 bytes on wire (352 bits), 44 bytes captured
+Bluetooth Low Energy Link Layer
+    Access Address: 0x8e89bed6                          &lt;-- Adresse d'accès fixe des canaux d'annonce (37, 38, 39)
+    Packet Header: 0x2200 (PDU Type: ADV_NONCONN_IND, TxAdd: Random, Length: 28)
+        .... 0010 = PDU Type: ADV_NONCONN_IND (0x2)    &lt;-- Annonce non connectable et non orientée (Balise)
+        ...0 .... = RFU: 0
+        ..1. .... = ChSel: 1 (Channel Selection Algorithm #2)
+        .1.. .... = TxAdd: Random (1)                   &lt;-- TYPE D'ADRESSE EXPÉDITEUR : 1 = Random / 0 = Public
+        0... .... = RxAdd: Public (0)
+        Length: 28 octets
+    Advertising Address: c6:54:12:34:56:78 (c6:54:12:34:56:78)  &lt;-- ADRESSE MAC DE L'EXPÉDITEUR (AdvA)
+    Advertising Data
+        Flags
+            Length: 2
+            Type: Flags (0x01)
+            0000 0110 = Flags: 0x06 (LE General Discoverable Mode, BR/EDR Not Supported)
+        Complete Local Name
+            Length: 10
+            Type: Complete Local Name (0x09)
+            Device Name: BEACON_01                      &lt;-- Nom textuel de l'équipement
+        Manufacturer Specific
+            Length: 8
+            Type: Manufacturer Specific (0xFF)          &lt;-- Données brutes de télémétrie injectées par l'ESP32
+            Company ID: 0x01FF (Propriétaire)
+            Data: 0a00eb0001 (ID Balise #10, Temp = 23.5 C, Séquence #1)
+    CRC: 0x5a31b2                                       &lt;-- Contrôle d'intégrité radio (24 bits)</code></pre>
+
+  <div class="callout callout-info">
+    <div class="callout-title">🔑 Comment l'expéditeur d'un message Bluetooth LE est-il formellement identifié ?</div>
+    <p>Contrairement au Bluetooth classique où l'adresse MAC (BD_ADDR) est toujours publique et gravée en dur, le standard BLE définit deux types d'adresses d'émission dans le champ <code>AdvA</code> (48 bits), signalés par le bit <strong><code>TxAdd</code></strong> de l'en-tête de paquet :</p>
+    <ul>
+      <li><strong>Si TxAdd = 0 &rarr; Adresse Publique (Public Address) :</strong> Adresse IEEE fixe administrée par l'IEEE (identique à une adresse MAC Ethernet avec identifiant constructeur OUI). L'émetteur est immédiatement et universellement identifiable.</li>
+      <li><strong>Si TxAdd = 1 &rarr; Adresse Aléatoire (Random Device Address) :</strong> L'adresse est générée logiciellement. La norme BLE distingue :
+        <ul>
+          <li><strong>Random Static Address :</strong> Les deux bits de poids fort valent <code>11</code> (ex : <code>C6:...</code>). L'adresse reste constante pendant toute la session ou le cycle d'alimentation de l'objet.</li>
+          <li><strong>Resolvable Private Address (RPA - Vie privée / Anti-tracking) :</strong> Les deux bits de poids fort valent <code>01</code> (ex : <code>4A:...</code>). L'adresse change aléatoirement à intervalle régulier (typiquement toutes les 15 minutes sur smartphone). <em>Seul un destinataire autorisé possédant la clé secrète partagée <strong>IRK (Identity Resolving Key)</strong> peut décrypter l'adresse via un algorithme cryptographique AES-128 pour retrouver la véritable identité du terminal !</em></li>
+          <li><strong>Non-Resolvable Private Address :</strong> Les deux bits de poids fort valent <code>00</code>. Adresse purement éphémère et anonyme.</li>
+        </ul>
+      </li>
+    </ul>
+  </div>
+
+  <div class="student-response">
+    <strong>Question 3.3 (Filtres Wireshark & Détection Radio) :</strong><br>
+    1. Dans Wireshark, quel filtre d'affichage (<em>Display Filter</em>) permet d'isoler exclusivement les paquets BLE émis par l'adresse d'annonce de votre ESP32 ?<br>
+    <code>Filtre Wireshark :</code> ....................................................................................................................................<br><br>
+    2. Quelle est la valeur hexadécimale de l'<strong>Access Address</strong> utilisée sur les canaux 37, 38 et 39 ? Pourquoi cette adresse est-elle rigoureusement identique pour tous les paquets d'annonces de tous les constructeurs du monde ?
+    <div class="dotted-line"></div>
+    <div class="dotted-line"></div>
+  </div>
+
+  <div class="student-response">
+    <strong>Question 3.4 (Dissection de l'En-tête de Paquet & Identification) :</strong><br>
+    1. Dans la trame Wireshark fournie ci-dessus, relevez la valeur du bit <strong><code>TxAdd</code></strong> : ............<br>
+    L'adresse d'émission (<code>c6:54:12:34:56:78</code>) est-elle une adresse Publique ou Aléatoire ? Justifiez.<br><br>
+    2. Convertissez le premier octet de l'adresse (<code>0xC6</code>) en binaire : <code>0xC6</code> = <code>%........................</code>.<br>
+    En observant les deux bits de poids fort (bits 7 et 6), déterminez s'il s'agit d'une adresse <em>Static</em>, <em>Resolvable Private (RPA)</em> ou <em>Non-resolvable</em>.
+    <div class="dotted-line"></div>
+    <div class="dotted-line"></div>
+  </div>
+
+  <div class="student-response">
+    <strong>Question 3.5 (Cybersécurité : Mécanisme de Résolution d'Identité avec clé IRK) :</strong><br>
+    Lorsqu'un smartphone diffuse des annonces BLE, il change son adresse MAC apparente toutes les 15 minutes pour éviter d'être pisté par des commerces ou des espions radio.<br>
+    Expliquez comment une serrure connectée ou une borne d'atelier (avec laquelle le smartphone s'est préalablement apparié) réussit à <strong>authentifier avec certitude son propriétaire</strong> malgré ce changement permanent d'adresse. Quel rôle joue la clé <strong>IRK (Identity Resolving Key)</strong> stockée lors du bonding ?
+    <div class="dotted-line"></div>
+    <div class="dotted-line"></div>
+    <div class="dotted-line"></div>
+  </div>
+
+  <div class="student-response">
+    <strong>Question 3.6 (Identification applicative dans le Payload) :</strong><br>
+    Si l'adresse MAC est masquée ou aléatoire, quels sont les deux types de structures AD (dans la charge utile <em>Advertising Data</em> de la trame) qui permettent à l'application réceptrice d'identifier immédiatement le service et l'expéditeur au niveau applicatif ?
+    <div class="dotted-line"></div>
+    <div class="dotted-line"></div>
+  </div>
+</div>
+
+<!-- ETAPE 4 -->
+<div class="step-box">
+  <div class="step-header">
+    <span class="step-title">PARTIE 4 : Réseau Maillé (Mesh) Multi-Sauts sur ESP32</span>
+    <span class="timing-badge">Durée estimée : 1h15</span>
+  </div>
+
+  <p>La limite majeure du Bluetooth en atelier est sa portée (typiquement 10 à 20 mètres en intérieur). La topologie <strong>Mesh (Réseau Maillé)</strong> résout ce problème par la technique de l'<strong>inondation contrôlée (Managed Flooding)</strong> : chaque nœud agit comme un <strong>relais</strong> en retransmettant les messages qu'il entend pour étendre la couverture globale.</p>
+
+  <div class="callout callout-warning">
+    <div class="callout-title">⚠️ Comment éviter la tempête de diffusion (Broadcast Storm) dans un réseau Mesh ?</div>
+    <p>Pour qu'un message ne tourne pas indéfiniment en boucle entre les nœuds :</p>
+    <ul>
+      <li><strong>Le Time-To-Live (TTL) :</strong> un compteur décrémenté à chaque saut (hop). Lorsque <code>TTL == 0</code>, le paquet est détruit.</li>
+      <li><strong>La table de cache des messages récents (Message Cache) :</strong> chaque message possède un identifiant unique <code>(Originator_ID, Sequence_Number)</code>. Si un nœud reçoit un message dont l'ID figure déjà dans son historique, il l'ignore immédiatement et ne le retransmet pas !</li>
+    </ul>
+  </div>
+
+  <h4>3.8. Code du Nœud Réseau Maillé (Mesh Relay Node) pour ESP32</h4>
+  <p>Ce programme autonome s'installe sur tous les ESP32 du groupe (ou de binômes interconnectés). Chaque carte possède son propre ID (ex : <code>0x01</code>, <code>0x02</code>, <code>0x03</code>) :</p>
+
+  <pre><code>/* =========================================================================
+   BTS CIEL - PARTIE 4 : Nœud Relais Réseau Maillé BLE (ESP-Mesh Flooding)
+   Chaque ESP32 reçoit, vérifie le cache, décrémente le TTL et relaie l'alerte
+   ========================================================================= */
+#include &lt;BLEDevice.h&gt;
+#include &lt;BLEUtils.h&gt;
+#include &lt;BLEScan.h&gt;
+#include &lt;BLEAdvertising.h&gt;
+
+const uint8_t MY_NODE_ID = 0x02; // ATTENTION : Définir un ID unique par carte (0x01, 0x02, 0x03...)
+const uint8_t MESH_COMPANY_ID = 0xAA; // Clé de reconnaissance du réseau BTS CIEL
+
+// Structure du paquet Mesh encapsulé dans le Manufacturer Data
+struct __attribute__((packed)) MeshPacket {
+  uint8_t  companyId; // 0xAA
+  uint8_t  sourceId;  // Nœud d'origine de l'alerte
+  uint16_t msgId;     // Numéro séquentiel unique
+  uint8_t  ttl;       // Nombre de sauts restants (Time-To-Live)
+  uint8_t  payload;   // Donnée (ex: 0xFF = ALERTE INCENDIE, 0x01 = NORMAL)
+};
+
+// Table d'historique pour éliminer les doublons (Anti-Bouclage)
+#define CACHE_SIZE 10
+uint16_t seenMessages[CACHE_SIZE] = {0};
+uint8_t cacheIndex = 0;
+
+BLEScan* pBLEScan;
+BLEAdvertising* pAdvertising;
+bool isRelaying = false;
+MeshPacket packetToRelay;
+
+bool hasSeenMessage(uint16_t id) {
+  for (int i = 0; i < CACHE_SIZE; i++) {
+    if (seenMessages[i] == id) return true;
+  }
+  return false;
+}
+
+void markMessageSeen(uint16_t id) {
+  seenMessages[cacheIndex] = id;
+  cacheIndex = (cacheIndex + 1) % CACHE_SIZE;
+}
+
+// Fonction de relais d'un paquet
+void relayMessage(MeshPacket pkt) {
+  pkt.ttl--; // Décrémentation du compteur de sauts
+  std::string mData((char*)&pkt, sizeof(MeshPacket));
+  
+  BLEAdvertisementData advData;
+  advData.setManufacturerData(mData);
+  pAdvertising->setAdvertisementData(advData);
+  pAdvertising->start();
+  
+  Serial.printf(">> [RELAIS MESH] Message #%u relayé ! (Nouveau TTL = %d)\n", pkt.msgId, pkt.ttl);
+  delay(600); // Émission pendant 600 ms
+  pAdvertising->stop();
+}
+
+class MeshScanCallbacks: public BLEAdvertisedDeviceCallbacks {
+    void onResult(BLEAdvertisedDevice dev) {
+      if (dev.haveManufacturerData()) {
+        std::string data = dev.getManufacturerData();
+        if (data.length() == sizeof(MeshPacket)) {
+          MeshPacket* pkt = (MeshPacket*)data.data();
+          
+          if (pkt->companyId == MESH_COMPANY_ID) {
+            // Vérification si ce message a déjà été traité
+            if (!hasSeenMessage(pkt->msgId)) {
+              markMessageSeen(pkt->msgId);
+              
+              Serial.printf("\n[NOUVEAU MESSAGE MESH REÇU !]\n");
+              Serial.printf("  Origine : Nœud #%02X | Msg ID : #%u | TTL Reçu : %d | Alerte : 0x%02X\n",
+                            pkt->sourceId, pkt->msgId, pkt->ttl, pkt->payload);
+              
+              // Si le TTL est supérieur à 1, nous devons le relayer aux voisins !
+              if (pkt->ttl > 1) {
+                packetToRelay = *pkt;
+                isRelaying = true;
+              } else {
+                Serial.println(F("  [TTL ÉPUISÉ] Paquet non réémis (fin de vie du saut)."));
+              }
+            }
+          }
+        }
+      }
+    }
+};
+
+void setup() {
+  Serial.begin(115200);
+  Serial.printf("\n=======================================================\n");
+  Serial.printf("  Nœud Mesh BLE initialisé - ID Nœud : 0x%02X\n", MY_NODE_ID);
+  Serial.printf("=======================================================\n");
+  Serial.println(F("Tapez 'SEND' dans la console pour générer une alerte locale."));
+
+  BLEDevice::init("");
+  pAdvertising = BLEDevice::getAdvertising();
+  
+  pBLEScan = BLEDevice::getScan();
+  pBLEScan->setAdvertisedDeviceCallbacks(new MeshScanCallbacks());
+  pBLEScan->setActiveScan(false);
+  pBLEScan->setInterval(80);
+  pBLEScan->setWindow(75);
+}
+
+void loop() {
+  // 1. Déclenchement manuel d'une alerte depuis la console série
+  if (Serial.available() > 0) {
+    String cmd = Serial.readStringUntil('\n');
+    cmd.trim();
+    if (cmd == "SEND") {
+      static uint16_t myMsgCounter = 100;
+      myMsgCounter++;
+      MeshPacket myAlert;
+      myAlert.companyId = MESH_COMPANY_ID;
+      myAlert.sourceId  = MY_NODE_ID;
+      myAlert.msgId     = (MY_NODE_ID << 8) | (myMsgCounter & 0xFF);
+      myAlert.ttl       = 3;    // Permet jusqu'à 3 sauts dans le réseau
+      myAlert.payload   = 0xFF; // Code Alerte
+      
+      markMessageSeen(myAlert.msgId);
+      Serial.printf("\n*** [ÉMISSION INITIALE ALERTE] ID Msg #%u (TTL initial = %d) ***\n",
+                    myAlert.msgId, myAlert.ttl);
+      relayMessage(myAlert);
+    }
+  }
+
+  // 2. Traitement d'un relais en attente
+  if (isRelaying) {
+    isRelaying = false;
+    relayMessage(packetToRelay);
+  }
+
+  // 3. Écoute continue du canal radio Mesh
+  pBLEScan->start(1, false);
+  pBLEScan->clearResults();
+}</code></pre>
+
+  <h4>3.9. Protocole expérimental à 3 nœuds (Multi-sauts) :</h4>
+  <p>Placez 3 cartes ESP32 réparties dans la salle de TP selon la topologie en ligne :</p>
+  <div style="text-align: center; margin: 15px 0; font-family: Consolas; font-weight: bold;">
+    [ESP32 Nœud 1] &nbsp; &mdash;&mdash;&mdash;&gt; &nbsp; [ESP32 Nœud 2 (Relais)] &nbsp; &mdash;&mdash;&mdash;&gt; &nbsp; [ESP32 Nœud 3]
+  </div>
+  <ol>
+    <li>Configurez : Nœud 1 (<code>MY_NODE_ID = 0x01</code>), Nœud 2 (<code>MY_NODE_ID = 0x02</code>), Nœud 3 (<code>MY_NODE_ID = 0x03</code>).</li>
+    <li>Éloignez le Nœud 1 et le Nœud 3 à une distance telle qu'ils ne puissent plus s'entendre directement (ou simulez l'éloignement en vérifiant que le Nœud 3 ne capte pas le Nœud 1 sans le Nœud 2).</li>
+    <li>Placez le Nœud 2 à mi-chemin.</li>
+    <li>Déclenchez une alerte depuis le Nœud 1 en tapant <code>SEND</code>. Observez la réception sur le Nœud 2, sa réémission immédiate avec décrémentation du TTL, et la réception finale sur le Nœud 3 !</li>
+  </ol>
+
+  <div class="student-response">
+    <strong>Question 4.1 (Analyse de la trace du réseau maillé) :</strong><br>
+    Relevez les valeurs des champs capturés sur la console du Nœud 3 :<br>
+    • Nœud source d'origine : <code>0x............</code><br>
+    • Identifiant unique de message (Msg ID) : <code>#............</code><br>
+    • Valeur du TTL reçu par le Nœud 3 : <code>TTL = ............</code><br>
+    Justifiez pourquoi cette valeur de TTL confirme que le message a franchi exactement deux sauts radio (1 rebond intermédiaire).
+    <div class="dotted-line"></div>
+    <div class="dotted-line"></div>
+  </div>
+
+  <div class="student-response">
+    <strong>Question 4.2 (Résistance aux pannes et auto-cicatrisation) :</strong><br>
+    Que se passerait-il si l'on éteignait le Nœud 2 dans cette disposition en ligne ? Quelle modification de disposition physique ou topologique permettrait de garantir que le message atteigne tout de même le Nœud 3 ?
+    <div class="dotted-line"></div>
+    <div class="dotted-line"></div>
+  </div>
+</div>
+
+<!-- ETAPE 5 -->
+<div class="step-box">
+  <div class="step-header">
+    <span class="step-title">PARTIE 5 : Synthèse Comparative, Bilan Énergétique & Grille de Recette</span>
+    <span class="timing-badge">Durée estimée : 0h30</span>
+  </div>
+
+  <h4>5.1. Synthèse globale des mesures réalisées :</h4>
+  <p>Complétez le tableau récapitulatif ci-dessous à partir de l'ensemble de vos observations en TP :</p>
+
+  <table>
+    <thead>
+      <tr>
+        <th>Technologie / Topologie</th>
+        <th>Débit Utile Constaté</th>
+        <th>Nombre max d'équipements</th>
+        <th>Consommation Énergétique Relative</th>
+        <th>Cas d'application industriel privilégié</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><strong>Bluetooth Classic (SPP)</strong></td>
+        <td>..................... kbit/s</td>
+        <td>.....................</td>
+        <td>Élevée (Tx/Rx continu)</td>
+        <td>....................................................................................</td>
+      </tr>
+      <tr>
+        <td><strong>BLE GATT (Connecté)</strong></td>
+        <td>..................... kbit/s</td>
+        <td>Multiples (selon Central)</td>
+        <td>Faible (Mode Notify périodique)</td>
+        <td>....................................................................................</td>
+      </tr>
+      <tr>
+        <td><strong>BLE Broadcast (Beacon)</strong></td>
+        <td>Très faible (31 octets/salve)</td>
+        <td>Illimité</td>
+        <td>Ultra-faible (Sommeil entre annonces)</td>
+        <td>....................................................................................</td>
+      </tr>
+      <tr>
+        <td><strong>BLE Mesh (Maillé)</strong></td>
+        <td>Faible (&lt; 20 kbit/s)</td>
+        <td>Centaines à milliers</td>
+        <td>Modérée à faible selon le rôle</td>
+        <td>....................................................................................</td>
+      </tr>
+    </tbody>
+  </table>
+
+  <div class="student-response">
+    <strong>Question 5.1 (Synthèse d'Ingénierie BTS CIEL) :</strong><br>
+    Un client industriel vous sollicite pour équiper une usine métallurgique : il doit suivre l'emplacement de 200 chariots de pièces en mouvement (actualisé toutes les 10 secondes) et équiper les techniciens d'un système audio/données pour la maintenance en direct des machines.<br>
+    Quelle technologie Bluetooth recommandez-vous pour chaque besoin ? Justifiez rigoureusement votre arbitrage technique.
+    <div class="dotted-line"></div>
+    <div class="dotted-line"></div>
+    <div class="dotted-line"></div>
+    <div class="dotted-line"></div>
+  </div>
+</div>
+
+<hr />
+
+<!-- ========================================================================= -->
+<!-- 4. GRILLE D'EVALUATION SOMMATIVE                                           -->
+<!-- ========================================================================= -->
+<h2>4. Grille d'Évaluation des Compétences (Barème /20)</h2>
+
+<table>
+  <thead>
+    <tr>
+      <th>Compétence</th>
+      <th>Indicateurs d'Évaluation</th>
+      <th>Barème</th>
+      <th>Note</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td><strong>C07 - Réalisation</strong></td>
+      <td>Téléversement correct des différents firmwares sur les ESP32, paramétrage soigné des identifiants (noms, rôles, IDs de nœuds).</td>
+      <td>/3 pts</td>
+      <td></td>
+    </tr>
+    <tr>
+      <td><strong>C04 - Analyse</strong></td>
+      <td>Maîtrise des concepts protocolaires (RFCOMM vs GATT, canaux 37-39 d'annonces, principes anti-bouclage et TTL du Mesh).</td>
+      <td>/4 pts</td>
+      <td></td>
+    </tr>
+    <tr>
+      <td><strong>C05 - Conception</strong></td>
+      <td>Configuration opérationnelle des services GATT (UUIDs, CCCD, notifications) et du protocole de relayage maillé (Mesh flooding).</td>
+      <td>/6 pts</td>
+      <td></td>
+    </tr>
+    <tr>
+      <td><strong>C06 - Validation</strong></td>
+      <td>Exploitation rigoureuse des outils d'analyse (nRF Connect, Serial Terminal), justesse des mesures de débit, de RSSI et de relais multi-sauts.</td>
+      <td>/5 pts</td>
+      <td></td>
+    </tr>
+    <tr>
+      <td><strong>C01 - Communication</strong></td>
+      <td>Qualité rédactionnelle, complétion méthodique des tableaux de synthèse et pertinence des réponses aux questions d'ingénierie.</td>
+      <td>/2 pts</td>
+      <td></td>
+    </tr>
+  </tbody>
+</table>
+
+</body>
+</html>
