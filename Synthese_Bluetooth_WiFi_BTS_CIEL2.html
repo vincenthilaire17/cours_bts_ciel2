@@ -193,6 +193,7 @@
     .callout-warning { background-color: #fffbeb; border-color: #f59e0b; color: #92400e; }
     .callout-danger  { background-color: #fef2f2; border-color: #ef4444; color: #991b1b; }
     .callout-success { background-color: #f0fdf4; border-color: #22c55e; color: #166534; }
+    .callout-purple  { background-color: #f5f3ff; border-color: #7c3aed; color: #5b21b6; }
     
     .callout-title {
       font-weight: 700;
@@ -468,6 +469,90 @@
   <!-- ========================================================================= -->
   <h2>2. Synthèse Technologique : Bluetooth (BR/EDR & SPP)</h2>
 
+  <div class="figure-box">
+    <svg viewBox="0 0 920 330" width="100%" height="auto" xmlns="http://www.w3.org/2000/svg">
+      <defs>
+        <linearGradient id="wifiGrad" x1="0%" y1="0%" x2="100%" y2="100%"><stop offset="0%" stop-color="#0284c7"/><stop offset="100%" stop-color="#0369a1"/></linearGradient>
+        <linearGradient id="btGrad" x1="0%" y1="0%" x2="100%" y2="100%"><stop offset="0%" stop-color="#3b82f6"/><stop offset="100%" stop-color="#1d4ed8"/></linearGradient>
+        <linearGradient id="bleGrad" x1="0%" y1="0%" x2="100%" y2="100%"><stop offset="0%" stop-color="#10b981"/><stop offset="100%" stop-color="#047857"/></linearGradient>
+        <linearGradient id="meshGrad" x1="0%" y1="0%" x2="100%" y2="100%"><stop offset="0%" stop-color="#8b5cf6"/><stop offset="100%" stop-color="#6d28d9"/></linearGradient>
+      </defs>
+
+      <!-- Titre général SVG -->
+      <text x="460" y="24" fill="#0b3c5d" font-family="'Segoe UI', sans-serif" font-size="12pt" font-weight="bold" text-anchor="middle">PANORAMA DES TECHNOLOGIES SANS FIL 2,4 GHz (ÉPREUVE U4 BTS CIEL)</text>
+
+      <!-- CARTE 1 : WI-FI (IEEE 802.11) -->
+      <g transform="translate(15, 42)">
+        <rect width="210" height="270" rx="8" fill="#ffffff" stroke="#cbd5e1" stroke-width="1.5"/>
+        <rect width="210" height="42" rx="8" fill="url(#wifiGrad)"/>
+        <text x="105" y="26" fill="#ffffff" font-family="'Segoe UI', sans-serif" font-size="9.5pt" font-weight="bold" text-anchor="middle">WI-FI (802.11 b/g/n)</text>
+        <text x="105" y="65" fill="#0369a1" font-family="'Segoe UI', sans-serif" font-size="8pt" font-weight="bold" text-anchor="middle">Infrastructure / BSSID</text>
+        <text x="15" y="92" fill="#334155" font-family="Consolas" font-size="7.5pt">• Spectre : 13 canaux (20 MHz)</text>
+        <text x="15" y="112" fill="#334155" font-family="Consolas" font-size="7.5pt">• Canaux sans overlap : 1, 6, 11</text>
+        <text x="15" y="132" fill="#334155" font-family="Consolas" font-size="7.5pt">• Débit : 11 à 150 Mbit/s</text>
+        <text x="15" y="152" fill="#334155" font-family="Consolas" font-size="7.5pt">• Pile : IP / TCP / UDP / HTTP</text>
+        <text x="15" y="172" fill="#b91c1c" font-family="Consolas" font-size="7.5pt">• Conso : 70 - 150 mA (Élevée)</text>
+        <text x="15" y="192" fill="#334155" font-family="Consolas" font-size="7.5pt">• Portée : 30 à 100 m</text>
+        <rect x="15" y="215" width="180" height="40" rx="4" fill="#e0f2fe"/>
+        <text x="105" y="232" fill="#0369a1" font-family="'Segoe UI', sans-serif" font-size="7pt" font-weight="bold" text-anchor="middle">Usage : Flux vidéo, gros fichiers,</text>
+        <text x="105" y="246" fill="#0369a1" font-family="'Segoe UI', sans-serif" font-size="7pt" text-anchor="middle">serveur Web local embarqué</text>
+      </g>
+
+      <!-- CARTE 2 : BT CLASSIQUE (BR/EDR SPP) -->
+      <g transform="translate(240, 42)">
+        <rect width="210" height="270" rx="8" fill="#ffffff" stroke="#cbd5e1" stroke-width="1.5"/>
+        <rect width="210" height="42" rx="8" fill="url(#btGrad)"/>
+        <text x="105" y="26" fill="#ffffff" font-family="'Segoe UI', sans-serif" font-size="9.5pt" font-weight="bold" text-anchor="middle">BT CLASSIC (SPP)</text>
+        <text x="105" y="65" fill="#1d4ed8" font-family="'Segoe UI', sans-serif" font-size="8pt" font-weight="bold" text-anchor="middle">Piconet (Étoile / 7 Slaves)</text>
+        <text x="15" y="92" fill="#334155" font-family="Consolas" font-size="7.5pt">• Spectre : 79 canaux (1 MHz)</text>
+        <text x="15" y="112" fill="#334155" font-family="Consolas" font-size="7.5pt">• Sauts : FHSS (1600 sauts/s)</text>
+        <text x="15" y="132" fill="#334155" font-family="Consolas" font-size="7.5pt">• Débit : 700 kbit/s - 2 Mbit/s</text>
+        <text x="15" y="152" fill="#334155" font-family="Consolas" font-size="7.5pt">• Pile : RFCOMM / L2CAP (COM)</text>
+        <text x="15" y="172" fill="#b91c1c" font-family="Consolas" font-size="7.5pt">• Conso : 30 - 50 mA (Continu)</text>
+        <text x="15" y="192" fill="#334155" font-family="Consolas" font-size="7.5pt">• Portée : 10 m (Classe 2)</text>
+        <rect x="15" y="215" width="180" height="40" rx="4" fill="#eff6ff"/>
+        <text x="105" y="232" fill="#1d4ed8" font-family="'Segoe UI', sans-serif" font-size="7pt" font-weight="bold" text-anchor="middle">Usage : Câble série virtuel,</text>
+        <text x="105" y="246" fill="#1d4ed8" font-family="'Segoe UI', sans-serif" font-size="7pt" text-anchor="middle">audio continu, console RS-232</text>
+      </g>
+
+      <!-- CARTE 3 : BLE BROADCAST (BEACON) -->
+      <g transform="translate(465, 42)">
+        <rect width="210" height="270" rx="8" fill="#ffffff" stroke="#cbd5e1" stroke-width="1.5"/>
+        <rect width="210" height="42" rx="8" fill="url(#bleGrad)"/>
+        <text x="105" y="26" fill="#ffffff" font-family="'Segoe UI', sans-serif" font-size="9.5pt" font-weight="bold" text-anchor="middle">BLE BROADCAST</text>
+        <text x="105" y="65" fill="#047857" font-family="'Segoe UI', sans-serif" font-size="8pt" font-weight="bold" text-anchor="middle">Diffusion 1-vers-N (Sans lien)</text>
+        <text x="15" y="92" fill="#334155" font-family="Consolas" font-size="7.5pt">• Spectre : 3 canaux (37, 38, 39)</text>
+        <text x="15" y="112" fill="#334155" font-family="Consolas" font-size="7.5pt">• Annonces : 31 octets utiles</text>
+        <text x="15" y="132" fill="#334155" font-family="Consolas" font-size="7.5pt">• Temps collecte : &lt; 200 ms</text>
+        <text x="15" y="152" fill="#334155" font-family="Consolas" font-size="7.5pt">• Pile : GAP Advertising</text>
+        <text x="15" y="172" fill="#047857" font-family="Consolas" font-size="7.5pt">• Conso : &lt; 15 &mu;A (Sommeil)</text>
+        <text x="15" y="192" fill="#334155" font-family="Consolas" font-size="7.5pt">• Récepteurs : Illimités</text>
+        <rect x="15" y="215" width="180" height="40" rx="4" fill="#ecfdf5"/>
+        <text x="105" y="232" fill="#047857" font-family="'Segoe UI', sans-serif" font-size="7pt" font-weight="bold" text-anchor="middle">Usage : Balises d'inventaire,</text>
+        <text x="105" y="246" fill="#047857" font-family="'Segoe UI', sans-serif" font-size="7pt" text-anchor="middle">sondes météo sur pile bouton</text>
+      </g>
+
+      <!-- CARTE 4 : BLE GATT & MESH -->
+      <g transform="translate(690, 42)">
+        <rect width="215" height="270" rx="8" fill="#ffffff" stroke="#cbd5e1" stroke-width="1.5"/>
+        <rect width="215" height="42" rx="8" fill="url(#meshGrad)"/>
+        <text x="107" y="26" fill="#ffffff" font-family="'Segoe UI', sans-serif" font-size="9.5pt" font-weight="bold" text-anchor="middle">BLE GATT &amp; MESH</text>
+        <text x="107" y="65" fill="#6d28d9" font-family="'Segoe UI', sans-serif" font-size="8pt" font-weight="bold" text-anchor="middle">Attributs &amp; Réseau Maillé</text>
+        <text x="15" y="92" fill="#334155" font-family="Consolas" font-size="7.5pt">• Spectre : 37 canaux de données</text>
+        <text x="15" y="112" fill="#334155" font-family="Consolas" font-size="7.5pt">• GATT : Service &amp; Caractéristique</text>
+        <text x="15" y="132" fill="#334155" font-family="Consolas" font-size="7.5pt">• Descripteur : 0x2902 (Notify)</text>
+        <text x="15" y="152" fill="#334155" font-family="Consolas" font-size="7.5pt">• Mesh : Inondation contrôlée</text>
+        <text x="15" y="172" fill="#334155" font-family="Consolas" font-size="7.5pt">• Sécurité : Chiffrement AES-128</text>
+        <text x="15" y="192" fill="#6d28d9" font-family="Consolas" font-size="7.5pt">• Portée : Multi-sauts étendue</text>
+        <rect x="15" y="215" width="185" height="40" rx="4" fill="#f5f3ff"/>
+        <text x="107" y="232" fill="#6d28d9" font-family="'Segoe UI', sans-serif" font-size="7pt" font-weight="bold" text-anchor="middle">Usage : Éclairage connecté,</text>
+        <text x="107" y="246" fill="#6d28d9" font-family="'Segoe UI', sans-serif" font-size="7pt" text-anchor="middle">alertes industrielles d'atelier</text>
+      </g>
+    </svg>
+    <div class="figure-caption">Figure 1 : Matrice de synthèse comparative des technologies sans fil 2,4 GHz au programme du BTS CIEL.</div>
+  </div>
+
+
   <h3>2.1. Architecture Matérielle & Rôle des Liaisons Séries</h3>
   <p>Dans un système communicant basé sur un microcontrôleur moderne (ex. RP2350 sur Raspberry Pi Pico 2 W), la séparation des canaux de communication est indispensable pour la supervision et la robustesse :</p>
   <ul>
@@ -510,7 +595,16 @@
   <!-- ========================================================================= -->
   <!-- 3. SYNTHESE WI-FI & TCP/IP                                                -->
   <!-- ========================================================================= -->
-  <h2>3. Synthèse Technologique : Wi-Fi (IEEE 802.11) & Pile TCP/IP</h2>
+  
+  <h3>2.5. Bluetooth Low Energy (BLE) : Architecture GAP, GATT & Mode Broadcast</h3>
+  <p>Le standard BLE (Bluetooth 4.2 / 5.x) opère sur 40 canaux de 2 MHz (au lieu de 79 canaux de 1 MHz). Il se divise en deux modes opérationnels majeurs :</p>
+  <ul>
+    <li><strong>Mode Broadcast (GAP Broadcaster &rarr; Observer) :</strong> Diffusion sans connexion de paquets d'annonces (<em>Advertising Data</em>) sur les canaux 37, 38 et 39. Permet à un nombre <strong>illimité de récepteurs</strong> d'intercepter la donnée simultanément en quelques dizaines de millisecondes (&Delta;<i>t</i> &lt; 200 ms).</li>
+    <li><strong>Mode Connecté GATT (Client &rarr; Serveur) :</strong> Base de données hiérarchique d'attributs structurée en <strong>Profils &rarr; Services &rarr; Caractéristiques &rarr; Descripteurs</strong>. Les échanges sont gérés par les opérations <code>READ</code>, <code>WRITE</code>, <code>NOTIFY</code> (sans acquittement applicatif) et <code>INDICATE</code> (avec acquittement).</li>
+    <li><strong>Descripteur CCCD (<code>0x2902</code>) :</strong> Attribut indispensable stocké dans le serveur GATT pour autoriser ou bloquer l'émission spontanée de notifications vers le client (écriture de <code>0x0001</code> pour activer Notify).</li>
+  </ul>
+
+<h2>3. Synthèse Technologique : Wi-Fi (IEEE 802.11) & Pile TCP/IP</h2>
 
   <h3>3.1. Couche Liaison & Enrôlement Réseau (DHCP / ARP)</h3>
   <ul>
@@ -584,7 +678,81 @@
   <!-- 4. CAHIER D'EXERCICES TYPE BTS CIEL                                       -->
   <!-- ========================================================================= -->
   <div class="page-break"></div>
-  <h2>4. Cahier d'Exercices Type Épreuve BTS CIEL</h2>
+  
+  <!-- ========================================================================= -->
+  <!-- 4. METROLOGIE RF & BILAN ENERGETIQUE                                      -->
+  <!-- ========================================================================= -->
+  <h2>4. Métrologie RF &amp; Bilan Énergétique (Formules Clés Épreuve U4)</h2>
+
+  <div class="figure-box">
+    <svg viewBox="0 0 900 240" width="100%" height="auto" xmlns="http://www.w3.org/2000/svg">
+      <defs>
+        <marker id="arrow" viewBox="0 0 10 10" refX="5" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+          <path d="M 0 0 L 10 5 L 0 10 z" fill="#0284c7"/>
+        </marker>
+      </defs>
+
+      <!-- ÉMETTEUR TX -->
+      <rect x="20" y="40" width="160" height="150" rx="8" fill="#e0f2fe" stroke="#0284c7" stroke-width="1.5"/>
+      <text x="100" y="70" fill="#0369a1" font-family="'Segoe UI', sans-serif" font-size="10pt" font-weight="bold" text-anchor="middle">ÉMETTEUR (TX)</text>
+      <text x="100" y="95" fill="#334155" font-family="Consolas" font-size="8pt" text-anchor="middle">Puissance : P_TX (dBm)</text>
+      <text x="100" y="115" fill="#334155" font-family="Consolas" font-size="8pt" text-anchor="middle">Gain Antenne : G_TX (dBi)</text>
+      <text x="100" y="150" fill="#0b3c5d" font-family="Consolas" font-size="8.5pt" font-weight="bold" text-anchor="middle">PIRE = P_TX + G_TX</text>
+
+      <!-- ESPACE LIBRE & ATTENUATION -->
+      <line x1="180" y1="115" x2="330" y2="115" stroke="#0284c7" stroke-width="2" stroke-dasharray="4 2" marker-end="url(#arrow)"/>
+      <rect x="340" y="55" width="220" height="120" rx="6" fill="#f8fafc" stroke="#cbd5e1" stroke-width="1.5"/>
+      <text x="450" y="85" fill="#0f172a" font-family="'Segoe UI', sans-serif" font-size="9pt" font-weight="bold" text-anchor="middle">PROPAGATION ESPACE LIBRE</text>
+      <text x="450" y="110" fill="#b91c1c" font-family="Consolas" font-size="8.5pt" font-weight="bold" text-anchor="middle">Affaiblissement FSPL(d)</text>
+      <text x="450" y="130" fill="#475569" font-family="Consolas" font-size="7.5pt" text-anchor="middle">FSPL = 20*log10(d) + 20*log10(f) - 27.55</text>
+      <text x="450" y="150" fill="#b91c1c" font-family="Consolas" font-size="7.5pt" text-anchor="middle">+ Pertes Obstacles (Cloisons / Humains)</text>
+      <line x1="560" y1="115" x2="710" y2="115" stroke="#0284c7" stroke-width="2" stroke-dasharray="4 2" marker-end="url(#arrow)"/>
+
+      <!-- RÉCEPTEUR RX -->
+      <rect x="720" y="40" width="160" height="150" rx="8" fill="#dcfce7" stroke="#16a34a" stroke-width="1.5"/>
+      <text x="800" y="70" fill="#15803d" font-family="'Segoe UI', sans-serif" font-size="10pt" font-weight="bold" text-anchor="middle">RÉCEPTEUR (RX)</text>
+      <text x="800" y="95" fill="#334155" font-family="Consolas" font-size="8pt" text-anchor="middle">Gain Antenne : G_RX (dBi)</text>
+      <text x="800" y="115" fill="#334155" font-family="Consolas" font-size="8pt" text-anchor="middle">Puissance Reçue : RSSI</text>
+      <text x="800" y="145" fill="#166534" font-family="Consolas" font-size="8.5pt" font-weight="bold" text-anchor="middle">P_RX = PIRE - FSPL + G_RX</text>
+      <text x="800" y="165" fill="#15803d" font-family="Consolas" font-size="7.5pt" text-anchor="middle">Marge = P_RX - S_RX &gt; 10 dB</text>
+    </svg>
+    <div class="figure-caption">Figure 2 : Schéma synoptique du bilan de liaison radiofréquence 2,4 GHz (Formule de Friis & Décroissance RSSI).</div>
+  </div>
+
+  <h3>4.1. Bilan de Liaison Radiofréquence (RF Link Budget)</h3>
+  <p>Le bilan de liaison permet de dimensionner la portée maximale d'un système sans fil (Wi-Fi, Bluetooth Classic, BLE, LoRaWAN) et de vérifier que le signal reçu est suffisant pour assurer un taux d'erreur binaire (BER) acceptable :</p>
+  
+  <div class="formula-box">
+    <i>P</i><sub>RX</sub> (dBm) = <i>P</i><sub>TX</sub> (dBm) + <i>G</i><sub>TX</sub> (dBi) + <i>G</i><sub>RX</sub> (dBi) &minus; <i>L</i><sub>FSPL</sub> (dB) &minus; <i>L</i><sub>obstacles</sub> (dB)
+  </div>
+
+  <p><strong>Formule d'atténuation en espace libre (FSPL - Free Space Path Loss) :</strong></p>
+  <div class="formula-box">
+    <i>L</i><sub>FSPL</sub> (dB) = 20 &times; log<sub>10</sub>(<i>d</i><sub>km</sub>) + 20 &times; log<sub>10</sub>(<i>f</i><sub>MHz</sub>) + 32{,}44 &emsp;|&emsp; À 2,4 GHz : <i>L</i><sub>FSPL</sub> &approx; <strong>40 dB + 20 &times; log<sub>10</sub>(<i>d</i><sub>m</sub>)</strong>
+  </div>
+
+  <p><strong>Condition impérative de liaison opérationnelle :</strong> Le signal reçu $P_{	ext{RX}}$ (ou RSSI) doit dépasser le seuil de sensibilité limite du récepteur $S_{	ext{RX}}$ avec une <strong>marge de sécurité de liaison (Fade Margin)</strong> minimale :</p>
+  <div class="formula-box">
+    <i>Marge</i> = <i>P</i><sub>RX</sub> &minus; <i>S</i><sub>RX</sub> &ge; <strong>10 dB à 15 dB</strong>
+  </div>
+
+  <h3>4.2. Bilan de Consommation &amp; Autonomie Énergétique sur Batterie</h3>
+  <p>Un objet connecté IoT (sur ESP32, nRF52 ou Nano) alterne entre un mode actif bref (mesure, émission sans fil) et un mode sommeil profond (Deep Sleep) :</p>
+
+  <div class="formula-box">
+    <i>I</i><sub>moyen</sub> = <span class="frac"><span class="num">(<i>I</i><sub>on</sub> &times; <i>t</i><sub>on</sub>) + (<i>I</i><sub>sleep</sub> &times; <i>t</i><sub>sleep</sub>)</span><span class="den"><i>T</i><sub>cycle</sub></span></span>
+    &emsp;avec&emsp;<i>T</i><sub>cycle</sub> = <i>t</i><sub>on</sub> + <i>t</i><sub>sleep</sub>
+  </div>
+
+  <p><strong>Autonomie prévisionnelle de la pile / batterie (en heures ou années) :</strong></p>
+  <div class="formula-box">
+    <i>T</i><sub>autonomie</sub> (heures) = <span class="frac"><span class="num"><i>C</i><sub>nominale</sub> (mAh) &times; &eta;</span><span class="den"><i>I</i><sub>moyen</sub> (mA)</span></span>
+    &emsp;|&emsp;<i>T</i><sub>années</sub> = <span class="frac"><span class="num"><i>T</i><sub>autonomie</sub></span><span class="den">8 760 h/an</span></span>
+  </div>
+  <p>où $eta$ est le coefficient d'efficacité et d'autodécharge de la batterie ($eta approx 0{,}80$ à $0{,}90$).</p>
+
+  <div class="page-break"></div>
+  <h2>5. Cahier d'Exercices Type Épreuve BTS CIEL (U4)</h2>
 
   <!-- EXERCICE 1 -->
   <div class="exercise-card">
@@ -821,5 +989,135 @@ Content-Length: 29
       });
     }
   </script>
+
+  <!-- EXERCICE 5 : BILAN DE LIAISON RF -->
+  <div class="exercise-card">
+    <div class="exercise-header">
+      <span class="exercise-title">Exercice 5 : Bilan de Liaison RF 2,4 GHz &amp; Détermination de la Portée d'une Balise BLE</span>
+      <span class="meta-badge badge-primary">Compétences C04 &amp; C06 (Épreuve U4)</span>
+    </div>
+    <p>Une station de surveillance industrielle reçoit les salves d'annonces émises par une balise nomade <strong>BLE Broadcaster (2,4 GHz)</strong> implantée dans un atelier d'assemblage.</p>
+    <p><strong>Données du constructeur :</strong></p>
+    <ul>
+      <li>Puissance d'émission de l'ESP32 : $P_{	ext{TX}} = +4 	ext{dBm}$ (soit $approx 2{,}5 	ext{mW}$).</li>
+      <li>Gain de l'antenne imprimée de la balise : $G_{	ext{TX}} = +2 	ext{dBi}$.</li>
+      <li>Gain de l'antenne de la station réceptrice : $G_{	ext{RX}} = +3 	ext{dBi}$.</li>
+      <li>Sensibilité limite du récepteur BLE : $S_{	ext{RX}} = -93 	ext{dBm}$.</li>
+      <li>Marge de sécurité minimale requise face aux bruits industriels : $M_{	ext{sécu}} = 12 	ext{dB}$.</li>
+      <li>Affaiblissement moyen de l'onde 2,4 GHz provoqué par une cloison d'atelier : $L_{	ext{cloison}} = 6 	ext{dB}$.</li>
+    </ul>
+
+    <p><strong>Questions :</strong></p>
+    <ol>
+      <li><strong>[C04]</strong> Calculer la <strong>PIRE</strong> (Puissance Isotrope Rayonnée Équivalente) émise par la balise BLE en dBm puis en milliwatts.</li>
+      <li><strong>[C04]</strong> À une distance $d = 25 	ext{m}$ en visibilité directe sans obstacle (champ libre), calculer l'affaiblissement d'espace libre $L_{	ext{FSPL}}$. En déduire la puissance reçue $P_{	ext{RX}}$ (RSSI attendu) à cette distance.</li>
+      <li><strong>[C06]</strong> Déterminer la puissance minimale admissible en entrée du récepteur $P_{	ext{RX_min}}$ pour respecter la marge de sécurité de 12 dB.</li>
+      <li><strong>[C06]</strong> Si l'onde traverse deux cloisons métalliques ($L_{	ext{obstacles}} = 12 	ext{dB}$), déterminer la portée maximale théorique $d_{	ext{max}}$ (en mètres) de la liaison radio.</li>
+    </ol>
+
+    <!-- SOLUTION 5 -->
+    <div class="solution-box solution-item">
+      <div class="solution-title">📝 Corrigé Détaillé de l'Exercice 5</div>
+      <p><strong>1. Calcul de la PIRE :</strong><br>
+      $	ext{PIRE} = P_{	ext{TX}} + G_{	ext{TX}} = +4 	ext{dBm} + 2 	ext{dBi} = mathbf{+6 	ext{dBm}}$
+      Conversion en milliwatts : $P_{	ext{mW}} = 10^{rac{6}{10}} approx mathbf{3{,}98 	ext{mW}}$.</p>
+
+      <p><strong>2. Affaiblissement d'espace libre et RSSI à 25 mètres :</strong><br>
+      $L_{	ext{FSPL}}(25 	ext{m}) = 40 + 20 	imes log_{10}(25) = 40 + 20 	imes (1{,}3979) = 40 + 27{,}96 = mathbf{67{,}96 	ext{dB}}$
+      Puissance reçue en champ libre :<br>
+      $P_{	ext{RX}} = 	ext{PIRE} - L_{	ext{FSPL}} + G_{	ext{RX}} = +6 - 67{,}96 + 3 = mathbf{-58{,}96 	ext{dBm}}$
+      Le niveau RSSI attendu à 25 m est donc d'environ <strong>-59 dBm</strong> (excellente liaison nominale).</p>
+
+      <p><strong>3. Puissance minimale admissible avec marge :</strong><br>
+      $P_{	ext{RX_min}} = S_{	ext{RX}} + M_{	ext{sécu}} = -93 	ext{dBm} + 12 	ext{dB} = mathbf{-81 	ext{dBm}}$</p>
+
+      <p><strong>4. Portée maximale avec deux cloisons (12 dB) :</strong><br>
+      À la limite de portée : $P_{	ext{RX}} = P_{	ext{RX_min}} = -81 	ext{dBm}$.<br>
+      $-81 = 	ext{PIRE} - L_{	ext{FSPL}}(d_{	ext{max}}) - L_{	ext{obstacles}} + G_{	ext{RX}} = 6 - L_{	ext{FSPL}}(d_{	ext{max}}) - 12 + 3 = -3 - L_{	ext{FSPL}}(d_{	ext{max}})$
+      $L_{	ext{FSPL}}(d_{	ext{max}}) = 81 - 3 = mathbf{78 	ext{dB}}$
+      Or $L_{	ext{FSPL}} = 40 + 20 	imes log_{10}(d_{	ext{max}}) = 78$ &rarr; $20 	imes log_{10}(d_{	ext{max}}) = 38$ &rarr; $log_{10}(d_{	ext{max}}) = 1{,}90$<br>
+      $d_{	ext{max}} = 10^{1{,}90} approx mathbf{79{,}4 	ext{mètres}}$
+    </div>
+  </div>
+
+  <!-- EXERCICE 6 : BILAN ÉNERGÉTIQUE & AUTONOMIE -->
+  <div class="exercise-card">
+    <div class="exercise-header">
+      <span class="exercise-title">Exercice 6 : Bilan Énergétique &amp; Dimensionnement d'une Pile Bouton CR2032 (Épreuve U4)</span>
+      <span class="meta-badge badge-warning">Compétences C04 &amp; C05 (Épreuve U4)</span>
+    </div>
+    <p>Un capteur environnemental autonome mesure la température d'un atelier et transmet une salve radio toutes les <strong>10 secondes</strong> ($T_{	ext{cycle}} = 10 	ext{s}$). Le système est alimenté par une pile bouton Lithium <strong>CR2032 (3,0 V - capacité nominale $C = 220 	ext{mAh}$)</strong> avec un coefficient d'efficacité utile de $eta = 0{,}85$.</p>
+    
+    <p><strong>Profil temporel de consommation mesuré :</strong></p>
+    <ul>
+      <li><strong>Phase active d'éveil (Mesure ADC + Salve Broadcast BLE) :</strong> durée $t_{	ext{on}} = 10 	ext{ms}$, courant consommé $I_{	ext{on}} = 15 	ext{mA}$.</li>
+      <li><strong>Phase de sommeil profond (Deep Sleep) :</strong> durée $t_{	ext{sleep}} = 9,990 	ext{ms}$, courant de fuite $I_{	ext{sleep}} = 10 mu	ext{A}$ ($0{,}010 	ext{mA}$).</li>
+    </ul>
+
+    <p><strong>Questions :</strong></p>
+    <ol>
+      <li><strong>[C05]</strong> Calculer la quantité de charge électrique $Q_{	ext{on}}$ (en milliampères-secondes, mAs) consommée lors de la phase active, puis la charge $Q_{	ext{sleep}}$ consommée pendant le sommeil.</li>
+      <li><strong>[C05]</strong> En déduire le <strong>courant moyen</strong> $I_{	ext{moyen}}$ consommé par le capteur sur un cycle complet de 10 secondes.</li>
+      <li><strong>[C06]</strong> Déterminer l'<strong>autonomie théorique</strong> du capteur sur sa pile CR2032 en heures, puis en <strong>années</strong>.</li>
+      <li><strong>[C04]</strong> Si l'on remplaçait le protocole BLE Broadcast par un module <strong>Bluetooth Classic SPP</strong> restant connecté en continu ($I_{	ext{continu}} = 35 	ext{mA}$ permanent), calculer la nouvelle durée de vie de la pile. Conclure de manière argumentée sur l'impératif du BLE pour l'IoT sur pile.</li>
+    </ol>
+
+    <!-- SOLUTION 6 -->
+    <div class="solution-box solution-item">
+      <div class="solution-title">📝 Corrigé Détaillé de l'Exercice 6</div>
+      <p><strong>1. Charges consommées par phase :</strong><br>
+      $Q_{	ext{on}} = I_{	ext{on}} 	imes t_{	ext{on}} = 15 	ext{mA} 	imes 0{,}010 	ext{s} = mathbf{0{,}15 	ext{mAs}}$
+      $Q_{	ext{sleep}} = I_{	ext{sleep}} 	imes t_{	ext{sleep}} = 0{,}010 	ext{mA} 	imes 9{,}990 	ext{s} = mathbf{0{,}0999 	ext{mAs}}$</p>
+
+      <p><strong>2. Courant moyen sur un cycle de 10 s :</strong><br>
+      $Q_{	ext{total}} = Q_{	ext{on}} + Q_{	ext{sleep}} = 0{,}15 + 0{,}0999 = 0{,}2499 	ext{mAs}$
+      $I_{	ext{moyen}} = rac{Q_{	ext{total}}}{T_{	ext{cycle}}} = rac{0{,}2499 	ext{mAs}}{10 	ext{s}} approx mathbf{0{,}02499 	ext{mA}} quad (approx mathbf{25 mu	ext{A}})$</p>
+
+      <p><strong>3. Autonomie prévisionnelle sur pile CR2032 :</strong><br>
+      Capacité utile disponible : $C_{	ext{utile}} = 220 	ext{mAh} 	imes 0{,}85 = mathbf{187 	ext{mAh}}$.<br>
+      $T_{	ext{heures}} = rac{C_{	ext{utile}}}{I_{	ext{moyen}}} = rac{187 	ext{mAh}}{0{,}02499 	ext{mA}} approx mathbf{7,483 	ext{heures}}$
+      En années (sachant qu'une année compte $365 	imes 24 = 8,760 	ext{heures}$) :<br>
+      $T_{	ext{années}} = rac{7,483}{8,760} approx mathbf{0{,}85 	ext{an}} quad (	ext{soit plus de } mathbf{10 	ext{mois}})$
+      <em>Note : en espaçant les mesures à 60 secondes, l'autonomie dépasse 4 ans !</em></p>
+
+      <p><strong>4. Comparaison avec le Bluetooth Classic SPP continu :</strong><br>
+      $T_{	ext{Classic}} = rac{187 	ext{mAh}}{35 	ext{mA}} approx mathbf{5{,}34 	ext{heures}} quad (	ext{moins d'une demi-journée !})$
+      <strong>Conclusion :</strong> Le Bluetooth Classique est totalement inadapté aux équipements autonomes alimentés sur pile bouton en raison de sa liaison RF permanente et de ses sauts de fréquences FHSS ininterrompus. Le BLE est incontournable grâce à son ratio veille/activité supérieur à 99,9%.</p>
+    </div>
+  </div>
+
+  <!-- EXERCICE 7 : COMPARATIF TOPOLOGIES -->
+  <div class="exercise-card">
+    <div class="exercise-header">
+      <span class="exercise-title">Exercice 7 : Arbitrage Technologique &amp; Topologies Réseaux (Épreuve U4 BTS CIEL)</span>
+      <span class="meta-badge badge-primary">Compétences C04 &amp; C01 (Épreuve U4)</span>
+    </div>
+    <p>Une usine logistique 4.0 déploie une flotte de 100 palettes connectées réparties dans un entrepôt de $120 	imes 60 	ext{mètres}$. Chaque palette intègre un capteur de choc et de température. Une centrale de supervision doit collecter l'état des 100 palettes.</p>
+
+    <p><strong>Questions d'ingénierie BTS CIEL :</strong></p>
+    <ol>
+      <li><strong>[C04]</strong> Dans une architecture <strong>Bluetooth Classique (Piconet)</strong>, combien d'esclaves actifs peuvent être connectés simultanément à un seul maître ? Si la passerelle doit interroger séquentiellement les 100 palettes en se connectant tour à tour (durée moyenne de $2{,}5 	ext{s}$ par connexion/déconnexion), quel serait le <strong>temps de cycle global</strong> pour un relevé complet ? Conclure sur la faisabilité.</li>
+      <li><strong>[C04]</strong> Dans une architecture <strong>BLE Broadcast (Balises d'annonces)</strong>, pourquoi la passerelle peut-elle intercepter les trames de l'ensemble des 100 palettes sans aucune limitation de connexion ? Pourquoi un technicien muni d'une tablette peut-il simultanément recevoir ces mêmes données sans perturber la centrale ?</li>
+      <li><strong>[C05]</strong> En raison de rayonnages métalliques massifs provoquant un affaiblissement de $25 	ext{dB}$, les palettes situées au fond du hangar ne sont plus à portée directe de la passerelle. Quelle topologie Bluetooth permet de contourner cet obstacle radio ? Expliquer succinctement le rôle du paramètre <strong>TTL (Time To Live)</strong> dans ce type de réseau.</li>
+    </ol>
+
+    <!-- SOLUTION 7 -->
+    <div class="solution-box solution-item">
+      <div class="solution-title">📝 Corrigé Détaillé de l'Exercice 7</div>
+      <p><strong>1. Limites du Piconet Bluetooth Classic :</strong><br>
+      Un piconet est limité à <strong>7 esclaves actifs simultanés</strong> par maître.<br>
+      Temps de cycle séquentiel pour 100 palettes :<br>
+      $T_{	ext{cycle}} = 100 	imes 2{,}5 	ext{s} = mathbf{250 	ext{secondes}} quad (approx mathbf{4 	ext{minutes et } 10 	ext{s}})$
+      Cette latence de plus de 4 minutes est inacceptable pour la détection réactive de chocs ou d'incidents logistiques.</p>
+
+      <p><strong>2. Avantage du Broadcast BLE :</strong><br>
+      Le mode Broadcast n'établit aucune connexion (absence d'appairage, diffusion sur canaux 37, 38, 39). Le nombre de récepteurs et d'émetteurs est virtuellement <strong>illimité</strong> : la passerelle et la tablette du technicien opèrent en <strong>écoute passive (Observer)</strong> sans jamais saturer les émetteurs.</p>
+
+      <p><strong>3. Topologie Maillée (Bluetooth Mesh) :</strong><br>
+      Pour contourner les zones d'ombre et obstacles métalliques, la solution est le <strong>Bluetooth Mesh (Réseau Maillé)</strong> utilisant le mécanisme d'<strong>inondation contrôlée (Managed Flooding)</strong> : les nœuds intermédiaires agissent comme <strong>Relais</strong> pour faire rebondir les paquets de proche en proche.<br>
+      <strong>Rôle du TTL (Time To Live) :</strong> Entier décrémenté de 1 à chaque saut de relais. Lorsqu'il atteint 0, le paquet est détruit, évitant ainsi la tempête de diffusion (<em>Broadcast Storm</em>) et le bouclage infini des trames dans le réseau.</p>
+    </div>
+  </div>
+
 </body>
 </html>
