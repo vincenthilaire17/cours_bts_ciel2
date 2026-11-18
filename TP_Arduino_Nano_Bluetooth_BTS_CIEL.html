@@ -4,7 +4,7 @@
   <meta charset="utf-8" />
   <meta name="generator" content="BTS CIEL - Vincent Hilaire" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes" />
-  <title>Fiche Travail Demandé & Questions : Bluetooth Classic (SPP) vs Bluetooth Low Energy (BLE) - BTS CIEL</title>
+  <title>TP : Communication Bluetooth (SPP), Bus I²C & Instrumentation Digilent Analog Discovery 3 — BTS CIEL</title>
   
   <style>
     @page {
@@ -455,20 +455,19 @@
   </style>
 </head>
 <body>
-
-<header id="title-block-header">
+<header>
   <div style="text-transform: uppercase; font-size: 0.88em; font-weight: 700; letter-spacing: 1px; color: #0284c7; margin-bottom: 4px;">
     BTS CIEL — 2<sup>e</sup> Année • Électronique, Réseaux & Systèmes Communicants
   </div>
-  <h1>Architecture Sans Fil : Bluetooth Classic (SPP) vs Bluetooth Low Energy (BLE)</h1>
+  <h1>TP : Communication Bluetooth (SPP), Bus I²C & Instrumentation Digilent Analog Discovery 3</h1>
   <div style="font-weight: 600; color: #475569; font-size: 1.05em; margin-top: 4px;">
-    De l'Arduino Nano v3 au Concentrateur ESP32 — Métrologie RF (RSSI), Profilage Énergétique & Multi-Nœuds
+    Développement d'un pupitre de télé-exploitation sans fil sur Arduino Nano v3 — Liaison SoftwareSerial, Bus I²C, Mesures RSSI & Analyse de Gigue
   </div>
   <div style="margin-top: 12px;">
-    <span class="meta-badge badge-primary">⏱ Format : Fiche de Synthèse & Questions</span>
-    <span class="meta-badge badge-cyan">🎯 Cibles : Nano v3 (ASX00061) & ESP32 Plus</span>
-    <span class="meta-badge badge-purple">📡 Protocoles : Bluetooth Classic 3.0 (SPP) & BLE 4.2/5.0 (GATT)</span>
-    <span class="meta-badge badge-warning">⚡ Métrologie : INA219 / Shunt & Terminal BLE Windows</span>
+    <span class="meta-badge badge-primary">⏱ Format : Fiche de Travail & Questions</span>
+    <span class="meta-badge badge-cyan">🎯 Cible : Arduino Nano v3 (Carrier ASX00061)</span>
+    <span class="meta-badge badge-purple">📡 Protocole : Bluetooth Classic 3.0 (SPP) & Bus I²C</span>
+    <span class="meta-badge badge-warning">⚡ Instrumentation : Digilent Analog Discovery 3 (WaveForms)</span>
   </div>
 </header>
 
@@ -496,8 +495,8 @@
     <div class="card-caption"><strong>Grove Serial BT v3.0</strong><br>Puce CSR BC417, SPP esclave, profil transparent 9600 bauds</div>
   </div>
   <div class="image-card">
-    <img src="images/esp32_board.png" alt="ESP32 Plus Keyestudio" />
-    <div class="card-caption"><strong>ESP32 Plus (WROOM-32)</strong><br>Double cœur 240 MHz, Wi-Fi & BT Classic/BLE, USB-C</div>
+    <img src="images/asx00061_carrier_pinout.png" alt="Brochage Carrier ASX00061" />
+    <div class="card-caption"><strong>Brochage Carrier ASX00061</strong><br>Ports Grove J4 (UART D0/D1), J6 (I²C), J7 (A0/A1)</div>
   </div>
 </div>
 
@@ -513,9 +512,8 @@
 <hr />
 <h2 id="partie-1" class="section-part-1">📋 DOCUMENT 1 : FICHE TRAVAIL DEMANDÉ (Activités Pratiques)</h2>
 
-<<<<<<< HEAD
-<p><em>Cette fiche synthétique définit le cahier des charges opérationnel des 8 étapes pratiques à mener en binôme. Vous devez implémenter les configurations, relever les mesures radiofréquences et énergétiques, et consigner vos résultats dans la Fiche Questions associée (Document 2).</em></p>
-=======
+<p><em>Cette fiche synthétique définit le cahier des charges opérationnel des 3 étapes pratiques à mener en binôme. Vous devez implémenter les configurations, relever les mesures radiofréquences et temporelles à l'Analog Discovery 3, et consigner vos résultats dans la Fiche Questions & Bilan Technique (Document 2).</em></p>
+
 <!-- ========================================================================= -->
 <!-- 1. REFERENTIEL BTS CIEL & COMPETENCES VISEES                             -->
 <!-- ========================================================================= -->
@@ -692,301 +690,304 @@
   </tbody>
 </table>
 
-<h3>2.3. Justification technique : Pourquoi déclarer la liaison Bluetooth sur A0 / A1 plutôt que sur le port UART (D0 / D1) ?</h3>
+<h3>2.3. Choix du port de communication (A0 / A1)</h3>
 
-<div class="callout callout-danger">
-  <div class="callout-title">⚠️ Le Conflit Matériel sur l'UART Natif D0/D1</div>
-  <p>Sur l'Arduino Nano classique (ATmega328P), le seul port série matériel (USART0) est physiquement raccordé aux broches <strong>D0 (RX)</strong> et <strong>D1 (TX)</strong>. Ces mêmes broches sont également reliées, à travers des résistances de 1 kΩ, au convertisseur USB-Série de la carte (CH340 ou FTDI FT232RL) qui communique avec votre ordinateur.</p>
-  <p>Si vous branchez le module Bluetooth sur le port Grove UART (J4) de la carte porteuse :</p>
-  <ul>
-    <li><strong>Le téléversement de programme devient impossible :</strong> le module Bluetooth impose ses niveaux logiques sur les broches D0/D1, ce qui perturbe le bootloader Arduino lors du flash (l'IDE affiche l'erreur fatale <code>avrdude: stk500_recv(): programmer is not responding</code>). Vous seriez obligé de débrancher physiquement le module Bluetooth à chaque téléversement !</li>
-    <li><strong>Impossibilité de déboguer avec le Moniteur Série :</strong> les trames émises par le PC sur l'USB et celles émises par le Bluetooth entrent en collision directe sur la broche RX de l'ATmega328P, provoquant une corruption totale des données reçues.</li>
-  </ul>
+<div class="callout callout-info">
+  <div class="callout-title">💡 Pourquoi privilégier le port A0 / A1 plutôt que l'UART natif (D0 / D1) ?</div>
+  <p>L'UART matériel (D0/D1) étant partagé avec l'interface USB pour le téléversement et le moniteur série, raccorder le module Bluetooth sur ces broches créerait un conflit matériel empêchant la programmation et corrompant les échanges. L'utilisation des broches A0/A1 configurées en liaison série logicielle via <code>SoftwareSerial</code> garantit une communication dédiée et totalement indépendante sans manipulation de câbles.</p>
 </div>
 
-<div class="callout callout-success">
-  <div class="callout-title">💡 La Solution : Émulation UART avec SoftwareSerial sur les broches A0 et A1 (Connecteur J7)</div>
-  <p><strong>1. Polyvalence des broches analogiques de l'ATmega328P :</strong><br>
-  Sur le microcontrôleur ATmega328P, les broches repérées <strong>A0 à A5</strong> ne sont pas limitées aux mesures analogiques de l'ADC : ce sont de véritables broches d'entrée/sortie numériques appartenant au <strong>PORT C (PC0 à PC5)</strong>, avec des registres de direction (<code>DDRC</code>) et de données (<code>PORTC / PINC</code>). Elles correspondent aux broches numériques <strong>D14 à D19</strong>.</p>
-  <p>De plus, les broches A0 à A5 intègrent le support des interruptions sur changement d'état (<strong>Pin Change Interrupts : PCINT8 à PCINT13</strong>). La bibliothèque standard <strong><code>SoftwareSerial</code></strong> exploite précisément ces interruptions pour détecter le front descendant du bit de START sur la ligne de réception (RX). Les broches A0 et A1 sont donc 100% compatibles pour une émulation série logicielle fiable.</p>
-
-  <p><strong>2. Raccordement direct avec le câble Grove 4 broches sur J7 :</strong><br>
-  Le module <strong>Grove - Serial Bluetooth v3.0</strong> respecte le brochage standard des capteurs Grove UART :
-  <ul>
-    <li>Broche 1 du module (Fil Jaune) : entrée <strong>RX</strong> du module Bluetooth.</li>
-    <li>Broche 2 du module (Fil Blanc) : sortie <strong>TX</strong> du module Bluetooth.</li>
-  </ul>
-  En reliant directement ce module au connecteur <strong>J7 (A0 / A1)</strong> de la carte porteuse ASX00061 :
-  <ul>
-    <li>Le fil <strong>Jaune</strong> relie la broche <strong>A0</strong> de la Nano à l'entrée <strong>RX</strong> du module Bluetooth &rarr; <strong>A0 joue le rôle de TX pour l'Arduino Nano</strong>.</li>
-    <li>Le fil <strong>Blanc</strong> relie la broche <strong>A1</strong> de la Nano à la sortie <strong>TX</strong> du module Bluetooth &rarr; <strong>A1 joue le rôle de RX pour l'Arduino Nano</strong>.</li>
-  </ul>
-  Le constructeur de <code>SoftwareSerial</code> prenant en argument <code>(rxPin, txPin)</code>, la déclaration logicielle dans notre programme s'écrit donc naturellement :
-  <pre><code>// SoftwareSerial(rxPin, txPin);
-// A1 = RX (reçoit du TX du Bluetooth via le fil blanc)
-// A0 = TX (émet vers le RX du Bluetooth via le fil jaune)
-SoftwareSerial BT_SERIAL(A1, A0);</code></pre>
-  <em>Cette configuration garantit l'indépendance totale entre l'USB (surveillance console & téléversement) et la liaison Bluetooth sans aucune manipulation de câble !</em>
-</div>
-
-<h3>2.4. Plan de câblage complet et sondes Digilent AD3</h3>
-
-<table>
-  <thead>
-    <tr>
-      <th>Signal / Fonction</th>
-      <th>Broche Arduino Nano</th>
-      <th>Port Carrier ASX00061 / Hub</th>
-      <th>Sonde Digilent AD3 (Nappe MTE)</th>
-      <th>Rôle & Format</th>
-    </tr>
-  </thead>
-  <tbody>
-    <tr>
-      <td><strong>Masse commune (GND)</strong></td>
-      <td>GND</td>
-      <td>GND (Carrier ou Hub)</td>
-      <td><strong>GND (Fil Noir - flèche ▼)</strong></td>
-      <td>Référence de potentiel 0V <em>(INDISPENSABLE)</em></td>
-    </tr>
-    <tr>
-      <td><strong>Bluetooth TX (Module) / RX (Nano)</strong></td>
-      <td>A1 (Software RX)</td>
-      <td>Port J7 (Broche Blanche)</td>
-      <td><strong>DIO 0 (Fil Rose / Orange 0)</strong></td>
-      <td>Capture des réponses émises par le Bluetooth vers l'Arduino</td>
-    </tr>
-    <tr>
-      <td><strong>Bluetooth RX (Module) / TX (Nano)</strong></td>
-      <td>A0 (Software TX)</td>
-      <td>Port J7 (Broche Jaune)</td>
-      <td><strong>DIO 1 (Fil Vert / Vert-Blanc 1)</strong></td>
-      <td>Capture des commandes émises par l'Arduino vers le Bluetooth</td>
-    </tr>
-    <tr>
-      <td><strong>Bus I²C - Horloge (SCL)</strong></td>
-      <td>A5 (I2C SCL)</td>
-      <td><strong>Hub I²C (Port 4 - Broche Blanche)</strong></td>
-      <td><strong>DIO 2 (Fil Bleu / Bleu-Blanc 2)</strong></td>
-      <td>Horloge I²C commune (OLED, Clavier, Matrice)</td>
-    </tr>
-    <tr>
-      <td><strong>Bus I²C - Données (SDA)</strong></td>
-      <td>A4 (I2C SDA)</td>
-      <td><strong>Hub I²C (Port 4 - Broche Jaune)</strong></td>
-      <td><strong>DIO 3 (Fil Jaune / Jaune-Blanc 3)</strong></td>
-      <td>Données bidirectionnelles I²C</td>
-    </tr>
-    <tr>
-      <td><strong>Signal Analogique TX (Scope)</strong></td>
-      <td>A0 (TX Nano)</td>
-      <td>Port J7 (Broche Jaune)</td>
-      <td><strong>1+ (Fil Orange) & 1- (Orange/Blanc à GND)</strong></td>
-      <td>Oscilloscope Voie 1 (Niveau 5V TTL et temps de montée sur la ligne d'émission)</td>
-    </tr>
-  </tbody>
-</table>
+<h3>2.4. Schéma d'instrumentation Digilent AD3</h3>
 
 <!-- FIGURE 1 : SCHEMA DE CABLAGE ARDUINO NANO, HUB I2C & DIGILENT AD3 -->
 <div class="figure-box">
   <div class="svg-container">
-    <svg viewBox="0 0 870 380" width="100%" height="auto" xmlns="http://www.w3.org/2000/svg">
-      <defs>
-        <linearGradient id="ad3Grad" x1="0%" y1="0%" x2="100%" y2="100%">
-          <stop offset="0%" stop-color="#2d3748" />
-          <stop offset="100%" stop-color="#1a202c" />
-        </linearGradient>
-        <linearGradient id="nanoShieldGrad" x1="0%" y1="0%" x2="0%" y2="100%">
-          <stop offset="0%" stop-color="#0284c7" />
-          <stop offset="100%" stop-color="#0369a1" />
-        </linearGradient>
-        <linearGradient id="nanoBoardGrad" x1="0%" y1="0%" x2="100%" y2="0%">
-          <stop offset="0%" stop-color="#00878f" />
-          <stop offset="100%" stop-color="#00979d" />
-        </linearGradient>
-        <linearGradient id="btGrad" x1="0%" y1="0%" x2="100%" y2="100%">
-          <stop offset="0%" stop-color="#1976d2" />
-          <stop offset="100%" stop-color="#0d47a1" />
-        </linearGradient>
-        <linearGradient id="hubGrad" x1="0%" y1="0%" x2="100%" y2="100%">
-          <stop offset="0%" stop-color="#0d9488" />
-          <stop offset="100%" stop-color="#0f766e" />
-        </linearGradient>
-        <filter id="shadow" x="-3%" y="-3%" width="106%" height="108%">
-          <feDropShadow dx="2" dy="3" stdDeviation="3" flood-opacity="0.25"/>
-        </filter>
-      </defs>
+    <svg viewBox="0 0 920 450" width="100%" height="auto" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <linearGradient id="ad3Grad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#2d3748" />
+      <stop offset="100%" stop-color="#1a202c" />
+    </linearGradient>
+    <linearGradient id="nanoShieldGrad" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" stop-color="#0284c7" />
+      <stop offset="100%" stop-color="#0369a1" />
+    </linearGradient>
+    <linearGradient id="nanoBoardGrad" x1="0%" y1="0%" x2="100%" y2="0%">
+      <stop offset="0%" stop-color="#00878f" />
+      <stop offset="100%" stop-color="#00979d" />
+    </linearGradient>
+    <linearGradient id="btGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#1e40af" />
+      <stop offset="100%" stop-color="#1e3a8a" />
+    </linearGradient>
+    <linearGradient id="hubGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#0d9488" />
+      <stop offset="100%" stop-color="#0f766e" />
+    </linearGradient>
+    <filter id="shadow" x="-3%" y="-3%" width="106%" height="108%">
+      <feDropShadow dx="2" dy="3" stdDeviation="3" flood-opacity="0.2"/>
+    </filter>
+  </defs>
 
-      <!-- FOND -->
-      <rect width="870" height="380" fill="#f8fafc" rx="8" />
+  <!-- FOND -->
+  <rect width="920" height="450" fill="#f8fafc" rx="8" />
 
-      <!-- BOITIER DIGILENT DISCOVERY 3 (GAUCHE) -->
-      <g transform="translate(25, 45)" filter="url(#shadow)">
-        <rect width="210" height="280" rx="14" fill="url(#ad3Grad)" stroke="#cbd5e1" stroke-width="2"/>
-        <rect x="15" y="15" width="180" height="40" rx="6" fill="#0f172a" />
-        <text x="105" y="38" fill="#f8fafc" font-family="'Segoe UI', sans-serif" font-size="11pt" font-weight="bold" text-anchor="middle">DIGILENT</text>
-        <text x="105" y="50" fill="#f59e0b" font-family="'Segoe UI', sans-serif" font-size="7pt" font-weight="600" text-anchor="middle">Analog Discovery 3 (AD3)</text>
-        
-        <!-- Connecteur MTE 30 broches -->
-        <rect x="20" y="75" width="170" height="50" rx="4" fill="#111827" stroke="#94a3b8" stroke-width="1.5" />
-        <text x="105" y="92" fill="#94a3b8" font-family="Consolas" font-size="7pt" text-anchor="middle">Connecteur MTE 2x15</text>
-        
-        <!-- Broches et sorties -->
-        <circle cx="45" cy="110" r="4" fill="#f43f5e" /><!-- DIO 0 -->
-        <text x="45" y="132" fill="#f8fafc" font-size="6.5pt" font-family="Consolas" text-anchor="middle">DIO 0</text>
+  <!-- ===================================================================== -->
+  <!-- 1. BOITIER DIGILENT ANALOG DISCOVERY 3 (GAUCHE)                       -->
+  <!-- ===================================================================== -->
+  <g transform="translate(25, 25)" filter="url(#shadow)">
+    <rect width="200" height="385" rx="14" fill="url(#ad3Grad)" stroke="#cbd5e1" stroke-width="2"/>
+    
+    <!-- En-tête -->
+    <rect x="15" y="15" width="170" height="42" rx="6" fill="#0f172a" />
+    <text x="100" y="34" fill="#f8fafc" font-family="'Segoe UI', sans-serif" font-size="11pt" font-weight="bold" text-anchor="middle">DIGILENT</text>
+    <text x="100" y="47" fill="#f59e0b" font-family="'Segoe UI', sans-serif" font-size="7pt" font-weight="600" text-anchor="middle">Analog Discovery 3 (AD3)</text>
+    
+    <!-- Connecteur MTE 2x15 (Sondes Logiques) -->
+    <rect x="15" y="70" width="170" height="95" rx="6" fill="#111827" stroke="#64748b" stroke-width="1.5" />
+    <text x="100" y="87" fill="#94a3b8" font-family="Consolas" font-size="7pt" text-anchor="middle">Connecteur MTE (Sondes)</text>
+    
+    <!-- Noms des broches (en haut du connecteur) -->
+    <text x="32" y="108" fill="#f8fafc" font-size="6.5pt" font-family="Consolas" text-anchor="middle">DIO 0</text>
+    <text x="65" y="108" fill="#f8fafc" font-size="6.5pt" font-family="Consolas" text-anchor="middle">DIO 1</text>
+    <text x="98" y="108" fill="#f8fafc" font-size="6.5pt" font-family="Consolas" text-anchor="middle">DIO 2</text>
+    <text x="131" y="108" fill="#f8fafc" font-size="6.5pt" font-family="Consolas" text-anchor="middle">DIO 3</text>
+    <text x="164" y="108" fill="#f8fafc" font-size="6.5pt" font-family="Consolas" text-anchor="middle">GND</text>
+    
+    <!-- Pastilles de connexion (en dessous) -->
+    <circle cx="32" cy="125" r="4.5" fill="#f43f5e" /><!-- DIO 0 Rose -->
+    <circle cx="65" cy="125" r="4.5" fill="#22c55e" /><!-- DIO 1 Vert -->
+    <circle cx="98" cy="125" r="4.5" fill="#3b82f6" /><!-- DIO 2 Bleu -->
+    <circle cx="131" cy="125" r="4.5" fill="#eab308" /><!-- DIO 3 Jaune -->
+    <circle cx="164" cy="125" r="4.5" fill="#000000" stroke="#ffffff" stroke-width="1.2"/><!-- GND Noir -->
 
-        <circle cx="75" cy="110" r="4" fill="#22c55e" /><!-- DIO 1 -->
-        <text x="75" y="132" fill="#f8fafc" font-size="6.5pt" font-family="Consolas" text-anchor="middle">DIO 1</text>
+    <text x="32" y="148" fill="#f43f5e" font-family="Consolas" font-size="5.5pt" text-anchor="middle">RX_BT</text>
+    <text x="65" y="148" fill="#22c55e" font-family="Consolas" font-size="5.5pt" text-anchor="middle">TX_BT</text>
+    <text x="98" y="148" fill="#38bdf8" font-family="Consolas" font-size="5.5pt" text-anchor="middle">SCL</text>
+    <text x="131" y="148" fill="#fde047" font-family="Consolas" font-size="5.5pt" text-anchor="middle">SDA</text>
+    <text x="164" y="148" fill="#cbd5e1" font-family="Consolas" font-size="5.5pt" text-anchor="middle">0V</text>
 
-        <circle cx="105" cy="110" r="4" fill="#3b82f6" /><!-- DIO 2 -->
-        <text x="105" y="132" fill="#f8fafc" font-size="6.5pt" font-family="Consolas" text-anchor="middle">DIO 2</text>
+    <!-- Section Oscilloscope Voie 1 -->
+    <rect x="15" y="180" width="170" height="65" rx="6" fill="#111827" stroke="#64748b" stroke-width="1.2" />
+    <text x="100" y="198" fill="#fdba74" font-family="'Segoe UI', sans-serif" font-size="7.5pt" font-weight="bold" text-anchor="middle">Oscilloscope Voie 1</text>
+    <circle cx="35" cy="222" r="5" fill="#f97316" /><!-- Scope 1+ -->
+    <text x="48" y="225" fill="#f8fafc" font-size="6.5pt" font-family="Consolas">Voie 1+ (Fil Orange)</text>
+    <text x="100" y="236" fill="#94a3b8" font-size="5.5pt" font-family="Consolas" text-anchor="middle">Sonde sur A0 (TX Nano)</text>
 
-        <circle cx="135" cy="110" r="4" fill="#eab308" /><!-- DIO 3 -->
-        <text x="135" y="132" fill="#f8fafc" font-size="6.5pt" font-family="Consolas" text-anchor="middle">DIO 3</text>
+    <!-- Connecteur USB PC -->
+    <rect x="55" y="335" width="90" height="24" rx="4" fill="#334155" />
+    <text x="100" y="351" fill="#ffffff" font-size="6.8pt" font-weight="600" text-anchor="middle">USB vers PC</text>
+  </g>
 
-        <circle cx="165" cy="110" r="4" fill="#000000" stroke="#ffffff" stroke-width="1"/><!-- GND -->
-        <text x="165" y="132" fill="#f8fafc" font-size="6.5pt" font-family="Consolas" text-anchor="middle">GND</text>
+  <!-- ===================================================================== -->
+  <!-- 2. ARDUINO NANO & CARRIER ASX00061 (CENTRE HAUT)                      -->
+  <!-- ===================================================================== -->
+  <g transform="translate(260, 25)" filter="url(#shadow)">
+    <rect width="235" height="235" rx="10" fill="url(#nanoShieldGrad)" stroke="#0284c7" stroke-width="2"/>
+    <text x="117" y="20" fill="#ffffff" font-family="'Segoe UI', sans-serif" font-size="8.5pt" font-weight="bold" text-anchor="middle">Carrier ASX00061 + Nano v3</text>
+    
+    <!-- Sélecteur S1 et Avertisseur UART J4 -->
+    <rect x="12" y="27" width="56" height="15" rx="3" fill="#1e293b" />
+    <text x="40" y="38" fill="#38bdf8" font-family="Consolas" font-size="5.5pt" text-anchor="middle">S1: 5V (OK)</text>
 
-        <!-- Oscilloscope Voie 1+ -->
-        <circle cx="45" cy="180" r="4" fill="#f97316" />
-        <text x="60" y="184" fill="#f8fafc" font-size="7pt" font-family="Consolas">Voie 1+ (Scope 5V)</text>
-        
-        <!-- Câble USB vers PC -->
-        <rect x="70" y="240" width="70" height="15" rx="3" fill="#64748b" />
-        <text x="105" y="251" fill="#ffffff" font-size="6.5pt" text-anchor="middle">USB vers PC</text>
-      </g>
+    <rect x="156" y="27" width="67" height="15" rx="3" fill="#7f1d1d" stroke="#ef4444" stroke-width="1"/>
+    <text x="189" y="38" fill="#fee2e2" font-family="Consolas" font-size="5pt" text-anchor="middle">J4 UART (Libre)</text>
 
-      <!-- ARDUINO NANO & CARRIER ASX00061 (CENTRE) -->
-      <g transform="translate(265, 45)" filter="url(#shadow)">
-        <rect width="245" height="280" rx="10" fill="url(#nanoShieldGrad)" stroke="#0284c7" stroke-width="2"/>
-        <text x="122" y="22" fill="#ffffff" font-family="'Segoe UI', sans-serif" font-size="9pt" font-weight="bold" text-anchor="middle">Carrier ASX00061 + Nano v3</text>
-        
-        <!-- Sélecteur de tension S1 (5V) -->
-        <rect x="15" y="28" width="60" height="15" rx="3" fill="#1e293b" />
-        <text x="45" y="39" fill="#38bdf8" font-family="Consolas" font-size="5.5pt" text-anchor="middle">S1: 5V (OK)</text>
+    <!-- Carte Arduino Nano enfichée -->
+    <rect x="57" y="47" width="120" height="98" rx="5" fill="url(#nanoBoardGrad)" stroke="#005c5f" stroke-width="1.5" />
+    <rect x="92" y="43" width="50" height="14" rx="2" fill="#cbd5e1" stroke="#475569" stroke-width="1" />
+    <text x="117" y="54" fill="#1e293b" font-family="Consolas" font-size="6pt" text-anchor="middle">Mini-USB</text>
+    
+    <rect x="87" y="75" width="60" height="36" rx="3" fill="#1e293b" />
+    <text x="117" y="97" fill="#ffffff" font-family="Consolas" font-size="7pt" text-anchor="middle">ATmega328P</text>
+    <text x="117" y="128" fill="#e0f2fe" font-family="Consolas" font-size="5.5pt" text-anchor="middle">16 MHz • 5V TTL</text>
+    
+    <!-- Port Grove J7 (SoftwareSerial A0/A1 pour Bluetooth) -->
+    <rect x="12" y="152" width="102" height="70" rx="5" fill="#ffffff" stroke="#94a3b8" stroke-width="1.2" />
+    <text x="63" y="167" fill="#0f172a" font-family="Consolas" font-size="6.5pt" font-weight="bold" text-anchor="middle">Port J7 (SoftSerial)</text>
+    <text x="63" y="179" fill="#0284c7" font-family="Consolas" font-size="5.5pt" font-weight="bold" text-anchor="middle">A0(TX) / A1(RX)</text>
+    
+    <circle cx="27" cy="195" r="4" fill="#22c55e" /><!-- A0 TX -->
+    <text x="27" y="210" fill="#334155" font-size="5pt" font-family="Consolas" text-anchor="middle">A0</text>
+    
+    <circle cx="49" cy="195" r="4" fill="#f43f5e" /><!-- A1 RX -->
+    <text x="49" y="210" fill="#334155" font-size="5pt" font-family="Consolas" text-anchor="middle">A1</text>
+    
+    <circle cx="71" cy="195" r="4" fill="#ef4444" /><!-- 5V -->
+    <text x="71" y="210" fill="#334155" font-size="5pt" font-family="Consolas" text-anchor="middle">5V</text>
+    
+    <circle cx="93" cy="195" r="4" fill="#000000" /><!-- GND -->
+    <text x="93" y="210" fill="#334155" font-size="5pt" font-family="Consolas" text-anchor="middle">GND</text>
 
-        <!-- Port J4 UART barré (Conflit USB) -->
-        <rect x="165" y="28" width="65" height="15" rx="3" fill="#7f1d1d" stroke="#ef4444" stroke-width="1"/>
-        <text x="197" y="39" fill="#fee2e2" font-family="Consolas" font-size="5pt" text-anchor="middle">J4 UART (Conflit!)</text>
+    <!-- Port Grove J6 (Bus I2C : A4=SDA, A5=SCL) -->
+    <rect x="121" y="152" width="102" height="70" rx="5" fill="#ffffff" stroke="#94a3b8" stroke-width="1.2" />
+    <text x="172" y="167" fill="#0f172a" font-family="Consolas" font-size="6.5pt" font-weight="bold" text-anchor="middle">Port J6 (Bus I²C)</text>
+    <text x="172" y="179" fill="#047857" font-family="Consolas" font-size="5.5pt" font-weight="bold" text-anchor="middle">A5(SCL) / A4(SDA)</text>
+    
+    <circle cx="136" cy="195" r="4" fill="#3b82f6" /><!-- SCL -->
+    <text x="136" y="210" fill="#334155" font-size="5pt" font-family="Consolas" text-anchor="middle">SCL</text>
+    
+    <circle cx="158" cy="195" r="4" fill="#eab308" /><!-- SDA -->
+    <text x="158" y="210" fill="#334155" font-size="5pt" font-family="Consolas" text-anchor="middle">SDA</text>
+    
+    <circle cx="180" cy="195" r="4" fill="#ef4444" /><!-- 5V -->
+    <text x="180" y="210" fill="#334155" font-size="5pt" font-family="Consolas" text-anchor="middle">5V</text>
+    
+    <circle cx="202" cy="195" r="4" fill="#000000" /><!-- GND -->
+    <text x="202" y="210" fill="#334155" font-size="5pt" font-family="Consolas" text-anchor="middle">GND</text>
+  </g>
 
-        <!-- Arduino Nano Board enfichée au centre -->
-        <rect x="62" y="48" width="120" height="135" rx="5" fill="url(#nanoBoardGrad)" stroke="#005c5f" stroke-width="1.5" />
-        <rect x="97" y="43" width="50" height="16" rx="3" fill="#cbd5e1" stroke="#475569" stroke-width="1" />
-        <text x="122" y="55" fill="#1e293b" font-family="Consolas" font-size="6.5pt" text-anchor="middle">Mini-USB</text>
-        <rect x="92" y="92" width="60" height="40" rx="3" fill="#1e293b" />
-        <text x="122" y="115" fill="#ffffff" font-family="Consolas" font-size="7pt" text-anchor="middle">ATmega328P</text>
-        
-        <!-- Port Grove J7 (A0=TX / A1=RX) -->
-        <rect x="15" y="195" width="105" height="65" rx="5" fill="#f1f5f9" stroke="#94a3b8" stroke-width="1.5" />
-        <text x="67" y="210" fill="#0f172a" font-family="Consolas" font-size="6.8pt" font-weight="bold" text-anchor="middle">Port J7 (A0 / A1)</text>
-        <text x="67" y="222" fill="#0369a1" font-family="Consolas" font-size="5.8pt" font-weight="bold" text-anchor="middle">A0(TX) / A1(RX)</text>
-        <circle cx="30" cy="242" r="3" fill="#22c55e" /><!-- A0 TX Nano -->
-        <text x="30" y="254" fill="#334155" font-size="5pt" text-anchor="middle">A0</text>
-        <circle cx="50" cy="242" r="3" fill="#f43f5e" /><!-- A1 RX Nano -->
-        <text x="50" y="254" fill="#334155" font-size="5pt" text-anchor="middle">A1</text>
-        <circle cx="70" cy="242" r="3" fill="#ef4444" /><!-- VCC 5V -->
-        <text x="70" y="254" fill="#334155" font-size="5pt" text-anchor="middle">5V</text>
-        <circle cx="90" cy="242" r="3" fill="#000000" /><!-- GND -->
-        <text x="90" y="254" fill="#334155" font-size="5pt" text-anchor="middle">GND</text>
+  <!-- ===================================================================== -->
+  <!-- 3. MODULE GROVE BLUETOOTH (CENTRE BAS - SANS SUPERPOSITION)           -->
+  <!-- ===================================================================== -->
+  <g transform="translate(260, 275)" filter="url(#shadow)">
+    <rect width="235" height="135" rx="8" fill="url(#btGrad)" stroke="#1e40af" stroke-width="1.8"/>
+    
+    <!-- Connecteur Grove à l'avant (en haut du module) pour raccordement direct -->
+    <rect x="15" y="12" width="205" height="52" rx="5" fill="#f8fafc" stroke="#cbd5e1" stroke-width="1.2" />
+    <text x="117" y="26" fill="#0f172a" font-family="Consolas" font-size="6.5pt" font-weight="bold" text-anchor="middle">Entrée Connecteur Grove UART</text>
+    
+    <!-- Pastilles Grove Bluetooth (face aux pastilles J7 du Carrier !) -->
+    <circle cx="35" cy="42" r="4" fill="#eab308" /><!-- RX Module (Fil Jaune) -->
+    <text x="35" y="55" fill="#1e293b" font-size="5.2pt" font-family="Consolas" text-anchor="middle">RX (Jaune)</text>
 
-        <!-- Port Grove J6 I2C (A4=SDA, A5=SCL) -->
-        <rect x="130" y="195" width="100" height="65" rx="5" fill="#f1f5f9" stroke="#94a3b8" stroke-width="1.5" />
-        <text x="180" y="210" fill="#0f172a" font-family="Consolas" font-size="6.8pt" font-weight="bold" text-anchor="middle">Port J6 (I²C)</text>
-        <text x="180" y="222" fill="#334155" font-family="Consolas" font-size="5.8pt" text-anchor="middle">A5(SCL) / A4(SDA)</text>
-        <circle cx="145" cy="242" r="3" fill="#3b82f6" /><!-- SCL -->
-        <circle cx="165" cy="242" r="3" fill="#eab308" /><!-- SDA -->
-        <circle cx="185" cy="242" r="3" fill="#ef4444" /><!-- VCC 5V -->
-        <circle cx="205" cy="242" r="3" fill="#000000" /><!-- GND -->
-      </g>
+    <circle cx="85" cy="42" r="4" fill="#ffffff" stroke="#475569" stroke-width="1.2"/><!-- TX Module (Fil Blanc) -->
+    <text x="85" y="55" fill="#1e293b" font-size="5.2pt" font-family="Consolas" text-anchor="middle">TX (Blanc)</text>
 
-      <!-- MODULE GROVE BLUETOOTH (BAS GAUCHE) -->
-      <g transform="translate(180, 275)" filter="url(#shadow)">
-        <rect width="130" height="70" rx="6" fill="url(#btGrad)" stroke="#1e40af" stroke-width="1.5"/>
-        <text x="65" y="20" fill="#ffffff" font-family="'Segoe UI', sans-serif" font-size="7.5pt" font-weight="bold" text-anchor="middle">Grove Bluetooth</text>
-        <circle cx="20" cy="38" r="4" fill="#38bdf8" />
-        <text x="28" y="41" fill="#bae6fd" font-size="6pt" font-family="Consolas">LED Status</text>
-        <!-- Broches Grove -->
-        <rect x="25" y="52" width="80" height="14" fill="#ffffff" rx="2" />
-        <text x="65" y="62" fill="#0f172a" font-size="6pt" font-family="Consolas" text-anchor="middle">TX / RX / 5V / GND</text>
-      </g>
+    <circle cx="140" cy="42" r="4" fill="#ef4444" /><!-- VCC 5V -->
+    <text x="140" y="55" fill="#1e293b" font-size="5.2pt" font-family="Consolas" text-anchor="middle">VCC (5V)</text>
 
-      <!-- GROVE I2C HUB 4 PORTS (DROITE) -->
-      <g transform="translate(540, 45)" filter="url(#shadow)">
-        <rect width="140" height="280" rx="8" fill="url(#hubGrad)" stroke="#0f766e" stroke-width="2"/>
-        <text x="70" y="22" fill="#ffffff" font-family="'Segoe UI', sans-serif" font-size="8.5pt" font-weight="bold" text-anchor="middle">Grove I²C Hub</text>
-        <text x="70" y="34" fill="#99f6e4" font-family="Consolas" font-size="6.5pt" text-anchor="middle">(4 ports mutualisés)</text>
+    <circle cx="190" cy="42" r="4" fill="#000000" /><!-- GND -->
+    <text x="190" y="55" fill="#1e293b" font-size="5.2pt" font-family="Consolas" text-anchor="middle">GND (0V)</text>
 
-        <!-- Port 1 (In vers Nano) -->
-        <rect x="15" y="46" width="110" height="42" rx="4" fill="#f0fdfa" stroke="#14b8a6"/>
-        <text x="70" y="62" fill="#134e4a" font-size="7pt" font-weight="bold" text-anchor="middle">Port 1 (In Nano)</text>
-        <text x="70" y="74" fill="#64748b" font-size="6pt" font-family="Consolas" text-anchor="middle">SCL / SDA / 5V / GND</text>
+    <!-- Informations du module (en bas, protégées des câbles) -->
+    <text x="117" y="80" fill="#ffffff" font-family="'Segoe UI', sans-serif" font-size="8pt" font-weight="bold" text-anchor="middle">Grove - Serial Bluetooth v3.0</text>
+    <text x="117" y="93" fill="#93c5fd" font-family="Consolas" font-size="5.8pt" text-anchor="middle">CSR BC417 • SPP 9600 bauds • Classe 2</text>
+    
+    <circle cx="30" cy="114" r="4" fill="#38bdf8" />
+    <text x="40" y="117" fill="#bae6fd" font-size="6pt" font-family="Consolas">LED d'état (Clignote = AT / Fixe = Connecté)</text>
+  </g>
 
-        <!-- Port 2 (OLED) -->
-        <rect x="15" y="100" width="110" height="42" rx="4" fill="#f0fdfa" stroke="#14b8a6"/>
-        <text x="70" y="116" fill="#134e4a" font-size="7pt" font-weight="bold" text-anchor="middle">Port 2 : OLED SSD1306</text>
-        <text x="70" y="128" fill="#0284c7" font-size="6pt" font-family="Consolas" text-anchor="middle">Adresse 0x3C</text>
+  <!-- ===================================================================== -->
+  <!-- 4. GROVE I2C HUB (DROITE MILIEU)                                      -->
+  <!-- ===================================================================== -->
+  <g transform="translate(520, 25)" filter="url(#shadow)">
+    <rect width="160" height="385" rx="8" fill="url(#hubGrad)" stroke="#0f766e" stroke-width="2"/>
+    <text x="80" y="20" fill="#ffffff" font-family="'Segoe UI', sans-serif" font-size="8.5pt" font-weight="bold" text-anchor="middle">Grove I²C Hub</text>
+    <text x="80" y="32" fill="#99f6e4" font-family="Consolas" font-size="6pt" text-anchor="middle">(4 ports en parallèle)</text>
 
-        <!-- Port 3 (Clavier + Matrice) -->
-        <rect x="15" y="154" width="110" height="42" rx="4" fill="#f0fdfa" stroke="#14b8a6"/>
-        <text x="70" y="170" fill="#134e4a" font-size="7pt" font-weight="bold" text-anchor="middle">Port 3 : Clavier / Matrice</text>
-        <text x="70" y="182" fill="#7c3aed" font-size="6pt" font-family="Consolas" text-anchor="middle">0x5B (Touch) / 0x70 (LED)</text>
+    <!-- Port 1 (In Nano J6) -->
+    <rect x="12" y="45" width="136" height="48" rx="4" fill="#f0fdfa" stroke="#14b8a6"/>
+    <text x="80" y="63" fill="#134e4a" font-size="6.8pt" font-weight="bold" text-anchor="middle">Port 1 (In Nano J6)</text>
+    <text x="80" y="78" fill="#64748b" font-size="5.8pt" font-family="Consolas" text-anchor="middle">SCL / SDA / 5V / GND</text>
 
-        <!-- Port 4 (Point de Test AD3) -->
-        <rect x="15" y="208" width="110" height="52" rx="4" fill="#fef3c7" stroke="#f59e0b" stroke-width="1.5"/>
-        <text x="70" y="224" fill="#78350f" font-size="7pt" font-weight="bold" text-anchor="middle">Port 4 : TEST POINT</text>
-        <text x="70" y="238" fill="#b45309" font-size="6.5pt" font-weight="bold" text-anchor="middle">Sondes AD3 DIO 2 &amp; 3</text>
-        <circle cx="35" cy="250" r="3" fill="#3b82f6" /><!-- DIO 2 SCL -->
-        <circle cx="60" cy="250" r="3" fill="#eab308" /><!-- DIO 3 SDA -->
-        <circle cx="85" cy="250" r="3" fill="#ef4444" /><!-- VCC -->
-        <circle cx="105" cy="250" r="3" fill="#000000" /><!-- GND -->
-      </g>
+    <!-- Port 2 (OLED SSD1306) -->
+    <rect x="12" y="105" width="136" height="48" rx="4" fill="#f0fdfa" stroke="#14b8a6"/>
+    <text x="80" y="123" fill="#134e4a" font-size="6.8pt" font-weight="bold" text-anchor="middle">Port 2 : Vers OLED</text>
+    <text x="80" y="138" fill="#0284c7" font-size="6pt" font-family="Consolas" text-anchor="middle">Adresse 0x3C</text>
 
-      <!-- MODULES CLIENTS I2C (EXTREME DROITE) -->
-      <g transform="translate(710, 45)">
-        <!-- OLED -->
-        <g filter="url(#shadow)">
-          <rect width="135" height="75" rx="6" fill="#1e293b" stroke="#475569" stroke-width="1.5"/>
-          <text x="67" y="18" fill="#38bdf8" font-family="'Segoe UI', sans-serif" font-size="7pt" font-weight="bold" text-anchor="middle">Grove OLED 0.96"</text>
-          <rect x="15" y="26" width="105" height="38" rx="3" fill="#020617" stroke="#38bdf8"/>
-          <text x="67" y="42" fill="#38bdf8" font-family="Consolas" font-size="6pt" text-anchor="middle">CIEL BT READY</text>
-          <text x="67" y="54" fill="#22c55e" font-family="Consolas" font-size="5.5pt" text-anchor="middle">Addr: 0x3C</text>
-        </g>
-        <!-- Clavier 12 touches -->
-        <g transform="translate(0, 95)" filter="url(#shadow)">
-          <rect width="135" height="75" rx="6" fill="#334155" stroke="#475569" stroke-width="1.5"/>
-          <text x="67" y="18" fill="#f8fafc" font-family="'Segoe UI', sans-serif" font-size="7pt" font-weight="bold" text-anchor="middle">Grove Keypad (0x5B)</text>
-          <text x="67" y="32" fill="#cbd5e1" font-size="5.5pt" font-family="Consolas" text-anchor="middle">12 touches capacitives</text>
-          <!-- Touches dessinées -->
-          <circle cx="35" cy="50" r="7" fill="#64748b"/> <text x="35" y="53" fill="#fff" font-size="5.5pt" text-anchor="middle">1</text>
-          <circle cx="67" cy="50" r="7" fill="#64748b"/> <text x="67" y="53" fill="#fff" font-size="5.5pt" text-anchor="middle">2</text>
-          <circle cx="100" cy="50" r="7" fill="#64748b"/> <text x="100" y="53" fill="#fff" font-size="5.5pt" text-anchor="middle">3</text>
-        </g>
-        <!-- Matrice LED -->
-        <g transform="translate(0, 190)" filter="url(#shadow)">
-          <rect width="135" height="75" rx="6" fill="#1e1e2e" stroke="#475569" stroke-width="1.5"/>
-          <text x="67" y="18" fill="#f8fafc" font-family="'Segoe UI', sans-serif" font-size="7pt" font-weight="bold" text-anchor="middle">Matrice LED 8x8 (0x70)</text>
-          <rect x="40" y="26" width="55" height="40" rx="3" fill="#000"/>
-          <circle cx="55" cy="40" r="3" fill="#ef4444"/>
-          <circle cx="75" cy="40" r="3" fill="#ef4444"/>
-          <circle cx="65" cy="52" r="3" fill="#ef4444"/>
-        </g>
-      </g>
+    <!-- Port 3 (Clavier & Matrice) -->
+    <rect x="12" y="165" width="136" height="48" rx="4" fill="#f0fdfa" stroke="#14b8a6"/>
+    <text x="80" y="183" fill="#134e4a" font-size="6.8pt" font-weight="bold" text-anchor="middle">Port 3 : Clavier / Matrice</text>
+    <text x="80" y="198" fill="#7c3aed" font-size="5.8pt" font-family="Consolas" text-anchor="middle">0x5B (Keypad) / 0x70 (LED)</text>
 
-      <!-- LIAISONS ET CABLAGES -->
-      <!-- DIO 0 (Rose) : AD3 vers A1 (RX Nano / TX Bluetooth - Fil Blanc) -->
-      <path d="M 70 155 C 70 190, 200 220, 285 287" fill="none" stroke="#f43f5e" stroke-width="2.5" stroke-dasharray="4 2"/>
-      <!-- DIO 1 (Vert) : AD3 vers A0 (TX Nano / RX Bluetooth - Fil Jaune) -->
-      <path d="M 100 155 C 100 230, 260 260, 310 287" fill="none" stroke="#22c55e" stroke-width="2.5"/>
-      <!-- Câble Grove Nano I2C vers Hub Port 1 -->
-      <path d="M 440 255 C 470 255, 500 100, 555 75" fill="none" stroke="#0ea5e9" stroke-width="3"/>
-      <!-- Câble Grove Nano Port J7 A0/A1 vers Bluetooth -->
-      <path d="M 330 255 C 330 290, 300 295, 270 300" fill="none" stroke="#6366f1" stroke-width="3"/>
-      <!-- Hub Port 4 vers AD3 (DIO 2 Bleu & DIO 3 Jaune) -->
-      <path d="M 575 295 C 400 370, 150 350, 130 155" fill="none" stroke="#3b82f6" stroke-width="2.5"/>
-      <path d="M 600 295 C 430 385, 170 365, 160 155" fill="none" stroke="#eab308" stroke-width="2.5"/>
-      <!-- Masse GND commune (Noir) -->
-      <path d="M 190 155 C 190 270, 340 320, 360 287" fill="none" stroke="#000000" stroke-width="2.5"/>
-    </svg>
+    <!-- Port 4 (Point de Test AD3) -->
+    <rect x="12" y="230" width="136" height="75" rx="4" fill="#fef3c7" stroke="#f59e0b" stroke-width="1.5"/>
+    <text x="80" y="248" fill="#78350f" font-size="7pt" font-weight="bold" text-anchor="middle">Port 4 : TEST POINT</text>
+    <text x="80" y="261" fill="#b45309" font-size="6pt" font-weight="bold" text-anchor="middle">Sondes AD3 DIO 2 &amp; DIO 3</text>
+    
+    <circle cx="32" cy="282" r="4" fill="#3b82f6" /><!-- DIO 2 SCL -->
+    <text x="32" y="295" fill="#78350f" font-size="5pt" font-family="Consolas" text-anchor="middle">SCL</text>
+
+    <circle cx="64" cy="282" r="4" fill="#eab308" /><!-- DIO 3 SDA -->
+    <text x="64" y="295" fill="#78350f" font-size="5pt" font-family="Consolas" text-anchor="middle">SDA</text>
+
+    <circle cx="96" cy="282" r="4" fill="#ef4444" /><!-- 5V -->
+    <text x="96" y="295" fill="#78350f" font-size="5pt" font-family="Consolas" text-anchor="middle">5V</text>
+
+    <circle cx="128" cy="282" r="4" fill="#000000" /><!-- GND -->
+    <text x="128" y="295" fill="#78350f" font-size="5pt" font-family="Consolas" text-anchor="middle">GND</text>
+  </g>
+
+  <!-- ===================================================================== -->
+  <!-- 5. PERIPHERIQUES I2C (DROITE TOUT AU BOUT)                             -->
+  <!-- ===================================================================== -->
+  <g transform="translate(710, 25)">
+    <!-- OLED 0.96" -->
+    <g filter="url(#shadow)">
+      <rect width="180" height="85" rx="6" fill="#1e293b" stroke="#475569" stroke-width="1.5"/>
+      <text x="90" y="18" fill="#38bdf8" font-family="'Segoe UI', sans-serif" font-size="7.5pt" font-weight="bold" text-anchor="middle">Grove OLED 0.96"</text>
+      <rect x="15" y="26" width="150" height="45" rx="3" fill="#020617" stroke="#38bdf8"/>
+      <text x="90" y="45" fill="#38bdf8" font-family="Consolas" font-size="6.5pt" text-anchor="middle">CIEL BT READY</text>
+      <text x="90" y="59" fill="#22c55e" font-family="Consolas" font-size="5.8pt" text-anchor="middle">Adresse I²C : 0x3C</text>
+    </g>
+
+    <!-- Clavier 12 touches capacitif -->
+    <g transform="translate(0, 105)" filter="url(#shadow)">
+      <rect width="180" height="85" rx="6" fill="#334155" stroke="#475569" stroke-width="1.5"/>
+      <text x="90" y="18" fill="#f8fafc" font-family="'Segoe UI', sans-serif" font-size="7.5pt" font-weight="bold" text-anchor="middle">Grove Keypad (0x5B)</text>
+      <text x="90" y="31" fill="#cbd5e1" font-size="5.5pt" font-family="Consolas" text-anchor="middle">12 touches tactiles MPR121</text>
+      <!-- Touches dessinées -->
+      <circle cx="50" cy="52" r="8" fill="#64748b"/> <text x="50" y="55" fill="#fff" font-size="6pt" text-anchor="middle">1</text>
+      <circle cx="90" cy="52" r="8" fill="#64748b"/> <text x="90" y="55" fill="#fff" font-size="6pt" text-anchor="middle">2</text>
+      <circle cx="130" cy="52" r="8" fill="#64748b"/> <text x="130" y="55" fill="#fff" font-size="6pt" text-anchor="middle">3</text>
+      <text x="90" y="74" fill="#94a3b8" font-size="5pt" font-family="Consolas" text-anchor="middle">[4] [5] [6] [7] [8] [9] [*] [0] [#]</text>
+    </g>
+
+    <!-- Matrice LED 8x8 -->
+    <g transform="translate(0, 210)" filter="url(#shadow)">
+      <rect width="180" height="85" rx="6" fill="#1e1e2e" stroke="#475569" stroke-width="1.5"/>
+      <text x="90" y="18" fill="#f8fafc" font-family="'Segoe UI', sans-serif" font-size="7.5pt" font-weight="bold" text-anchor="middle">Matrice LED 8x8 (0x70)</text>
+      <text x="90" y="31" fill="#cbd5e1" font-size="5.5pt" font-family="Consolas" text-anchor="middle">Contrôleur HT16K33</text>
+      <rect x="60" y="38" width="60" height="38" rx="3" fill="#000000" stroke="#334155"/>
+      <circle cx="76" cy="52" r="3" fill="#ef4444"/>
+      <circle cx="104" cy="52" r="3" fill="#ef4444"/>
+      <circle cx="90" cy="64" r="3" fill="#ef4444"/>
+    </g>
+  </g>
+
+  <!-- ===================================================================== -->
+  <!-- 6. CABLAGES SANS CHEVAUCHEMENT NI TEXTE COUPE                         -->
+  <!-- ===================================================================== -->
+  
+  <!-- CÂBLE 1 : Port J7 (Carrier) vers Connecteur Grove Bluetooth (Vertical direct et net) -->
+  <!-- A0 (TX Nano - Vert) -> RX Module BT (Jaune) -->
+  <path d="M 287 220 L 295 315" fill="none" stroke="#eab308" stroke-width="2.5"/>
+  <!-- A1 (RX Nano - Rose) -> TX Module BT (Blanc) -->
+  <path d="M 309 220 L 345 315" fill="none" stroke="#94a3b8" stroke-width="2.5" stroke-dasharray="4 2"/>
+  <!-- 5V (Rouge) -->
+  <path d="M 331 220 L 400 315" fill="none" stroke="#ef4444" stroke-width="2"/>
+  <!-- GND (Noir) -->
+  <path d="M 353 220 L 450 315" fill="none" stroke="#000000" stroke-width="2"/>
+
+  <!-- CÂBLE 2 : Port J6 (Carrier) vers Port 1 Hub I2C (Courbe horizontale propre, passe entre les cartes) -->
+  <path d="M 462 205 C 495 205, 495 72, 532 72" fill="none" stroke="#0ea5e9" stroke-width="3"/>
+
+  <!-- CÂBLE 3 : Hub vers Périphériques I2C (Horizontales directes sans croisement) -->
+  <!-- Port 2 -> OLED -->
+  <path d="M 656 130 L 710 70" fill="none" stroke="#0ea5e9" stroke-width="2.5"/>
+  <!-- Port 3 -> Clavier & Matrice -->
+  <path d="M 656 190 L 710 150" fill="none" stroke="#a855f7" stroke-width="2"/>
+  <path d="M 656 190 C 680 190, 680 250, 710 250" fill="none" stroke="#a855f7" stroke-width="2"/>
+
+  <!-- CÂBLES SONDES AD3 (Liaisons MTE) : sortent à droite du connecteur sans masquer les textes -->
+  <!-- DIO 0 (Rose pointillé) : AD3 vers A1 (RX Nano) -->
+  <path d="M 57 130 C 57 155, 235 155, 245 200 C 250 220, 290 220, 309 220" fill="none" stroke="#f43f5e" stroke-width="2" stroke-dasharray="4 2"/>
+  
+  <!-- DIO 1 (Vert) : AD3 vers A0 (TX Nano) -->
+  <path d="M 90 130 C 90 165, 225 165, 240 210 C 245 220, 270 220, 287 220" fill="none" stroke="#22c55e" stroke-width="2"/>
+  
+  <!-- GND AD3 (Noir) vers GND J7 -->
+  <path d="M 189 130 C 189 175, 245 175, 255 230 C 265 240, 330 240, 353 220" fill="none" stroke="#000000" stroke-width="1.8"/>
+
+  <!-- Scope 1+ (Orange) vers A0 (TX Nano) -->
+  <path d="M 60 247 C 110 247, 210 255, 240 230 C 250 215, 270 220, 287 220" fill="none" stroke="#f97316" stroke-width="2"/>
+
+  <!-- DIO 2 (Bleu) & DIO 3 (Jaune) vers Port 4 TEST POINT du Hub I2C (Passent par le bas dégagé) -->
+  <path d="M 123 130 C 123 370, 160 430, 330 430 C 450 430, 520 370, 552 307" fill="none" stroke="#3b82f6" stroke-width="2.2"/>
+  <path d="M 156 130 C 156 380, 190 440, 350 440 C 470 440, 535 380, 584 307" fill="none" stroke="#eab308" stroke-width="2.2"/>
+
+</svg>
   </div>
   <div class="figure-caption">Figure 1 : Schéma d'instrumentation - Raccordement du Digilent AD3, de l'Arduino Nano sur Carrier ASX00061 (Port J7 A0/A1), du Grove I²C Hub et des périphériques</div>
 </div>
@@ -997,7 +998,6 @@ SoftwareSerial BT_SERIAL(A1, A0);</code></pre>
 <!-- 3. DEROULEMENT DU TP - ACTIVITES PRATIQUES ET MESURES                     -->
 <!-- ========================================================================= -->
 <h2>3. Déroulement du TP — Activités Pratiques et Mesures</h2>
->>>>>>> c58a85e35afce0e03ae5ba0070373a9c57bf7f45
 
 <!-- ETAPE 1 -->
 <div class="step-box">
@@ -1090,104 +1090,77 @@ SoftwareSerial BT_SERIAL(A1, A0);</code></pre>
 <!-- ETAPE 3 -->
 <div class="step-box">
   <div class="step-header">
-    <span class="step-title">Étape 3 : Déclaration de l'ESP32 & Scanner RSSI Bluetooth Classic</span>
-    <span class="step-badge">ESP32 • Scan RF</span>
+    <span class="step-title">Étape 3 : Passerelle Bidirectionnelle Bluetooth &harr; I²C (OLED &amp; Clavier), Mesures à l'AD3 & Portée RSSI</span>
+    <span class="step-badge">Bluetooth SPP • Bus I²C • Métrologie AD3</span>
   </div>
-  <p><strong>Objectif :</strong> Configurer l'environnement de développement pour la carte <strong>ESP32 Plus (Keyestudio WROOM-32)</strong> et implémenter un scanner Bluetooth Classic pour détecter les modules Nano et mesurer leur niveau de réception (RSSI).</p>
+
+  <p><strong>Objectif :</strong> Réceptionner des données textuelles transmises en Bluetooth depuis un terminal distant (PC ou smartphone) pour les afficher en temps réel sur l'écran OLED I²C, renvoyer les frappes du clavier capacitif I²C vers le terminal distant, caractériser les signaux à l'analyseur logique Digilent AD3, et évaluer la portée radio (RSSI) ainsi que les contraintes temporelles de <code>SoftwareSerial</code>.</p>
+
+  <!-- ======================================================================= -->
+  <!-- 4.1. PASSERELLE BLUETOOTH -> ECRAN I2C & RELEVE AD3                     -->
+  <!-- ======================================================================= -->
+  <h4>3.1. Passerelle Bidirectionnelle : Terminal distant &harr; Écran OLED &amp; Clavier I²C</h4>
+  
+  <p><strong>Appairage initial :</strong> Activez le Bluetooth sur votre terminal distant (smartphone ou PC), recherchez votre module (ex. : <code>CIEL_B1</code>) et saisissez votre code PIN (ex. : <code>1234</code>). La LED bleue cesse de clignoter et reste <strong>allumée en continu</strong> (liaison RFCOMM active).</p>
+
+  <p>Une fois la liaison Bluetooth établie avec votre terminal distant (application <em>Serial Bluetooth Terminal</em> sur smartphone ou logiciel PC fourni), la communication est exploitée dans les <strong>deux sens de transmission</strong> :</p>
   <ul>
-    <li><strong>Configuration dans l'Arduino IDE :</strong>
-      <ul>
-        <li>Dans les préférences, vérifiez l'URL de package de cartes ESP32 : <code>https://espressif.github.io/arduino-esp32/package_esp32_index.json</code>.</li>
-        <li>Sélectionnez la carte : <strong><code>ESP32 Dev Module</code></strong> (ou <em>DOIT ESP32 DEVKIT V1</em>).</li>
-        <li>Réglez : <em>Upload Speed : 921600</em>, <em>CPU Frequency : 240 MHz</em>, Port COM correspondant au câble USB-C.</li>
-      </ul>
-    </li>
-    <li><strong>Programme de scan Bluetooth Classic :</strong>
-      Exploitez la bibliothèque <code>BluetoothSerial.h</code> pour exécuter une recherche inquiry GAP et afficher pour chaque périphérique détecté :
-      <ul>
-        <li>Nom du périphérique (ex : <code>CIEL_B1</code>).</li>
-        <li>Adresse MAC (BD_ADDR).</li>
-        <li>Puissance reçue <strong>RSSI</strong> (en dBm).</li>
-      </ul>
-    </li>
-  </ul>
-  <div class="deliverable-box">
-    <div class="deliverable-title">📦 Livrable attendu :</div>
-    Capture de la console série de l'ESP32 listant l'ensemble des modules Bluetooth de la salle avec leur RSSI.
-  </div>
-</div>
-
-<!-- ETAPE 4 -->
-<div class="step-box">
-  <div class="step-header">
-<<<<<<< HEAD
-    <span class="step-title">Étape 4 : Recherche Documentaire & Campagne de Mesures RSSI (Distance & Obstacles)</span>
-    <span class="step-badge">Métrologie RF • Recherche & Mesures</span>
-  </div>
-  <p><strong>Objectif :</strong> Comprendre la signification physique du RSSI, documenter ses ordres de grandeur types à l'aide d'une recherche Internet, puis quantifier expérimentalement l'atténuation à 2,4 GHz selon la distance et les obstacles.</p>
-
-  <div class="callout callout-info" style="margin: 8px 0;">
-    <strong>🌐 Recherche documentaire Internet & Illustration préalable :</strong><br>
-    Avant d'entamer les relevés sur le terrain, effectuez une recherche sur le Web (documentation technique Bluetooth SIG, constructeurs Texas Instruments / Nordic Semiconductor / Espressif, articles académiques sur la propagation RF) pour :
-    <ol style="margin-top: 4px; margin-bottom: 4px;">
-      <li>Définir la grandeur <strong>RSSI</strong> (unité, référence physique en milliwatts et conversion logarithmique en dBm).</li>
-      <li>Établir l'échelle normalisée de qualité de signal pour une liaison Bluetooth / Wi-Fi (de l'excellent à la perte de liaison).</li>
-      <li>Rechercher ou schématiser une <strong>illustration graphique explicative</strong> montrant l'allure de la courbe de décroissance du RSSI en fonction de la distance, les zones de couverture et la sensibilité minimale du récepteur (<i>S</i><sub>RX</sub>).</li>
-    </ol>
-  </div>
-
-  <p><strong>Protocole expérimental de mesures sur l'ESP32 :</strong></p>
-  <ul>
-    <li><strong>Profil 1 : Propagation en champ libre (Line-of-Sight - LoS) :</strong> Relevez le RSSI moyen (sur 5 trames consécutives) à <strong>1 m, 3 m, 5 m, 10 m et 15 m</strong>.</li>
-    <li><strong>Profil 2 : Atténuation par obstacles à 5 mètres (Non-Line-of-Sight - NLoS) :</strong> Mesurez l'affaiblissement provoqué par :
-      <ul>
-        <li>Une cloison sèche (plaque de plâtre / placo alvéolaire).</li>
-        <li>Un mur porteur (béton armé ou brique pleine).</li>
-        <li>Un écran métallique continu (feuille d'aluminium ou armoire métallique &rarr; effet cage de Faraday).</li>
-        <li>L'interposition du corps d'un équipier (absorption diélectrique par l'eau corporelle à 2,4 GHz).</li>
-      </ul>
-    </li>
-  </ul>
-  <div class="deliverable-box">
-    <div class="deliverable-title">📦 Livrables attendus :</div>
-    Synthèse de la recherche Internet, illustration graphique du RSSI collée/tracée et tableau de mesures complété dans la Fiche Questions (Partie B).
-=======
-    <span class="step-title">PARTIE 4 : Caractérisation Radio (RSSI & Dégradation de Portée) & Impact de SoftwareSerial sur l'I²C</span>
-    <span class="timing-badge">Durée estimée : 1h00</span>
-  </div>
-
-  <p>Dans un système communicant industriel, la robustesse de la transmission ne dépend pas uniquement de l'absence d'erreurs logicielles : elle repose sur la <strong>qualité du bilan de liaison radiofréquence (RSSI)</strong> et sur la <strong>capacité du microcontrôleur à absorber un flux de données série sans pénaliser les périphériques synchrones</strong> (comme le rafraîchissement I²C de l'afficheur OLED et de la matrice LED).</p>
-
-  <h4>4.1. Caractérisation de la liaison radio 2,4 GHz : Mesure du RSSI et affaiblissement en fonction de la distance</h4>
-  <p>Le <strong>RSSI</strong> (<em>Received Signal Strength Indicator</em>), exprimé en <strong>dBm</strong> (décibels par rapport à 1 mW), quantifie la puissance haute fréquence captée par le récepteur Bluetooth. C'est une grandeur logarithmique négative :</p>
-  <ul>
-    <li><strong>&gt; -60 dBm :</strong> Excellente liaison radio (proximité immédiate &lt; 2 m).</li>
-    <li><strong>-60 dBm à -75 dBm :</strong> Liaison nominale fiable en atelier industriel.</li>
-    <li><strong>-75 dBm à -85 dBm :</strong> Signal dégradé (augmentation de la latence, retransmissions de paquets radio).</li>
-    <li><strong>&lt; -88 dBm :</strong> Seuil de sensibilité limite du récepteur (décrochage imminent de la liaison).</li>
+    <li><strong>Sens Descendant (Terminal &rarr; Pupitre Nano) :</strong><br>
+    Le terminal envoie des messages textuels ASCII (ex. : <code>"CIEL_TEST"</code>, <code>"TEMP=23.5C"</code>). L'Arduino Nano lit ces octets sur <code>BT_SERIAL</code> (broche A1/RX) et les retransmet via le bus I²C (A4/A5) vers l'afficheur OLED SSD1306 (adresse <code>0x3C</code>) où ils s'affichent instantanément.</li>
+    <li><strong>Sens Montant (Clavier tactile &rarr; Terminal distant) :</strong><br>
+    L'utilisateur saisit un code ou appuie sur les touches du <strong>clavier capacitif 12 touches Grove</strong> (contrôleur MPR121, adresse I²C <code>0x5B</code> relié au Hub). L'Arduino Nano lit la touche pressée sur le bus I²C et la transmet immédiatement sur la liaison sans fil via <code>BT_SERIAL.print(...)</code> (broche A0/TX). Le caractère ou code tapé s'affiche en direct sur le terminal du smartphone ou du PC !</li>
   </ul>
 
-  <p>Selon le modèle d'atténuation en espace libre (<em>Log-distance Path Loss Model</em>), la puissance reçue théorique décroît avec la distance selon la formule :</p>
-  <div class="formula-box">
-    <i>RSSI</i>(<i>d</i>) = <i>RSSI</i>(<i>d</i><sub>0</sub>) − 10 · <i>n</i> · log<sub>10</sub><span class="frac"><span class="num"><i>d</i></span><span class="den"><i>d</i><sub>0</sub></span></span>
+  <!-- ENCADRE DIRECTIVE PEDAGOGIQUE IA (GEMINI.md) -->
+  <div class="callout callout-purple">
+    <div class="callout-title">🤖 Pistes de recherche & Conception assistée par IA</div>
+    <p><strong>Cahier des charges logiciel :</strong> Développer la routine bidirectionnelle gérant conjointement la réception Bluetooth vers l'afficheur OLED et l'acquisition du clavier tactile I²C vers l'émission Bluetooth, sans blocage de la boucle <code>loop()</code>.</p>
+    <ul>
+      <li><strong>Mots-clés d'investigation :</strong> <code>SoftwareSerial.available()</code>, <code>Adafruit_SSD1306.h</code>, <code>Adafruit_MPR121.h</code> (ou lecture directe des registres <code>0x00 / 0x01</code> via <code>Wire.h</code>), <code>adresse I2C 0x5B</code>, <code>anti-rebond (debouncing)</code>, <code>buffer circulaire</code>.</li>
+      <li><strong>Suggestion de prompt pour votre assistant IA :</strong><br>
+      <em>« Pour une carte Arduino Nano v3 (ATmega328P), écris un programme en C++ Arduino gérant une passerelle bidirectionnelle :
+      1) Il lit en continu les messages textuels reçus sur SoftwareSerial (A1=RX, A0=TX à 9600 bauds) et les affiche sur un écran OLED SSD1306 I2C (adresse 0x3C).
+      2) Il interroge un clavier capacitif Grove MPR121 sur le même bus I2C (adresse 0x5B) : dès qu'une touche (0-9, *, #) est pressée, il l'envoie sur SoftwareSerial pour qu'elle s'affiche sur le terminal distant.
+      Le code doit être non-bloquant (aucun delay), n'émettre qu'un seul caractère par appui (anti-rebond) et optimiser la mémoire SRAM. »</em></li>
+      <li><strong>Esprit critique & Validation :</strong> Analysez comment l'IA traite le partage du bus I²C entre l'afficheur (<code>0x3C</code>) et le clavier (<code>0x5B</code>). Comment évite-t-elle l'envoi continu d'octets répétés si l'opérateur laisse son doigt posé sur une touche capacitive ? Adaptez le code et téléversez-le sur votre Nano.</li>
+    </ul>
   </div>
-  <p style="font-size: 8.8pt; color: #475569;">où <i>d</i><sub>0</sub> est la distance de référence (1 mètre), <i>d</i> la distance réelle séparant le smartphone de la maquette, et <i>n</i> l'exposant d'affaiblissement environnemental (<i>n</i> &approx; 2 en champ libre sans obstacle, <i>n</i> &approx; 2,8 à 3,8 en milieu intérieur avec mobilier et cloisons).</p>
 
-  <p><strong>Travail demandé (Télémétrie RSSI & Affichage dynamique) :</strong></p>
+  <p><strong>Mesure et décodage des trames au Digilent Analog Discovery 3 (WaveForms) :</strong></p>
   <ol>
-    <li>Sur votre smartphone (via l'application <em>Serial Bluetooth Terminal</em> ou <em>nRF Connect</em>), ouvrez le volet de télémétrie affichant en temps réel le niveau de signal <strong>RSSI en dBm</strong>.</li>
-    <li>Relevez le RSSI à plusieurs distances prédéfinies : <strong>1 m, 2 m, 5 m, 8 m</strong>, puis jusqu'à la limite de décrochage.</li>
-    <li>Modifiez le programme de l'Arduino Nano pour gérer un indicateur visuel de qualité radio :
+    <li>Dans <strong>WaveForms Logic Analyzer</strong>, activez simultanément trois décodeurs de bus :
       <ul>
-        <li>Sur l'<strong>écran OLED</strong> : afficher la valeur numérique du RSSI et le niveau d'alerte (<code>EXCELLENT</code>, <code>BON</code>, <code>FAIBLE</code>, <code>CRITIQUE</code>).</li>
-        <li>Sur la <strong>matrice LED 8x8</strong> : afficher un bargraphe dynamique proportionnel au signal (de 1 colonne allumée pour un signal critique à 8 colonnes pour un signal maximal).</li>
+        <li><strong>Liaison Bluetooth RX (Terminal &rarr; Nano) :</strong> Voie <code>DIO 0</code> (reliée à A1 / RX Nano), décodeur UART à <strong>9600 bauds 8N1</strong>.</li>
+        <li><strong>Liaison Bluetooth TX (Nano &rarr; Terminal) :</strong> Voie <code>DIO 1</code> (reliée à A0 / TX Nano), décodeur UART à <strong>9600 bauds 8N1</strong>.</li>
+        <li><strong>Bus I²C mutualisé (OLED &amp; Clavier) :</strong> Horloge <code>DIO 2</code> (SCL sur A5) et Données <code>DIO 3</code> (SDA sur A4), décodeur I²C.</li>
       </ul>
     </li>
+    <li><strong>Test Sens 1 (Terminal &rarr; OLED) :</strong> Depuis le terminal, envoyez la lettre <code>'A'</code> (ASCII <code>0x41</code>) et déclenchez sur <code>DIO 0</code> : observez la réception série puis l'écriture consécutive vers l'adresse <code>0x3C</code>.</li>
+    <li><strong>Test Sens 2 (Clavier &rarr; Terminal) :</strong> Tapez un chiffre sur le clavier (ex. : <code>'5'</code>, ASCII <code>0x35</code>) et déclenchez sur l'activité I²C (adresse <code>0x5B</code>) : observez la lecture I²C puis l'émission série sur <code>DIO 1</code> vers le Bluetooth.</li>
   </ol>
 
+  <div class="deliverable-box">
+    <div class="deliverable-title">📦 Relevés de trames bidirectionnelles attendus :</div>
+    1. Capture WaveForms du sens descendant (Bluetooth RX sur <code>DIO 0</code> &rarr; écriture OLED sur <code>DIO 2/DIO 3</code>).<br>
+    2. Capture WaveForms du sens montant (lecture clavier I²C sur <code>DIO 2/DIO 3</code> &rarr; émission Bluetooth TX sur <code>DIO 1</code>).
+  </div>
+
+  <!-- ======================================================================= -->
+  <!-- 3.2. CAMPAGNE DE MESURES DE PORTEE ET DU RSSI AVEC LE SMARTPHONE        -->
+  <!-- ======================================================================= -->
+  <h4>3.2. Caractérisation de la portée radio et mesure du RSSI avec le smartphone</h4>
+  
+  <p>Le <strong>RSSI</strong> (<em>Received Signal Strength Indicator</em>), exprimé en <strong>dBm</strong> (décibels par rapport à 1 mW), quantifie la puissance radiofréquence captée par le récepteur. C'est une valeur négative : plus elle se rapproche de 0, plus le signal est puissant (ex. : -50 dBm correspond à un signal excellent, -88 dBm est proche de la perte de liaison).</p>
+
+  <p><strong>Protocole expérimental de mesure à différentes distances :</strong></p>
+  <ul>
+    <li>Ouvrez l'application <em>Serial Bluetooth Terminal</em> sur votre smartphone appairé au module de la maquette.</li>
+    <li>Affichez le niveau de signal en temps réel (RSSI en dBm) fourni par l'application.</li>
+    <li>Tout en maintenant la communication active, déplacez-vous progressivement dans la salle ou le couloir en ligne de vue directe pour relever le RSSI :</li>
+  </ul>
+
   <div class="student-response">
-    <strong>Question 4.1 (Relevés expérimentaux et analyse du canal RF) :</strong><br>
-    Remplissez la grille de mesures ci-dessous dans la salle de TP ou le couloir :<br>
+    <strong>Grille de relevés expérimentaux de portée :</strong>
     <table>
       <thead>
         <tr>
@@ -1210,18 +1183,23 @@ SoftwareSerial BT_SERIAL(A1, A0);</code></pre>
         </tr>
       </tbody>
     </table>
-    Calculez la perte de niveau (en dB) entre 1 m et 5 m : &Delta;<i>P</i> = <i>RSSI</i>(5 m) − <i>RSSI</i>(1 m) = ................. dB.<br>
-    Comparez avec la valeur théorique en espace libre (&Delta;<i>P</i><sub>th</sub> = 10 · 2 · log<sub>10</sub>(5/1) &approx; 14 dB). Pourquoi l'atténuation mesurée en atelier est-elle plus prononcée ? (Citez au moins deux phénomènes physiques : réflexions multivoies, absorption par les corps/matériaux, obstacles métalliques).
+    <strong>Calcul et analyse d'atténuation :</strong><br>
+    1. Calculez l'atténuation mesurée entre 1 m et 5 m : &Delta;<i>P</i><sub>mesurée</sub> = <i>RSSI</i>(5 m) − <i>RSSI</i>(1 m) = ................. dB.<br>
+    2. La formule théorique en champ libre (modèle d'atténuation logarithmique) donne &Delta;<i>P</i><sub>th</sub> = 10 · 2 · log<sub>10</sub>(5/1) &approx; 14 dB.<br>
+    Pourquoi l'atténuation mesurée en environnement réel est-elle généralement plus élevée que cette valeur théorique ? (Citez au moins deux phénomènes physiques concrets : obstacles, réflexions, absorption par le corps humain).
     <div class="dotted-line"></div>
     <div class="dotted-line"></div>
   </div>
 
-  <h4>4.2. Analyse critique matérielle & logicielle : Impact temporel de SoftwareSerial sur la CPU et le bus I²C</h4>
-  <p>L'Arduino Nano (ATmega328P) ne dispose que d'un seul contrôleur USART matériel (affecté à l'USB D0/D1). Pour dialoguer avec le module Bluetooth sur A0/A1, la bibliothèque <strong><code>SoftwareSerial</code></strong> émule un UART par logiciel grâce aux interruptions sur changement d'état de broche (<em>Pin Change Interrupts PCINT</em>) :</p>
+  <!-- ======================================================================= -->
+  <!-- 4.3. IMPACT TEMPOREL DE SOFTWARESERIAL SUR LE BUS I2C                   -->
+  <!-- ======================================================================= -->
+  <h4>3.3. Analyse de l'impact temporel de SoftwareSerial sur le bus I²C</h4>
+  
+  <p>Sur l'Arduino Nano (ATmega328P), l'UART matériel étant réservé à l'USB, la liaison Bluetooth utilise la bibliothèque <code>SoftwareSerial</code>. Cette bibliothèque émule la réception série au moyen d'interruptions sur changement d'état (PCINT) :</p>
   <ul>
-    <li>À <strong>9600 bauds</strong>, la transmission d'un bit dure <i>T</i><sub>bit</sub> = 1 / 9600 &approx; 104,17 µs. Pour recevoir un caractère complet (1 Start + 8 Données + 1 Stop = 10 bits), l'émulation bloque le processeur pendant plus de <strong>1,04 ms par octet</strong>.</li>
-    <li>Durant ce temps, la routine de service d'interruption (ISR) de <code>SoftwareSerial</code> monopolise la CPU et désactive temporairement les autres interruptions pour échantillonner précisément chaque bit en temps réel.</li>
-    <li><strong>Conséquence directe sur le bus I²C (A4/A5) :</strong> Si le smartphone transmet une chaîne de données continue, les transactions I²C destinées à l'écran OLED ou à la matrice LED subissent des micro-blocages imprévisibles. Cela provoque une <strong>gigue temporelle importante (jitter)</strong> sur le signal d'horloge SCL et des saccades visibles sur les animations graphiques.</li>
+    <li>À <strong>9600 bauds</strong>, la réception d'un seul octet (10 bits) bloque le processeur dans sa routine d'interruption pendant environ <strong>1,04 ms</strong>.</li>
+    <li>Durant cette phase, les autres interruptions sont bloquées, provoquant un étirement forcé du signal d'horloge I²C SCL (phénomène de <strong>gigue temporelle / jitter</strong>).</li>
   </ul>
 
   <!-- FIGURE 4 : CHRONOGRAMME CONFLIT TEMPOREL SOFTWARESERIAL VS I2C -->
@@ -1244,7 +1222,7 @@ SoftwareSerial BT_SERIAL(A1, A0);</code></pre>
         <rect y="36" width="850" height="28" fill="#f1f5f9" stroke="#cbd5e1" stroke-width="1"/>
         <text x="20" y="55" fill="#334155" font-family="Consolas" font-size="8pt">Échantillonnage: 2.0 MHz | Base de temps: 50 µs/div | Triggers: DIO 0 (Front descendant) &amp; DIO 2</text>
 
-        <!-- Zone d'affichage noir oscillo -->
+        <!-- Zone d'affichage oscillo -->
         <rect x="15" y="70" width="820" height="225" fill="#0f172a" rx="4"/>
 
         <!-- Lignes de grille temporelle -->
@@ -1273,11 +1251,8 @@ SoftwareSerial BT_SERIAL(A1, A0);</code></pre>
 
         <!-- Piste 3 : Horloge I2C SCL (DIO 2 / A5) avec gigue -->
         <text x="25" y="215" fill="#38bdf8" font-family="Consolas" font-size="8pt" font-weight="bold">DIO 2 (I²C SCL / A5)</text>
-        <!-- Horloge normale avant collision -->
         <path d="M 160 215 L 170 215 L 170 200 L 180 200 L 180 215 L 190 215 L 190 200 L 200 200 L 200 215 L 210 215 L 210 200 L 220 200 L 220 215 L 230 215 L 230 200 L 240 200 L 240 215" fill="none" stroke="#38bdf8" stroke-width="2"/>
-        <!-- Étirement forcé de l'horloge / Gigue (Clock stretched pendant l'ISR) -->
         <path d="M 240 215 L 600 215" fill="none" stroke="#ef4444" stroke-width="2.5" stroke-dasharray="3 2"/>
-        <!-- Reprise de l'horloge après fin de réception -->
         <path d="M 600 215 L 610 215 L 610 200 L 620 200 L 620 215 L 630 215 L 630 200 L 640 200 L 640 215 L 650 215 L 650 200 L 660 200 L 660 215 L 670 215 L 670 200 L 680 200 L 680 215 L 820 215" fill="none" stroke="#38bdf8" stroke-width="2"/>
 
         <!-- Curseur et mesure de gigue Delta T -->
@@ -1290,434 +1265,29 @@ SoftwareSerial BT_SERIAL(A1, A0);</code></pre>
     <div class="figure-caption">Figure 4 : Démonstration à l'Analog Discovery 3 — Phénomène de gigue temporelle et blocage de l'horloge I²C SCL lors de l'exécution prioritaire de la routine d'interruption SoftwareSerial</div>
   </div>
 
-  <p><strong>Travail demandé (Mesure de gigue et mise en évidence sous WaveForms) :</strong></p>
+  <p><strong>Mise en évidence expérimentale sous WaveForms :</strong></p>
   <ol>
-    <li>Dans WaveForms Logic Analyzer, configurez la mesure automatique de la période sur le canal <code>DIO 2</code> (A5/SCL).</li>
-    <li>Observez la période nominale d'horloge du bus I²C au repos (lorsque l'écran OLED se rafraîchit sans activité Bluetooth).</li>
-    <li>Depuis l'application smartphone, envoyez un flux textuel massif et continu (ex : maintien prolongé d'une touche ou envoi d'un fichier texte de test).</li>
-    <li>Mesurez avec les curseurs <strong>X1</strong> et <strong>X2</strong> la durée maximale de blocage d'horloge (&Delta;<i>T</i>) sur la ligne SCL et observez le comportement visuel de l'écran OLED et de la matrice LED.</li>
+    <li>Dans <strong>WaveForms</strong>, configurez la mesure automatique de la période sur le canal <code>DIO 2</code> (A5 / SCL).</li>
+    <li>Observez l'horloge I²C au repos (rafraîchissement de l'OLED seul), puis transmettez un flux continu de texte depuis le smartphone.</li>
+    <li>Mesurez avec les curseurs <strong>X1</strong> et <strong>X2</strong> la durée maximale de blocage (&Delta;<i>T</i>) sur la ligne SCL.</li>
   </ol>
 
+  <!-- QUESTION D'INGENIERIE CLARIFIEE -->
   <div class="student-response">
-    <strong>Question 4.2 (Analyse temporelle et justification d'architecture matérielle) :</strong><br>
-    1. Relevez la période nominale du bus I²C au repos : <i>T</i><sub>SCL_nominale</sub> = ......................... µs (soit une fréquence d'horloge réelle de ......................... kHz).<br>
-    2. Relevez la gigue maximale (&Delta;<i>T</i><sub>max</sub>) mesurée aux curseurs WaveForms sur SCL pendant un flux continu de réception Bluetooth : &Delta;<i>T</i><sub>max</sub> = ......................... µs.<br>
-    3. Comparez cette durée &Delta;<i>T</i><sub>max</sub> avec le temps d'acquisition théorique d'un octet sous <code>SoftwareSerial</code> à 9600 bauds (1,04 ms). Justifiez la corrélation.<br>
-    4. <strong>Synthèse d'ingénierie :</strong> Pourquoi dans un système embarqué industriel critique (contrôle moteur, instrument biomédical), est-il fortement proscrit d'utiliser une émulation logicielle série comme <code>SoftwareSerial</code> ? Quelle solution matérielle (choix de microcontrôleur ou architecture) préconisez-vous pour garantir un traitement déterministe sans gigue ?
+    <strong>Question 3.3 (Analyse temporelle & Synthèse d'architecture embarquée) :</strong><br>
+    1. Relevez la période nominale du bus I²C au repos : <i>T</i><sub>SCL_nominale</sub> = ......................... µs (fréquence réelle = ......................... kHz).<br>
+    2. Relevez la gigue maximale (&Delta;<i>T</i><sub>max</sub>) mesurée sur SCL pendant la réception Bluetooth continue : &Delta;<i>T</i><sub>max</sub> = ......................... µs.<br>
+    3. Justifiez le lien direct entre &Delta;<i>T</i><sub>max</sub> et la durée de transmission d'un octet sous <code>SoftwareSerial</code> à 9600 bauds (10 bits à 104,17 µs/bit).<br><br>
+    <strong>Synthèse d'ingénierie (Systèmes critiques & Architecture matérielle) :</strong><br>
+    Dans les applications industrielles ou biomédicales (pilotage de moteurs, respirateurs, surveillance cardiaque), les tâches doivent s'exécuter de façon <strong>strictement déterministe</strong> (aucun retard imprévisible toléré).<br>
+    a) Expliquez pourquoi une liaison série émulée par logiciel (comme <code>SoftwareSerial</code>) est proscrite dans un système temps réel critique.<br>
+    b) Quelles solutions d'architecture matérielle permettent de s'affranchir totalement de ce blocage ? <em>(Précisez le rôle de composants tels qu'un contrôleur DMA, des UART matériels avec buffers FIFO, ou une architecture multi-cœurs).</em>
     <div class="dotted-line"></div>
     <div class="dotted-line"></div>
     <div class="dotted-line"></div>
->>>>>>> c58a85e35afce0e03ae5ba0070373a9c57bf7f45
   </div>
 </div>
 
-<!-- ETAPE 5 -->
-<div class="step-box">
-  <div class="step-header">
-    <span class="step-title">Étape 5 : Métrologie Énergétique en Bluetooth Classic (Repos vs Émission)</span>
-    <span class="step-badge">Énergie • Shunt / INA219</span>
-  </div>
-  <p><strong>Objectif :</strong> Mesurer avec précision le profil de consommation électrique du nœud émetteur (Nano + Grove BT) à l'état de repos et lors d'émissions radiofréquences continues.</p>
-  <ul>
-    <li><strong>Méthode A (Automatisée via bus I²C) :</strong> Intercalez un capteur de courant numérique <strong>INA219</strong> (shunt 0,1 Ω, adresse I²C <code>0x40</code> sur A4/A5) sur la ligne d'alimentation 5V du module Bluetooth.</li>
-    <li><strong>Méthode B (Shunt externe & Voltmètre/AD3) :</strong> Intercalez une résistance de précision <i>R</i><sub>shunt</sub> = 1 &Omega; en série sur la ligne VCC (ou masse), et mesurez la chute de tension &Delta;<i>U</i> pour en déduire <i>I</i> = &Delta;<i>U</i> / <i>R</i>.</li>
-    <li><strong>États à caractériser sous une tension régulée de 5,0 V :</strong>
-      <ol>
-        <li><strong>Repos non connecté :</strong> Module en attente d'appairage (LED clignotante).</li>
-        <li><strong>Repos connecté :</strong> Liaison SPP établie avec l'ESP32, sans transfert de données (LED fixe).</li>
-        <li><strong>Émission continue :</strong> Envoi cadencé de trames de télémétrie de 64 octets à cadence maximale.</li>
-      </ol>
-    </li>
-  </ul>
-  <div class="deliverable-box">
-    <div class="deliverable-title">📦 Livrable attendu :</div>
-    Relevé des courants moyens (<i>I</i><sub>moyen</sub> en mA) et calcul de la puissance active dissipée (<i>P</i> = <i>U</i> &times; <i>I</i> en mW).
-  </div>
-</div>
-
-<!-- ETAPE 6 -->
-<div class="step-box">
-  <div class="step-header">
-    <span class="step-title">Étape 6 : Collecte Séquentielle Multi-Nœuds en Bluetooth Classic (5 Esclaves &rarr; 1 Maître)</span>
-    <span class="step-badge">Bluetooth Classic • Architecture Réseau</span>
-  </div>
-  <p><strong>Objectif :</strong> Réaliser une station de télémétrie centralisée sur l'ESP32 capable d'interroger successivement 5 maquettes Arduino Nano esclaves réparties dans la salle.</p>
-  <div class="callout callout-info" style="margin: 8px 0;">
-    <strong>Contrainte architecturale du Bluetooth Classic SPP :</strong> Une liaison SPP (RFCOMM) est strictement <em>point-à-point</em>. Un esclave connecté ne peut pas répondre à un autre équipement. Pour collecter 5 modules restant en mode esclave standard (<code>AT+ROLE0</code>), le concentrateur maître (ESP32) doit gérer une <strong>interrogation séquentielle cyclique (polling temporel)</strong>.
-  </div>
-  <p><strong>Démarche algorithmique à mettre en œuvre sur l'ESP32 :</strong></p>
-  <ol>
-    <li>Définir dans le code un tableau contenant les 5 adresses MAC des nœuds Nano :<br>
-      <code>uint8_t slavesMAC[5][6] = { {0x00,0x13,0xEF,...}, ... };</code></li>
-    <li>Dans la boucle principale, pour chaque esclave <i>i</i> de 1 à 5 :
-      <ul>
-        <li><strong>Connexion :</strong> <code>SerialBT.connect(slavesMAC[i]);</code> (attendre la validation de la liaison, timeout 4 s).</li>
-        <li><strong>Interrogation :</strong> Envoyer la commande d'invite <code>"GET_DATA\n"</code>.</li>
-        <li><strong>Réception :</strong> Lire la réponse textuelle renvoyée par le Nano et l'horodater.</li>
-        <li><strong>Déconnexion :</strong> Fermer immédiatement le lien : <code>SerialBT.disconnect();</code>.</li>
-        <li><strong>Garde temporelle :</strong> Marquer un délai de repos de 300 ms pour permettre la désynchronisation physique du canal radio.</li>
-      </ul>
-    </li>
-  </ol>
-  <div class="deliverable-box">
-    <div class="deliverable-title">📦 Livrable attendu :</div>
-    Journal de bord série de l'ESP32 démontrant la collecte réussie et chronométrée des données des 5 modules de la salle.
-  </div>
-</div>
-
-<!-- ETAPE 7 -->
-<div class="step-box ble-step">
-  <div class="step-header">
-    <span class="step-title">Étape 7 : Déploiement en Bluetooth Low Energy (BLE) & Analyse sur Bluetooth LE Explorer (Windows)</span>
-    <span class="step-badge badge-ble">BLE • Profil GATT • Windows</span>
-  </div>
-  <p><strong>Objectif :</strong> Programmer l'ESP32 en serveur GATT BLE (exemple <code>BLE_notify</code>), décoder ses trames de balisage publicitaire (*Advertising*), contourner le piège du cache Bluetooth de Windows et souscrire aux notifications en direct.</p>
-
-  <h4>7.1. Programmation de l'ESP32 (Exemple IDE Arduino BLE_notify) :</h4>
-  <ul>
-    <li>Ouvrez dans l'IDE Arduino l'exemple officiel : <strong>Fichier &rarr; Exemples &rarr; ESP32 BLE Arduino &rarr; <code>BLE_notify</code></strong>.</li>
-    <li>Personnalisez le nom du nœud dans le <code>setup()</code> afin de l'identifier immédiatement dans la salle :<br>
-      <code>BLEDevice::init("ESP32_B1"); // Remplacez B1 par votre numéro de binôme</code></li>
-    <li>Téléversez le programme sur votre carte ESP32 Plus. Le microcontrôleur crée un service (UUID <code>4fafc201-1fb5-459e-8fcc-c5c9c331914b</code>) et une caractéristique notifiable (UUID <code>beb5483e-36e1-4688-b7f5-ea07361b26a8</code>) avec descripteur CCCD (<code>BLE2902</code>).</li>
-  </ul>
-
-  <div class="callout callout-info" style="margin: 12px 0;">
-    <div class="callout-title">💡 Bonnes pratiques d'architecture BLE : Standardisation des UUID & Analogie des capteurs de santé (Cardio)</div>
-    <p><strong>Faut-il générer des UUID différents pour chaque ESP32 de la classe ? Non, c'est l'inverse !</strong><br>
-    Dans le standard Bluetooth SIG, un <strong>UUID (128 bits ou 16 bits)</strong> ne sert pas à numéroter un circuit physique, mais définit un <strong>contrat sémantique de données</strong> (un « profil métier » commun) :</p>
-    <ul>
-      <li><strong>Exemple concret des cardiofréquencemètres du commerce :</strong> Toutes les ceintures et montres cardio du marché mondial (Polar, Garmin, Apple Watch, etc.) partagent rigoureusement le même <code>SERVICE_UUID</code> officiel (<code>0x180D</code> &ndash; <em>Heart Rate Service</em>) et la même <code>CHARACTERISTIC_UUID</code> (<code>0x2A37</code> &ndash; <em>Heart Rate Measurement</em>). N'importe quelle application smartphone ou montre de sport sait ainsi dialoguer avec n'importe quelle marque de capteur sans modifier une seule ligne de code.</li>
-      <li><strong>Application en salle de TP :</strong> Tous les ESP32 de la classe partagent le même <code>SERVICE_UUID</code> et la même <code>CHARACTERISTIC_UUID</code>. Un script Python central ou un tableau de bord de supervision Node-RED peut ainsi découvrir et interroger l'ensemble des modules de la salle avec un algorithme de traitement unique.</li>
-    </ul>
-
-    <table style="margin-top: 10px; margin-bottom: 4px;">
-      <thead>
-        <tr>
-          <th style="width: 25%;">Paramètre BLE</th>
-          <th style="width: 25%;">Dans la salle de TP</th>
-          <th style="width: 50%;">Rôle & Signification technique</th>
-        </tr>
-      </thead>
-      <tbody>
-        <tr>
-          <td><strong><code>SERVICE_UUID</code></strong></td>
-          <td><span style="color: #0369a1; font-weight: bold;">Identique</span> pour tous</td>
-          <td>Identifie le type de service (ex. télémétrie / groupe de mesures de la classe).</td>
-        </tr>
-        <tr>
-          <td><strong><code>CHARACTERISTIC_UUID</code></strong></td>
-          <td><span style="color: #0369a1; font-weight: bold;">Identique</span> pour tous</td>
-          <td>Identifie la donnée transmise (ex. la mesure ou le compteur incrémenté).</td>
-        </tr>
-        <tr>
-          <td><strong>Nom d'annonce (<code>BLEDevice::init</code>)</strong></td>
-          <td><span style="color: #b45309; font-weight: bold;">Différent</span> (<code>ESP32_B1</code>, <code>ESP32_B2</code>...)</td>
-          <td>Permet aux binômes de repérer visuellement leur carte lors du scan sur PC ou smartphone.</td>
-        </tr>
-        <tr>
-          <td><strong>Adresse MAC (BT Address)</strong></td>
-          <td><span style="color: #15803d; font-weight: bold;">Unique</span> par carte (matériel)</td>
-          <td>Identifiant réseau physique 48 bits gravé en usine, utilisé par la couche radio.</td>
-        </tr>
-      </tbody>
-    </table>
-  </div>
-
-
-  <h4>7.2. Analyse du balisage publicitaire (Advertisement Monitor) :</h4>
-  <p>Lancez l'application officielle Microsoft <strong>Bluetooth LE Explorer</strong> (disponible sur le Microsoft Store) et sélectionnez l'onglet <strong>Advertisement Monitor</strong> :</p>
-
-  <div class="image-grid">
-    <div class="image-card" style="max-width: 580px;">
-      <img src="images/ble_explorer_adv.png" alt="Capture Advertisement Monitor Bluetooth LE Explorer" style="height: auto; max-height: 240px;" />
-      <div class="card-caption">Figure 7.1 : Détection de la trame publicitaire de l'ESP32 dans l'Advertisement Monitor</div>
-    </div>
-  </div>
-
-  <p><strong>Comment reconnaître à coup sûr la trame de votre ESP32 dans la liste ?</strong></p>
-  <ul>
-    <li><strong>Adresse MAC (BT Address) :</strong> Format physique 48 bits (ex : <code>B0CBD879867A</code>).</li>
-    <li><strong>Décodage ASCII du nom dans la Payload :</strong> Observez la séquence d'octets finale <code>...-09-45-53-50-33-32</code>.
-      Le champ <code>09</code> correspond au drapeau normalisé <em>Complete Local Name</em>. Les valeurs hexadécimales représentent le code ASCII de "ESP32" :
-      <code>45</code> ('E'), <code>53</code> ('S'), <code>50</code> ('P'), <code>33</code> ('3'), <code>32</code> ('2').
-    </li>
-    <li><strong>UUID du Service en Little-Endian :</strong> Les 16 octets précédant le nom (<code>4B-91-31-C3-...-AF-4F</code>) correspondent rigoureusement à l'identifiant 128 bits de votre service <code>4fafc201-1fb5-...</code> transmis octet de poids faible en tête.</li>
-  </ul>
-
-  <h4>7.3. Connexion GATT, Résolution du Cache Windows & Visualisation des Échanges :</h4>
-  <p>Pour vous connecter et visualiser la variable incrémentée en direct par l'ESP32 :</p>
-  <ol>
-    <li>Dans le menu de gauche de <em>Bluetooth LE Explorer</em>, basculez sur l'onglet <strong>Discover and Pair</strong>.</li>
-    <li>Sélectionnez votre ESP32 dans la liste et cliquez sur <strong>Pair / Connect</strong>.</li>
-    <li>
-      <div class="callout callout-danger" style="margin: 6px 0;">
-        <strong>⚠️ Piège classique sous Windows : Le Cache de la table GATT !</strong><br>
-        Si la page <em>Device Services Page</em> n'affiche que <strong>2 services</strong> (uniquement les services génériques <code>GenericAttribute 0x1801</code> et <code>GenericAccess 0x1800</code>), Windows a conservé en cache une ancienne arborescence et ne voit pas encore votre service personnalisé !<br><br>
-        <strong>Procédure de déblocage rapide :</strong>
-        <ol style="margin-top: 4px; margin-bottom: 4px;">
-          <li>Ouvrez les <strong>Paramètres Windows</strong> &rarr; <strong>Bluetooth et appareils</strong>.</li>
-          <li>Dans la rubrique <em>Autres appareils</em>, cliquez sur votre périphérique <strong>ESP32 (Connecté)</strong>.</li>
-          <li>Cliquez sur le bouton <strong>Supprimer le périphérique</strong> (confirmez par <em>Oui</em>).</li>
-          <li>Appuyez sur le bouton physique <strong>RESET (EN)</strong> de la carte ESP32.</li>
-          <li>Retournez dans <em>Bluetooth LE Explorer</em>, relancez la découverte et reconnectez-vous.</li>
-        </ol>
-      </div>
-    </li>
-    <li>Cette fois, le compteur indique <strong><code>Number of Services: 3</code></strong> et le service personnalisé apparaît :</li>
-  </ol>
-
-  <div class="image-grid">
-    <div class="image-card" style="max-width: 580px;">
-      <img src="images/ble_explorer_services.png" alt="Device Services Page montrant les 3 services et la caractéristique" style="height: auto; max-height: 240px;" />
-      <div class="card-caption">Figure 7.2 : Apparition du service 4fafc201... et de la caractéristique beb5483e... (Handle 41)</div>
-    </div>
-  </div>
-
-  <p><strong>Où cliquer pour observer les données transmises ?</strong></p>
-  <ul>
-    <li>Dans la section inférieure <strong>Service Name: 4fafc201-1fb5-459e-8fcc-c5c9c331914b</strong>, <strong>cliquez directement sur la ligne de la caractéristique</strong> :<br>
-      <code>Characteristic Name: beb5483e-36e1-4688-b7f5-ea07361b26a8</code>.
-    </li>
-    <li>La page dédiée à la caractéristique s'ouvre. Cliquez sur le bouton <strong>Subscribe to notifications</strong> (ou activez la case <em>Notify</em>).</li>
-    <li><strong>Observation :</strong> Le champ <strong>Value</strong> (représentation binaire/hexadécimale du compteur 32 bits de l'ESP32) s'actualise sous vos yeux en temps réel toutes les 500 ms !</li>
-  </ul>
-
-  <h4>7.4. Déploiement Multi-Nœuds : 3 Solutions pour s'abonner / observer plusieurs ESP32 simultanément</h4>
-  <p>L'application <em>Bluetooth LE Explorer</em> est un outil d'inspection unitaire (une seule connexion active à la fois). Dans un atelier ou une salle de classe où plusieurs binômes émettent, 3 approches permettent de superviser simultanément tous les ESP32 :</p>
-
-  <div style="background:#f8fafc; border:1px solid #cbd5e1; border-radius:6px; padding:12px 14px; margin:10px 0;">
-    <h5 style="margin:0 0 6px 0; color:#0369a1; font-size:9.2pt;">Solution A : Mode Diffusion sans connexion (*Advertising / Manufacturer Data*) dans Bluetooth LE Explorer</h5>
-    <p style="margin:4px 0; font-size:8.6pt;">Au lieu d'établir des connexions point-à-point, chaque ESP32 insère ses données directement dans ses paquets de publicité (via <code>setManufacturerData(...)</code>). Sur le PC, dans l'onglet <strong>Advertisement Monitor</strong> de <em>Bluetooth LE Explorer</em>, <strong>toutes les trames de la salle défilent et se rafraîchissent en même temps</strong>, sans aucune limite de connexions et sans nécessiter d'appairage.</p>
-  </div>
-
-  <div style="background:#f8fafc; border:1px solid #cbd5e1; border-radius:6px; padding:12px 14px; margin:10px 0;">
-    <h5 style="margin:0 0 6px 0; color:#7c3aed; font-size:9.2pt;">Solution B : Multi-connexions sur application mobile (*nRF Connect for Mobile* - Android / iOS)</h5>
-    <p style="margin:4px 0; font-size:8.6pt;">L'application gratuite <strong>nRF Connect for Mobile</strong> (développée par Nordic Semiconductor) gère nativement le multi-lien. Vous pouvez lancer un scan, cliquer sur <em>Connect</em> pour le premier ESP32, puis revenir sur l'onglet <em>Scanner</em> et vous connecter au deuxième et au troisième sans couper les liaisons existantes. L'application ouvre un onglet distinct par équipement (jusqu'à 7 à 8 connexions simultanées selon la puce radio du smartphone) où vous pouvez activer les notifications en parallèle.</p>
-  </div>
-
-  <div style="background:#f8fafc; border:1px solid #cbd5e1; border-radius:6px; padding:12px 14px; margin:10px 0;">
-    <h5 style="margin:0 0 6px 0; color:#15803d; font-size:9.2pt;">Solution C : Concentrateur logiciel Python multi-clients avec la bibliothèque <code>bleak</code></h5>
-    <p style="margin:4px 0; font-size:8.6pt;">Sur PC Windows, la bibliothèque Python asynchrone <strong><code>bleak</code></strong> (installation : <code>pip install bleak</code>) permet de gérer un pool de connexions simultanées via <code>asyncio</code>. Un script Python centralise les flux de notification de tous les ESP32 de la salle dans une même console :</p>
-    <pre style="margin:6px 0; padding:10px; font-size:8pt;"><code>import asyncio
-from bleak import BleakClient
-
-# Adresses MAC des ESP32 de la salle (relevées au préalable)
-SERVEURS_ESP32 = [
-    {"nom": "Binôme 1", "mac": "B0:CB:D8:79:86:7A"},
-    {"nom": "Binôme 2", "mac": "40:22:D8:34:12:05"},
-    {"nom": "Binôme 3", "mac": "84:CC:A8:11:99:4F"},
-]
-CHAR_UUID = "beb5483e-36e1-4688-b7f5-ea07361b26a8"
-
-def creer_callback(nom):
-    return lambda sender, data: print(f"[{nom}] Valeur reçue = {int.from_bytes(data, 'little')}")
-
-async def ecoute_noeud(noeud):
-    async with BleakClient(noeud["mac"]) as client:
-        await client.start_notify(CHAR_UUID, creer_callback(noeud["nom"]))
-        while True:
-            await asyncio.sleep(1)
-
-async def main():
-    # Connexion asynchrone concurrente vers tous les serveurs BLE
-    await asyncio.gather(*(ecoute_noeud(n) for n in SERVEURS_ESP32))
-
-asyncio.run(main())</code></pre>
-  </div>
-
-  <h4>7.5. Supervision Industrielle & Tableau de Bord IoT avec Node-RED</h4>
-  <p>Pour valoriser ces mesures dans un contexte industriel (Industrie 4.0), les flux BLE multi-nœuds peuvent être acheminés vers un <strong>Dashboard Web temps réel</strong> conçu avec <strong>Node-RED</strong>.</p>
-  
-  <p><strong>Grandes lignes de la mise en œuvre technique :</strong></p>
-  <ol>
-    <li><strong>Passerelle BLE &rarr; MQTT (Gateway Edge) :</strong> Le script Python précédent (basé sur <code>bleak</code>) est enrichi avec le client <code>paho-mqtt</code>. À chaque notification reçue, il formate un message JSON (ex: <code>{"id": "B1", "valeur": 42, "rssi": -65}</code>) et le publie sur un broker MQTT local (ex : <em>Mosquitto</em> sur le port 1883) sous le topic <code>ciel/atelier/binome1</code>.</li>
-    <li><strong>Ingestion et traitement dans Node-RED :</strong>
-      <ul>
-        <li>Un nœud <code>mqtt in</code> souscrit au topic générique <code>ciel/atelier/+</code> pour intercepter les trames de tous les binômes.</li>
-        <li>Un nœud <code>json</code> désérialise la chaîne reçue en objet JavaScript.</li>
-        <li>Un nœud <code>switch</code> ou <code>function</code> aiguille les grandeurs vers les interfaces graphiques dédiées.</li>
-      </ul>
-    </li>
-    <li><strong>Restitution graphique (Node-RED Dashboard) :</strong>
-      <ul>
-        <li>Nœuds <code>ui_gauge</code> : affichage de la valeur instantanée ou du niveau RSSI sous forme de jauge à cadran.</li>
-        <li>Nœuds <code>ui_chart</code> : tracé de l'historique temporel des données pour observer les tendances et dérives.</li>
-        <li>Nœuds <code>ui_template</code> : tableau synoptique de l'état de santé (en ligne / hors-ligne) de tous les modules de la classe.</li>
-      </ul>
-    </li>
-    <li><strong>Accès opérateur :</strong> Le tableau de bord est immédiatement accessible sur tout navigateur réseau à l'adresse <code>http://localhost:1880/ui</code>.</li>
-  </ol>
-
-  <!-- DIAGRAMME D'ARCHITECTURE FLUX BLE -> MQTT -> NODE-RED -->
-  <div style="margin: 14px 0; text-align: center;">
-    <svg viewBox="0 0 920 250" width="100%" height="auto" xmlns="http://www.w3.org/2000/svg" style="background:#ffffff; border:1px solid #cbd5e1; border-radius:6px;">
-      <defs>
-        <linearGradient id="bleNodeGrad" x1="0%" y1="0%" x2="100%" y2="100%">
-          <stop offset="0%" stop-color="#0284c7" />
-          <stop offset="100%" stop-color="#0369a1" />
-        </linearGradient>
-        <linearGradient id="gatewayGrad" x1="0%" y1="0%" x2="100%" y2="100%">
-          <stop offset="0%" stop-color="#15803d" />
-          <stop offset="100%" stop-color="#166534" />
-        </linearGradient>
-        <linearGradient id="mqttGrad" x1="0%" y1="0%" x2="100%" y2="100%">
-          <stop offset="0%" stop-color="#c2410c" />
-          <stop offset="100%" stop-color="#9a3412" />
-        </linearGradient>
-        <linearGradient id="noderedGrad" x1="0%" y1="0%" x2="100%" y2="100%">
-          <stop offset="0%" stop-color="#b91c1c" />
-          <stop offset="100%" stop-color="#881337" />
-        </linearGradient>
-        <linearGradient id="uiGrad" x1="0%" y1="0%" x2="100%" y2="100%">
-          <stop offset="0%" stop-color="#6b21a8" />
-          <stop offset="100%" stop-color="#4c1d95" />
-        </linearGradient>
-        <marker id="arrow" viewBox="0 0 10 10" refX="6" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
-          <path d="M 0 1 L 10 5 L 0 9 z" fill="#334155" />
-        </marker>
-      </defs>
-
-      <!-- FOND -->
-      <rect width="920" height="250" fill="#f8fafc" />
-
-      <!-- NOEUDS ESP32 (GAUCHE) -->
-      <g transform="translate(20, 25)">
-        <rect width="135" height="48" rx="5" fill="url(#bleNodeGrad)" stroke="#0284c7" />
-        <text x="67" y="22" fill="#ffffff" font-family="'Segoe UI', sans-serif" font-size="7.5pt" font-weight="bold" text-anchor="middle">ESP32 Nœud 1</text>
-        <text x="67" y="38" fill="#bae6fd" font-family="Consolas" font-size="6.5pt" text-anchor="middle">BLE GATT Server</text>
-
-        <rect y="72" width="135" height="48" rx="5" fill="url(#bleNodeGrad)" stroke="#0284c7" />
-        <text x="67" y="94" fill="#ffffff" font-family="'Segoe UI', sans-serif" font-size="7.5pt" font-weight="bold" text-anchor="middle">ESP32 Nœud 2</text>
-        <text x="67" y="110" fill="#bae6fd" font-family="Consolas" font-size="6.5pt" text-anchor="middle">BLE GATT Server</text>
-
-        <rect y="144" width="135" height="48" rx="5" fill="url(#bleNodeGrad)" stroke="#0284c7" />
-        <text x="67" y="166" fill="#ffffff" font-family="'Segoe UI', sans-serif" font-size="7.5pt" font-weight="bold" text-anchor="middle">ESP32 Nœud N</text>
-        <text x="67" y="182" fill="#bae6fd" font-family="Consolas" font-size="6.5pt" text-anchor="middle">BLE GATT Server</text>
-      </g>
-
-      <!-- FLECHES ONDES BLE -->
-      <path d="M 155 49 C 180 49, 180 100, 205 100" fill="none" stroke="#0284c7" stroke-width="2" stroke-dasharray="4 2" marker-end="url(#arrow)"/>
-      <path d="M 155 96 L 205 105" fill="none" stroke="#0284c7" stroke-width="2" stroke-dasharray="4 2" marker-end="url(#arrow)"/>
-      <path d="M 155 168 C 180 168, 180 120, 205 120" fill="none" stroke="#0284c7" stroke-width="2" stroke-dasharray="4 2" marker-end="url(#arrow)"/>
-      <text x="180" y="80" fill="#0284c7" font-family="Consolas" font-size="7pt" font-weight="bold" text-anchor="middle">Liaisons BLE</text>
-
-      <!-- PASSERELLE PYTHON BLEAK -->
-      <g transform="translate(215, 60)">
-        <rect width="145" height="100" rx="8" fill="url(#gatewayGrad)" stroke="#15803d" stroke-width="1.5"/>
-        <text x="72" y="24" fill="#ffffff" font-family="'Segoe UI', sans-serif" font-size="8pt" font-weight="bold" text-anchor="middle">Passerelle Edge (PC)</text>
-        <rect x="10" y="34" width="125" height="52" rx="4" fill="#ffffff" opacity="0.95"/>
-        <text x="72" y="52" fill="#14532d" font-family="Consolas" font-size="7pt" font-weight="bold" text-anchor="middle">Script Python</text>
-        <text x="72" y="66" fill="#334155" font-family="Consolas" font-size="6.5pt" text-anchor="middle">• Client BLE (bleak)</text>
-        <text x="72" y="78" fill="#334155" font-family="Consolas" font-size="6.5pt" text-anchor="middle">• Publieur (paho-mqtt)</text>
-      </g>
-
-      <!-- FLECHE PASSERELLE -> MQTT -->
-      <path d="M 360 110 L 400 110" fill="none" stroke="#334155" stroke-width="2" marker-end="url(#arrow)"/>
-      <text x="380" y="102" fill="#334155" font-family="Consolas" font-size="6.5pt" text-anchor="middle">JSON</text>
-
-      <!-- BROKER MQTT MOSQUITTO -->
-      <g transform="translate(410, 60)">
-        <rect width="130" height="100" rx="8" fill="url(#mqttGrad)" stroke="#c2410c" stroke-width="1.5"/>
-        <text x="65" y="24" fill="#ffffff" font-family="'Segoe UI', sans-serif" font-size="8pt" font-weight="bold" text-anchor="middle">Broker MQTT</text>
-        <rect x="10" y="34" width="110" height="52" rx="4" fill="#ffffff" opacity="0.95"/>
-        <text x="65" y="52" fill="#9a3412" font-family="Consolas" font-size="7.5pt" font-weight="bold" text-anchor="middle">Eclipse Mosquitto</text>
-        <text x="65" y="66" fill="#334155" font-family="Consolas" font-size="6.5pt" text-anchor="middle">Port TCP 1883</text>
-        <text x="65" y="78" fill="#334155" font-family="Consolas" font-size="6pt" text-anchor="middle">Topic: ciel/atelier/+</text>
-      </g>
-
-      <!-- FLECHE MQTT -> NODE-RED -->
-      <path d="M 540 110 L 580 110" fill="none" stroke="#334155" stroke-width="2" marker-end="url(#arrow)"/>
-      <text x="560" y="102" fill="#334155" font-family="Consolas" font-size="6.5pt" text-anchor="middle">Sub</text>
-
-      <!-- MOTEUR NODE-RED -->
-      <g transform="translate(590, 45)">
-        <rect width="145" height="130" rx="8" fill="url(#noderedGrad)" stroke="#b91c1c" stroke-width="1.5"/>
-        <text x="72" y="22" fill="#ffffff" font-family="'Segoe UI', sans-serif" font-size="8.5pt" font-weight="bold" text-anchor="middle">Serveur Node-RED</text>
-        <rect x="10" y="30" width="125" height="88" rx="4" fill="#ffffff" opacity="0.95"/>
-        <text x="72" y="48" fill="#881337" font-family="Consolas" font-size="7pt" font-weight="bold" text-anchor="middle">Flux de Traitement</text>
-        <!-- Nœuds dessinés -->
-        <rect x="18" y="56" width="48" height="16" rx="3" fill="#cbd5e1"/>
-        <text x="42" y="67" fill="#0f172a" font-family="Consolas" font-size="5.5pt" text-anchor="middle">mqtt in</text>
-        <rect x="74" y="56" width="48" height="16" rx="3" fill="#fde047"/>
-        <text x="98" y="67" fill="#713f12" font-family="Consolas" font-size="5.5pt" text-anchor="middle">json parse</text>
-        <rect x="18" y="80" width="48" height="16" rx="3" fill="#93c5fd"/>
-        <text x="42" y="91" fill="#1e3a8a" font-family="Consolas" font-size="5.5pt" text-anchor="middle">ui_gauge</text>
-        <rect x="74" y="80" width="48" height="16" rx="3" fill="#a7f3d0"/>
-        <text x="98" y="91" fill="#064e3b" font-family="Consolas" font-size="5.5pt" text-anchor="middle">ui_chart</text>
-        <text x="72" y="110" fill="#64748b" font-family="Consolas" font-size="6pt" text-anchor="middle">Port 1880</text>
-      </g>
-
-      <!-- FLECHE NODE-RED -> UI DASHBOARD -->
-      <path d="M 735 110 L 775 110" fill="none" stroke="#334155" stroke-width="2" marker-end="url(#arrow)"/>
-      <text x="755" y="102" fill="#334155" font-family="Consolas" font-size="6.5pt" text-anchor="middle">WebSockets</text>
-
-      <!-- DASHBOARD CLIENT (DROITE) -->
-      <g transform="translate(785, 45)">
-        <rect width="115" height="130" rx="8" fill="url(#uiGrad)" stroke="#6b21a8" stroke-width="1.5"/>
-        <text x="57" y="22" fill="#ffffff" font-family="'Segoe UI', sans-serif" font-size="7.5pt" font-weight="bold" text-anchor="middle">Dashboard Web</text>
-        <rect x="10" y="30" width="95" height="88" rx="4" fill="#ffffff" opacity="0.95"/>
-        <text x="57" y="46" fill="#4c1d95" font-family="Consolas" font-size="6.5pt" font-weight="bold" text-anchor="middle">Navigateur PC</text>
-        <!-- Mini dashboard -->
-        <circle cx="36" cy="68" r="14" fill="#f1f5f9" stroke="#0284c7" stroke-width="2"/>
-        <text x="36" y="71" fill="#0369a1" font-family="Consolas" font-size="6pt" text-anchor="middle">42</text>
-        <circle cx="78" cy="68" r="14" fill="#f1f5f9" stroke="#15803d" stroke-width="2"/>
-        <text x="78" y="71" fill="#14532d" font-family="Consolas" font-size="6pt" text-anchor="middle">OK</text>
-        <rect x="18" y="90" width="78" height="20" rx="2" fill="#0f172a"/>
-        <path d="M 22 105 L 35 98 L 50 102 L 65 95 L 85 99 L 92 93" fill="none" stroke="#38bdf8" stroke-width="1.5"/>
-        <text x="57" y="115" fill="#f8fafc" font-family="Consolas" font-size="5pt" text-anchor="middle">/ui</text>
-      </g>
-    </svg>
-    <div style="font-size: 8pt; color: #64748b; font-weight: 600; margin-top: 4px;">Figure 7.3 : Architecture de supervision industrielle centralisée — Nœuds BLE &rarr; Passerelle Python (bleak) &rarr; Broker MQTT &rarr; Dashboard Node-RED</div>
-  </div>
-
-  <div class="deliverable-box">
-    <div class="deliverable-title">📦 Livrable attendu :</div>
-    Capture d'écran de la caractéristique en cours de notification dans Bluetooth LE Explorer montrant les valeurs hexadécimales reçues en direct.
-  </div>
-</div>
-
-<!-- ETAPE 8 -->
-<div class="step-box ble-step">
-  <div class="step-header">
-    <span class="step-title">Étape 8 : Caractérisation Énergétique en Bluetooth Low Energy (BLE)</span>
-    <span class="step-badge badge-ble">Énergie • Profilage BLE</span>
-  </div>
-  <p><strong>Objectif :</strong> Relever le profil de consommation dynamique en technologie BLE et mettre en évidence la réduction drastique de consommation par rapport au Bluetooth Classic.</p>
-  <ul>
-    <li>Mesurez le courant consommé par l'ESP32 dans les conditions suivantes :
-      <ol>
-        <li><strong>Phase de balisage publicitaire (Advertising) :</strong> Mesurez le courant moyen entre deux impulsions publicitaires (avec un intervalle d'annonce de 500 ms).</li>
-        <li><strong>Phase Connectée en veille (Connection Event) :</strong> Liaison BLE établie avec Windows, notifications inactives.</li>
-        <li><strong>Phase de Notification active :</strong> Envoi d'une notification périodique toutes les 1 seconde.</li>
-      </ol>
-    </li>
-    <li>À l'aide de l'Analog Discovery 3 ou d'un oscilloscope numérique, visualisez les impulsions ultra-brèves de transmission radio (crêtes de quelques millisecondes).</li>
-  </ul>
-  <div class="deliverable-box">
-    <div class="deliverable-title">📦 Livrable attendu :</div>
-    Chronogramme ou relevé de courant moyen en BLE (<i>I</i><sub>BLE</sub> en mA) et comparaison avec le mode Classic.
-  </div>
-</div>
-
-<!-- ETAPE 9 -->
-<div class="step-box">
-  <div class="step-header">
-    <span class="step-title">Étape 9 : Étude Comparative Systémique : Bluetooth Classic (SPP) vs Bluetooth Low Energy (BLE)</span>
-    <span class="step-badge">Synthèse • Ingénierie</span>
-  </div>
-  <p><strong>Objectif :</strong> Rédiger la synthèse technologique et justifier les choix d'architecture réseau à l'aide des résultats expérimentaux acquis lors des étapes 1 à 8.</p>
-  <p>Complétez la matrice d'évaluation comparative dans la Fiche Questions en confrontant :</p>
-  <ul>
-    <li>La complexité de raccordement et de programmation.</li>
-    <li>Le débit utile effectif et la latence d'établissement de liaison.</li>
-    <li>La consommation énergétique globale et l'autonomie estimée sur batterie Li-Po 1200 mAh.</li>
-    <li>La topologie réseau adaptée à la collecte de capteurs multiples (connexions point-à-point exclusives vs diffusion par balisage / piconet BLE).</li>
-  </ul>
-  <div class="deliverable-box">
-    <div class="deliverable-title">📦 Livrable attendu :</div>
-    Synthèse comparative dûment argumentée dans la Fiche Questions (Document 2).
-  </div>
-</div>
 
 <!-- ========================================================================= -->
 <!-- PARTIE 2 : FICHE QUESTIONS & EVALUATION                                    -->
@@ -1725,29 +1295,30 @@ asyncio.run(main())</code></pre>
 <hr class="page-break" />
 <h2 id="partie-2" class="section-part-2">✍️ DOCUMENT 2 : FICHE QUESTIONS & BILAN TECHNIQUE (Évaluation)</h2>
 
-<<<<<<< HEAD
 <div class="callout callout-purple">
   <div class="callout-title">📝 Consignes pour l'Étudiant</div>
-  <p>Cette fiche d'évaluation est à compléter individuellement ou en binôme tout au long du déroulement des activités pratiques. Renseignez l'intégralité des mesures demandées, justifiez vos réponses par des arguments techniques rigoureux (termes normatifs, formules et unités) et soignez la clarté de vos raisonnements.</p>
+  <p>Cette fiche d'évaluation et de synthèse est à compléter individuellement ou en binôme tout au long du déroulement des activités pratiques (Étapes 1 à 3). Renseignez l'intégralité des mesures demandées, justifiez vos réponses par des arguments techniques rigoureux (termes normatifs, formules et unités) et soignez la clarté de vos raisonnements.</p>
   <div style="margin-top: 6px; font-weight: 700;">
     NOM Prénom Étudiant 1 : .............................................................. &nbsp;&nbsp;|&nbsp;&nbsp; Étudiant 2 : .............................................................. &nbsp;&nbsp;|&nbsp;&nbsp; Date : ....................
   </div>
 </div>
 
-<!-- SECTION QUESTIONS 1 -->
+<!-- ========================================================================= -->
+<!-- SECTION QUESTIONS A : ARCHITECTURE MATERIELLE & COMMANDES AT              -->
+<!-- ========================================================================= -->
 <h3>Partie A : Architecture Matérielle, Bus Série & Commandes AT (Étapes 1 & 2)</h3>
 
 <div class="question-card">
-  <span class="q-num">Question A.1 :</span> Sur la platine support <strong>Arduino Nano Connector Carrier (ASX00061)</strong>, expliquez précisément pourquoi le connecteur <strong>J4 (UART)</strong> ne peut pas être utilisé pour dialoguer avec le module Bluetooth lorsque le Nano est raccordé en USB à un PC.<br>
-  <em>Détaillez les conséquences matérielles sur la programmation (bootloader) et sur la surveillance console.</em>
+  <span class="q-num">Question A.1 :</span> Sur la platine support <strong>Arduino Nano Connector Carrier (ASX00061)</strong>, expliquez précisément pourquoi le connecteur <strong>J4 (UART D0/D1)</strong> ne doit pas être utilisé pour dialoguer avec le module Bluetooth lorsque le Nano est raccordé en USB à un PC.<br>
+  <em>Détaillez les conséquences matérielles sur la programmation (bootloader) et sur le moniteur série.</em>
   <div class="dotted-line"></div>
   <div class="dotted-line"></div>
   <div class="dotted-line"></div>
 </div>
 
 <div class="question-card">
-  <span class="q-num">Question A.2 :</span> En vous référant à l'architecture interne du microcontrôleur <strong>ATmega328P</strong>, justifiez pourquoi les broches repérées <strong>A0 et A1</strong> du connecteur Grove <strong>J7</strong> peuvent fonctionner avec la bibliothèque <code>SoftwareSerial</code>.<br>
-  <em>À quel port interne (PORT B, C ou D) appartiennent-elles ? Quel mécanisme matériel précis permet d'intercepter le bit de Start d'un octet entrant ?</em>
+  <span class="q-num">Question A.2 :</span> En vous référant à l'architecture interne du microcontrôleur <strong>ATmega328P</strong>, justifiez pourquoi les broches repérées <strong>A0 et A1</strong> du connecteur Grove <strong>J7</strong> peuvent être exploitées pour une liaison série avec la bibliothèque <code>SoftwareSerial</code>.<br>
+  <em>À quel port interne d'E/S (PORT B, C ou D) appartiennent-elles ? Quel mécanisme matériel d'interruption permet de détecter le bit de Start ?</em>
   <div class="dotted-line"></div>
   <div class="dotted-line"></div>
 </div>
@@ -1774,13 +1345,13 @@ asyncio.run(main())</code></pre>
         <td><strong>Nom personnalisé</strong></td>
         <td><code>....................</code></td>
         <td><code>........................................</code></td>
-        <td>Nom d'annonce visible par les scanners</td>
+        <td>Nom d'annonce visible lors du scan distant</td>
       </tr>
       <tr>
         <td><strong>Code PIN de sécurité</strong></td>
         <td><code>....................</code></td>
         <td><code>........................................</code></td>
-        <td>Clé d'appairage pour chiffrement de liaison (Legacy Pairing)</td>
+        <td>Clé d'authentification pour l'appairage (Legacy Pairing)</td>
       </tr>
       <tr>
         <td><strong>Rôle réseau</strong></td>
@@ -1799,479 +1370,207 @@ asyncio.run(main())</code></pre>
 </div>
 
 <div class="question-card">
-  <span class="q-num">Question A.4 :</span> Pourquoi la configuration du terminal en mode <code>No line ending</code> est-elle critique pour ce module ? Que se produit-il techniquement si l'on envoie la séquence <code>\r\n</code> (CR+LF) ?
+  <span class="q-num">Question A.4 :</span> Pourquoi la configuration du terminal en mode <code>No line ending</code> (<em>Pas de fin de ligne</em>) est-elle impérative pour ce module lors de la configuration AT ? Que se produit-il techniquement si l'on transmet les caractères <code>\r\n</code> (CR+LF) ?
   <div class="dotted-line"></div>
   <div class="dotted-line"></div>
 </div>
 
-<!-- SECTION QUESTIONS 2 -->
-<h3>Partie B : Recherche Documentaire, Métrologie RF & Modélisation du RSSI (Étapes 3 & 4)</h3>
+<!-- ========================================================================= -->
+<!-- SECTION QUESTIONS B : APPAIRAGE, AFFICHAGE I2C, MESURES AD3 & RSSI       -->
+<!-- ========================================================================= -->
+<h3>Partie B : Appairage, Passerelle Bidirectionnelle (OLED &amp; Clavier I²C), Mesures AD3 &amp; Portée RSSI (Étape 3)</h3>
 
 <div class="question-card">
-  <span class="q-num">Question B.1 (Recherche documentaire Internet sur le RSSI) :</span><br>
-  À l'aide d'une recherche sur Internet, explicitez la définition physique exacte du <strong>RSSI</strong> (*Received Signal Strength Indicator*) :
+  <span class="q-num">Question B.1 (Appairage & Profil RFCOMM SPP) :</span><br>
+  1. Décrivez l'évolution visuelle de la LED d'état bleue du module Grove Bluetooth entre le mode veille non connecté et le mode appairé connecté.<br>
+  2. Quel est le rôle du protocole <strong>RFCOMM</strong> dans le profil Bluetooth SPP (Serial Port Profile) par rapport à un câble série RS-232 physique ?
+  <div class="dotted-line"></div>
+  <div class="dotted-line"></div>
+</div>
+
+<div class="question-card">
+  <span class="q-num">Question B.2 (Validation de la communication bidirectionnelle au Digilent AD3) :</span><br>
+  À l'aide des décodeurs de bus configurés sous <strong>WaveForms Logic</strong> :
   <ol>
-    <li>Donnez la relation mathématique permettant de convertir une puissance reçue <i>P</i><sub>r</sub> exprimée en milliwatts (mW) en décibels-milliwatts (dBm) :
-      <div class="formula-box">
-        <i>P</i><sub>dBm</sub> = 10 &times; log<sub>10</sub>(<i>P</i><sub>r</sub> / 1 mW)
-      </div>
-    </li>
-    <li>Pourquoi la valeur du RSSI mesurée sur un récepteur radio est-elle quasi-systématiquement <strong>négative</strong> en pratique ? Calculez la valeur en dBm correspondant à une puissance reçue de 1 &mu;W (10<sup>-6</sup> W) puis 1 nW (10<sup>-9</sup> W).</li>
-    <li>Complétez l'échelle normalisée de qualité de signal ci-dessous :
-      <table>
-        <thead>
-          <tr>
-            <th style="width: 25%;">Plage de RSSI</th>
-            <th style="width: 35%;">Qualification du signal</th>
-            <th style="width: 40%;">Comportement de la liaison Bluetooth</th>
-          </tr>
-        </thead>
-        <tbody>
-          <tr>
-            <td>&ge; -50 dBm</td>
-            <td><strong>Excellente</strong> (Proximité immédiate)</td>
-            <td>Débit maximal, zéro perte de paquet, consommation RF optimisée</td>
-          </tr>
-          <tr>
-            <td>-50 dBm à -70 dBm</td>
-            <td><strong>Bonne / Nominale</strong></td>
-            <td>Liaison parfaitement stable pour flux SPP ou BLE</td>
-          </tr>
-          <tr>
-            <td>-70 dBm à -85 dBm</td>
-            <td><strong>Moyenne / Dégradée</strong></td>
-            <td>Augmentation du taux d'erreur binaire (BER), retransmissions fréquentes</td>
-          </tr>
-          <tr>
-            <td>&lt; -90 dBm</td>
-            <td><strong>Critique / Décrochage</strong></td>
-            <td>Limite de sensibilité (<i>S</i><sub>RX</sub>), déconnexion imminente de la liaison</td>
-          </tr>
-        </tbody>
-      </table>
-    </li>
-    <li>Indiquez les URL ou références des 2 sources techniques consultées lors de votre recherche :
-      <div class="dotted-line"></div>
-    </li>
+    <li><strong>Sens descendant (Terminal &rarr; OLED) :</strong> Relevez la durée d'acquisition d'un octet Bluetooth sur <code>DIO 0</code> (9600 bauds 8N1) : <i>T</i><sub>octet</sub> = <strong>......................... ms</strong>. Sur le bus I²C (<code>DIO 2/3</code>), relevez l'adresse de l'afficheur OLED (<code>0x........</code>) et mesurez le temps de latence avant l'envoi de la trame d'affichage.</li>
+    <li><strong>Sens montant (Clavier tactile &rarr; Terminal distant) :</strong> Quelle est l'adresse I²C du contrôleur MPR121 du clavier : <code>0x........</code> ? Lors de l'appui sur une touche, décrivez la succession des signaux observés entre la transaction de lecture I²C et l'émission du caractère ASCII sur la broche TX (<code>DIO 1</code>).</li>
+    <li><strong>Mutualisation du bus I²C :</strong> Pourquoi l'afficheur OLED (<code>0x3C</code>) et le clavier (<code>0x5B</code>) peuvent-ils partager les mêmes lignes SDA/SCL sans conflit ? Quel octet d'en-tête de protocole garantit que seul le composant concerné réagit ?</li>
   </ol>
+  <div class="dotted-line"></div>
+  <div class="dotted-line"></div>
+  <div class="dotted-line"></div>
 </div>
 
 <div class="question-card">
-  <span class="q-num">Question B.2 (Illustration et analyse de la courbe théorique de propagation) :</span><br>
-  Le schéma ci-dessous illustre la courbe théorique de décroissance du RSSI en fonction de la distance, avec les seuils de qualité de réception et le bruit de fond thermique :
-
-  <!-- FIGURE ILLUSTRATIVE DU RSSI -->
-  <div style="margin: 12px 0; text-align: center;">
-    <svg viewBox="0 0 780 260" width="100%" height="auto" xmlns="http://www.w3.org/2000/svg" style="background:#ffffff; border:1px solid #cbd5e1; border-radius:6px;">
-      <defs>
-        <linearGradient id="rssiGrad" x1="0%" y1="0%" x2="0%" y2="100%">
-          <stop offset="0%" stop-color="#22c55e" stop-opacity="0.2"/>
-          <stop offset="50%" stop-color="#eab308" stop-opacity="0.2"/>
-          <stop offset="100%" stop-color="#ef4444" stop-opacity="0.2"/>
-        </linearGradient>
-      </defs>
-
-      <!-- Zones de qualité colorées en arrière-plan -->
-      <rect x="70" y="30" width="670" height="50" fill="#dcfce7" opacity="0.6"/>
-      <text x="650" y="55" fill="#15803d" font-family="'Segoe UI', sans-serif" font-size="8pt" font-weight="bold">Zone Excellente (&gt; -50 dBm)</text>
-
-      <rect x="70" y="80" width="670" height="60" fill="#fef9c3" opacity="0.6"/>
-      <text x="650" y="110" fill="#854d0e" font-family="'Segoe UI', sans-serif" font-size="8pt" font-weight="bold">Zone Nominale (-50 à -75 dBm)</text>
-
-      <rect x="70" y="140" width="670" height="45" fill="#ffedd5" opacity="0.6"/>
-      <text x="650" y="165" fill="#9a3412" font-family="'Segoe UI', sans-serif" font-size="8pt" font-weight="bold">Zone Dégradée (-75 à -85 dBm)</text>
-
-      <rect x="70" y="185" width="670" height="40" fill="#fee2e2" opacity="0.6"/>
-      <text x="650" y="210" fill="#991b1b" font-family="'Segoe UI', sans-serif" font-size="8pt" font-weight="bold">Zone Critique (&lt; -90 dBm)</text>
-
-      <!-- Axes -->
-      <line x1="70" y1="225" x2="740" y2="225" stroke="#334155" stroke-width="1.8"/>
-      <line x1="70" y1="225" x2="70" y2="25" stroke="#334155" stroke-width="1.8"/>
-      <text x="730" y="245" fill="#0f172a" font-family="'Segoe UI', sans-serif" font-size="8.5pt" font-weight="bold">Distance d (m)</text>
-      <text x="18" y="22" fill="#0f172a" font-family="'Segoe UI', sans-serif" font-size="8.5pt" font-weight="bold">RSSI (dBm)</text>
-
-      <!-- Graduations Y -->
-      <text x="32" y="45" fill="#334155" font-family="Consolas" font-size="7.5pt">-30 dBm</text>
-      <line x1="66" y1="42" x2="70" y2="42" stroke="#334155" stroke-width="1.5"/>
-      <text x="32" y="85" fill="#334155" font-family="Consolas" font-size="7.5pt">-50 dBm</text>
-      <line x1="66" y1="82" x2="70" y2="82" stroke="#334155" stroke-width="1.5"/>
-      <text x="32" y="145" fill="#334155" font-family="Consolas" font-size="7.5pt">-75 dBm</text>
-      <line x1="66" y1="142" x2="70" y2="142" stroke="#334155" stroke-width="1.5"/>
-      <text x="32" y="195" fill="#334155" font-family="Consolas" font-size="7.5pt">-92 dBm</text>
-      <line x1="66" y1="192" x2="70" y2="192" stroke="#ef4444" stroke-width="2"/>
-      <line x1="70" y1="192" x2="740" y2="192" stroke="#ef4444" stroke-width="1" stroke-dasharray="4 3"/>
-      <text x="500" y="188" fill="#ef4444" font-family="Consolas" font-size="7pt" font-weight="bold">Sensibilité Récepteur SRX (-92 dBm)</text>
-
-      <!-- Graduations X -->
-      <text x="120" y="240" fill="#334155" font-family="Consolas" font-size="7.5pt">1 m (d₀)</text>
-      <line x1="120" y1="223" x2="120" y2="227" stroke="#334155" stroke-width="1.5"/>
-      <text x="240" y="240" fill="#334155" font-family="Consolas" font-size="7.5pt">3 m</text>
-      <line x1="240" y1="223" x2="240" y2="227" stroke="#334155" stroke-width="1.5"/>
-      <text x="360" y="240" fill="#334155" font-family="Consolas" font-size="7.5pt">5 m</text>
-      <line x1="360" y1="223" x2="360" y2="227" stroke="#334155" stroke-width="1.5"/>
-      <text x="510" y="240" fill="#334155" font-family="Consolas" font-size="7.5pt">10 m</text>
-      <line x1="510" y1="223" x2="510" y2="227" stroke="#334155" stroke-width="1.5"/>
-      <text x="660" y="240" fill="#334155" font-family="Consolas" font-size="7.5pt">15 m</text>
-      <line x1="660" y1="223" x2="660" y2="227" stroke="#334155" stroke-width="1.5"/>
-
-      <!-- Courbe théorique logarithmique -->
-      <path d="M 120 48 Q 160 85 240 108 T 360 135 T 510 162 T 660 182 T 720 190" fill="none" stroke="#0284c7" stroke-width="3"/>
-      
-      <!-- Points de référence -->
-      <circle cx="120" cy="48" r="4" fill="#0284c7"/>
-      <circle cx="240" cy="108" r="4" fill="#0284c7"/>
-      <circle cx="360" cy="135" r="4" fill="#0284c7"/>
-      <circle cx="510" cy="162" r="4" fill="#0284c7"/>
-      <circle cx="660" cy="182" r="4" fill="#0284c7"/>
-
-      <text x="135" y="44" fill="#0369a1" font-family="Consolas" font-size="7pt" font-weight="bold">-38 dBm @ 1m</text>
-      <text x="255" y="104" fill="#0369a1" font-family="Consolas" font-size="7pt" font-weight="bold">-58 dBm @ 3m</text>
-      <text x="375" y="131" fill="#0369a1" font-family="Consolas" font-size="7pt" font-weight="bold">-67 dBm @ 5m</text>
-      <text x="525" y="158" fill="#0369a1" font-family="Consolas" font-size="7pt" font-weight="bold">-78 dBm @ 10m</text>
-    </svg>
-    <div style="font-size: 8pt; color: #64748b; font-weight: 600; margin-top: 4px;">Figure : Modélisation théorique de l'affaiblissement logarithmique du RSSI avec zones de couverture radio (2,4 GHz)</div>
+  <span class="q-num">Question B.3 (Grandeur physique et modélisation du RSSI) :</span><br>
+  1. Donnez la relation mathématique permettant de convertir une puissance reçue <i>P</i><sub>r</sub> exprimée en milliwatts (mW) en décibels-milliwatts (dBm) :
+  <div class="formula-box">
+    <i>P</i><sub>dBm</sub> = 10 &times; log<sub>10</sub>(<i>P</i><sub>r</sub> / 1 mW)
   </div>
-
-  <p><strong>Travail d'analyse demandé :</strong></p>
-  <ol>
-    <li>En observant l'allure de la courbe, expliquez pourquoi la perte de signal (en dBm) est très brutale sur les premiers mètres (de 1 m à 3 m), puis semble « s'adoucir » aux distances plus éloignées (de 10 m à 15 m). Quel est l'impact de l'échelle logarithmique ?</li>
-    <li>Dans l'encadré ci-dessous, collez une illustration ou schéma représentatif issu de votre propre recherche Internet (ex : zones de Fresnel, modèle avec atténuation d'obstacles ou diagramme de rayonnement d'une antenne PCB) et rédigez un court commentaire explicatif :
-      <div style="height: 120px; border: 1.5px dashed #94a3b8; border-radius: 5px; margin: 8px 0; background: #fafbfc; display: flex; align-items: center; justify-content: center; color: #64748b; font-size: 8.5pt;">
-        [ Emplacement pour l'illustration issue de votre recherche Internet &amp; commentaire ]
-      </div>
-    </li>
-  </ol>
-</div>
-
-<div class="question-card">
-  <span class="q-num">Question B.3 (Relevés expérimentaux) :</span> Renseignez vos mesures expérimentales de RSSI relevées avec l'ESP32 :
+  2. Pourquoi le RSSI mesuré sur un récepteur radio est-il systématiquement <strong>négatif</strong> ? Calculez la puissance en dBm correspondant à 1 &mu;W (10<sup>-6</sup> W) puis à 1 nW (10<sup>-9</sup> W).
+  <div class="dotted-line"></div>
+  <div class="dotted-line"></div>
+  3. Complétez l'échelle normalisée de qualité de signal :
   <table>
     <thead>
       <tr>
-        <th style="width: 25%;">Configuration d'essai</th>
-        <th style="width: 25%;">Distance réelle (m)</th>
-        <th style="width: 25%;">Obstacle interposé</th>
-        <th style="width: 25%;">RSSI moyen mesuré (dBm)</th>
+        <th style="width: 25%;">Plage de RSSI</th>
+        <th style="width: 35%;">Qualification du signal</th>
+        <th style="width: 40%;">Comportement de la liaison Bluetooth</th>
       </tr>
     </thead>
     <tbody>
       <tr>
-        <td>Champ libre (LoS)</td>
-        <td>1 m (Référence <i>d</i><sub>0</sub>)</td>
-        <td>Aucun</td>
-        <td><strong>............... dBm</strong></td>
+        <td>&ge; -50 dBm</td>
+        <td><strong>Excellente</strong> (Proximité immédiate)</td>
+        <td>Débit maximal, zéro perte de paquet, liaison très stable</td>
       </tr>
       <tr>
-        <td>Champ libre (LoS)</td>
-        <td>3 m</td>
-        <td>Aucun</td>
-        <td><strong>............... dBm</strong></td>
+        <td>-50 dBm à -70 dBm</td>
+        <td><strong>Bonne / Nominale</strong></td>
+        <td>Liaison industrielle fiable et sans latence perceptible</td>
       </tr>
       <tr>
-        <td>Champ libre (LoS)</td>
-        <td>5 m</td>
-        <td>Aucun</td>
-        <td><strong>............... dBm</strong></td>
+        <td>-70 dBm à -85 dBm</td>
+        <td><strong>Moyenne / Dégradée</strong></td>
+        <td>Augmentation du taux d'erreur, ralentissement des flux</td>
       </tr>
       <tr>
-        <td>Champ libre (LoS)</td>
-        <td>10 m</td>
-        <td>Aucun</td>
-        <td><strong>............... dBm</strong></td>
-      </tr>
-      <tr>
-        <td>Champ libre (LoS)</td>
-        <td>15 m</td>
-        <td>Aucun</td>
-        <td><strong>............... dBm</strong></td>
-      </tr>
-      <tr>
-        <td>Obstacle 1 (NLoS)</td>
-        <td>5 m</td>
-        <td>Cloison plâtre (Placo)</td>
-        <td><strong>............... dBm</strong></td>
-      </tr>
-      <tr>
-        <td>Obstacle 2 (NLoS)</td>
-        <td>5 m</td>
-        <td>Mur béton armé</td>
-        <td><strong>............... dBm</strong></td>
-      </tr>
-      <tr>
-        <td>Obstacle 3 (NLoS)</td>
-        <td>5 m</td>
-        <td>Blindage métallique (Alu)</td>
-        <td><strong>............... dBm</strong></td>
-      </tr>
-      <tr>
-        <td>Obstacle 4 (NLoS)</td>
-        <td>5 m</td>
-        <td>Corps humain interposé</td>
-        <td><strong>............... dBm</strong></td>
+        <td>&lt; -88 dBm</td>
+        <td><strong>Critique / Seuil limite</strong></td>
+        <td>Limite de sensibilité du récepteur, risque de déconnexion</td>
       </tr>
     </tbody>
   </table>
 </div>
 
 <div class="question-card">
-  <span class="q-num">Question B.4 :</span> Le modèle théorique de propagation logarithmique en espace libre s'écrit :
-  <div class="formula-box">
-    RSSI(<i>d</i>) = RSSI(<i>d</i><sub>0</sub>) - 10 &times; <i>n</i> &times; log<sub>10</sub>(<i>d</i> / <i>d</i><sub>0</sub>)
-  </div><br>
-  En prenant votre mesure à <i>d</i><sub>0</sub> = 1 m comme référence, calculez le coefficient d'atténuation de trajectoire <i>n</i> obtenu expérimentalement à la distance de 10 m. Comparez cette valeur au coefficient théorique de l'espace libre (<i>n</i> = 2) et commentez les écarts observés dans la salle de cours (réflexions, évanouissements multitrajets).
-  <div class="dotted-line"></div>
-  <div class="dotted-line"></div>
-  <div class="dotted-line"></div>
-</div>
-
-<div class="question-card">
-  <span class="q-num">Question B.5 (Analyse physique des obstacles) :</span> Pourquoi l'obstacle métallique et l'obstacle humain entraînent-ils une dégradation particulièrement sévère du niveau de signal à la fréquence de 2,4 GHz ? Justifiez par deux phénomènes physiques distincts.
-  <div class="dotted-line"></div>
-  <div class="dotted-line"></div>
-</div>
-
-<!-- SECTION QUESTIONS 3 -->
-<h3>Partie C : Architecture Réseau Multi-Nœuds en Bluetooth Classic (Étape 6)</h3>
-
-<div class="question-card">
-  <span class="q-num">Question C.1 :</span> Dans un réseau Bluetooth Classic basé sur le profil <strong>SPP (Serial Port Profile / RFCOMM)</strong>, quelle est la contrainte topologique majeure qui empêche un concentrateur maître d'écouter simultanément 5 capteurs esclaves sans rupture de liaison ?
-  <div class="dotted-line"></div>
-  <div class="dotted-line"></div>
-</div>
-
-<div class="question-card">
-  <span class="q-num">Question C.2 :</span> Représentez ci-dessous sous forme d'un <strong>diagramme de séquence temporel (ou chronogramme fonctionnel)</strong> l'enchaînement des étapes exécutées par l'ESP32 pour collecter successivement les modules de 2 binômes (Binôme A puis Binôme B) :<br>
-  <em>Faites apparaître les phases : Connexion SPP, Envoi de requête, Réception données, Déconnexion, Délai de garde inter-connexion.</em>
-  <div style="height: 140px; border: 1px dashed #cbd5e1; border-radius: 4px; margin: 10px 0; background: #fafbfc; padding: 10px; font-family: Consolas; font-size: 8pt; color: #64748b;">
-    ESP32 (Maître)                     Esclave A (Nano 1)                Esclave B (Nano 2)<br>
-       |                                      |                                 |<br>
-       |--- connect(MAC_A) -----------------> |                                 |<br>
-       |&lt;-- ACK Connexion -------------------|                                 |<br>
-       |                                      |                                 |
-  </div>
-</div>
-
-<div class="question-card">
-  <span class="q-num">Question C.3 :</span> Quel est le temps total mesuré pour effectuer un cycle complet de collecte des 5 maquettes esclaves de la salle ? Si un des modules est éteint ou hors de portée, quel comportement logiciel préventif (Watchdog / Timeout) doit impérativement être implémenté sur l'ESP32 pour éviter le blocage de la chaîne de mesure ?
-  <div class="dotted-line"></div>
-  <div class="dotted-line"></div>
-</div>
-
-<!-- SECTION QUESTIONS 4 -->
-<h3>Partie D : Métrologie Énergétique & Bilan de Consommation (Étapes 5 & 8)</h3>
-
-<div class="question-card">
-  <span class="q-num">Question D.1 :</span> Renseignez les valeurs de courant mesurées sur l'alimentation 5,0 V :
+  <span class="q-num">Question B.4 (Campagne de mesures de portée au smartphone) :</span><br>
+  Reportez les valeurs de RSSI relevées avec l'application smartphone lors du déplacement :
   <table>
     <thead>
       <tr>
-        <th>Technologie & État opérationnel</th>
-        <th>Courant mesuré <i>I</i> (mA)</th>
-        <th>Puissance dissipée <i>P</i> = <i>U</i> &times; <i>I</i> (mW)</th>
-        <th>Observations sur la dynamique du courant</th>
+        <th>Distance <i>d</i></th>
+        <th>1 mètre (Réf. <i>d</i><sub>0</sub>)</th>
+        <th>2 mètres</th>
+        <th>5 mètres</th>
+        <th>8 mètres</th>
+        <th>Distance de Décrochage (<i>d</i><sub>max</sub>)</th>
       </tr>
     </thead>
     <tbody>
       <tr>
-        <td><strong>Bluetooth Classic : Veille non connectée</strong></td>
-        <td><strong>............... mA</strong></td>
-        <td><strong>............... mW</strong></td>
-        <td>Clignotement périodique de la LED d'état</td>
-      </tr>
-      <tr>
-        <td><strong>Bluetooth Classic : Connecté repos (SPP)</strong></td>
-        <td><strong>............... mA</strong></td>
-        <td><strong>............... mW</strong></td>
-        <td>Canal RF synchronisé permanent</td>
-      </tr>
-      <tr>
-        <td><strong>Bluetooth Classic : Émission continue</strong></td>
-        <td><strong>............... mA</strong></td>
-        <td><strong>............... mW</strong></td>
-        <td>Amplificateur RF de puissance actif en permanence</td>
-      </tr>
-      <tr>
-        <td><strong>BLE (ESP32) : Advertising (Balisage 500 ms)</strong></td>
-        <td><strong>............... mA</strong></td>
-        <td><strong>............... mW</strong></td>
-        <td>Impulsions brèves entrecoupées de veille</td>
-      </tr>
-      <tr>
-        <td><strong>BLE (ESP32) : Connecté avec Notifications</strong></td>
-        <td><strong>............... mA</strong></td>
-        <td><strong>............... mW</strong></td>
-        <td>Transmission synchrone par paquets GATT</td>
+        <td><strong>RSSI mesuré (dBm)</strong></td>
+        <td>................... dBm</td>
+        <td>................... dBm</td>
+        <td>................... dBm</td>
+        <td>................... dBm</td>
+        <td>................... dBm (à ...... m)</td>
       </tr>
     </tbody>
   </table>
-</div>
-
-<div class="question-card">
-  <span class="q-num">Question D.2 :</span> Un capteur autonome de télé-surveillance industrielle est alimenté par une batterie Li-Po de tension moyenne 3,7 V et de capacité utile <i>C</i> = 1200 mAh (soit une énergie embarquée <i>E</i> = 4,44 Wh).<br><br>
-  • <strong>Hypothèse 1 : Utilisation en Bluetooth Classic SPP permanent :</strong><br>
-  Le module consomme un courant constant moyen de 35 mA sous 5V (fourni via un régulateur à découpage de rendement &eta; = 85 %).<br>
-  Calculez le courant moyen soutiré à la batterie <i>I</i><sub>bat</sub> et l'autonomie théorique correspondante (en heures et en jours) :
-  <div class="formula-box">
-    <i>I</i><sub>bat</sub> = <i>P</i><sub>système</sub> / (&eta; &times; <i>U</i><sub>bat</sub>) = <strong>.................................................. mA</strong>
-    &nbsp;&nbsp;&rArr;&nbsp;&nbsp;
-    Autonomie = <i>C</i> / <i>I</i><sub>bat</sub> = <strong>.................................................. heures (........... jours)</strong>
-  </div><br><br>
-
-  • <strong>Hypothèse 2 : Utilisation en Bluetooth Low Energy (BLE) :</strong><br>
-  Le nœud transmet une notification une fois par minute (<i>I</i><sub>active</sub> = 20 mA pendant 15 ms), et se place en veille profonde (Deep Sleep, <i>I</i><sub>sleep</sub> = 15 &mu;A) le reste du temps.<br>
-  Calculez le courant moyen équivalent <i>I</i><sub>moyen</sub> sur une période de 60 secondes et l'autonomie théorique résultante :
-  <div class="formula-box">
-    <i>I</i><sub>moyen</sub> = [(<i>I</i><sub>active</sub> &times; <i>t</i><sub>active</sub>) + (<i>I</i><sub>sleep</sub> &times; <i>t</i><sub>sleep</sub>)] / <i>T</i> = <strong>.................................................. &mu;A</strong>
-    &nbsp;&nbsp;&rArr;&nbsp;&nbsp;
-    Autonomie = <i>C</i> / <i>I</i><sub>moyen</sub> = <strong>.................................................. jours (........... années)</strong>
-  </div><br>
-  <em>Concluez sur la viabilité d'un réseau de capteurs autonomes scellés en maintenance zéro.</em>
+  Calculez l'atténuation mesurée entre 1 m et 5 m : &Delta;<i>P</i><sub>mesurée</sub> = <i>RSSI</i>(5 m) − <i>RSSI</i>(1 m) = ................. dB.<br>
+  Comparez avec la valeur théorique en champ libre (&Delta;<i>P</i><sub>th</sub> = 10 · 2 · log<sub>10</sub>(5/1) &approx; 14 dB). Pourquoi l'atténuation en atelier est-elle plus prononcée ?
+  <div class="dotted-line"></div>
   <div class="dotted-line"></div>
 </div>
 
-<!-- SECTION QUESTIONS 5 -->
-<h3>Partie E : Architecture BLE, Profil GATT & Synthèse Comparative (Étapes 7, 8 & 9)</h3>
+<div class="question-card">
+  <span class="q-num">Question B.5 (Impact physique des obstacles à 2,4 GHz) :</span> Pourquoi l'interposition d'un obstacle métallique (armoire, porte blindée) ou du corps humain provoque-t-elle une chute brutale du RSSI à 2,4 GHz ? Citez deux phénomènes physiques distincts (réflexion / cage de Faraday et absorption diélectrique par l'eau corporelle).
+  <div class="dotted-line"></div>
+  <div class="dotted-line"></div>
+</div>
+
+<!-- ========================================================================= -->
+<!-- SECTION QUESTIONS C : SYNTHESE D'INGENIERIE & ARCHITECTURE SYSTEME        -->
+<!-- ========================================================================= -->
+<h3>Partie C : Synthèse d'Ingénierie & Bilan de Qualification (Bilan du TP)</h3>
 
 <div class="question-card">
-  <span class="q-num">Question E.1 (Architecture BLE, GAP & GATT) :</span> Dans l'architecture Bluetooth Low Energy, explicitez les rôles des couches logiques normalisées suivantes :
+  <span class="q-num">Question C.1 (Analyse de la gigue temporelle SoftwareSerial) :</span><br>
+  1. Rappelez la durée du blocage (&Delta;<i>T</i><sub>max</sub>) mesurée sur l'horloge I²C SCL pendant la réception d'un flux continu Bluetooth : &Delta;<i>T</i><sub>max</sub> = ......................... µs.<br>
+  2. Expliquez pourquoi ce blocage correspond exactement au temps de traitement de l'interruption (ISR) de <code>SoftwareSerial</code> pour acquérir un octet complet à 9600 bauds.
+  <div class="dotted-line"></div>
+  <div class="dotted-line"></div>
+</div>
+
+<div class="question-card">
+  <span class="q-num">Question C.2 (Contraintes des systèmes critiques & Solutions d'architecture) :</span><br>
+  Dans les équipements industriels ou biomédicaux temps réel (commande de moteur pas à pas, surveillance de pression respiratoire) :<br>
+  a) Pourquoi l'utilisation d'une émulation série logicielle comme <code>SoftwareSerial</code> est-elle formellement proscrite ? Quel risque fait-elle peser sur les asservissements critiques ?<br>
+  b) Citez et détaillez <strong>deux solutions d'ingénierie matérielle</strong> permettant de s'affranchir de ce problème sans bloquer la CPU :
   <ul>
-    <li><strong>GAP (Generic Access Profile) :</strong> Rôles de <em>Broadcaster</em> (Diffuseur), <em>Observer</em> (Observateur), <em>Peripheral</em> (Périphérique) et <em>Central</em> (Central). Quel rôle a été attribué à l'ESP32 et quel rôle a été attribué au PC Windows lors de l'étape 7 ?</li>
-    <li><strong>GATT (Generic Attribute Profile) :</strong> Définissez la hiérarchie entre <em>Profil</em>, <em>Service</em> et <em>Caractéristique</em>. Pourquoi utilise-t-on des identifiants <strong>UUID</strong> sur 128 bits pour les services personnalisés, alors que les services standards (ex: Generic Access 0x1800) n'utilisent que 16 bits ?</li>
-    <li><strong>Modes de transfert GATT :</strong> Quelle est la différence fondamentale entre une lecture par scrutation (<code>READ / POLL</code>) et un mécanisme d'alerte événementiel par <strong><code>NOTIFICATION</code></strong> ? En quoi la notification est-elle plus économe en énergie pour un capteur sur batterie ?</li>
-    <li><strong>Standardisation des UUIDs (Analogie capteurs de santé / cardio) :</strong> En vous appuyant sur l'exemple des cardiofréquencemètres (Service officiel <code>0x180D</code>, Caractéristique <code>0x2A37</code>), justifiez l'intérêt d'utiliser un <code>SERVICE_UUID</code> et une <code>CHARACTERISTIC_UUID</code> identiques pour tous les ESP32 de la salle, et expliquez comment le récepteur (PC/Central) différencie physiquement chaque module.</li>
+    <li><em>Solution 1 (Microcontrôleur & Périphériques matériels) :</em> ............................................................................................................</li>
+    <li><em>Solution 2 (Tampons matériels & DMA ou Co-processeur) :</em> ............................................................................................................</li>
   </ul>
   <div class="dotted-line"></div>
   <div class="dotted-line"></div>
+</div>
+
+<div class="question-card">
+  <span class="q-num">Question C.3 (Sécurité de l'appairage Bluetooth Legacy) :</span><br>
+  Le module Grove Bluetooth v3.0 utilise le protocole d'authentification <strong>Legacy Pairing</strong> avec un code PIN fixe à 4 chiffres (ex. : <code>1234</code>).<br>
+  1. Quel est le nombre total de combinaisons possibles pour un code à 4 chiffres décimaux ? Combien de temps mettrait un attaquant pour tester l'ensemble des clés en force brute hors-ligne (moins de 0,1 s) ?<br>
+  2. Quelle mesure de sécurité préconisez-vous pour moderniser la sécurité de cet équipement (normes Bluetooth 4.2+ Secure Connections, algorithmes ECDH / AES-CCM) ?
   <div class="dotted-line"></div>
   <div class="dotted-line"></div>
 </div>
 
-<div class="question-card">
-  <span class="q-num">Question E.2 (Analyse de la trame de balisage & du cache GATT Windows) :</span><br>
-  Lors de la mise en œuvre de l'étape 7 avec l'application <strong>Bluetooth LE Explorer</strong> :
-  <ol>
-    <li>Dans la capture de l'<em>Advertisement Monitor</em> (Figure 7.1), la charge utile (Payload) reçue de l'ESP32 se termine par la suite hexadécimale :<br>
-      <code>... 09 - 45 - 53 - 50 - 33 - 32</code>.<br>
-      En consultant la table ASCII, justifiez la correspondance exacte entre ces octets et le nom configuré dans le programme Arduino (<code>BLEDevice::init(...)</code>). Quel est le rôle du tag <code>0x09</code> ?
-      <div class="dotted-line"></div>
-    </li>
-    <li>Pourquoi les identifiants UUID 128 bits (comme <code>4fafc201-1fb5-459e-8fcc-c5c9c331914b</code>) apparaissent-ils avec l'ordre des octets inversé dans la trame radio brute (<code>4B-91-31-C3-...-AF-4F</code>) ? Quel nom donne-t-on à cette convention d'ordonnancement des octets ?
-      <div class="dotted-line"></div>
-    </li>
-    <li>Pourquoi Windows conserve-t-il la table des services GATT en mémoire cache lors des reconnexions ? Pourquoi est-il indispensable de supprimer le périphérique dans les paramètres Windows si l'on modifie la structure des caractéristiques dans le code de l'ESP32 ?
-      <div class="dotted-line"></div>
-      <div class="dotted-line"></div>
-    </li>
-  </ol>
-</div>
+<!-- ========================================================================= -->
+<!-- GRILLE D'EVALUATION DES COMPETENCES BTS CIEL                              -->
+<!-- ========================================================================= -->
+<h3>Grille d'Évaluation des Compétences du Référentiel BTS CIEL</h3>
 
-<div class="question-card">
-  <span class="q-num">Question E.3 :</span> Complétez la matrice de synthèse comparative entre le <strong>Bluetooth Classic (BR/EDR - SPP)</strong> et le <strong>Bluetooth Low Energy (BLE)</strong> :
-  <table>
-    <thead>
-      <tr>
-        <th style="width: 25%;">Critère d'évaluation</th>
-        <th style="width: 37%;">Bluetooth Classic (Module Grove v3.0 / BC417)</th>
-        <th style="width: 38%;">Bluetooth Low Energy (ESP32 WROOM-32 / GATT)</th>
-      </tr>
-    </thead>
-    <tbody>
-      <tr>
-        <td><strong>Version du standard</strong></td>
-        <td>Bluetooth 2.0 / 2.1 + EDR ou 3.0</td>
-        <td>Bluetooth 4.0 / 4.2 / 5.0+</td>
-      </tr>
-      <tr>
-        <td><strong>Profil de transport</strong></td>
-        <td>SPP (RFCOMM - Émulation port série RS-232)</td>
-        <td>GATT (Attributs, Services & Caractéristiques)</td>
-      </tr>
-      <tr>
-        <td><strong>Débit utile mesuré</strong></td>
-        <td>Élevé (~100 à 300 kbit/s en continu)</td>
-        <td>Faible à moyen (~10 à 80 kbit/s par paquets)</td>
-      </tr>
-      <tr>
-        <td><strong>Latence d'établissement</strong></td>
-        <td>Lente (2 à 5 secondes par connexion)</td>
-        <td>Ultra-rapide (quelques millisecondes)</td>
-      </tr>
-      <tr>
-        <td><strong>Topologie multi-capteurs</strong></td>
-        <td>Point-à-point strict &rarr; Collecte séquentielle obligatoire</td>
-        <td>Diffusion publicitaire (Beacon) ou Piconet multi-liens simultanés</td>
-      </tr>
-      <tr>
-        <td><strong>Ordre de grandeur du courant</strong></td>
-        <td>20 à 40 mA permanent</td>
-        <td>Quelques microampères en veille, crêtes de 15 mA ultra-brèves</td>
-      </tr>
-      <tr>
-        <td><strong>Intégration OS PC / Mobile</strong></td>
-        <td>Nécessite souvent un port COM virtuel et un code PIN</td>
-        <td>Pris en charge nativement par les API WebBluetooth & Windows BLE</td>
-      </tr>
-      <tr>
-        <td><strong>Domaine d'application idéal</strong></td>
-        <td>Streaming continu (Audio, flux de données volumineux)</td>
-        <td>Capteurs IoT autonomes, wearables, domotique, industrie 4.0</td>
-      </tr>
-    </tbody>
-  </table>
-</div>
-
-<div class="question-card">
-  <span class="q-num">Question E.4 (Synthèse d'ingénierie BTS CIEL) :</span> Un client industriel vous consulte pour concevoir le réseau sans fil d'un atelier d'usinage surveillant la température et les vibrations de 50 machines-outils (émission d'une mesure de 4 octets toutes les 10 secondes par machine).<br>
-  En vous basant sur l'ensemble de vos résultats expérimentaux, justifiez de façon argumentée la technologie à prescrire (Classic ou BLE). Mettez en avant les contraintes d'autonomie des piles, le temps de cycle de collecte et la robustesse globale du réseau.
-  <div class="dotted-line"></div>
-  <div class="dotted-line"></div>
-  <div class="dotted-line"></div>
-  <div class="dotted-line"></div>
-</div>
-=======
 <table>
   <thead>
     <tr>
-      <th>Compétence</th>
-      <th>Indicateurs d'Évaluation</th>
-      <th>Barème</th>
-      <th>Note</th>
+      <th style="width: 15%;">Compétence</th>
+      <th style="width: 60%;">Indicateurs d'Évaluation & Tâches Qualifiées</th>
+      <th style="width: 12%;">Barème</th>
+      <th style="width: 13%;">Note / Validation</th>
     </tr>
   </thead>
   <tbody>
     <tr>
       <td><strong>C07 - Réalisation</strong></td>
-      <td>Câblage soigné sur le carrier Arduino Nano ASX00061 et le Hub I²C, raccordement correct des sondes MTE de l'Analog Discovery 3 et de la masse commune (GND).</td>
+      <td>Câblage soigné sur le carrier Arduino Nano ASX00061 (port J7) et le Hub I²C, respect strict de la masse commune (GND) et raccordement correct des sondes MTE de l'Analog Discovery 3.</td>
       <td>/3 pts</td>
       <td></td>
     </tr>
     <tr>
       <td><strong>C04 - Analyse</strong></td>
-      <td>Justesse de l'analyse temporelle UART sous WaveForms, compréhension du port SoftwareSerial A0/A1 sur carrier ASX00061 et absence de terminateur (No line ending).</td>
-      <td>/4 pts</td>
+      <td>Compréhension du port SoftwareSerial A0/A1 (PORT C / PCINT), audit rigoureux des commandes AT (MAC, PIN, Nom) et justification de l'absence de conflit USB sur D0/D1.</td>
+      <td>/5 pts</td>
       <td></td>
     </tr>
     <tr>
       <td><strong>C05 - Conception</strong></td>
-      <td>Gestion conjointe de SoftwareSerial et de l'I²C mutualisé (OLED + Clavier + Matrice), intégration de la télémétrie RSSI et analyse de l'impact CPU de SoftwareSerial.</td>
-      <td>/7 pts</td>
+      <td>Développement de la passerelle série vers affichage OLED I²C sans blocage CPU, utilisation raisonnée de l'assistance IA et pertinence des adaptations logicielles.</td>
+      <td>/5 pts</td>
       <td></td>
     </tr>
     <tr>
       <td><strong>C06 - Validation</strong></td>
-      <td>Mise en œuvre du Digilent AD3 (triggers, curseurs, décodeurs), recette technique et analyse critique de sécurité.</td>
-      <td>/4 pts</td>
+      <td>Maîtrise de l'analyseur logique Digilent AD3 (décodeurs UART & I²C, triggers, curseurs de gigue temporelle), pertinence des relevés de portée RSSI et analyse des obstacles.</td>
+      <td>/5 pts</td>
       <td></td>
     </tr>
     <tr>
       <td><strong>C01 - Communication</strong></td>
-      <td>Clarté du compte-rendu, rigueur des réponses et vocabulaire technique normalisé.</td>
+      <td>Rigueur des réponses, clarté du compte-rendu d'essai, précision du vocabulaire technique et qualité de la synthèse d'ingénierie.</td>
       <td>/2 pts</td>
       <td></td>
     </tr>
   </tbody>
+  <tfoot>
+    <tr style="background: #f1f5f9; font-weight: bold; font-size: 10pt;">
+      <td colspan="2" style="text-align: right; padding-right: 15px;">NOTE FINALE GLOBALE :</td>
+      <td>/20 pts</td>
+      <td style="font-size: 11pt; color: #0284c7;">........ / 20</td>
+    </tr>
+  </tfoot>
 </table>
->>>>>>> c58a85e35afce0e03ae5ba0070373a9c57bf7f45
+
 
 </body>
 </html>
