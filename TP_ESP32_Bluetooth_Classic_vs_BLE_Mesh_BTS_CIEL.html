@@ -366,7 +366,7 @@
   <h1 class="title">TP : Comparatif Bluetooth Classic vs BLE & Topologies Réseaux (Piconet, Broadcast, Mesh) sur ESP32</h1>
   <div style="margin-top: 10px;">
     <span class="meta-badge badge-primary">⏱ Durée : 5h00 (Séance complète)</span>
-    <span class="meta-badge badge-purple">🎯 Cible : Modules ESP32 Dual-Core (Wi-Fi & Dual-Mode BT 4.2 / BLE)</span>
+    <span class="meta-badge badge-purple">🎯 Cible : 1x Passerelle ESP32 &amp; 3x Arduino Nano v3 + Modules Grove BT v3.0 / HC-05</span>
     <span class="meta-badge badge-cyan">📡 Piles : Bluetooth Classic (SPP/RFCOMM) & BLE (GAP / GATT)</span>
     <span class="meta-badge badge-orange">🌐 Topologies : Piconet (Étoile), Broadcast (Beacon) & Mesh (Maillé)</span>
   </div>
@@ -414,7 +414,7 @@
       <td><strong>C05</strong></td>
       <td><strong>Concevoir une structure matérielle et logicielle</strong></td>
       <td>
-        • Développer un service Bluetooth Classic SPP sur ESP32 via la bibliothèque <code>BluetoothSerial</code>.<br>
+        • Développer un maître de collecte Piconet en Bluetooth Classic SPP sur ESP32 (scrutation séquentielle de 3 esclaves Arduino Nano + HC-05 via la bibliothèque <code>BluetoothSerial</code>).<br>
         • Concevoir un profil serveur GATT BLE avec Service propriétaire et Caractéristiques (UUID 128 bits, modes <em>Read, Write, Notify</em>).<br>
         • Implémenter un émetteur BLE Broadcaster (iBeacon / Manufacturer Data) et un scanner récepteur (Observer).<br>
         • Programmer un protocole de relais multi-sauts pour réseau maillé (Mesh flooding) avec décrémentation de TTL et table anti-boucle.
@@ -433,7 +433,7 @@
       <td><strong>C07</strong></td>
       <td><strong>Réaliser des maquettes et prototypes</strong></td>
       <td>
-        • Flasher et interconnecter plusieurs cartes ESP32 en respectant les rôles réseau (Maître/Esclave, Serveur/Client, Nœuds Mesh).
+        • Flasher et interconnecter la passerelle ESP32 et 3 cartes Arduino Nano (avec modules Grove Bluetooth v3.0 / HC-05) en respectant les rôles réseau (Maître/Esclaves Piconet, Serveur/Client, Nœuds Mesh).
       </td>
     </tr>
     <tr>
@@ -713,95 +713,167 @@
 <!-- ETAPE 1 -->
 <div class="step-box">
   <div class="step-header">
-    <span class="step-title">PARTIE 1 : Bluetooth Classic (SPP) sur ESP32 — Liaison Série Transparente et Topologie Piconet</span>
-    <span class="timing-badge">Durée estimée : 1h00</span>
+    <span class="step-title">PARTIE 1 : Réseau Piconet Bluetooth Classic (SPP) — Maître ESP32 &amp; 3 Esclaves Arduino Nano + HC-05 Grove</span>
+    <span class="timing-badge">Durée estimée : 1h15</span>
   </div>
 
-  <p>L'ESP32 intègre un contrôleur radio Bluetooth double mode. Nous allons d'abord exploiter le profil <strong>Bluetooth Classic SPP (Serial Port Profile)</strong>, idéal pour remplacer un câble RS-232 sans modifier la structure applicative.</p>
-
-  <h4>3.1. Code ESP32 : Pont série bidirectionnel Bluetooth Classic</h4>
-  <p>Téléversez le programme suivant sur votre carte ESP32. Il initialise le périphérique sous le nom personnalisé <code>ESP32_BT_CIEL_X</code> (remplacez <code>X</code> par votre numéro de binôme) :</p>
-
-  <pre><code>/* =========================================================================
-   BTS CIEL - PARTIE 1 : Bluetooth Classic SPP sur ESP32
-   Bibliothèque standard ESP32 Arduino Core : BluetoothSerial
-   ========================================================================= */
-#include "BluetoothSerial.h"
-
-#if !defined(CONFIG_BT_ENABLED) || !defined(CONFIG_BLUEDROID_ENABLED)
-#error "Le Bluetooth doit être activé dans le menu de configuration du composant !"
-#endif
-
-BluetoothSerial SerialBT;
-
-const char* DEVICE_NAME = "ESP32_CLASSIC_B1"; // Modifier selon votre binôme
-unsigned long lastHeartbeat = 0;
-uint32_t messageCounter = 0;
-
-void setup() {
-  Serial.begin(115200);
+  <p>Dans un atelier industriel ou une centrale de supervision, une passerelle unique (ici une carte <strong>ESP32 configurée en Maître</strong>) doit collecter les relevés de trois pupitres/capteurs déportés autonomes (trois cartes <strong>Arduino Nano v3 + modules Grove Bluetooth v3.0 / HC-05</strong>, configurées en <strong>Esclaves</strong> nommés <code>BT1</code>, <code>BT2</code> et <code>BT3</code>). Cette topologie en étoile avec un maître et plusieurs esclaves forme un <strong>Piconet</strong>.</p>
   
-  // Démarrage du Bluetooth Classic en mode esclave (détectable par un Maître/Smartphone)
-  SerialBT.begin(DEVICE_NAME);
-  
-  Serial.println(F("\n======================================================="));
-  Serial.println(F("  ESP32 Bluetooth Classic SPP - Pret"));
-  Serial.println(F("======================================================="));
-  Serial.printf("Périphérique visible sous le nom : %s\n", DEVICE_NAME);
-  Serial.println(F("Ouvrez 'Serial Bluetooth Terminal' sur smartphone et connectez-vous."));
-}
+  <p>Le profil Bluetooth Classic <strong>SPP (Serial Port Profile)</strong> reposant sur une émulation de liaison série point-à-point (canaux RFCOMM), le maître ESP32 doit scruter cycliquement l'environnement : il découvre les esclaves au scan, puis établit successivement une connexion avec chacun d'eux, acquiert leur message d'identification (<code>"Bonjour [Nom]"</code>), se déconnecte pour libérer le canal radio, et passe à l'esclave suivant.</p>
 
-void loop() {
-  // 1. Relais des données reçues depuis la console USB du PC vers le Bluetooth
-  while (Serial.available() > 0) {
-    char c = Serial.read();
-    SerialBT.write(c);
-  }
+  <!-- ======================================================================= -->
+  <!-- 1.1. NOEUDS ESCLAVES ARDUINO NANO                                       -->
+  <!-- ======================================================================= -->
+  <h4>1.1. Configuration &amp; Programmation des 3 Nœuds Esclaves (Arduino Nano + HC-05 / Grove BT v3.0)</h4>
+  <p>Chaque binôme ou groupe d'étudiants prépare l'une des 3 cartes Arduino Nano (nommées <code>BT1</code>, <code>BT2</code>, ou <code>BT3</code>) selon le cahier des charges suivant :</p>
+  <ul>
+    <li><strong>Raccordement matériel :</strong> Le module Grove Bluetooth v3.0 (ou HC-05) est connecté sur le port <strong>J7 (A0 / A1)</strong> de la platine d'extension Nano Carrier (ASX00061). La liaison série logicielle est déclarée à <strong>9600 bauds (8N1)</strong> avec <code>SoftwareSerial BT_Serial(A1, A0); // RX sur A1, TX sur A0</code> afin de préserver l'UART matériel USB (D0/D1).</li>
+    <li><strong>Configuration préalable (Commandes AT) :</strong> Chaque module doit être configuré avec un nom unique (<code>BT1</code>, <code>BT2</code> ou <code>BT3</code>), le rôle Esclave (<code>ROLE=0</code>) et le code PIN commun <code>1234</code>. L'adresse MAC Bluetooth (BD_ADDR de 6 octets) de chaque module doit être relevée et transmise à l'équipe gérant l'ESP32.</li>
+    <li><strong>Comportement opérationnel attendu :</strong> Dès qu'une liaison RFCOMM est établie avec le maître ESP32, l'Arduino Nano doit lui transmettre sur la liaison sans fil la chaîne de caractères terminée par un saut de ligne : <code>"Bonjour &lt;Nom&gt;\n"</code> (par exemple <code>"Bonjour BT1\n"</code>). L'envoi doit être cadencé de manière non-bloquante (ex : toutes les 1000 ms avec <code>millis()</code>) ou asservi à la détection de connexion.</li>
+  </ul>
 
-  // 2. Relais des données reçues depuis le Bluetooth vers la console USB du PC
-  while (SerialBT.available() > 0) {
-    char c = SerialBT.read();
-    Serial.write(c);
-  }
+  <!-- ENCADRE DIRECTIVE PEDAGOGIQUE IA POUR NANO (GEMINI.md) -->
+  <div class="callout callout-purple">
+    <div class="callout-title">🤖 Pistes de recherche &amp; Conception assistée par IA (Code Arduino Nano Esclave)</div>
+    <p><strong>Cahier des charges :</strong> Développer le microprogramme de l'Arduino Nano v3 pour qu'il diffuse son message de salutation sur le port série Bluetooth sans bloquer le microcontrôleur.</p>
+    <ul>
+      <li><strong>Mots-clés d'investigation :</strong> <code>SoftwareSerial.h</code>, <code>millis()</code> (scrutation temporelle sans <code>delay()</code>), <code>terminateur \n</code>, <code>flush()</code>, <code>ATmega328P</code>.</li>
+      <li><strong>Suggestion de prompt pour votre assistant IA :</strong><br>
+      <em>« Écris un programme Arduino en C++ pour une carte Arduino Nano v3 avec un module Bluetooth HC-05 / Grove raccordé sur SoftwareSerial (A1=RX, A0=TX à 9600 bauds). Le module est un esclave nommé "BT1". Toutes les 1000 ms, de manière non-bloquante (avec millis, sans delay), le Nano émet sur la liaison Bluetooth la chaîne "Bonjour BT1\n". Le code doit être sobre en mémoire SRAM. »</em></li>
+      <li><strong>Esprit critique &amp; Validation :</strong> Vérifiez la présence du terminateur <code>\n</code> indispensable pour la fonction de lecture <code>readStringUntil('\n')</code> de l'ESP32. Pourquoi l'utilisation de <code>delay(1000)</code> est-elle proscrite dans un équipement de mesure industriel communicant ?</li>
+    </ul>
+  </div>
 
-  // 3. Télémétrie périodique (émission toutes les 2 secondes)
-  if (millis() - lastHeartbeat >= 2000) {
-    lastHeartbeat = millis();
-    messageCounter++;
-    if (SerialBT.hasClient()) {
-      SerialBT.printf("TELEMETRY:ID=%u;UPTIME=%lu ms;STATUS=OK\r\n", messageCounter, millis());
-    }
-  }
-}</code></pre>
-
-  <h4>3.2. Expérimentations et mesures :</h4>
+  <!-- ======================================================================= -->
+  <!-- 1.2. PASSERELLE MAITRE ESP32                                            -->
+  <!-- ======================================================================= -->
+  <h4>1.2. Programmation de la Passerelle Maître (ESP32 Master Piconet)</h4>
+  <p>L'ESP32 utilise la bibliothèque standard <code>BluetoothSerial</code> en mode maître (<code>SerialBT.begin("ESP32_Master", true)</code>). Le programme est articulé autour de deux phases fondamentales inspirées du projet de référence <code>codes arduino/esp32btclassic_scan_piconet.ino</code> :</p>
   <ol>
-    <li>Activez le Bluetooth sur votre smartphone Android/iOS, lancez l'application <strong>Serial Bluetooth Terminal</strong>, scannez et associez le module <code>ESP32_CLASSIC_BX</code>.</li>
-    <li>Observez la connexion : vérifiez que les trames de télémétrie s'affichent toutes les 2 secondes sur votre smartphone.</li>
-    <li>Depuis le smartphone, envoyez une commande texte (ex : <code>LED_ON</code> ou un texte long). Vérifiez la réception instantanée sur le moniteur série de l'ordinateur.</li>
-    <li><strong>Topologie Piconet (Interconnexion inter-binômes) :</strong>
-      Deux binômes voisins doivent tenter de connecter <strong>simultanément</strong> leurs deux smartphones à un seul et même ESP32 en Bluetooth Classic SPP. Que constatez-vous ?
+    <li><strong>Phase 1 : Scan synchrone initial de l'environnement radio (Inquiry) :</strong><br>
+    Pendant 10 secondes (<code>SerialBT.discover(10000)</code>), l'ESP32 écoute les annonces Bluetooth Classic. Pour chaque équipement détecté, il compare son adresse MAC avec les 3 esclaves cibles (<code>BT3</code>, <code>BT2</code>, <code>BT1</code>), valide sa présence (flag <code>trouveAuScan = true</code>) et relève son niveau de puissance reçue <strong>RSSI</strong> en dBm.</li>
+    <li><strong>Phase 2 : Scrutation séquentielle cyclique (Polling TDD du Piconet) :</strong><br>
+    Dans la boucle <code>loop()</code>, pour chaque module esclave détecté :
+      <ul>
+        <li>L'ESP32 tente d'établir la connexion RFCOMM via son adresse MAC : <code>SerialBT.connect(cible.adresse)</code>.</li>
+        <li>Une fois connecté, il lit la trame texte émise par le Nano : <code>SerialBT.readStringUntil('\n')</code>.</li>
+        <li>Il affiche la trame sur le Moniteur Série : <code>[BTx] : Bonjour BTx</code>.</li>
+        <li>Il se déconnecte immédiatement avec <code>SerialBT.disconnect()</code> pour libérer le canal radio et passe à l'esclave suivant.</li>
+        <li>Ordre de scrutation prédéfini : <code>BT3 &rarr; BT2 &rarr; BT1 &rarr; BT3...</code>. Si un module est absent au scan, il est ignoré pour ne pas pénaliser la réactivité du bus.</li>
+      </ul>
     </li>
+    <li><strong>Phase 3 : Calcul &amp; Chronométrage du temps pour 3 relevés complets :</strong><br>
+    À l'aide de la fonction <code>millis()</code>, l'ESP32 doit mesurer la durée totale nécessaire pour effectuer un cycle complet de 3 relevés (de la tentative de connexion sur le 1<sup>er</sup> esclave jusqu'à la déconnexion réussie du 3<sup>e</sup>). Le temps mesuré et la moyenne par nœud doivent s'afficher en fin de chaque cycle.</li>
   </ol>
 
+  <!-- ENCADRE DIRECTIVE PEDAGOGIQUE IA POUR ESP32 (GEMINI.md) -->
+  <div class="callout callout-purple">
+    <div class="callout-title">🤖 Pistes de recherche &amp; Conception assistée par IA (Code ESP32 Maître Piconet)</div>
+    <p><strong>Cahier des charges :</strong> Adapter le code source de base <code>codes arduino/esp32btclassic_scan_piconet.ino</code> pour intégrer le calcul précis du temps de cycle pour 3 relevés et optimiser la réactivité en déconnectant dès la réception effective du message.</p>
+    <ul>
+      <li><strong>Mots-clés d'investigation :</strong> <code>BluetoothSerial.h</code>, <code>SerialBT.discover()</code>, <code>BTScanResults</code>, <code>SerialBT.connect(adresse_mac)</code>, <code>SerialBT.disconnect()</code>, <code>SerialBT.setPin("1234", 4)</code>, <code>millis()</code>, <code>temps de cycle T_cycle</code>.</li>
+      <li><strong>Suggestion de prompt pour votre assistant IA :</strong><br>
+      <em>« En partant du sketch Arduino ESP32 BluetoothSerial en mode maître (SerialBT.begin("ESP32_Master", true)), j'ai 3 modules esclaves HC-05/Grove BT (BT3, BT2, BT1) identifiés par leurs adresses MAC sur 6 octets.
+      1) L'ESP32 lance un scan de 10 s pour détecter leur présence et afficher leur RSSI en dBm.
+      2) Dans loop(), l'ESP32 se connecte tour à tour à BT3, BT2 et BT1 avec connect(adresse). Dès qu'il reçoit la ligne de texte ("Bonjour BTx"), il l'affiche sur le port série USB, se déconnecte aussitôt avec disconnect() et passe au module suivant.
+      3) Intègre la mesure chronométrée avec millis() du temps global nécessaire pour accomplir 3 relevés complets (1 relevé par esclave). À la fin du cycle de 3 relevés, affiche : ">>> TEMPS POUR 3 RELEVÉS : XXXX ms (soit X.XX s) — Moyenne par nœud : YYYY ms <<<". »</em></li>
+      <li><strong>Esprit critique &amp; Validation :</strong> Analysez comment l'algorithme gère un esclave injoignable ou temporairement éteint. Quel timeout de connexion préconisez-vous pour éviter de figer la boucle ? Téléversez et validez le bon fonctionnement avec vos 3 Arduino Nano.</li>
+    </ul>
+  </div>
+
+  <!-- ======================================================================= -->
+  <!-- 1.3. RELEVES EXPERIMENTAUX ET MESURES DE PERFORMANCE                     -->
+  <!-- ======================================================================= -->
+  <h4>1.3. Relevés Expérimentaux, Chronométrage et Calculs de Performances</h4>
+  
+  <p><strong>Tableau 1 : Recensement des esclaves et niveaux RF mesurés au scan initial :</strong></p>
+  <table>
+    <thead>
+      <tr>
+        <th style="width: 15%;">Module Esclave</th>
+        <th style="width: 35%;">Adresse MAC Bluetooth (BD_ADDR)</th>
+        <th style="width: 25%;">Détecté au Scan ?</th>
+        <th style="width: 25%;">Niveau RSSI mesuré (dBm)</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><strong>BT1</strong></td>
+        <td><code>.... : .... : .... : .... : .... : ....</code></td>
+        <td>[ ] OUI &nbsp;&nbsp; [ ] NON</td>
+        <td><strong>............... dBm</strong></td>
+      </tr>
+      <tr>
+        <td><strong>BT2</strong></td>
+        <td><code>.... : .... : .... : .... : .... : ....</code></td>
+        <td>[ ] OUI &nbsp;&nbsp; [ ] NON</td>
+        <td><strong>............... dBm</strong></td>
+      </tr>
+      <tr>
+        <td><strong>BT3</strong></td>
+        <td><code>.... : .... : .... : .... : .... : ....</code></td>
+        <td>[ ] OUI &nbsp;&nbsp; [ ] NON</td>
+        <td><strong>............... dBm</strong></td>
+      </tr>
+    </tbody>
+  </table>
+
+  <p><strong>Tableau 2 : Campagne de chronométrage du temps de cycle pour 3 relevés complets :</strong></p>
+  <p>Laissez la boucle de scrutation s'exécuter et relevez sur le Moniteur Série de l'ESP32 la durée totale pour 3 relevés consécutifs sur 3 cycles successifs :</p>
+  <table>
+    <thead>
+      <tr>
+        <th style="width: 20%;">Mesure de Cycle</th>
+        <th style="width: 35%;">Temps total pour 3 relevés (&Delta;<i>t</i> en ms)</th>
+        <th style="width: 45%;">Temps moyen par esclave (&Delta;<i>t</i> / 3 en ms)</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><strong>Cycle N°1</strong></td>
+        <td><i>T</i><sub>cycle 1</sub> = <strong>......................... ms</strong></td>
+        <td><i>T</i><sub>moyen 1</sub> = <strong>......................... ms</strong></td>
+      </tr>
+      <tr>
+        <td><strong>Cycle N°2</strong></td>
+        <td><i>T</i><sub>cycle 2</sub> = <strong>......................... ms</strong></td>
+        <td><i>T</i><sub>moyen 2</sub> = <strong>......................... ms</strong></td>
+      </tr>
+      <tr>
+        <td><strong>Cycle N°3</strong></td>
+        <td><i>T</i><sub>cycle 3</sub> = <strong>......................... ms</strong></td>
+        <td><i>T</i><sub>moyen 3</sub> = <strong>......................... ms</strong></td>
+      </tr>
+      <tr style="background-color: #f1f5f9; font-weight: bold;">
+        <td><strong>Moyenne Globale</strong></td>
+        <td><i>T̄</i><sub>cycle</sub> = <strong>......................... ms</strong></td>
+        <td><i>T̄</i><sub>noeud</sub> = <strong>......................... ms</strong></td>
+      </tr>
+    </tbody>
+  </table>
+
+  <!-- QUESTIONS ET ANALYSE D'INGENIERIE -->
   <div class="student-response">
-    <strong>Question 1.1 :</strong> Dans la topologie Bluetooth Classic, quel rôle (<em>Master</em> ou <em>Slave</em>) joue le smartphone ? Quel rôle joue l'ESP32 ?
-    Est-il possible dans ce mode qu'un deuxième smartphone se connecte au même ESP32 pour recevoir la télémétrie en simultané ? Justifiez en rappelant les règles d'un canal logique RFCOMM.
+    <strong>Question 1.1 (Analyse du temps d'établissement de liaison Bluetooth Classic) :</strong><br>
+    À partir de vos relevés chronométrés, observez le temps moyen nécessaire pour interroger un seul module (&Delta;<i>t</i> moyen &ge; 1,5 à 3 secondes) :<br>
+    1. La transmission de la trame <code>"Bonjour BTx\n"</code> ne prenant que quelques millisecondes à 9600 bauds, à quoi est imputable l'immense majorité de ce temps de cycle ? Détaillez les étapes protocolaires obligatoires en Bluetooth Classic (sauts de fréquences pseudo-aléatoires FHSS, synchronisation de l'horloge du canal, négociation des paquets de contrôle LMP et ouverture du canal logique RFCOMM).<br>
+    2. Pourquoi cette méthode de scrutation séquentielle par connexions/déconnexions successives est-elle obligatoire si l'on souhaite interroger plus de 7 esclaves avec un maître Bluetooth Classic ?
+    <div class="dotted-line"></div>
     <div class="dotted-line"></div>
     <div class="dotted-line"></div>
   </div>
 
   <div class="student-response">
-    <strong>Question 1.2 (Mesure du débit utile maximal en Bluetooth Classic) :</strong><br>
-    À l'aide de l'outil "Send File" ou d'une boucle émettant 10 000 octets sans délai (<code>SerialBT.write()</code>), chronométrez la durée totale du transfert vers le smartphone :<br>
-    • Taille des données : <strong>10 000 octets</strong> (soit 80 000 bits).<br>
-    • Durée mesurée (&Delta;<i>t</i>) : <strong>......................... ms</strong>.<br>
-    • Calcul du débit binaire utile réel :
+    <strong>Question 1.2 (Calcul de la fréquence maximale d'échantillonnage du Piconet) :</strong><br>
+    1. Calculez la <strong>fréquence maximale de rafraîchissement</strong> <i>f</i><sub>relevé</sub> (en Hz) de la centrale de mesure pour acquérir les données des 3 capteurs :
     <div class="formula-box">
-      <i>D</i><sub>utile</sub> = 
-      <span class="frac"><span class="num">80 000 bits</span><span class="den">&Delta;<i>t</i> (s)</span></span>
-      = <strong>......................... kbit/s</strong>
+      <i>f</i><sub>relevé</sub> = 
+      <span class="frac"><span class="num">1</span><span class="den"><i>T̄</i><sub>cycle</sub> (s)</span></span>
+      = <strong>......................... Hz</strong>
     </div>
+    2. Ce système est-il adapté à la surveillance d'une température ambiante de stockage (constante de temps thermique &tau; &approx; 10 minutes) ? Serait-il adapté pour détecter un arrêt d'urgence ou réguler la vitesse d'un moteur synchrone (temps de réaction requis &lt; 50 ms) ? Justifiez.
+    <div class="dotted-line"></div>
+    <div class="dotted-line"></div>
   </div>
 </div>
 
