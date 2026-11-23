@@ -362,6 +362,12 @@
       text-align: center;
     }
     
+    .figure-box img {
+      max-width: 100%;
+      height: auto;
+      border-radius: 6px;
+    }
+    
     .figure-caption {
       font-size: 8.4pt;
       color: #475569;
@@ -423,199 +429,10 @@
     <li><strong>Bande 2,4 GHz ISM (Mondiale - 2 400 à 2 483,5 MHz) :</strong> Spectre universel partagé par le Wi-Fi (IEEE 802.11), le Bluetooth Classic (IEEE 802.15.1) et le BLE (Bluetooth Low Energy). Puissance d'émission jusqu'à <strong>+20 dBm (100 mW PIRE)</strong> en Wi-Fi et <strong>+10 dBm (10 mW)</strong> en BLE. Il n'y a pas de contrainte de Duty Cycle, mais cette bande est saturée en atelier par les bornes réseau, smartphones et machines industrielles.</li>
   </ul>
 
-  <!-- FIGURE 1 : SVG SPECTRES FREQUENTIELS COMPARATIFS -->
+  <!-- FIGURE 1 : COMPARAISON DES PROTOCOLES IOT (WI-FI, BLE, LORA) -->
   <div class="figure-box">
-    <svg viewBox="0 0 940 450" width="100%" height="auto" xmlns="http://www.w3.org/2000/svg">
-  <defs>
-    <!-- Dégradés doux professionnels -->
-    <linearGradient id="gradWifi1" x1="0%" y1="0%" x2="0%" y2="100%">
-      <stop offset="0%" stop-color="#0284c7" stop-opacity="0.75"/>
-      <stop offset="100%" stop-color="#0284c7" stop-opacity="0.15"/>
-    </linearGradient>
-    <linearGradient id="gradWifi6" x1="0%" y1="0%" x2="0%" y2="100%">
-      <stop offset="0%" stop-color="#0369a1" stop-opacity="0.75"/>
-      <stop offset="100%" stop-color="#0369a1" stop-opacity="0.15"/>
-    </linearGradient>
-    <linearGradient id="gradWifi11" x1="0%" y1="0%" x2="0%" y2="100%">
-      <stop offset="0%" stop-color="#0284c7" stop-opacity="0.75"/>
-      <stop offset="100%" stop-color="#0284c7" stop-opacity="0.15"/>
-    </linearGradient>
-    <linearGradient id="gradLora" x1="0%" y1="0%" x2="100%" y2="100%">
-      <stop offset="0%" stop-color="#ea580c"/>
-      <stop offset="100%" stop-color="#c2410c"/>
-    </linearGradient>
-  </defs>
-
-  <!-- FOND GENERAL BLANC AVEC BORDURE LEGERE -->
-  <rect x="0" y="0" width="940" height="450" rx="10" fill="#ffffff" stroke="#cbd5e1" stroke-width="1.5"/>
-
-  <!-- TITRE GLOBAL DU DIAGRAMME -->
-  <text x="470" y="26" font-family="'Segoe UI', Roboto, sans-serif" font-size="13.5" font-weight="800" fill="#0b3c5d" text-anchor="middle" letter-spacing="0.5">
-    RÉPARTITION SPECTRALE COMPARÉE DES PROTOCOLES IOT (868 MHz vs 2,4 GHz)
-  </text>
-
-  <!-- ========================================================================= -->
-  <!-- BLOC 1 : BANDE SUB-GHZ 868 MHz (EUROPE)                                   -->
-  <!-- ========================================================================= -->
-  <g transform="translate(25, 42)">
-    <!-- Cadre conteneur -->
-    <rect x="0" y="0" width="890" height="120" rx="6" fill="#fff7ed" stroke="#fdba74" stroke-width="1.2"/>
-    <rect x="0" y="0" width="890" height="28" rx="6" fill="#ffedd5"/>
-    <text x="15" y="19" font-family="'Segoe UI', sans-serif" font-size="11" font-weight="bold" fill="#9a3412">
-      1. BANDE SUB-GHz ISM EUROPE (863 - 870 MHz) &bull; Longue portée &bull; Réglementation ETSI
-    </text>
-
-    <!-- Axe Fréquence -->
-    <line x1="40" y1="80" x2="840" y2="80" stroke="#78716c" stroke-width="2"/>
-    <polygon points="840,76 850,80 840,84" fill="#78716c"/>
-    <text x="856" y="84" font-family="'Segoe UI', sans-serif" font-size="9.5" font-weight="bold" fill="#57534e">f (MHz)</text>
-
-    <!-- Bornes de l'axe -->
-    <line x1="60" y1="75" x2="60" y2="85" stroke="#78716c" stroke-width="1.5"/>
-    <text x="60" y="98" font-family="Consolas, monospace" font-size="9.5" fill="#78716c" text-anchor="middle">863,0 MHz</text>
-
-    <line x1="820" y1="75" x2="820" y2="85" stroke="#78716c" stroke-width="1.5"/>
-    <text x="820" y="98" font-family="Consolas, monospace" font-size="9.5" fill="#78716c" text-anchor="middle">870,0 MHz</text>
-
-    <!-- Zone Sous-bande g1 (868,0 à 868,6 MHz) -->
-    <rect x="340" y="44" width="220" height="36" fill="#fed7aa" rx="4" stroke="#ea580c" stroke-width="1"/>
-    
-    <!-- 3 Canaux LoRa (125 kHz chacun) -->
-    <rect x="360" y="47" width="50" height="30" fill="url(#gradLora)" rx="3"/>
-    <text x="385" y="66" font-family="Consolas, monospace" font-size="8.5" font-weight="bold" fill="#ffffff" text-anchor="middle">868,1</text>
-
-    <rect x="425" y="47" width="50" height="30" fill="url(#gradLora)" rx="3"/>
-    <text x="450" y="66" font-family="Consolas, monospace" font-size="8.5" font-weight="bold" fill="#ffffff" text-anchor="middle">868,3</text>
-
-    <rect x="490" y="47" width="50" height="30" fill="url(#gradLora)" rx="3"/>
-    <text x="515" y="66" font-family="Consolas, monospace" font-size="8.5" font-weight="bold" fill="#ffffff" text-anchor="middle">868,5</text>
-
-    <!-- Légende sous-bande g1 -->
-    <text x="450" y="40" font-family="'Segoe UI', sans-serif" font-size="8.5" font-weight="bold" fill="#c2410c" text-anchor="middle">
-      Sous-bande g1 (868,0 à 868,6 MHz) &bull; 3 Canaux LoRa par défaut (BW = 125 kHz)
-    </text>
-    <text x="450" y="98" font-family="'Segoe UI', sans-serif" font-size="8.5" fill="#9a3412" text-anchor="middle">
-      Puissance max : +14 dBm (25 mW) &bull; <b>Duty Cycle légal : 1%</b> (max 36 s / heure)
-    </text>
-
-    <!-- Canal RX2 / Alertes (869,525 MHz) -->
-    <rect x="670" y="47" width="70" height="30" fill="#ea580c" rx="3" stroke="#9a3412"/>
-    <text x="705" y="66" font-family="Consolas, monospace" font-size="8.5" font-weight="bold" fill="#ffffff" text-anchor="middle">869,525</text>
-    <text x="705" y="40" font-family="'Segoe UI', sans-serif" font-size="8" font-weight="bold" fill="#9a3412" text-anchor="middle">Canal RX2 (+27 dBm)</text>
-    <text x="705" y="98" font-family="'Segoe UI', sans-serif" font-size="8" fill="#78716c" text-anchor="middle">Duty Cycle : 10%</text>
-  </g>
-
-  <!-- ========================================================================= -->
-  <!-- BLOC 2 : BANDE 2,4 GHz ISM (WI-FI, BLE & BLUETOOTH CLASSIC)               -->
-  <!-- ========================================================================= -->
-  <g transform="translate(25, 175)">
-    <!-- Cadre conteneur -->
-    <rect x="0" y="0" width="890" height="260" rx="6" fill="#f8fafc" stroke="#94a3b8" stroke-width="1.2"/>
-    <rect x="0" y="0" width="890" height="28" rx="6" fill="#e2e8f0"/>
-    <text x="15" y="19" font-family="'Segoe UI', sans-serif" font-size="11" font-weight="bold" fill="#0f172a">
-      2. BANDE 2,4 GHz ISM (2 400 - 2 483,5 MHz) &bull; Cohabitation Wi-Fi, BLE &amp; Bluetooth Classic
-    </text>
-
-    <!-- VOIE A : WI-FI (CANAUX 1, 6, 11 NON RECOUVRANTS) -->
-    <g transform="translate(0, 32)">
-      <text x="15" y="32" font-family="'Segoe UI', sans-serif" font-size="9.5" font-weight="bold" fill="#0369a1">Wi-Fi (802.11 b/g/n) :</text>
-      <text x="15" y="46" font-family="'Segoe UI', sans-serif" font-size="8" fill="#64748b">3 canaux de 20 MHz</text>
-
-      <!-- Dôme Canal 1 (2412 MHz : 2401 à 2423) -->
-      <path d="M 125,55 C 150,8 190,8 215,55 Z" fill="url(#gradWifi1)" stroke="#0284c7" stroke-width="1.8"/>
-      <text x="170" y="32" font-family="'Segoe UI', sans-serif" font-size="10" font-weight="bold" fill="#0369a1" text-anchor="middle">Canal 1</text>
-      <text x="170" y="46" font-family="Consolas, monospace" font-size="8.5" fill="#0c4a6e" text-anchor="middle">2 412 MHz</text>
-
-      <!-- Dôme Canal 6 (2437 MHz : 2426 à 2448) -->
-      <path d="M 375,55 C 400,8 440,8 465,55 Z" fill="url(#gradWifi6)" stroke="#0369a1" stroke-width="1.8"/>
-      <text x="420" y="32" font-family="'Segoe UI', sans-serif" font-size="10" font-weight="bold" fill="#0369a1" text-anchor="middle">Canal 6</text>
-      <text x="420" y="46" font-family="Consolas, monospace" font-size="8.5" fill="#0c4a6e" text-anchor="middle">2 437 MHz</text>
-
-      <!-- Dôme Canal 11 (2462 MHz : 2451 à 2473) -->
-      <path d="M 625,55 C 650,8 690,8 715,55 Z" fill="url(#gradWifi11)" stroke="#0284c7" stroke-width="1.8"/>
-      <text x="670" y="32" font-family="'Segoe UI', sans-serif" font-size="10" font-weight="bold" fill="#0369a1" text-anchor="middle">Canal 11</text>
-      <text x="670" y="46" font-family="Consolas, monospace" font-size="8.5" fill="#0c4a6e" text-anchor="middle">2 462 MHz</text>
-    </g>
-
-    <!-- VOIE B : BLE (40 CANAUX DONT 3 D'ANNONCES PRIVILEGIES) -->
-    <g transform="translate(0, 105)">
-      <text x="15" y="24" font-family="'Segoe UI', sans-serif" font-size="9.5" font-weight="bold" fill="#15803d">BLE (Bluetooth LE) :</text>
-      <text x="15" y="38" font-family="'Segoe UI', sans-serif" font-size="8" fill="#64748b">40 canaux de 2 MHz</text>
-
-      <!-- Barre de fond représentant les canaux de données -->
-      <rect x="110" y="16" width="680" height="18" fill="#e2e8f0" rx="3" stroke="#cbd5e1"/>
-      <text x="310" y="29" font-family="'Segoe UI', sans-serif" font-size="8" fill="#64748b" text-anchor="middle">37 canaux de données GATT (espacés de 2 MHz)</text>
-      <text x="550" y="29" font-family="'Segoe UI', sans-serif" font-size="8" fill="#64748b" text-anchor="middle">Canaux 0 à 36</text>
-
-      <!-- Canal d'annonce 37 (2402 MHz) : Tout à gauche, avant Wi-Fi 1 -->
-      <rect x="115" y="8" width="45" height="34" fill="#16a34a" rx="4" stroke="#14532d" stroke-width="1.2"/>
-      <text x="137" y="22" font-family="Consolas, monospace" font-size="8.5" font-weight="bold" fill="#ffffff" text-anchor="middle">CH 37</text>
-      <text x="137" y="35" font-family="Consolas, monospace" font-size="7.5" fill="#dcfce7" text-anchor="middle">2402</text>
-
-      <!-- Canal d'annonce 38 (2426 MHz) : Dans l'interstice libre entre Wi-Fi 1 et Wi-Fi 6 ! -->
-      <rect x="295" y="8" width="45" height="34" fill="#16a34a" rx="4" stroke="#14532d" stroke-width="1.2"/>
-      <text x="317" y="22" font-family="Consolas, monospace" font-size="8.5" font-weight="bold" fill="#ffffff" text-anchor="middle">CH 38</text>
-      <text x="317" y="35" font-family="Consolas, monospace" font-size="7.5" fill="#dcfce7" text-anchor="middle">2426</text>
-
-      <!-- Canal d'annonce 39 (2480 MHz) : Tout à droite, après Wi-Fi 11 -->
-      <rect x="740" y="8" width="45" height="34" fill="#16a34a" rx="4" stroke="#14532d" stroke-width="1.2"/>
-      <text x="762" y="22" font-family="Consolas, monospace" font-size="8.5" font-weight="bold" fill="#ffffff" text-anchor="middle">CH 39</text>
-      <text x="762" y="35" font-family="Consolas, monospace" font-size="7.5" fill="#dcfce7" text-anchor="middle">2480</text>
-    </g>
-
-    <!-- VOIE C : BLUETOOTH CLASSIC (79 CANAUX DE 1 MHz AVEC AFH) -->
-    <g transform="translate(0, 168)">
-      <text x="15" y="20" font-family="'Segoe UI', sans-serif" font-size="9.5" font-weight="bold" fill="#1d4ed8">Bluetooth Classic :</text>
-      <text x="15" y="34" font-family="'Segoe UI', sans-serif" font-size="8" fill="#64748b">79 canaux de 1 MHz</text>
-
-      <!-- Trame de canaux FHSS -->
-      <rect x="110" y="8" width="680" height="24" fill="#dbeafe" rx="4" stroke="#2563eb" stroke-width="1"/>
-      <!-- Petits tirets représentant les canaux de 1 MHz -->
-      <line x1="120" y1="12" x2="120" y2="28" stroke="#3b82f6" stroke-width="1"/>
-      <line x1="140" y1="12" x2="140" y2="28" stroke="#3b82f6" stroke-width="1"/>
-      <line x1="160" y1="12" x2="160" y2="28" stroke="#3b82f6" stroke-width="1"/>
-      <line x1="180" y1="12" x2="180" y2="28" stroke="#3b82f6" stroke-width="1"/>
-      <line x1="200" y1="12" x2="200" y2="28" stroke="#3b82f6" stroke-width="1"/>
-      <line x1="720" y1="12" x2="720" y2="28" stroke="#3b82f6" stroke-width="1"/>
-      <line x1="740" y1="12" x2="740" y2="28" stroke="#3b82f6" stroke-width="1"/>
-      <line x1="760" y1="12" x2="760" y2="28" stroke="#3b82f6" stroke-width="1"/>
-
-      <text x="450" y="24" font-family="'Segoe UI', sans-serif" font-size="8.8" font-weight="bold" fill="#1e40af" text-anchor="middle">
-        79 canaux de 1 MHz (2 402 à 2 480 MHz) &bull; Sauts de fréquence AFH à 1 600 sauts / s
-      </text>
-    </g>
-
-    <!-- AXE FREQUENCE COMMUN EN BAS -->
-    <g transform="translate(0, 215)">
-      <line x1="80" y1="10" x2="810" y2="10" stroke="#475569" stroke-width="1.8"/>
-      <polygon points="810,7 820,10 810,13" fill="#475569"/>
-      <text x="826" y="14" font-family="'Segoe UI', sans-serif" font-size="9.5" font-weight="bold" fill="#334155">f (MHz)</text>
-
-      <!-- Ticks majeurs -->
-      <line x1="105" y1="5" x2="105" y2="15" stroke="#475569" stroke-width="1.5"/>
-      <text x="105" y="28" font-family="Consolas, monospace" font-size="8.5" fill="#475569" text-anchor="middle">2400</text>
-
-      <line x1="170" y1="5" x2="170" y2="15" stroke="#0284c7" stroke-width="1.5"/>
-      <text x="170" y="28" font-family="Consolas, monospace" font-size="8.5" font-weight="bold" fill="#0369a1" text-anchor="middle">2412</text>
-
-      <line x1="317" y1="5" x2="317" y2="15" stroke="#16a34a" stroke-width="1.5"/>
-      <text x="317" y="28" font-family="Consolas, monospace" font-size="8.5" font-weight="bold" fill="#15803d" text-anchor="middle">2426 (CH38)</text>
-
-      <line x1="420" y1="5" x2="420" y2="15" stroke="#0369a1" stroke-width="1.5"/>
-      <text x="420" y="28" font-family="Consolas, monospace" font-size="8.5" font-weight="bold" fill="#0369a1" text-anchor="middle">2437</text>
-
-      <line x1="670" y1="5" x2="670" y2="15" stroke="#0284c7" stroke-width="1.5"/>
-      <text x="670" y="28" font-family="Consolas, monospace" font-size="8.5" font-weight="bold" fill="#0369a1" text-anchor="middle">2462</text>
-
-      <line x1="762" y1="5" x2="762" y2="15" stroke="#16a34a" stroke-width="1.5"/>
-      <text x="762" y="28" font-family="Consolas, monospace" font-size="8.5" font-weight="bold" fill="#15803d" text-anchor="middle">2480</text>
-
-      <line x1="795" y1="5" x2="795" y2="15" stroke="#475569" stroke-width="1.5"/>
-      <text x="795" y="28" font-family="Consolas, monospace" font-size="8.5" fill="#475569" text-anchor="middle">2483,5</text>
-    </g>
-  </g>
-</svg>
-    <div class="figure-caption">Figure 1 : Répartition fréquentielle comparée en bande Sub-GHz 868 MHz (LoRa) et bande 2,4 GHz (Wi-Fi, Bluetooth Classic et BLE).</div>
+    <img src="images/comparatif_wifi_ble_lora.jpg" alt="Comparatif Wi-Fi, Bluetooth Low Energy, LoRa" style="max-width: 540px; width: 100%; height: auto; border-radius: 6px; margin: 0 auto; display: block;" />
+    <div class="figure-caption">Figure 1 : Comparatif des technologies IoT (Wi-Fi, Bluetooth Low Energy, LoRa) selon la portée d'action et le profil de consommation énergétique.</div>
   </div>
 
   <h3>1.2. Types d'Antennes en TP &amp; Comportement Pratique face aux Obstacles d'Atelier</h3>
