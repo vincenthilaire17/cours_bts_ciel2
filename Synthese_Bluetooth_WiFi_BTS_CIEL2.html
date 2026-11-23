@@ -4,7 +4,7 @@
   <meta charset="utf-8" />
   <meta name="generator" content="BTS CIEL - Vincent Hilaire" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes" />
-  <title>Synthèse B.O. : Bluetooth, Wi-Fi & Cybersécurité - BTS CIEL 2e Année</title>
+  <title>Synthèse d'Activités Pratiques STI : Communications Sans Fil pour Capteurs IoT – BTS CIEL Option B</title>
   
   <style>
     @page {
@@ -20,7 +20,7 @@
     
     body {
       font-family: 'Segoe UI', -apple-system, BlinkMacSystemFont, Roboto, Helvetica, Arial, sans-serif;
-      line-height: 1.52;
+      line-height: 1.54;
       color: #1e293b;
       max-width: 980px;
       margin: 0 auto;
@@ -45,18 +45,18 @@
       body {
         background-color: transparent;
         color: #000000;
-        font-size: 9.3pt;
+        font-size: 9.2pt;
         max-width: 100%;
         padding: 0;
         box-shadow: none;
       }
       p, h2, h3 { orphans: 3; widows: 3; }
       h2, h3, h4 { page-break-after: avoid; }
-      pre, blockquote, table, .figure-box, .step-box, .formula-box { page-break-inside: avoid; }
+      pre, blockquote, table, .figure-box, .step-box, .formula-box, .exercise-card { page-break-inside: avoid; }
       .page-break { page-break-before: always; }
       .no-print { display: none !important; }
       a { color: #000000; text-decoration: none; }
-      .badge-primary, .badge-alert, .badge-success, .badge-warning, .badge-purple, .badge-cyan {
+      .badge-primary, .badge-alert, .badge-success, .badge-warning, .badge-purple, .badge-cyan, .badge-orange {
         border: 1px solid #64748b !important;
         color: #000000 !important;
         background: #f1f5f9 !important;
@@ -71,8 +71,8 @@
     }
     
     .super-title {
-      font-size: 9.5pt;
-      color: #475569;
+      font-size: 9pt;
+      color: #0284c7;
       font-weight: 700;
       text-transform: uppercase;
       letter-spacing: 1.5px;
@@ -85,10 +85,11 @@
       margin: 0.3em 0;
       letter-spacing: -0.5px;
       font-weight: 800;
+      line-height: 1.25;
     }
     
     .subtitle {
-      font-size: 11pt;
+      font-size: 10.5pt;
       color: #334155;
       margin-bottom: 14px;
       font-weight: 500;
@@ -96,11 +97,11 @@
     
     .meta-badge {
       display: inline-block;
-      font-size: 8pt;
+      font-size: 7.8pt;
       font-weight: 600;
       padding: 3px 9px;
       border-radius: 14px;
-      margin: 2px 4px;
+      margin: 2px 3px;
       text-transform: uppercase;
       letter-spacing: 0.5px;
     }
@@ -111,12 +112,13 @@
     .badge-warning { background: #fef3c7; color: #92400e; border: 1px solid #fcd34d; }
     .badge-purple  { background: #f3e8ff; color: #6b21a8; border: 1px solid #d8b4fe; }
     .badge-cyan    { background: #e0f2fe; color: #0369a1; border: 1px solid #7dd3fc; }
+    .badge-orange  { background: #ffedd5; color: #c2410c; border: 1px solid #fdba74; }
     .badge-slate   { background: #f1f5f9; color: #334155; border: 1px solid #cbd5e1; }
     
     h2 {
       font-size: 13.5pt;
       color: #0b3c5d;
-      margin-top: 30px;
+      margin-top: 32px;
       margin-bottom: 12px;
       border-bottom: 2px solid #cbd5e1;
       padding-bottom: 6px;
@@ -128,17 +130,18 @@
     h3 {
       font-size: 11pt;
       color: #1e3a8a;
-      margin-top: 20px;
+      margin-top: 22px;
       margin-bottom: 8px;
-      border-left: 4px solid #3b82f6;
+      border-left: 4px solid #0284c7;
       padding-left: 10px;
     }
     
     h4 {
       font-size: 9.8pt;
       color: #0369a1;
-      margin-top: 14px;
+      margin-top: 15px;
       margin-bottom: 6px;
+      font-weight: 700;
     }
     
     p {
@@ -152,21 +155,21 @@
     }
     
     li {
-      margin-bottom: 0.3em;
+      margin-bottom: 0.35em;
     }
     
     table {
       border-collapse: collapse;
       width: 100%;
       margin: 14px 0;
-      font-size: 8.8pt;
+      font-size: 8.6pt;
       background-color: #ffffff;
-      box-shadow: 0 1px 3px rgba(0,0,0,0.04);
+      box-shadow: 0 1px 3px rgba(0,0,0,0.03);
     }
     
     th, td {
       border: 1px solid #cbd5e1;
-      padding: 7px 10px;
+      padding: 7px 9px;
       text-align: left;
       vertical-align: middle;
     }
@@ -185,7 +188,7 @@
       border-radius: 6px;
       padding: 10px 14px;
       margin: 14px 0;
-      font-size: 9pt;
+      font-size: 8.9pt;
       border-left: 4.5px solid;
     }
     
@@ -193,6 +196,7 @@
     .callout-warning { background-color: #fffbeb; border-color: #f59e0b; color: #92400e; }
     .callout-danger  { background-color: #fef2f2; border-color: #ef4444; color: #991b1b; }
     .callout-success { background-color: #f0fdf4; border-color: #22c55e; color: #166534; }
+    .callout-purple  { background-color: #f5f3ff; border-color: #7c3aed; color: #5b21b6; }
     
     .callout-title {
       font-weight: 700;
@@ -208,7 +212,7 @@
       border: 1px solid #334155;
       border-radius: 6px;
       padding: 11px 14px;
-      font-size: 8.4pt;
+      font-size: 8.3pt;
       line-height: 1.45;
       overflow-x: auto;
       font-family: Consolas, 'Courier New', Monaco, monospace;
@@ -239,13 +243,13 @@
       border-radius: 6px;
       padding: 8px 14px;
       margin: 10px 0;
-      font-family: 'Cambria Math', 'Times New Roman', Georgia, serif;
-      font-size: 10pt;
+      font-size: 9.2pt;
       display: flex;
       align-items: center;
       justify-content: center;
-      gap: 8px;
+      gap: 12px;
       color: #0f172a;
+      flex-wrap: wrap;
     }
     
     .frac {
@@ -270,7 +274,7 @@
       border: 1.5px solid #cbd5e1;
       border-radius: 8px;
       padding: 16px 20px;
-      margin: 20px 0;
+      margin: 22px 0;
       background: #ffffff;
       box-shadow: 0 2px 6px rgba(0,0,0,0.03);
     }
@@ -282,6 +286,8 @@
       border-bottom: 2px solid #e2e8f0;
       padding-bottom: 8px;
       margin-bottom: 12px;
+      flex-wrap: wrap;
+      gap: 8px;
     }
     
     .exercise-title {
@@ -331,7 +337,7 @@
       padding: 8px 16px;
       border-radius: 6px;
       font-weight: 600;
-      font-size: 9pt;
+      font-size: 8.8pt;
       cursor: pointer;
       display: inline-flex;
       align-items: center;
@@ -339,18 +345,13 @@
       transition: background 0.2s;
     }
     
-    .btn:hover {
-      background-color: #08293f;
-    }
+    .btn:hover { background-color: #08293f; }
     
     .btn-secondary {
       background-color: #e2e8f0;
       color: #1e293b;
     }
-    
-    .btn-secondary:hover {
-      background-color: #cbd5e1;
-    }
+    .btn-secondary:hover { background-color: #cbd5e1; }
     
     .figure-box {
       margin: 16px 0;
@@ -362,464 +363,1540 @@
     }
     
     .figure-caption {
-      font-size: 8.5pt;
+      font-size: 8.4pt;
       color: #475569;
       margin-top: 6px;
       font-style: italic;
     }
   </style>
+  
+  <script>
+    function toggleSolutions() {
+      const solutions = document.querySelectorAll('.solution-box');
+      const btn = document.getElementById('toggleSolutionsBtn');
+      if (solutions.length === 0) return;
+      const isHidden = solutions[0].style.display === 'none';
+      solutions.forEach(sol => {
+        sol.style.display = isHidden ? 'block' : 'none';
+      });
+      btn.innerText = isHidden ? 'Masquer les Corrigés Techniques' : 'Afficher les Corrigés Techniques';
+    }
+  </script>
 </head>
 <body>
 
-  <!-- BARRE D'ACTIONS UTILISATEUR (NON IMPRIMÉE) -->
+  <!-- BARRE D'ACTIONS RAPIDES -->
   <div class="btn-bar no-print">
-    <div>
-      <span style="font-weight: 700; color: #0b3c5d; font-size: 9.5pt;">BTS CIEL 2e Année</span>
-      <span style="color: #64748b; font-size: 9pt;"> | Document Synthèse & Exercices</span>
+    <div style="display: flex; gap: 8px; align-items: center;">
+      <button class="btn" onclick="window.print()">Imprimer en PDF (A4)</button>
+      <button id="toggleSolutionsBtn" class="btn btn-secondary" onclick="toggleSolutions()">Masquer les Corrigés Techniques</button>
     </div>
-    <div style="display: flex; gap: 8px;">
-      <button class="btn btn-secondary" onclick="toggleSolutions()">👁️ Afficher / Masquer Corrigés</button>
-      <button class="btn" onclick="window.print()">🖨️ Imprimer / Exporter en PDF</button>
+    <div>
+      <span class="meta-badge badge-primary">BTS CIEL 2</span>
+      <span class="meta-badge badge-cyan">Option B : Électronique &amp; Réseaux</span>
+      <span class="meta-badge badge-purple">Activités Pratiques STI</span>
     </div>
   </div>
 
   <header>
-    <div class="super-title">Brevet de Technicien Supérieur • Cybersécurité, Informatique & Réseaux, Électronique</div>
-    <h1>Synthèse B.O. : Bluetooth, Wi-Fi & Cybersécurité</h1>
-    <div class="subtitle">
-      Référentiel National (2ᵉ Année) • Compétences C04, C05, C06, C09, C10 • Travaux Pratiques & Épreuves E4 / E5 / E6
-    </div>
+    <div class="super-title">BTS CIEL &bull; Option B : Électronique et Réseaux &bull; Enseignement Professionnel STI</div>
+    <h1>Synthèse d'Activités Pratiques : Communications Sans Fil pour Capteurs IoT</h1>
+    <div class="subtitle">Bilan Expérimental &amp; Bureau d'Études : Wi-Fi, Bluetooth Classic, BLE, LoRa P2P &amp; LoRaWAN<br>Architectures Réseaux, Trames de Capteurs, Mesures de Consommation &amp; Qualification du Signal</div>
     <div>
-      <span class="meta-badge badge-primary">BTS CIEL (IR / ER)</span>
-      <span class="meta-badge badge-cyan">WPAN Bluetooth SPP</span>
-      <span class="meta-badge badge-purple">WLAN Wi-Fi 802.11 STA/AP</span>
-      <span class="meta-badge badge-alert">Sécurité TLS & Brute-Force</span>
-      <span class="meta-badge badge-success">Instrumentation Digilent AD3</span>
-      <span class="meta-badge badge-slate">Analyse Wireshark</span>
+      <span class="meta-badge badge-primary">Supports TP : ESP32-S3, Pico W, LoRa SX1262</span>
+      <span class="meta-badge badge-cyan">Mesures : Digilent AD3, nRF Connect, Wireshark</span>
+      <span class="meta-badge badge-purple">Réseaux : AP, STA, Piconet, BLE GATT, LoRa P2P, Mesh</span>
+      <span class="meta-badge badge-success">Compétences C04, C05, C06, C09, C10</span>
     </div>
   </header>
 
   <!-- ========================================================================= -->
-  <!-- 1. CADRE DU REFERENTIEL DU B.O.                                           -->
+  <!-- 1. FREQUENCES, ANTENNES & COMPORTEMENT EN ATELIER (ISM 868 MHz vs 2.4 GHz) -->
   <!-- ========================================================================= -->
-  <h2>1. Cadre du Référentiel National (B.O. BTS CIEL)</h2>
-  
-  <p>En deuxième année de BTS CIEL, l'enseignement professionnel décloisonne les télécommunications sans fil et la cybersécurité. Les activités menées sur plateformes de prototypage (<strong>Raspberry Pi Pico 2 W</strong>, <strong>Seeed Studio XIAO ESP32-S3</strong>, <strong>Arduino Nano</strong>) et bancs d'instrumentation (<strong>Digilent Analog Discovery 3</strong>, <strong>Wireshark</strong>) mobilisent cinq compétences fondamentales :</p>
+  <h2>1. Fréquences, Antennes &amp; Comportement en Atelier (Bandes ISM 868 MHz vs 2,4 GHz)</h2>
 
-  <table>
-    <thead>
-      <tr>
-        <th style="width: 14%;">Compétence</th>
-        <th style="width: 36%;">Intitulé du B.O.</th>
-        <th style="width: 50%;">Applications concrètes en TP & Évaluations</th>
-      </tr>
-    </thead>
-    <tbody>
-      <tr>
-        <td><strong>C04</strong></td>
-        <td><strong>Analyser une structure matérielle et logicielle</strong></td>
-        <td>
-          • Décodage des chronogrammes de liaisons séries asynchrones (UART) et synchrones (I²C).<br>
-          • Analyse de la pile Bluetooth classique BR/EDR (RFCOMM, L2CAP) et commandes AT.<br>
-          • Décorticage du modèle en couches OSI / TCP-IP, analyse des en-têtes Ethernet, IP, TCP, UDP.
-        </td>
-      </tr>
-      <tr>
-        <td><strong>C05</strong></td>
-        <td><strong>Concevoir une structure matérielle et logicielle</strong></td>
-        <td>
-          • Implémentation d'un routage de trames non-bloquant avec buffer circulaire (Ring Buffer FIFO).<br>
-          • Machine à états finis (FSM) pour le décodage protocolaire avec contrôle d'intégrité (Checksum XOR).<br>
-          • Programmation de clients/serveurs TCP/UDP et requêtes REST HTTP/HTTPS avec <code>WiFiClientSecure</code>.
-        </td>
-      </tr>
-      <tr>
-        <td><strong>C06</strong></td>
-        <td><strong>Valider une structure matérielle et logicielle</strong></td>
-        <td>
-          • Métrologie avec analyseur logique <strong>Digilent Analog Discovery 3 (WaveForms)</strong> : temps bit, jitter, seuils LVTTL 3.3V.<br>
-          • Capture et audit des paquets avec <strong>Wireshark</strong> : handshake TCP, échange DHCP DORA, ARP.<br>
-          • Mesure de débit utile et de portée radio (RSSI en dBm).
-        </td>
-      </tr>
-      <tr>
-        <td><strong>C09</strong></td>
-        <td><strong>Installer un système électronique ou informatique</strong></td>
-        <td>
-          • Câblage de modules Grove (Bluetooth, capteurs, afficheurs) sur Shield et bus partagés.<br>
-          • Raccordement des sondes de mesure en respectant impérativement la masse commune (GND).<br>
-          • Enrôlement radio : association Wi-Fi STA, appairage Bluetooth (port COM virtuel).
-        </td>
-      </tr>
-      <tr>
-        <td><strong>C10</strong></td>
-        <td><strong>Exploiter un réseau informatique</strong></td>
-        <td>
-          • Audit de sécurité : identification des flux réseau en clair (HTTP, Telnet) et interception de secrets.<br>
-          • Analyse des vulnérabilités de l'appairage Bluetooth d'ancienne génération (Legacy PIN brute-force).<br>
-          • Vérification du chiffrement TLS (port 443) et contrôle des certificats d'authenticité.
-        </td>
-      </tr>
-    </tbody>
-  </table>
+  <h3>1.1. Bandes Fréquentielles Utilisées en Activités Pratiques (868 MHz vs 2,4 GHz)</h3>
+  <p>Lors des activités pratiques d'électronique et réseaux (sur cartes <strong>Seeed Studio XIAO ESP32-S3</strong>, <strong>Raspberry Pi Pico W</strong> ou modules <strong>LoRa SX1262 / SX1276</strong>), le choix de la fréquence conditionne directement la portée, l'encombrement de l'antenne et la capacité à traverser les locaux industriels. Deux bandes sans licence (<strong>bandes ISM - Industriel, Scientifique et Médical</strong>) sont exploitées :</p>
 
-  <!-- ========================================================================= -->
-  <!-- 2. SYNTHESE BLUETOOTH                                                     -->
-  <!-- ========================================================================= -->
-  <h2>2. Synthèse Technologique : Bluetooth (BR/EDR & SPP)</h2>
-
-  <h3>2.1. Architecture Matérielle & Rôle des Liaisons Séries</h3>
-  <p>Dans un système communicant basé sur un microcontrôleur moderne (ex. RP2350 sur Raspberry Pi Pico 2 W), la séparation des canaux de communication est indispensable pour la supervision et la robustesse :</p>
   <ul>
-    <li><strong>UART0 (GP0/GP1 - <code>Serial1</code>) :</strong> Réservé au dialogue avec les périphériques locaux (ex: clavier de saisie série).</li>
-    <li><strong>UART1 (GP4/GP5 - <code>Serial2</code>) :</strong> Relié au module émetteur-récepteur radio Bluetooth (Grove Bluetooth v3.0 / HC-05).</li>
-    <li><strong>USB CDC Natif (<code>Serial</code>) :</strong> Liaison virtuelle directe vers la console de débogage du PC de développement (115200 bauds).</li>
+    <li><strong>Bande Sub-GHz 868 MHz (Europe - Norme ETSI EN 300 220) :</strong> Spectre dédié aux liaisons bas débit et très longue portée (LoRa, Sigfox, wM-Bus). Elle s'étend de <strong>863 à 870 MHz</strong>. Les canaux d'émission standards utilisés en TP sont <code>868.1 MHz</code>, <code>868.3 MHz</code> et <code>868.5 MHz</code> (largeur de canal <i>BW</i> = 125 kHz). La puissance maximale autorisée est de <strong>+14 dBm (25 mW PIRE)</strong>, assortie d'une contrainte réglementaire obligatoire de <strong>Duty Cycle de 1%</strong> (soit au maximum 36 secondes d'émission cumulée par heure pour ne pas saturer la fréquence).</li>
+    <li><strong>Bande 2,4 GHz ISM (Mondiale - 2 400 à 2 483,5 MHz) :</strong> Spectre universel partagé par le Wi-Fi (IEEE 802.11), le Bluetooth Classic (IEEE 802.15.1) et le BLE (Bluetooth Low Energy). Puissance d'émission jusqu'à <strong>+20 dBm (100 mW PIRE)</strong> en Wi-Fi et <strong>+10 dBm (10 mW)</strong> en BLE. Il n'y a pas de contrainte de Duty Cycle, mais cette bande est saturée en atelier par les bornes réseau, smartphones et machines industrielles.</li>
   </ul>
+
+  <!-- FIGURE 1 : SVG SPECTRES FREQUENTIELS COMPARATIFS -->
+  <div class="figure-box">
+    <svg viewBox="0 0 940 450" width="100%" height="auto" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <!-- Dégradés doux professionnels -->
+    <linearGradient id="gradWifi1" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" stop-color="#0284c7" stop-opacity="0.75"/>
+      <stop offset="100%" stop-color="#0284c7" stop-opacity="0.15"/>
+    </linearGradient>
+    <linearGradient id="gradWifi6" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" stop-color="#0369a1" stop-opacity="0.75"/>
+      <stop offset="100%" stop-color="#0369a1" stop-opacity="0.15"/>
+    </linearGradient>
+    <linearGradient id="gradWifi11" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" stop-color="#0284c7" stop-opacity="0.75"/>
+      <stop offset="100%" stop-color="#0284c7" stop-opacity="0.15"/>
+    </linearGradient>
+    <linearGradient id="gradLora" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#ea580c"/>
+      <stop offset="100%" stop-color="#c2410c"/>
+    </linearGradient>
+  </defs>
+
+  <!-- FOND GENERAL BLANC AVEC BORDURE LEGERE -->
+  <rect x="0" y="0" width="940" height="450" rx="10" fill="#ffffff" stroke="#cbd5e1" stroke-width="1.5"/>
+
+  <!-- TITRE GLOBAL DU DIAGRAMME -->
+  <text x="470" y="26" font-family="'Segoe UI', Roboto, sans-serif" font-size="13.5" font-weight="800" fill="#0b3c5d" text-anchor="middle" letter-spacing="0.5">
+    RÉPARTITION SPECTRALE COMPARÉE DES PROTOCOLES IOT (868 MHz vs 2,4 GHz)
+  </text>
+
+  <!-- ========================================================================= -->
+  <!-- BLOC 1 : BANDE SUB-GHZ 868 MHz (EUROPE)                                   -->
+  <!-- ========================================================================= -->
+  <g transform="translate(25, 42)">
+    <!-- Cadre conteneur -->
+    <rect x="0" y="0" width="890" height="120" rx="6" fill="#fff7ed" stroke="#fdba74" stroke-width="1.2"/>
+    <rect x="0" y="0" width="890" height="28" rx="6" fill="#ffedd5"/>
+    <text x="15" y="19" font-family="'Segoe UI', sans-serif" font-size="11" font-weight="bold" fill="#9a3412">
+      1. BANDE SUB-GHz ISM EUROPE (863 - 870 MHz) &bull; Longue portée &bull; Réglementation ETSI
+    </text>
+
+    <!-- Axe Fréquence -->
+    <line x1="40" y1="80" x2="840" y2="80" stroke="#78716c" stroke-width="2"/>
+    <polygon points="840,76 850,80 840,84" fill="#78716c"/>
+    <text x="856" y="84" font-family="'Segoe UI', sans-serif" font-size="9.5" font-weight="bold" fill="#57534e">f (MHz)</text>
+
+    <!-- Bornes de l'axe -->
+    <line x1="60" y1="75" x2="60" y2="85" stroke="#78716c" stroke-width="1.5"/>
+    <text x="60" y="98" font-family="Consolas, monospace" font-size="9.5" fill="#78716c" text-anchor="middle">863,0 MHz</text>
+
+    <line x1="820" y1="75" x2="820" y2="85" stroke="#78716c" stroke-width="1.5"/>
+    <text x="820" y="98" font-family="Consolas, monospace" font-size="9.5" fill="#78716c" text-anchor="middle">870,0 MHz</text>
+
+    <!-- Zone Sous-bande g1 (868,0 à 868,6 MHz) -->
+    <rect x="340" y="44" width="220" height="36" fill="#fed7aa" rx="4" stroke="#ea580c" stroke-width="1"/>
+    
+    <!-- 3 Canaux LoRa (125 kHz chacun) -->
+    <rect x="360" y="47" width="50" height="30" fill="url(#gradLora)" rx="3"/>
+    <text x="385" y="66" font-family="Consolas, monospace" font-size="8.5" font-weight="bold" fill="#ffffff" text-anchor="middle">868,1</text>
+
+    <rect x="425" y="47" width="50" height="30" fill="url(#gradLora)" rx="3"/>
+    <text x="450" y="66" font-family="Consolas, monospace" font-size="8.5" font-weight="bold" fill="#ffffff" text-anchor="middle">868,3</text>
+
+    <rect x="490" y="47" width="50" height="30" fill="url(#gradLora)" rx="3"/>
+    <text x="515" y="66" font-family="Consolas, monospace" font-size="8.5" font-weight="bold" fill="#ffffff" text-anchor="middle">868,5</text>
+
+    <!-- Légende sous-bande g1 -->
+    <text x="450" y="40" font-family="'Segoe UI', sans-serif" font-size="8.5" font-weight="bold" fill="#c2410c" text-anchor="middle">
+      Sous-bande g1 (868,0 à 868,6 MHz) &bull; 3 Canaux LoRa par défaut (BW = 125 kHz)
+    </text>
+    <text x="450" y="98" font-family="'Segoe UI', sans-serif" font-size="8.5" fill="#9a3412" text-anchor="middle">
+      Puissance max : +14 dBm (25 mW) &bull; <b>Duty Cycle légal : 1%</b> (max 36 s / heure)
+    </text>
+
+    <!-- Canal RX2 / Alertes (869,525 MHz) -->
+    <rect x="670" y="47" width="70" height="30" fill="#ea580c" rx="3" stroke="#9a3412"/>
+    <text x="705" y="66" font-family="Consolas, monospace" font-size="8.5" font-weight="bold" fill="#ffffff" text-anchor="middle">869,525</text>
+    <text x="705" y="40" font-family="'Segoe UI', sans-serif" font-size="8" font-weight="bold" fill="#9a3412" text-anchor="middle">Canal RX2 (+27 dBm)</text>
+    <text x="705" y="98" font-family="'Segoe UI', sans-serif" font-size="8" fill="#78716c" text-anchor="middle">Duty Cycle : 10%</text>
+  </g>
+
+  <!-- ========================================================================= -->
+  <!-- BLOC 2 : BANDE 2,4 GHz ISM (WI-FI, BLE & BLUETOOTH CLASSIC)               -->
+  <!-- ========================================================================= -->
+  <g transform="translate(25, 175)">
+    <!-- Cadre conteneur -->
+    <rect x="0" y="0" width="890" height="260" rx="6" fill="#f8fafc" stroke="#94a3b8" stroke-width="1.2"/>
+    <rect x="0" y="0" width="890" height="28" rx="6" fill="#e2e8f0"/>
+    <text x="15" y="19" font-family="'Segoe UI', sans-serif" font-size="11" font-weight="bold" fill="#0f172a">
+      2. BANDE 2,4 GHz ISM (2 400 - 2 483,5 MHz) &bull; Cohabitation Wi-Fi, BLE &amp; Bluetooth Classic
+    </text>
+
+    <!-- VOIE A : WI-FI (CANAUX 1, 6, 11 NON RECOUVRANTS) -->
+    <g transform="translate(0, 32)">
+      <text x="15" y="32" font-family="'Segoe UI', sans-serif" font-size="9.5" font-weight="bold" fill="#0369a1">Wi-Fi (802.11 b/g/n) :</text>
+      <text x="15" y="46" font-family="'Segoe UI', sans-serif" font-size="8" fill="#64748b">3 canaux de 20 MHz</text>
+
+      <!-- Dôme Canal 1 (2412 MHz : 2401 à 2423) -->
+      <path d="M 125,55 C 150,8 190,8 215,55 Z" fill="url(#gradWifi1)" stroke="#0284c7" stroke-width="1.8"/>
+      <text x="170" y="32" font-family="'Segoe UI', sans-serif" font-size="10" font-weight="bold" fill="#0369a1" text-anchor="middle">Canal 1</text>
+      <text x="170" y="46" font-family="Consolas, monospace" font-size="8.5" fill="#0c4a6e" text-anchor="middle">2 412 MHz</text>
+
+      <!-- Dôme Canal 6 (2437 MHz : 2426 à 2448) -->
+      <path d="M 375,55 C 400,8 440,8 465,55 Z" fill="url(#gradWifi6)" stroke="#0369a1" stroke-width="1.8"/>
+      <text x="420" y="32" font-family="'Segoe UI', sans-serif" font-size="10" font-weight="bold" fill="#0369a1" text-anchor="middle">Canal 6</text>
+      <text x="420" y="46" font-family="Consolas, monospace" font-size="8.5" fill="#0c4a6e" text-anchor="middle">2 437 MHz</text>
+
+      <!-- Dôme Canal 11 (2462 MHz : 2451 à 2473) -->
+      <path d="M 625,55 C 650,8 690,8 715,55 Z" fill="url(#gradWifi11)" stroke="#0284c7" stroke-width="1.8"/>
+      <text x="670" y="32" font-family="'Segoe UI', sans-serif" font-size="10" font-weight="bold" fill="#0369a1" text-anchor="middle">Canal 11</text>
+      <text x="670" y="46" font-family="Consolas, monospace" font-size="8.5" fill="#0c4a6e" text-anchor="middle">2 462 MHz</text>
+    </g>
+
+    <!-- VOIE B : BLE (40 CANAUX DONT 3 D'ANNONCES PRIVILEGIES) -->
+    <g transform="translate(0, 105)">
+      <text x="15" y="24" font-family="'Segoe UI', sans-serif" font-size="9.5" font-weight="bold" fill="#15803d">BLE (Bluetooth LE) :</text>
+      <text x="15" y="38" font-family="'Segoe UI', sans-serif" font-size="8" fill="#64748b">40 canaux de 2 MHz</text>
+
+      <!-- Barre de fond représentant les canaux de données -->
+      <rect x="110" y="16" width="680" height="18" fill="#e2e8f0" rx="3" stroke="#cbd5e1"/>
+      <text x="310" y="29" font-family="'Segoe UI', sans-serif" font-size="8" fill="#64748b" text-anchor="middle">37 canaux de données GATT (espacés de 2 MHz)</text>
+      <text x="550" y="29" font-family="'Segoe UI', sans-serif" font-size="8" fill="#64748b" text-anchor="middle">Canaux 0 à 36</text>
+
+      <!-- Canal d'annonce 37 (2402 MHz) : Tout à gauche, avant Wi-Fi 1 -->
+      <rect x="115" y="8" width="45" height="34" fill="#16a34a" rx="4" stroke="#14532d" stroke-width="1.2"/>
+      <text x="137" y="22" font-family="Consolas, monospace" font-size="8.5" font-weight="bold" fill="#ffffff" text-anchor="middle">CH 37</text>
+      <text x="137" y="35" font-family="Consolas, monospace" font-size="7.5" fill="#dcfce7" text-anchor="middle">2402</text>
+
+      <!-- Canal d'annonce 38 (2426 MHz) : Dans l'interstice libre entre Wi-Fi 1 et Wi-Fi 6 ! -->
+      <rect x="295" y="8" width="45" height="34" fill="#16a34a" rx="4" stroke="#14532d" stroke-width="1.2"/>
+      <text x="317" y="22" font-family="Consolas, monospace" font-size="8.5" font-weight="bold" fill="#ffffff" text-anchor="middle">CH 38</text>
+      <text x="317" y="35" font-family="Consolas, monospace" font-size="7.5" fill="#dcfce7" text-anchor="middle">2426</text>
+
+      <!-- Canal d'annonce 39 (2480 MHz) : Tout à droite, après Wi-Fi 11 -->
+      <rect x="740" y="8" width="45" height="34" fill="#16a34a" rx="4" stroke="#14532d" stroke-width="1.2"/>
+      <text x="762" y="22" font-family="Consolas, monospace" font-size="8.5" font-weight="bold" fill="#ffffff" text-anchor="middle">CH 39</text>
+      <text x="762" y="35" font-family="Consolas, monospace" font-size="7.5" fill="#dcfce7" text-anchor="middle">2480</text>
+    </g>
+
+    <!-- VOIE C : BLUETOOTH CLASSIC (79 CANAUX DE 1 MHz AVEC AFH) -->
+    <g transform="translate(0, 168)">
+      <text x="15" y="20" font-family="'Segoe UI', sans-serif" font-size="9.5" font-weight="bold" fill="#1d4ed8">Bluetooth Classic :</text>
+      <text x="15" y="34" font-family="'Segoe UI', sans-serif" font-size="8" fill="#64748b">79 canaux de 1 MHz</text>
+
+      <!-- Trame de canaux FHSS -->
+      <rect x="110" y="8" width="680" height="24" fill="#dbeafe" rx="4" stroke="#2563eb" stroke-width="1"/>
+      <!-- Petits tirets représentant les canaux de 1 MHz -->
+      <line x1="120" y1="12" x2="120" y2="28" stroke="#3b82f6" stroke-width="1"/>
+      <line x1="140" y1="12" x2="140" y2="28" stroke="#3b82f6" stroke-width="1"/>
+      <line x1="160" y1="12" x2="160" y2="28" stroke="#3b82f6" stroke-width="1"/>
+      <line x1="180" y1="12" x2="180" y2="28" stroke="#3b82f6" stroke-width="1"/>
+      <line x1="200" y1="12" x2="200" y2="28" stroke="#3b82f6" stroke-width="1"/>
+      <line x1="720" y1="12" x2="720" y2="28" stroke="#3b82f6" stroke-width="1"/>
+      <line x1="740" y1="12" x2="740" y2="28" stroke="#3b82f6" stroke-width="1"/>
+      <line x1="760" y1="12" x2="760" y2="28" stroke="#3b82f6" stroke-width="1"/>
+
+      <text x="450" y="24" font-family="'Segoe UI', sans-serif" font-size="8.8" font-weight="bold" fill="#1e40af" text-anchor="middle">
+        79 canaux de 1 MHz (2 402 à 2 480 MHz) &bull; Sauts de fréquence AFH à 1 600 sauts / s
+      </text>
+    </g>
+
+    <!-- AXE FREQUENCE COMMUN EN BAS -->
+    <g transform="translate(0, 215)">
+      <line x1="80" y1="10" x2="810" y2="10" stroke="#475569" stroke-width="1.8"/>
+      <polygon points="810,7 820,10 810,13" fill="#475569"/>
+      <text x="826" y="14" font-family="'Segoe UI', sans-serif" font-size="9.5" font-weight="bold" fill="#334155">f (MHz)</text>
+
+      <!-- Ticks majeurs -->
+      <line x1="105" y1="5" x2="105" y2="15" stroke="#475569" stroke-width="1.5"/>
+      <text x="105" y="28" font-family="Consolas, monospace" font-size="8.5" fill="#475569" text-anchor="middle">2400</text>
+
+      <line x1="170" y1="5" x2="170" y2="15" stroke="#0284c7" stroke-width="1.5"/>
+      <text x="170" y="28" font-family="Consolas, monospace" font-size="8.5" font-weight="bold" fill="#0369a1" text-anchor="middle">2412</text>
+
+      <line x1="317" y1="5" x2="317" y2="15" stroke="#16a34a" stroke-width="1.5"/>
+      <text x="317" y="28" font-family="Consolas, monospace" font-size="8.5" font-weight="bold" fill="#15803d" text-anchor="middle">2426 (CH38)</text>
+
+      <line x1="420" y1="5" x2="420" y2="15" stroke="#0369a1" stroke-width="1.5"/>
+      <text x="420" y="28" font-family="Consolas, monospace" font-size="8.5" font-weight="bold" fill="#0369a1" text-anchor="middle">2437</text>
+
+      <line x1="670" y1="5" x2="670" y2="15" stroke="#0284c7" stroke-width="1.5"/>
+      <text x="670" y="28" font-family="Consolas, monospace" font-size="8.5" font-weight="bold" fill="#0369a1" text-anchor="middle">2462</text>
+
+      <line x1="762" y1="5" x2="762" y2="15" stroke="#16a34a" stroke-width="1.5"/>
+      <text x="762" y="28" font-family="Consolas, monospace" font-size="8.5" font-weight="bold" fill="#15803d" text-anchor="middle">2480</text>
+
+      <line x1="795" y1="5" x2="795" y2="15" stroke="#475569" stroke-width="1.5"/>
+      <text x="795" y="28" font-family="Consolas, monospace" font-size="8.5" fill="#475569" text-anchor="middle">2483,5</text>
+    </g>
+  </g>
+</svg>
+    <div class="figure-caption">Figure 1 : Répartition fréquentielle comparée en bande Sub-GHz 868 MHz (LoRa) et bande 2,4 GHz (Wi-Fi, Bluetooth Classic et BLE).</div>
+  </div>
+
+  <h3>1.2. Types d'Antennes en TP &amp; Comportement Pratique face aux Obstacles d'Atelier</h3>
+  <p>En travaux pratiques d'électronique communicante, le technicien constate immédiatement deux configurations d'antennes radicalement différentes selon la fréquence :</p>
 
   <div class="callout callout-info">
-    <div class="callout-title">💡 Les Deux Modes Fondamentaux du Module Bluetooth Série</div>
+    <div class="callout-title">Constat Matériel sur les Cartes de TP (ESP32 vs LoRa)</div>
     <ul>
-      <li><strong>Mode Commande AT (LED d'état clignotante) :</strong> Tant qu'aucun terminal n'est connecté par radio, le module interprète les commandes textuelles reçues sur son UART (ex: <code>AT+NAMEPupitre_B1</code>, <code>AT+PIN9876</code>, <code>AT+BAUD?</code>).</li>
-      <li><strong>Mode Données Transparent (LED d'état allumée fixe) :</strong> Dès que l'appairage radio est validé, le module désactive l'interpréteur AT. Tout octet reçu sur l'UART est modulé directement sur l'onde radio (2.4 GHz) vers le terminal distant (et réciproquement).</li>
+      <li><strong>Sur les cartes 2,4 GHz (XIAO ESP32-S3, Raspberry Pi Pico W) :</strong> L'antenne est ultra-compacte, gravée directement en cuivre sur le circuit imprimé sous forme de <strong>piste méandrée (en serpentin d'environ 3 cm)</strong> ou réalisée par un petit composant céramique CMS. Très économique et sans encombrement, son gain est modeste (0 à 2 dBi) et elle est très sensible aux boîtiers métalliques ou à la proximité des doigts.</li>
+      <li><strong>Sur les modules 868 MHz (Semtech SX1262 / SX1276) :</strong> La fréquence étant 3 fois plus basse, l'antenne quart d'onde adaptée mesure environ <strong>8,6 cm</strong>. Elle se présente sous la forme d'un simple <strong>brin filaire droit</strong> soudé sur le plot <code>ANT</code> de la carte, ou d'une <strong>antenne fouet extérieure</strong> vissée sur un connecteur SMA.</li>
     </ul>
   </div>
 
-  <h3>2.2. Le Profil SPP (Serial Port Profile) & Pile Protocolaire</h3>
-  <p>Le profil <strong>SPP</strong> émule une liaison série RS-232 classique à travers le canal radio. Il repose sur le multiplexeur <strong>RFCOMM</strong>, lui-même encapsulé dans la couche <strong>L2CAP</strong> (<em>Logical Link Control and Adaptation Protocol</em>). Sur un système d'exploitation hôte (Windows/Linux/Android), l'appairage SPP instancie un <strong>port COM virtuel sortant</strong> permettant à n'importe quel logiciel applicatif (PuTTY, terminal de supervision, script Python) de communiquer sans modifier son code série.</p>
-
-  <h3>2.3. Métrologie avec l'Analog Discovery 3 (WaveForms)</h3>
-  <p>La validation de la couche physique et liaison fait appel à un analyseur logique configuré en conformité avec la norme UART asynchrone (format 8N1 : 1 Start, 8 Données, Pas de parité, 1 Stop) :</p>
-  
-  <div class="formula-box">
-    <span>Durée d'un bit :</span>
-    <i>T</i><sub>bit</sub> = <span class="frac"><span class="num">1</span><span class="den">Baudrate</span></span>
-    <span>&emsp;|&emsp;Exemple à 38 400 bauds :</span>
-    <i>T</i><sub>bit</sub> = <span class="frac"><span class="num">1</span><span class="den">38 400</span></span> &approx; <strong>26,04 &mu;s</strong>
-  </div>
-
-  <p>Un octet nécessitant 10 bits de transmission (1 bit Start à l'état bas + 8 bits de données LSB en premier + 1 bit Stop à l'état haut), la durée de transmission d'un octet est $T_{\text{octet}} = 10 \times T_{\text{bit}} \approx 260{,}4\ \mu\text{s}$.</p>
-
-  <h3>2.4. Cybersécurité : Audit de l'Appairage Bluetooth Legacy (PIN fixe)</h3>
-  <p>Les modules industriels économiques (HC-05, Grove BT v3.0) utilisent le protocole historique <strong>Legacy Pairing</strong> (&le; Bluetooth 2.0). Deux faiblesses critiques en résultent :</p>
-  <ol>
-    <li><strong>Espace des clés dérisoire :</strong> Un code PIN à 4 chiffres (0000 à 9999) représente $10^4 = 10\,000$ combinaisons possibles (soit seulement <strong>&approx; 13,3 bits d'entropie</strong>).</li>
-    <li><strong>Exposition de l'aléa radio :</strong> Les adresses MAC matérielles (<code>BD_ADDR</code>) et un nombre aléatoire de 128 bits (<code>IN_RAND</code>) sont transmis en clair lors de la négociation.</li>
-    <li><strong>Attaque hors-ligne (Offline Brute-Force) :</strong> Un attaquant muni d'un récepteur radio passif (sniffer Ubertooth / SDR) capture l'échange et fait tourner l'algorithme de dérivation $E_{22}(\text{PIN}, \text{IN\_RAND}, \text{BD\_ADDR})$ sur son processeur/GPU à plusieurs millions d'essais/s, trouvant le PIN en quelques millisecondes.</li>
-  </ol>
-
-  <!-- ========================================================================= -->
-  <!-- 3. SYNTHESE WI-FI & TCP/IP                                                -->
-  <!-- ========================================================================= -->
-  <h2>3. Synthèse Technologique : Wi-Fi (IEEE 802.11) & Pile TCP/IP</h2>
-
-  <h3>3.1. Couche Liaison & Enrôlement Réseau (DHCP / ARP)</h3>
+  <p>Cette différence de fréquence et d'antenne conditionne directement la propagation du signal dans un atelier ou un bâtiment technique :</p>
   <ul>
-    <li><strong>Mode Station (STA) :</strong> Le module (ex: XIAO ESP32-S3 ou Pico W) s'associe à un point d'accès Wi-Fi d'infrastructure.</li>
-    <li><strong>Indicateur RSSI (dBm) :</strong> Valeur négative mesurant la puissance radio reçue. Typiquement : $-45\ \text{dBm}$ (très proche), $-65\ \text{dBm}$ (nominal), $<-80\ \text{dBm}$ (limite de décrochage).</li>
-    <li><strong>Négociation DHCP (Processus DORA en 4 étapes) :</strong>
-      <ol>
-        <li><strong>Discover :</strong> Le client sans IP diffuse un broadcast UDP (port 68 &rarr; 67, IP src <code>0.0.0.0</code>, IP dst <code>255.255.255.255</code>).</li>
-        <li><strong>Offer :</strong> Le serveur DHCP propose un bail IP unitaire.</li>
-        <li><strong>Request :</strong> Le client confirme et demande officiellement l'adresse retenue.</li>
-        <li><strong>Acknowledge (ACK) :</strong> Le serveur valide l'attribution et transmet masque, passerelle et DNS.</li>
-      </ol>
-    </li>
-    <li><strong>Résolution ARP :</strong> Avant d'émettre vers la passerelle par défaut, le microcontrôleur émet une requête ARP broadcast pour lier l'adresse IPv4 de la passerelle à son adresse physique MAC de couche 2.</li>
+    <li><strong>Pourquoi le 2,4 GHz (Wi-Fi / Bluetooth) peine à traverser l'atelier :</strong> L'onde à 2,4 GHz est fortement atténuée par les murs épais et présente une zone d'ombre importante derrière chaque machine. De plus, <strong>l'eau absorbe massivement le 2,4 GHz</strong> : le passage d'une personne dans l'axe de transmission provoque une baisse de <strong>3 à 6 dB</strong> du signal BLE/Wi-Fi. Enfin, les armoires électriques et bardages métalliques agissent comme des cages de Faraday infranchissables.</li>
+    <li><strong>Pourquoi le 868 MHz (LoRa) réussit là où le 2,4 GHz échoue :</strong> L'onde à 868 MHz contourne naturellement les arêtes des machines-outils, les racks de stockage et les piliers d'atelier (phénomène de diffraction). Elle pénètre beaucoup mieux le béton et les cloisons de brique, permettant d'assurer une liaison directe sur plusieurs centaines de mètres ou à travers plusieurs dalles d'étage.</li>
   </ul>
-
-  <h3>3.2. Comparatif de la Couche Transport (L4) : UDP vs TCP</h3>
 
   <table>
     <thead>
       <tr>
-        <th>Caractéristique</th>
-        <th>UDP (User Datagram Protocol)</th>
-        <th>TCP (Transmission Control Protocol)</th>
+        <th style="width: 25%;">Nature de l'Obstacle en Atelier</th>
+        <th style="width: 22%;">Perte Réelle à 868 MHz (LoRa)</th>
+        <th style="width: 22%;">Perte Réelle à 2,4 GHz (Wi-Fi / BLE)</th>
+        <th style="width: 31%;">Action Pratique du Technicien en TP / BE</th>
       </tr>
     </thead>
     <tbody>
       <tr>
-        <td><strong>Mode de connexion</strong></td>
-        <td>Non connecté (émission immédiate)</td>
-        <td>Connecté (Handshake SYN &rarr; SYN-ACK &rarr; ACK)</td>
+        <td><strong>Cloison sèche / Placoplâtre (10 cm)</strong></td>
+        <td>1,5 à 2,5 dB</td>
+        <td>3 à 5 dB</td>
+        <td>Traversée sans difficulté sur 2 à 3 cloisons consécutives.</td>
       </tr>
       <tr>
-        <td><strong>Fiabilité des données</strong></td>
-        <td>Aucune (pas d'acquittement, pertes possibles)</td>
-        <td>Garantie totale (acquittements ACK, retransmissions)</td>
+        <td><strong>Porte en bois standard</strong></td>
+        <td>1 à 2 dB</td>
+        <td>2 à 4 dB</td>
+        <td>Impact négligeable sur la qualité de réception.</td>
       </tr>
       <tr>
-        <td><strong>Contrôle de flux & congestion</strong></td>
-        <td>Aucun</td>
-        <td>Fenêtre glissante (Window Size), régulation dynamique</td>
+        <td><strong>Mur de briques creuses (15 cm)</strong></td>
+        <td>3 à 5 dB</td>
+        <td>6 à 10 dB</td>
+        <td>Le 868 MHz conserve un signal stable ; le Wi-Fi perd une barre de signal.</td>
       </tr>
       <tr>
-        <td><strong>Taille d'en-tête (Overhead)</strong></td>
-        <td><strong>8 octets</strong> seulement</td>
-        <td><strong>20 octets</strong> au minimum (jusqu'à 60 octets)</td>
+        <td><strong>Dalle ou mur en béton armé (20 cm)</strong></td>
+        <td><strong>8 à 12 dB</strong></td>
+        <td><strong>20 à 30 dB</strong></td>
+        <td>Wi-Fi/BLE souvent coupés en direct ; LoRa franchit encore 1 à 2 étages.</td>
       </tr>
       <tr>
-        <td><strong>Domaine d'application</strong></td>
-        <td>Streaming capteur temps réel, audio/vidéo, DNS</td>
-        <td>Téléchargement firmware OTA, requêtes REST, MQTT, HTTP(S)</td>
+        <td><strong>Armoire électrique ou bardage métallique</strong></td>
+        <td><strong>&gt; 25 dB</strong></td>
+        <td><strong>&gt; 35 dB</strong> (Cage de Faraday)</td>
+        <td><strong>Liaison directe impossible :</strong> déporter l'antenne à l'extérieur de l'armoire via câble coaxial SMA, ou ajouter un nœud relais Mesh.</td>
+      </tr>
+      <tr>
+        <td><strong>Passage d'opérateurs / Corps humain</strong></td>
+        <td>&lt; 1,5 dB</td>
+        <td><strong>3 à 6 dB par personne</strong></td>
+        <td>Prévoir impérativement une <strong>marge de sécurité de 10 à 15 dB</strong> sur le récepteur.</td>
       </tr>
     </tbody>
   </table>
 
-  <h3>3.3. Cybersécurité Applicative : HTTP en Clair vs Chiffrement TLS (HTTPS)</h3>
-  <div class="callout callout-danger">
-    <div class="callout-title">⚠️ Vulnérabilité des flux HTTP en clair (Port 80)</div>
-    <p>Lors d'un audit sous Wireshark avec la commande <code>Follow &gt; TCP Stream</code>, une requête HTTP injectée sur le réseau expose l'intégralité de la trame en texte clair : URL, verbes REST, paramètres JSON et en-têtes d'authentification sensibles (<code>Authorization: Bearer [TOKEN]</code>). Tout attaquant situé sur le même réseau Wi-Fi peut usurper l'équipement.</p>
-  </div>
+  <!-- ========================================================================= -->
+  <!-- 2. PANORAMA & DESCRIPTION GENERALE DES PROTOCOLES SANS FIL IOT            -->
+  <!-- ========================================================================= -->
+  <h2>2. Panorama &amp; Description Générale des Protocoles Sans Fil IoT</h2>
 
-  <p><strong>Sécurisation par TLS (Transport Layer Security - Port 443) :</strong></p>
+  <p>Avant de comparer les performances chiffrées et les structures de trames, le technicien supérieur en bureau d'études électronique doit maîtriser la philosophie de conception, l'architecture logicielle et le domaine d'emploi privilégié de chacun des protocoles sans fil majeurs :</p>
+
+  <!-- 2.1. WI-FI -->
+  <h3>2.1. Le Wi-Fi (IEEE 802.11 b/g/n) : Le Réseau Local Sans Fil Haut Débit (WLAN)</h3>
+  <div class="callout callout-info">
+    <div class="callout-title">Origine &amp; Philosophie du Standard Wi-Fi</div>
+    <p>Le Wi-Fi est la déclinaison radiofréquence du réseau local Ethernet filaire (famille des normes IEEE 802). Conçu à l'origine pour interconnecter des ordinateurs, imprimantes et passerelles avec des débits de plusieurs dizaines à centaines de Mbit/s, il intègre nativement la pile protocolaire standard d'Internet (<strong>TCP/IP</strong>).</p>
+  </div>
   <ul>
-    <li>Utilisation de la bibliothèque <strong><code>WiFiClientSecure</code></strong> sur ESP32/Pico W.</li>
-    <li><strong>Handshake TLS :</strong> Authentification du serveur par son certificat numérique X.509 et échange de clés asymétrique (ECDHE) pour négocier une clé secrète éphémère.</li>
-    <li><strong>Chiffrement symétrique :</strong> Chiffrement rapide de tous les segments TCP au moyen d'AES-128-GCM ou ChaCha20.</li>
-    <li><strong>Bonne pratique contre le Man-in-the-Middle (MitM) :</strong> Toujours intégrer le certificat racine de l'autorité de certification (CA) via <code>setCACert()</code> et bannir la fonction permissive <code>setInsecure()</code> en environnement de production.</li>
+    <li><strong>Principe de fonctionnement :</strong> En bande 2,4 GHz, le Wi-Fi exploite des modulations multi-porteuses complexes (OFDM) réparties sur des canaux larges de <strong>20 MHz</strong> (canaux 1, 6 et 11 sans chevauchement). Les échanges s'effectuent par paquets IP adressés via des adresses MAC (48 bits) et des adresses IPv4/IPv6.</li>
+    <li><strong>Deux modes d'exploitation fondamentaux en TP STI :</strong>
+      <br>&bull; <strong>Mode Station (STA) :</strong> L'objet électronique (ex: ESP32-S3 ou Raspberry Pi Pico W) s'enrôle comme client sur un point d'accès existant (box Internet, routeur d'atelier). Il reçoit automatiquement ses paramètres IP par DHCP et peut dialoguer directement avec une base de données locale ou un broker MQTT distant.
+      <br>&bull; <strong>Mode Point d'Accès Autonome (Soft-AP) :** Le microcontrôleur génère lui-même son propre réseau Wi-Fi local sans aucun routeur externe. Il embarque un serveur DHCP et un serveur Web HTTP (accessible sur l'adresse standard <code>192.168.4.1</code>). Tout technicien muni d'un smartphone peut s'y connecter pour configurer l'équipement via une page Web embarquée.</li>
+    <li><strong>Sécurité :</strong> Chiffrement robuste de couche liaison en <strong>WPA2-PSK (AES-CCMP)</strong> ou <strong>WPA3-SAE</strong>, complété au niveau applicatif par le chiffrement <strong>TLS 1.3 (HTTPS / MQTTS)</strong>.</li>
+    <li><strong>Atouts &amp; Limites pour l'IoT :</strong>
+      <br>&bull; <em>Atouts :</em> Débit très élevé (vidéo, mise à jour de firmware OTA, gros flux de mesures), intégration directe aux infrastructures réseau existantes sans passerelle dédiée.
+      <br>&bull; <em>Limites :</em> <strong>Consommation électrique rédhibitoire pour des capteurs sur pile</strong> (150 à 300 mA lors des émissions radio, plusieurs dizaines de mA en veille active). Le Wi-Fi est réservé aux équipements raccordés au secteur 230 V ou disposant de fortes batteries rechargeables. Portée fortement dégradée par les parois épaisses en atelier.</li>
   </ul>
 
-  <!-- ========================================================================= -->
-  <!-- 4. CAHIER D'EXERCICES TYPE BTS CIEL                                       -->
-  <!-- ========================================================================= -->
-  <div class="page-break"></div>
-  <h2>4. Cahier d'Exercices Type Épreuve BTS CIEL</h2>
-
-  <!-- EXERCICE 1 -->
-  <div class="exercise-card">
-    <div class="exercise-header">
-      <span class="exercise-title">Exercice 1 : Liaison Série Bluetooth & Contrôle d'Intégrité par Checksum XOR</span>
-      <span class="meta-badge badge-primary">Compétences C04 & C05</span>
-    </div>
-    <p>Un pupitre à base de <strong>Raspberry Pi Pico 2 W</strong> transmet périodiquement une trame de télémétrie vers un terminal de supervision via son port série <strong>UART1</strong> (relié au module Grove Bluetooth configuré à <strong>38 400 bauds, 8N1</strong>).</p>
-    <p>La trame binaire de 6 octets est structurée comme suit :</p>
-    <ul>
-      <li>Octet 0 : Début de trame <code>STX = 0x02</code></li>
-      <li>Octet 1 : Identifiant de la carte <code>ID = 0x42</code></li>
-      <li>Octet 2 : Donnée capteur Température <code>TEMP = 0x19</code> (25°C)</li>
-      <li>Octet 3 : Donnée capteur Humidité <code>HUM = 0x3C</code> (60%)</li>
-      <li>Octet 4 : Octet de contrôle <strong>Checksum XOR</strong> (calculé sur ID, TEMP et HUM)</li>
-      <li>Octet 5 : Fin de trame <code>ETX = 0x03</code></li>
-    </ul>
-
-    <p><strong>Questions :</strong></p>
-    <ol>
-      <li><strong>[C04]</strong> Calculer la durée théorique d'un bit élémentaire $T_{\text{bit}}$ à 38 400 bauds.</li>
-      <li><strong>[C04]</strong> Préciser le nombre de bits réels transmis pour chaque octet (format 8N1). En déduire le temps nécessaire pour transmettre un octet complet $T_{\text{octet}}$.</li>
-      <li><strong>[C05]</strong> Calculer manuellement la valeur hexadécimale du <strong>Checksum XOR</strong> pour les trois octets de charge utile. Détailler le calcul bit à bit sous forme binaire.</li>
-      <li><strong>[C06]</strong> Lors d'une vérification avec l'analyseur logique <strong>Analog Discovery 3</strong>, déterminer la durée totale théorique d'occupation du bus série pour l'envoi de cette trame de 6 octets.</li>
-      <li><strong>[C05]</strong> Rédiger en langage C la fonction <code>uint8_t calculer_checksum(uint8_t id, uint8_t temp, uint8_t hum)</code>.</li>
-    </ol>
-
-    <!-- SOLUTION 1 -->
-    <div class="solution-box solution-item">
-      <div class="solution-title">📝 Corrigé Détaillé de l'Exercice 1</div>
-      <p><strong>1. Durée d'un bit :</strong></p>
-      <div class="formula-box">
-        <i>T</i><sub>bit</sub> = <span class="frac"><span class="num">1</span><span class="den">38 400</span></span> &approx; <strong>26,042 &mu;s</strong>
-      </div>
-
-      <p><strong>2. Format 8N1 et durée par octet :</strong><br>
-      Le format 8N1 comprend : 1 bit Start + 8 bits de données + 0 bit de parité + 1 bit Stop = <strong>10 bits par caractère</strong>.<br>
-      $$T_{\text{octet}} = 10 \times T_{\text{bit}} = 10 \times 26{,}042\ \mu\text{s} = \mathbf{260{,}42\ \mu\text{s}}$$</p>
-
-      <p><strong>3. Calcul du Checksum XOR bit à bit :</strong></p>
-      <ul>
-        <li><code>ID   = 0x42</code> &rarr; <code>0100 0010</code></li>
-        <li><code>TEMP = 0x19</code> &rarr; <code>0001 1001</code></li>
-        <li><code>HUM  = 0x3C</code> &rarr; <code>0011 1100</code></li>
-      </ul>
-      <pre><code>  0100 0010  (0x42)
-^ 0001 1001  (0x19)
------------
-  0101 1011  (Résultat intermédiaire = 0x5B)
-^ 0011 1100  (0x3C)
------------
-  0110 0111  (Checksum final = 0x67)</code></pre>
-      <p>La valeur hexadécimale du Checksum est <strong><code>0x67</code></strong>.</p>
-
-      <p><strong>4. Durée totale de la trame sous l'Analog Discovery 3 :</strong><br>
-      La trame contient 6 octets au total.<br>
-      $$T_{\text{totale}} = 6 \times T_{\text{octet}} = 6 \times 260{,}42\ \mu\text{s} \approx \mathbf{1{,}562\ \text{ms}}$$</p>
-
-      <p><strong>5. Fonction en C :</strong></p>
-      <pre><code>uint8_t calculer_checksum(uint8_t id, uint8_t temp, uint8_t hum) {
-    return (id ^ temp ^ hum);
-}</code></pre>
-    </div>
+  <!-- 2.2. BLUETOOTH CLASSIC -->
+  <h3>2.2. Le Bluetooth Classic (IEEE 802.15.1 - BR/EDR) : Le Câble Série Virtuel (WPAN)</h3>
+  <div class="callout callout-info">
+    <div class="callout-title">Origine &amp; Philosophie du Bluetooth Classic</div>
+    <p>Développé à l'origine par Ericsson pour supprimer les câbles physiques encombrants reliant les périphériques (câbles série RS-232, claviers, combinés audio), le Bluetooth Classic est un réseau personnel sans fil (WPAN) opérant en liaison point-à-point ou point-à-multipoints à courte distance (&lt; 10 à 15 m).</p>
   </div>
+  <ul>
+    <li><strong>Saut de fréquence adaptatif (AFH) :</strong> Pour cohabiter avec le Wi-Fi dans la bande 2,4 GHz, le Bluetooth Classic découpe le spectre en <strong>79 canaux de 1 MHz</strong> et change de fréquence <strong>1 600 fois par seconde</strong> (1600 sauts/s). L'algorithme AFH identifie les canaux brouillés par le Wi-Fi et les exclut automatiquement de sa séquence de saut.</li>
+    <li><strong>Topologie Piconet :</strong> Architecture hiérarchisée où un équipement maître gère jusqu'à <strong>7 esclaves actifs simultanément</strong> par multiplexage temporel.</li>
+    <li><strong>Le Profil Série SPP (Serial Port Profile) :</strong> Profil de référence en électronique et automatisme, reposant sur la couche logicielle RFCOMM. Il émule à la perfection un câble série asynchrone RS-232 (port COM virtuel). Sur banc d'essai, le microcontrôleur dialogue avec un module Bluetooth (ex: Grove HC-05) par de simples commandes <code>Serial.print()</code> et <code>Serial.read()</code>.</li>
+    <li><strong>Atouts &amp; Limites pour l'IoT :</strong>
+      <br>&bull; <em>Atouts :</em> Simplicité absolue de mise en œuvre, flux série bidirectionnel continu et stable (~1 à 2 Mbit/s), console de test universelle sur smartphone ou PC de maintenance via terminal série.
+      <br>&bull; <em>Limites :</em> Consommation continue importante (20 à 40 mA, la radio devant écouter les balises de synchronisation du maître), portée très courte, association préalable obligatoire par appairage (code PIN), inadapté aux capteurs autonomes sur pile.</li>
+  </ul>
 
-  <!-- EXERCICE 2 -->
-  <div class="exercise-card">
-    <div class="exercise-header">
-      <span class="exercise-title">Exercice 2 : Audit de Sécurité du Bluetooth Legacy Pairing (Code PIN 4 Chiffres)</span>
-      <span class="meta-badge badge-alert">Compétences C04, C06 & C10</span>
-    </div>
-    <p>Lors d'une séance d'audit de cybersécurité, un module Bluetooth HC-06 est déployé avec son code PIN de configuration d'usine par défaut à 4 chiffres décimaux (valeurs de <code>0000</code> à <code>9999</code>).</p>
-
-    <p><strong>Questions :</strong></p>
-    <ol>
-      <li><strong>[C04]</strong> Calculer l'entropie cryptographique $H$ (en bits) associée à ce secret à 4 chiffres décimaux :
-        $$H = \log_2(N) \quad \text{avec } N = 10^4$$</li>
-      <li><strong>[C06]</strong> Un attaquant tente une attaque par force brute en ligne (<em>Online Brute-force</em>). Le module impose un délai de temporisation matériel de <strong>1,2 seconde</strong> après chaque échec d'association. Calculer la durée maximale (en heures et minutes) requise pour tester exhaustivement l'espace des clés. Indiquer pourquoi cette attaque est difficilement viable.</li>
-      <li><strong>[C10]</strong> L'attaquant capture désormais passivement la séquence d'appairage radio à l'aide d'une clé SDR. Il bascule sur une attaque hors-ligne (<em>Offline Brute-force</em>) sur son poste de travail, capable d'évaluer <strong>$2{,}5 \times 10^6$ dérivations $E_{22}$ par seconde</strong>. Calculer le temps maximal nécessaire pour retrouver le code PIN.</li>
-      <li><strong>[C04]</strong> Préciser quelle évolution de la norme Bluetooth élimine radicalement cette faille d'interception passive.</li>
-    </ol>
-
-    <!-- SOLUTION 2 -->
-    <div class="solution-box solution-item">
-      <div class="solution-title">📝 Corrigé Détaillé de l'Exercice 2</div>
-      <p><strong>1. Entropie du code PIN :</strong><br>
-      $$H = \frac{\ln(10\,000)}{\ln(2)} \approx \frac{9{,}2103}{0{,}6931} \approx \mathbf{13{,}29\ \text{bits}}$$
-      Une sécurité de 13,3 bits est extrêmement faible (le standard minimal recommandé pour un secret symétrique est de 128 bits).</p>
-
-      <p><strong>2. Attaque en ligne (Online) :</strong><br>
-      Temps maximal pour 10 000 tentatives :
-      $$T_{\text{max}} = 10\,000 \times 1{,}2\ \text{s} = 12\,000\ \text{s} = \frac{12\,000}{3\,600} \approx \mathbf{3{,}33\ \text{heures}}\ (\mathbf{3\text{h } 20\text{min}})$$
-      <em>Analyse :</em> L'attaque en ligne est lente, génère des journaux d'erreurs d'appairage massifs et risque de saturer la pile radio du module. Elle n'est absolument pas discrète.</p>
-
-      <p><strong>3. Attaque hors-ligne (Offline) :</strong><br>
-      $$T_{\text{max}} = \frac{10\,000}{2{,}5 \times 10^6\ \text{op/s}} = 0{,}004\ \text{seconde} = \mathbf{4\ \text{millisecondes}}$$
-      <em>Conclusion :</em> L'attaque est quasi-instantanée et totalement invisible pour la cible.</p>
-
-      <p><strong>4. Évolution normative :</strong><br>
-      L'adoption du <strong>Secure Simple Pairing (SSP)</strong> introduit avec Bluetooth 2.1+, ou du <strong>BLE 4.2+ LE Secure Connections</strong>, qui reposent sur un échange de clés asymétriques à courbes elliptiques (**ECDH** - <em>Elliptic Curve Diffie-Hellman</em>). Même si un pirate intercepte la totalité des trames radio d'appairage, il lui est mathématiquement impossible de calculer la clé de session.</p>
-    </div>
+  <!-- 2.3. BLUETOOTH LOW ENERGY (BLE) -->
+  <h3>2.3. Le Bluetooth Low Energy (BLE - Bluetooth 4.0 à 5.4) : Le Standard des Capteurs Ultra-Basse Consommation</h3>
+  <div class="callout callout-info">
+    <div class="callout-title">Origine &amp; Rupture Technologique du BLE</div>
+    <p>Bien qu'il partage la marque commerciale « Bluetooth » et la bande 2,4 GHz, le <strong>BLE est un protocole entièrement distinct du Bluetooth Classic</strong> (incompatible au niveau matériel). Conçu dès sa genèse pour l'Internet des Objets, son objectif exclusif est de faire fonctionner des capteurs communicants pendant <strong>plusieurs années sur une simple pile bouton CR2032</strong>.</p>
   </div>
-
-  <!-- EXERCICE 3 -->
-  <div class="exercise-card">
-    <div class="exercise-header">
-      <span class="exercise-title">Exercice 3 : Analyse d'une Négociation Réseau Wi-Fi & Transport sous Wireshark</span>
-      <span class="meta-badge badge-purple">Compétences C04, C06 & C10</span>
-    </div>
-    <p>Une carte <strong>XIAO ESP32-S3</strong> démarre et se connecte au réseau Wi-Fi d'un laboratoire de télémesure. L'extrait de capture Wireshark suivant est recueilli :</p>
-
-    <pre><code>No.  Time       Source          Destination      Protocol  Info
-1    0.000000   0.0.0.0         255.255.255.255  DHCP      DHCP Discover - Transaction ID 0x8a1b2c
-2    0.038120   192.168.1.254   192.168.1.105    DHCP      DHCP Offer    - Transaction ID 0x8a1b2c
-3    0.040100   0.0.0.0         255.255.255.255  DHCP      DHCP Request  - Transaction ID 0x8a1b2c
-4    0.075400   192.168.1.254   192.168.1.105    DHCP      DHCP ACK      - Transaction ID 0x8a1b2c
-5    0.105200   28:cd:c1:05:ab  Broadcast        ARP       Who has 192.168.1.254? Tell 192.168.1.105
-6    0.106100   00:1a:2b:3c:4d  28:cd:c1:05:ab   ARP       192.168.1.254 is at 00:1a:2b:3c:4d
-7    0.200100   192.168.1.105   192.168.1.254    TCP       54210 &rarr; 8080 [SYN] Seq=0 Win=5840
-8    0.204500   192.168.1.254   192.168.1.105    TCP       8080 &rarr; 54210 [SYN, ACK] Seq=0 Ack=1
-9    0.205200   192.168.1.105   192.168.1.254    TCP       54210 &rarr; 8080 [ACK] Seq=1 Ack=1</code></pre>
-
-    <p><strong>Questions :</strong></p>
-    <ol>
-      <li><strong>[C10]</strong> Relever l'adresse IP et l'adresse MAC du microcontrôleur ainsi que celles de la passerelle / serveur DHCP.</li>
-      <li><strong>[C04]</strong> Expliciter la nécessité des adresses `0.0.0.0` et `255.255.255.255` dans la trame n°1 (DHCP Discover).</li>
-      <li><strong>[C04]</strong> Décrire précisément l'objectif de l'échange ARP (trames 5 et 6). Pourquoi cette étape est-elle indispensable avant la trame n°7 ?</li>
-      <li><strong>[C06]</strong> Identifier le protocole et la phase réseau observés entre les trames 7, 8 et 9. Quel est le rôle des drapeaux SYN et ACK ?</li>
-      <li><strong>[C05]</strong> Si l'application consistait à diffuser 50 fois par seconde une position angulaire sans besoin de confirmation, justifier pourquoi le protocole UDP aurait été préféré à TCP.</li>
-    </ol>
-
-    <!-- SOLUTION 3 -->
-    <div class="solution-box solution-item">
-      <div class="solution-title">📝 Corrigé Détaillé de l'Exercice 3</div>
-      <p><strong>1. Identification des adresses :</strong></p>
+  <ul>
+    <li><strong>Canaux &amp; Découpage Fréquentiel :</strong> La bande est divisée en <strong>40 canaux de 2 MHz</strong>. Trois canaux privilégiés (<strong>canaux 37, 38 et 39</strong>) sont réservés aux annonces d'enrôlement (<i>Advertising</i>) et judicieusement placés en dehors des canaux Wi-Fi majeurs pour éviter les collisions. Les 37 autres canaux servent au transfert de données lors des connexions actives.</li>
+    <li><strong>Deux modes de fonctionnement complémentaires :</strong>
+      <br>&bull; <strong>Mode Diffusion / Balises (Broadcast / Beacons) :</strong> Le capteur (<i>Broadcaster</i>) s'éveille pendant quelques millisecondes, émet une trame d'annonce contenant ses données de mesure (température, niveau de pile) sur les 3 canaux, puis se rendort immédiatement en sommeil profond (<i>Deep Sleep</i> à 10-15 &mu;A). N'importe quel récepteur à portée (<i>Observer</i>) lit la mesure sans établir de connexion.
+      <br>&bull; <strong>Mode Connecté GATT (Generic Attribute Profile) :</strong> L'objet agit comme un <strong>Serveur GATT</strong> qui expose une table de données normalisée. Le client (smartphone équipé de l'application <strong>nRF Connect for Mobile</strong>) s'y connecte et consulte :
       <ul>
-        <li><strong>Microcontrôleur (XIAO ESP32-S3) :</strong> Adresse IP = <code>192.168.1.105</code> | Adresse MAC = <code>28:cd:c1:05:ab</code></li>
-        <li><strong>Passerelle / Serveur DHCP :</strong> Adresse IP = <code>192.168.1.254</code> | Adresse MAC = <code>00:1a:2b:3c:4d</code></li>
+        <li>Les <strong>Services :</strong> regroupements thématiques identifiés par un identifiant universel <strong>UUID</strong> (16 bits standardisé comme le service <code>0x1809</code> pour la température, ou 128 bits propriétaire).</li>
+        <li>Les <strong>Caractéristiques :</strong> grandeurs physiques élémentaires contenant la valeur utile, dotées de droits d'accès : <strong>Read</strong> (lecture ponctuelle), <strong>Write</strong> (télécommande/écriture) et <strong>Notify</strong> (le capteur prévient automatiquement le smartphone lors d'un dépassement de seuil, sans interrogation périodique).</li>
       </ul>
+    </li>
+    <li><strong>Atouts &amp; Limites pour l'IoT :</strong>
+      <br>&bull; <em>Atouts :</em> Autonomie record (3 à 10 ans sur pile), réveil et connexion quasi instantanés (&lt; 5 ms), intégration native dans 100 % des smartphones, tablettes et PC modernes sans aucun adaptateur radio externe.
+      <br>&bull; <em>Limites :</em> Portée modeste (10 à 30 mètres en champ direct, coupée par les murs épais métalliques), taille de charge utile par paquet restreinte (paquets de 20 à 240 octets utiles).</li>
+  </ul>
 
-      <p><strong>2. Trame DHCP Discover :</strong><br>
-      Au démarrage, le microcontrôleur n'a pas encore d'adresse IP valide configurée sur sa pile, il utilise donc l'adresse source neutre <code>0.0.0.0</code>. Ignorant l'adresse du serveur DHCP sur le segment local, il émet sa requête vers l'adresse de diffusion générale <code>255.255.255.255</code> pour toucher tous les hôtes.</p>
-
-      <p><strong>3. Échange ARP (Address Resolution Protocol) :</strong><br>
-      Avant d'émettre un paquet IP vers <code>192.168.1.254</code>, la couche 2 (Liaison Ethernet/Wi-Fi) a impérativement besoin de connaître l'adresse physique matérielle (MAC) du récepteur pour constituer l'en-tête de trame. La trame 5 interroge le réseau en broadcast, et la trame 6 fournit la réponse (<code>00:1a:2b:3c:4d</code>).</p>
-
-      <p><strong>4. Établissement de connexion TCP (Three-Way Handshake) :</strong><br>
-      Les trames 7, 8 et 9 réalisent la poignée de main d'ouverture de session TCP :</p>
-      <ul>
-        <li><strong>Trame 7 [SYN] :</strong> Le client synchronise ses numéros de séquence (Seq=0).</li>
-        <li><strong>Trame 8 [SYN, ACK] :</strong> Le serveur accepte, synchronise son propre numéro de séquence (Seq=0) et acquitte celui du client (Ack=1).</li>
-        <li><strong>Trame 9 [ACK] :</strong> Le client acquitte le serveur (Ack=1). La connexion est désormais établie.</li>
-      </ul>
-
-      <p><strong>5. Intérêt d'UDP pour un flux angulaire temps réel :</strong><br>
-      UDP supprime le temps de latence de la négociation d'ouverture de session, n'effectue aucun accusé de réception ni retransmission en cas de perte (qui créerait des blocages et du jitter), et minimise la bande passante avec un en-tête très réduit de 8 octets contre 20 octets minimum pour TCP.</p>
-    </div>
+  <!-- 2.4. BLUETOOTH MESH -->
+  <h3>2.4. Le Bluetooth Mesh : L'Extension Maillée pour Bâtiments &amp; Sites Industriels</h3>
+  <div class="callout callout-info">
+    <div class="callout-title">Principe du Réseau Maillé Multi-Sauts</div>
+    <p>Normalisé en 2017 par le Bluetooth SIG, le <strong>Bluetooth Mesh</strong> s'appuie sur la couche physique du BLE pour créer un réseau maillé de type <i>Many-to-Many</i> pouvant compter jusqu'à <strong>32 767 nœuds</strong> sans nécessiter de contrôleur centralisé.</p>
   </div>
+  <ul>
+    <li><strong>Routage par Inondation Gérée (Managed Flooding) :</strong> Contrairement aux réseaux IP à routage complexe, les paquets sont diffusés en broadcast sur les canaux d'annonces BLE et répétés de proche en proche par les nœuds voisins. Un mécanisme d'horodatage, de durée de vie (TTL) et un cache anti-rejeu évitent toute boucle infinie.</li>
+    <li><strong>Spécialisation des Nœuds en Atelier :</strong>
+      <br>&bull; <em>Nœuds Relais (Relay Nodes) :</em> Raccordés au réseau électrique permanent de l'usine, ils écoutent sans interruption et répètent les trames radio pour contourner les machines métalliques et les piliers d'atelier.
+      <br>&bull; <em>Nœuds Amis (Friend Nodes) &amp; Nœuds Basse Consommation (Low Power Nodes - LPN) :</em> Les capteurs sur pile (LPN) s'endorment 99,9% du temps. À chaque réveil, ils interrogent leur nœud ami qui a stocké leurs messages en mémoire tampon, garantissant une autonomie de plusieurs années.</li>
+    <li><strong>Atouts &amp; Limites :</strong>
+      <br>&bull; <em>Atouts :</em> Réseau auto-cicatrisant (si un relais tombe en panne, le message transite par un autre chemin), couverture étendue à toute une usine, idéal pour l'éclairage connecté et la GTB.
+      <br>&bull; <em>Limites :</em> Nécessite un maillage dense de nœuds alimentés sur secteur, latence variable selon le nombre de rebonds.</li>
+  </ul>
 
-  <!-- EXERCICE 4 -->
-  <div class="exercise-card">
-    <div class="exercise-header">
-      <span class="exercise-title">Exercice 4 : Sécurisation IoT - Migration HTTP vers HTTPS/TLS</span>
-      <span class="meta-badge badge-alert">Compétences C04, C05 & C10</span>
-    </div>
-    <p>Un objet connecté transmet des relevés météo à un serveur distant via le protocole HTTP standard (port 80). Lors d'un test sous Wireshark, la trame suivante est capturée :</p>
+  <!-- 2.5. LORA P2P -->
+  <h3>2.5. La Modulation LoRa &amp; le Mode LoRa P2P : La Radio Longue Portée Sub-GHz Point-à-Point</h3>
+  <div class="callout callout-info">
+    <div class="callout-title">Origine &amp; Révolution de la Modulation LoRa (Couche Physique PHY)</div>
+    <p>Brevetée par la société française Cycleo (Semtech), <strong>LoRa (Long Range)</strong> est une technique de modulation radiofréquence de <strong>couche physique (PHY)</strong> opérant dans les bandes sans licence Sub-GHz (<strong>868 MHz en Europe</strong>). Elle a révolutionné l'instrumentation sans fil en permettant des portées de plusieurs kilomètres avec une consommation infime.</p>
+  </div>
+  <ul>
+    <li><strong>Principe de la Modulation CSS (Chirp Spread Spectrum) :</strong>
+      <br>Le signal utile est étalé sur une bande passante (généralement <i>BW</i> = 125 kHz) sous forme d'impulsions dont la fréquence varie linéairement dans le temps (les « chirps » montants ou descendants). Cette modulation confère au signal une immunité exceptionnelle contre les bruits industriels, l'effet Doppler et les réflexions métalliques.
+    </li>
+    <li><strong>La Prouesse du Décodage Sous le Bruit Thermique :</strong>
+      <br>Alors que le Wi-Fi ou le Bluetooth exigent un signal nettement supérieur au bruit de fond (SNR positif &gt; +10 dB), LoRa parvient à extraire et décoder des trames dont la puissance est <strong>inférieure au niveau de bruit ambiant</strong> (SNR négatif descendant jusqu'à <strong>&minus;15 dB voire &minus;20 dB</strong> !). La sensibilité du récepteur atteint <strong>&minus;130 dBm à &minus;140 dBm</strong>, soit une sensibilité 10 000 fois supérieure à celle d'un récepteur Wi-Fi classique.
+    </li>
+    <li><strong>Les 3 Paramètres Clés de Configuration Radio (Banc de Test STI) :</strong>
+      <br>&bull; <strong>Spreading Factor (SF - Facteur d'étalement de 7 à 12) :</strong> Nombre de chirps par symbole (2<sup>SF</sup>). Plus le SF est grand (ex: SF12), plus la portée et la pénétration des parois sont maximales, mais plus le temps d'émission (*Time on Air*) est long et le débit faible. Un SF plus court (SF7) permet une émission ultra-rapide et économe.
+      <br>&bull; <strong>Bandwidth (BW - Largeur de bande) :</strong> Fixée à 125 kHz en Europe pour respecter les gabarits réglementaires.
+      <br>&bull; <strong>Coding Rate (CR - Taux de correction d'erreur) :</strong> Bits de redondance pour corriger les interférences (4/5, 4/6, 4/7, 4/8).
+    </li>
+    <li><strong>Le Mode LoRa P2P (Point-à-Point Direct) :</strong>
+      <br>Deux cartes électroniques équipées d'un module LoRa (ex: Semtech SX1262, SX1276/RFM95, modules Grove Ebyte UART) s'échangent directement des paquets sur 868,1 MHz.
+      <br>&bull; <em>Atouts majeurs :</em> <strong>Aucun abonnement, aucun serveur, aucune passerelle requise</strong>. C'est la solution la plus robuste et économique pour relier un capteur industriel isolé à un automate ou PC de supervision situé à l'autre bout d'un site industriel.
+      <br>&bull; <em>Limites :</em> Débit ultra-faible (300 bit/s à 5 kbit/s), messages courts (&lt; 250 octets), obligation légale de respecter le <strong>Duty Cycle de 1%</strong>.
+    </li>
+  </ul>
 
-    <pre><code>POST /api/telemetry HTTP/1.1
-Host: api.station-meteo.org
-User-Agent: ESP32S3-Firmware/2.0
-Authorization: Bearer Key_CIEL_987654321
-Content-Type: application/json
-Content-Length: 29
+  <!-- 2.6. LORAWAN -->
+  <h3>2.6. Le Protocole LoRaWAN : L'Architecture LPWAN pour Télérelève Massive</h3>
+  <div class="callout callout-info">
+    <div class="callout-title">Standard Ouvert de Couches MAC et Réseau</div>
+    <p>Standardisé par la <strong>LoRa Alliance</strong>, <strong>LoRaWAN</strong> est le protocole de couche liaison de données (MAC) et réseau qui s'appuie sur la couche physique LoRa pour déployer des réseaux cellulaires IoT à l'échelle d'une agglomération ou d'un grand complexe industriel.</p>
+  </div>
+  <ul>
+    <li><strong>Architecture en Étoile d'Étoiles (Star-of-Stars) :</strong>
+      <br>Les capteurs autonomes (<i>End Nodes</i>) diffusent leurs paquets par onde radio. Toutes les passerelles réceptrices (<i>Gateways</i>) à portée captent ces trames et les relaient par liaison IP (Ethernet ou 4G) vers un serveur réseau central (<strong>The Things Network - TTN</strong>, <strong>ChirpStack</strong> ou opérateur public). Le serveur dé-duplique les messages reçus et les achemine vers la supervision.
+    </li>
+    <li><strong>Les 3 Classes de Fonctionnement LoRaWAN :</strong>
+      <br>&bull; <strong>Classe A (All / Bidirectionnel économe) :</strong> Mode obligatoire sur tous les capteurs autonomes. Le capteur émet quand il le décide (protocole ALOHA), puis ouvre <strong>deux courtes fenêtres d'écoute (RX1 et RX2)</strong> pour recevoir un éventuel ordre descendant (<i>Downlink</i>) ou un acquittement, avant de retourner en veille profonde. C'est la classe la plus sobre en énergie.
+      <br>&bull; <strong>Classe B (Beacon / Synchronisé) :</strong> Ouvre des fenêtres d'écoute régulières calées sur des balises horaires diffusées par les passerelles.
+      <br>&bull; <strong>Classe C (Continuous / Écoute permanente) :</strong> Le récepteur radio reste activé en permanence pour recevoir des commandes instantanées sans latence. Nécessite obligatoirement une alimentation sur secteur (consommation permanente de 15 à 30 mA).
+    </li>
+    <li><strong>Sécurité Industrielle Native &amp; Procédure d'Enrôlement OTAA (DevEUI, JoinEUI / AppEUI &amp; AppKey) :</strong>
+      <p>Pour qu'un capteur LoRaWAN puisse communiquer sur un réseau partagé comme <strong>The Things Network (TTN)</strong> ou <strong>ChirpStack</strong> sans risque d'interception ni d'usurpation d'identité, trois paramètres fondamentaux constituent son identité cryptographique :</p>
 
-{"temp": 21.8, "pression": 1013}</code></pre>
+      <table>
+        <thead>
+          <tr>
+            <th style="width: 20%;">Identifiant / Clé</th>
+            <th style="width: 16%;">Taille &amp; Format</th>
+            <th style="width: 32%;">Rôle &amp; Signification Télécom</th>
+            <th style="width: 32%;">Mise en Œuvre Pratique en TP (Console TTN)</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td><strong>DevEUI</strong><br>(Device EUI / DevID)</td>
+            <td><strong>64 bits</strong><br>(8 octets hex)<br>ex: <code>70-B3-D5-7E-D0-04-12-34</code></td>
+            <td><strong>Identifiant matériel mondial unique</strong> du capteur (équivalent de l'adresse MAC Ethernet IEEE EUI-64). Il identifie sans équivoque le composant parmi des millions d'autres sur la planète.</td>
+            <td>Gravé en usine par le fabricant du module LoRa (ex: Semtech, Murata, Seeed) ou généré automatiquement sur la console The Things Network.</td>
+          </tr>
+          <tr>
+            <td><strong>JoinEUI</strong><br>(anciennement <strong>AppEUI</strong> / UEID)</td>
+            <td><strong>64 bits</strong><br>(8 octets hex)<br>ex: <code>00-00-00-00-00-00-00-01</code></td>
+            <td><strong>Identifiant du serveur d'enrôlement</strong> (<i>Join Server</i>) ou de l'application cliente. Il indique à l'infrastructure réseau vers quelle application logicielle router la demande d'association du capteur.</td>
+            <td>Défini sur la console réseau du projet. Permet de regrouper toute une flotte de capteurs appartenant à une même application métier (ex: atelier usinage).</td>
+          </tr>
+          <tr>
+            <td><strong>AppKey</strong><br>(Application Key)</td>
+            <td><strong>128 bits</strong><br>(16 octets hex / AES-128)<br>ex: <code>2B 7E 15 16 28 AE D2 A6...</code></td>
+            <td><strong>Clé secrète maîtresse racine</strong> (chiffrement symétrique AES-128). C'est le « secret partagé absolu » connu uniquement du capteur et du serveur réseau. <strong>Elle n'est JAMAIS transmise sur les ondes radio !</strong></td>
+            <td>Générée aléatoirement sur la console TTN et copiée dans le code source C++ du microcontrôleur. Elle permet de dériver dynamiquement les clés de session lors de l'enrôlement.</td>
+          </tr>
+        </tbody>
+      </table>
 
-    <p><strong>Questions :</strong></p>
-    <ol>
-      <li><strong>[C10]</strong> Identifier la vulnérabilité majeure de ce message vis-à-vis d'un attaquant passif écoutant le réseau local.</li>
-      <li><strong>[C05]</strong> Pour remédier à cette faille, le développeur utilise la bibliothèque <code>WiFiClientSecure</code> en C++ pour basculer en HTTPS :
-        <ul>
-          <li>Quel est le port réseau standard assigné au protocole HTTPS ?</li>
-          <li>Quelles sont les deux garanties fondamentales apportées par la couche TLS (*Transport Layer Security*) ?</li>
-        </ul>
-      </li>
-      <li><strong>[C04]</strong> Dans certains tutoriels en ligne, la commande suivante est utilisée :
-        <pre><code>client.setInsecure(); // Désactive la vérification du certificat</code></pre>
-        Expliquer pourquoi cette instruction annule une part essentielle de la sécurité et à quelle attaque critique elle expose le microcontrôleur.
-      </li>
-      <li><strong>[C05]</strong> Indiquer la méthode correcte à adopter en environnement industriel pour assurer une authentification stricte du serveur.</li>
-    </ol>
-
-    <!-- SOLUTION 4 -->
-    <div class="solution-box solution-item">
-      <div class="solution-title">📝 Corrigé Détaillé de l'Exercice 4</div>
-      <p><strong>1. Vulnérabilité de la trame en clair :</strong><br>
-      La requête circulant sans chiffrement (HTTP port 80), l'en-tête d'authentification <code>Authorization: Bearer Key_CIEL_987654321</code> ainsi que les données du capteur sont lisibles en clair par simple écoute passive (sniffing). Un pirate peut voler le jeton (token) et usurper l'identité de l'objet connecté sur l'API centrale.</p>
-
-      <p><strong>2. Migration vers HTTPS / TLS :</strong></p>
+      <p><strong>La Procédure de Négociation Dynamique OTAA (Over-The-Air Activation) :</strong></p>
       <ul>
-        <li><strong>Port standard :</strong> Port TCP <strong>443</strong>.</li>
-        <li><strong>Deux garanties fondamentales de TLS :</strong>
-          <ol>
-            <li><strong>Confidentialité & Intégrité :</strong> Chiffrement robuste de bout en bout des données empêchant toute lecture ou altération des paquets en transit.</li>
-            <li><strong>Authentification du serveur :</strong> Garantie formelle que le client dialogue bien avec le serveur légitime grâce à la chaîne de confiance du certificat numérique X.509.</li>
-          </ol>
+        <li><strong>Étape 1 — Requête d'Association (Join-Request) :</strong> Au démarrage, le capteur émet une trame contenant son <code>DevEUI</code>, son <code>JoinEUI / AppEUI</code> et un nombre aléatoire anti-rejeu (<code>DevNonce</code>). L'ensemble est signé par un code MIC calculé à l'aide de l'<strong>AppKey</strong>.</li>
+        <li><strong>Étape 2 — Acceptation d'Association (Join-Accept) :</strong> Le serveur réseau valide l'authenticité de la requête grâce à l'AppKey stockée dans sa base. Si elle est conforme, il renvoie une trame <i>Join-Accept</i> chiffrée avec l'AppKey.</li>
+        <li><strong>Étape 3 — Dérivation Autonome des 3 Paramètres de Session :</strong> Le capteur et le serveur calculent indépendamment :
+          <ul>
+            <li><strong>DevAddr (Device Address - 32 bits / 4 octets) :</strong> Adresse réseau temporaire courte attribuée au capteur (équivalent d'une adresse IP privée locale), insérée dans l'en-tête de chaque trame de données montante.</li>
+            <li><strong>NwkSKey (Network Session Key - 128 bits) :</strong> Clé de session réseau partagée avec le serveur réseau, servant à authentifier les paquets et à vérifier le champ <strong>MIC</strong> (4 octets) pour bloquer les corruptions de trame.</li>
+            <li><strong>AppSKey (Application Session Key - 128 bits) :</strong> Clé de session applicative partagée exclusivement avec le serveur applicatif final pour <strong>chiffrer en AES-128 la charge utile (FRMPayload)</strong> contenant les mesures du capteur. L'opérateur réseau (passerelle) est techniquement incapable de lire les valeurs physiques transmises.</li>
+          </ul>
         </li>
       </ul>
 
-      <p><strong>3. Danger de <code>client.setInsecure()</code> :</strong><br>
-      Cette fonction indique au microcontrôleur d'ignorer la validité du certificat délivré par le serveur (absence de contrôle de l'autorité émettrice et du nom de domaine). Le système devient alors immédiatement vulnérable à une attaque de type <strong>Homme du Milieu (MitM - Man-in-the-Middle)</strong> : un attaquant peut intercepter la liaison, présenter un certificat auto-signé frauduleux et déchiffrer/modifier toutes les données à l'insu de l'objet connecté.</p>
+      <div class="callout callout-warning">
+        <div class="callout-title">Comparatif pour le Bureau d'Études : Mode OTAA vs Mode ABP</div>
+        <p><strong>Mode OTAA (Recommandé en Bureau d'Études &amp; Déploiement Réel) :</strong> Les clés de session (<i>NwkSKey</i>, <i>AppSKey</i>) et l'adresse <i>DevAddr</i> sont régénérées à chaque association. Sécurité maximale contre les attaques par écoute et rejeu.</p>
+        <p><strong>Mode ABP (Activation By Personalization) :</strong> Aucune négociation radio. <code>DevAddr</code>, <code>NwkSKey</code> et <code>AppSKey</code> sont inscrites en dur dans le firmware du microcontrôleur. Pratique pour un test rapide sur table en TP, mais <strong>déconseillé en environnement industriel</strong> (vulnérable si le compteur de trame <i>FCnt</i> se réinitialise à zéro lors d'un reboot).</p>
+      </div>
+    </li>
+    <li><strong>Atouts &amp; Limites pour l'IoT :</strong>
+      <br>&bull; <em>Atouts :</em> Portée métropolitaine (2 à 15 km), gestion unifiée de dizaines de milliers d'objets, géolocalisation native sans GPS par différence de temps d'arrivée (TDoA), sécurité cryptographique militaire.
+      <br>&bull; <em>Limites :</em> Débit asymétrique très faible (adapté à quelques envois de données par jour ou par heure), latence importante pour les ordres descendants en Classe A, nécessité d'un serveur réseau et de passerelles connectées.
+    </li>
+  </ul>
 
-      <p><strong>4. Solution industrielle recommandée :</strong><br>
-      Injecter dans la mémoire Flash du microcontrôleur l'empreinte racine de l'autorité de certification de confiance (<em>Root CA Certificate</em> au format PEM) et la charger dans le client via la méthode :
-      <pre><code>client.setCACert(root_ca_certificate);</code></pre>
-      Le microcontrôleur vérifie alors cryptographiquement la signature numérique du serveur avant tout échange de données.</p>
+  <!-- ========================================================================= -->
+  <!-- 2. MATRICE COMPARATIVE DES TECHNOLOGIES SANS FIL IOT                      -->
+  <!-- ========================================================================= -->
+  <h2>3. Matrice Comparative des Technologies Sans Fil pour Capteurs IoT</h2>
+
+  <h3>3.1. Tableau Comparatif Pratique pour Systèmes Capteurs Communicants</h3>
+  <p>Lors de la conception d'un système électronique communicant, le technicien en bureau d'études choisit la technologie radio la plus adaptée en fonction des contraintes de débit, de portée, d'autonomie et de coût d'exploitation :</p>
+
+  <table>
+    <thead>
+      <tr>
+        <th style="width: 14%;">Technologie &amp; Standard</th>
+        <th style="width: 14%;">Matériel de Prototypage en TP</th>
+        <th style="width: 12%;">Débit Utile Constaté</th>
+        <th style="width: 13%;">Portée Réelle en Atelier</th>
+        <th style="width: 14%;">Consommation Électrique (Alim 3,3 V)</th>
+        <th style="width: 13%;">Coût d'Abonnement / Infrastructure</th>
+        <th style="width: 20%;">Applications Typiques en TP STI</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><strong>Wi-Fi</strong><br>(IEEE 802.11 b/g/n)</td>
+        <td>XIAO ESP32-S3,<br>Raspberry Pi Pico W</td>
+        <td>10 à 50 Mbit/s<br>(Très haut débit)</td>
+        <td>20 à 50 m en intérieur<br>(1 à 2 cloisons)</td>
+        <td><strong>Forte :</strong><br>Veille : 15 à 50 mA<br>Émission TX : <strong>150 à 300 mA</strong></td>
+        <td><strong>Gratuit :</strong><br>Exploite le réseau ou la box du site</td>
+        <td>Transmission de flux vidéo, pages Web de configuration en mode Soft-AP, passerelle locale de collecte vers base SQL.</td>
+      </tr>
+      <tr>
+        <td><strong>Bluetooth Classic</strong><br>(BR/EDR - Profil SPP)</td>
+        <td>Module Grove HC-05,<br>ESP32 BluetoothSerial</td>
+        <td>&approx; 1 Mbit/s<br>(Flux série continu)</td>
+        <td>10 à 15 m<br>(Même pièce)</td>
+        <td><strong>Moyenne :</strong><br>Veille active : 10 à 25 mA<br>Émission TX : <strong>30 à 50 mA</strong></td>
+        <td><strong>Gratuit :</strong><br>Liaison directe point-à-point sans passerelle</td>
+        <td>Liaison série transparente (émulation port COM virtuel RS-232), console de configuration atelier sur smartphone ou PC.</td>
+      </tr>
+      <tr>
+        <td><strong>BLE (Broadcast)</strong><br>(Balises Beacons)</td>
+        <td>XIAO ESP32-S3,<br>Module BLE nRF52</td>
+        <td>Quelques octets / burst<br>(31 octets d'annonces)</td>
+        <td>15 à 30 m en champ direct</td>
+        <td><strong>Très faible :</strong><br>Deep Sleep : <strong>10 à 25 &mu;A</strong><br>Émission TX : 15 mA (10 ms)</td>
+        <td><strong>Gratuit :</strong><br>Diffusion aveugle sans connexion</td>
+        <td>Balises de localisation d'outillage en atelier (iBeacon), capteur thermomètre périodique sans appairage.</td>
+      </tr>
+      <tr>
+        <td><strong>BLE (Connexion GATT)</strong><br>(Bluetooth 4.2 / 5.x)</td>
+        <td>ESP32-S3 (Serveur GATT),<br>Appli nRF Connect</td>
+        <td>50 à 100 kbit/s<br>(Services &amp; Caract.)</td>
+        <td>10 à 30 m en intérieur</td>
+        <td><strong>Faible :</strong><br>Deep Sleep : 15 &mu;A<br>Liaison active : 12 à 25 mA</td>
+        <td><strong>Gratuit :</strong><br>Liaison directe avec smartphone/tablette</td>
+        <td>Capteur d'instrumentation communicant : lecture de mesure (Read), télé-commande (Write) et alertes automatiques (Notify).</td>
+      </tr>
+      <tr>
+        <td><strong>Bluetooth Mesh</strong><br>(BLE Maillé)</td>
+        <td>Modules nRF52840,<br>Cartes ESP32 Mesh</td>
+        <td>Faible (&approx; 10 kbit/s)<br>Multi-sauts</td>
+        <td>10 m par nœud,<br>couvre toute l'usine</td>
+        <td>Nœuds capteurs sur pile : faible.<br>Nœuds routeurs : <strong>permanente</strong></td>
+        <td><strong>Gratuit :</strong><br>Réseau auto-cicatrisant autonome</td>
+        <td>Gestion de luminaires d'atelier, contournement des machines métalliques par rebonds successifs.</td>
+      </tr>
+      <tr>
+        <td><strong>LoRa P2P</strong><br>(Point-à-Point direct)</td>
+        <td>Modules Semtech SX1262,<br>SX1276 / RFM95W, Ebyte</td>
+        <td>300 bit/s à 5 kbit/s<br>(Paquets de 10 à 50 octets)</td>
+        <td><strong>500 m à 5 km</strong><br>(Traverse tout l'atelier et les murs épais)</td>
+        <td><strong>Très faible :</strong><br>Deep Sleep : <strong>1 à 10 &mu;A</strong><br>Émission TX : 80 à 120 mA (50 ms)</td>
+        <td><strong>Gratuit :</strong><br>Aucun abonnement, aucune passerelle requise</td>
+        <td>Capteur autonome distant sur machine isolée, télésurveillance de cuves, report d'alarmes en liaison directe point-à-point.</td>
+      </tr>
+      <tr>
+        <td><strong>LoRaWAN</strong><br>(Étoile d'étoiles)</td>
+        <td>Module LoRa + Gateway<br>(The Things Network)</td>
+        <td>250 bit/s à 5 kbit/s<br>(1 à 50 octets / message)</td>
+        <td><strong>2 à 15 km</strong><br>(Portée urbaine / industrielle)</td>
+        <td><strong>Très faible :</strong><br>Deep Sleep : &lt; 5 &mu;A<br>Émission TX : 90 mA (&approx; 60 ms)</td>
+        <td><strong>Variable :</strong><br>Gratuit sur serveur privé TTN / ChirpStack, ou abonnement opérateur</td>
+        <td>Télérelève de compteurs d'énergie répartis sur un campus, suivi environnemental de grands sites logistiques.</td>
+      </tr>
+    </tbody>
+  </table>
+
+  <h3>3.2. Métrologie en TP : Mesure &amp; Qualification du Signal (RSSI, SNR &amp; Marge de Réception)</h3>
+  <p>En séance de travaux pratiques, la qualification d'une liaison radio ne se devine pas : elle est mesurée à l'aide d'outils matériels et logiciels dédiés :</p>
+
+  <div class="callout callout-info">
+    <div class="callout-title">Outils de Mesure du Signal en Atelier STI</div>
+    <ul>
+      <li><strong>En Wi-Fi :</strong> La fonction <code>WiFi.RSSI()</code> de l'ESP32 ou l'application mobile <strong>WiFi Analyzer</strong> donne la puissance reçue en dBm pour chaque canal.</li>
+      <li><strong>En Bluetooth Low Energy :</strong> L'application pour smartphone <strong>nRF Connect for Mobile</strong> affiche instantanément en direct le niveau de RSSI (en dBm) de chaque balise ou capteur à portée, avec rafraîchissement à chaque trame d'annonce.</li>
+      <li><strong>En LoRa :</strong> Les fonctions de bibliothèque <code>LoRa.packetRssi()</code> et <code>LoRa.packetSnr()</code> (ou la réponse à la commande AT <code>AT+CSQ</code>) renvoient la puissance du signal et le rapport signal sur bruit à chaque paquet reçu.</li>
+    </ul>
+  </div>
+
+  <p><strong>Grille d'interprétation pratique du niveau RSSI mesuré en atelier :</strong></p>
+  <table>
+    <thead>
+      <tr>
+        <th style="width: 22%;">Niveau RSSI Mesuré</th>
+        <th style="width: 25%;">Qualification en Atelier</th>
+        <th style="width: 25%;">Comportement Wi-Fi &amp; Bluetooth</th>
+        <th style="width: 28%;">Comportement LoRa 868 MHz</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><strong>&gt; &minus;55 dBm</strong></td>
+        <td>Signal excellent (très proche)</td>
+        <td>Débit maximal, aucune perte de paquet.</td>
+        <td>Signal saturant (trop proche de la passerelle).</td>
+      </tr>
+      <tr>
+        <td><strong>&minus;55 à &minus;70 dBm</strong></td>
+        <td>Signal très bon et stable</td>
+        <td>Fonctionnement optimal en intérieur.</td>
+        <td>Liaison parfaite avec SF minimal (SF7).</td>
+      </tr>
+      <tr>
+        <td><strong>&minus;70 à &minus;80 dBm</strong></td>
+        <td>Signal moyen / acceptable</td>
+        <td>Léger ralentissement en Wi-Fi, BLE stable.</td>
+        <td>Excellente marge de sécurité (&gt; 40 dB).</td>
+      </tr>
+      <tr>
+        <td><strong>&minus;80 à &minus;90 dBm</strong></td>
+        <td>Signal faible / limite</td>
+        <td>Pertes de paquets fréquentes, reconnexions.</td>
+        <td>Fonctionnement parfaitement nominal.</td>
+      </tr>
+      <tr>
+        <td><strong>&minus;90 à &minus;95 dBm</strong></td>
+        <td><strong>Seuil de décrochage Wi-Fi / BLE</strong></td>
+        <td><strong>Liaison coupée :</strong> le récepteur ne décode plus (sensibilité typique &minus;93 dBm).</td>
+        <td>Liaison très robuste (marge restante &gt; 30 dB).</td>
+      </tr>
+      <tr>
+        <td><strong>&minus;95 à &minus;125 dBm</strong></td>
+        <td><strong>Domaine exclusif LoRa</strong></td>
+        <td>Impossible (silence radio complet).</td>
+        <td><strong>Décodage parfait :</strong> LoRa décode jusqu'à <strong>&minus;130 dBm</strong>, même sous le niveau de bruit grâce à sa modulation par étalement de spectre (SNR jusqu'à &minus;15 dB).</td>
+      </tr>
+    </tbody>
+  </table>
+
+  <div class="callout callout-warning">
+    <div class="callout-title">Règle de Bureau d'Études : La Marge de Réception (Fade Margin)</div>
+    <p>La <strong>marge de réception</strong> (ou marge d'évanouissement) est la réserve de signal disponible au-dessus de la sensibilité limite du récepteur :</p>
+    <div class="formula-box">
+      <i>Marge</i> (en dB) = <i>RSSI</i><sub>mesuré</sub> (dBm) &minus; <i>Sensibilité</i><sub>récepteur</sub> (dBm)
+    </div>
+    <p>En environnement d'atelier industriel (bruit de découpeurs plasma, variateurs de vitesse, chariots élévateurs métalliques en mouvement), le technicien supérieur doit toujours s'assurer d'une <strong>marge minimale de 10 à 15 dB</strong> pour garantir qu'aucune trame de capteur ne soit perdue lors de l'activité de l'usine.</p>
+  </div>
+
+  <!-- ========================================================================= -->
+  <!-- 3. TYPOLOGIES D'ARCHITECTURES RESEAUX & FORMATS DE TRAMES IOT             -->
+  <!-- ========================================================================= -->
+  <h2>4. Typologies d'Architectures Réseaux &amp; Formats de Trames IoT</h2>
+
+  <h3>4.1. Panorama Pratique des Architectures Réseaux Utilisées en TP</h3>
+  <p>Lors des séances de laboratoire, les étudiants mettent en œuvre les différentes configurations réseau selon le cahier des charges de l'objet communicant :</p>
+
+  <ul>
+    <li><strong>Wi-Fi en Mode Station (STA) :</strong> Le microcontrôleur (ex: ESP32) s'associe au point d'accès du lycée ou de l'atelier avec son SSID et mot de passe WPA2/WPA3. Il obtient une adresse IP par DHCP et peut envoyer des requêtes HTTP POST ou des messages MQTT vers un broker distant.</li>
+    <li><strong>Wi-Fi en Mode Point d'Accès Autonome (Soft-AP) :</strong> L'ESP32 génère son propre réseau local Wi-Fi sans box ni routeur. Un technicien s'y connecte avec son smartphone ou PC portable pour ouvrir une page Web de configuration embarquée (serveur Web HTTP sur <code>192.168.4.1</code>).</li>
+    <li><strong>Bluetooth Classic (Piconet Maître / Esclaves - Profil SPP) :</strong> Le module esclave (Grove HC-05) s'appaire avec un équipement maître. Il émule un câble série bidirectionnel transparent (port COM virtuel) à 9600 ou 115200 bauds.</li>
+    <li><strong>BLE en Mode Balise (Broadcaster / Beacon) :</strong> Le capteur diffuse des trames d'annonces (<i>Advertising</i>) sur les canaux 37, 38 et 39 sans jamais établir de connexion active. Tous les récepteurs (<i>Observers</i>) à portée captent la mesure instantanément sans délai de synchronisation.</li>
+    <li><strong>BLE en Mode Connecté GATT (Serveur / Client) :</strong> L'objet communicant joue le rôle de <strong>Serveur GATT</strong>. Il structure ses grandeurs physiques sous forme de <strong>Services</strong> et de <strong>Caractéristiques</strong> identifiés par des UUID. Le smartphone de maintenance (Client GATT avec <i>nRF Connect</i>) peut lire (<i>Read</i>), modifier un paramètre (<i>Write</i>) ou s'abonner à des notifications en temps réel (<i>Notify</i>).</li>
+    <li><strong>LoRa P2P (Point-à-Point Direct) :</strong> Deux modules radio (émetteur capteur et récepteur passerelle) communiquent directement sur 868 MHz en modulation LoRa sans aucune infrastructure ni carte SIM. C'est la solution reine en atelier pour relier une machine isolée à un PC de supervision via commandes AT série.</li>
+    <li><strong>LoRaWAN (Architecture Étoile d'Étoiles) :</strong> Les capteurs autonomes émettent leurs paquets vers une ou plusieurs passerelles (<i>Gateways</i>) qui transfèrent les flux chiffrés en IP vers un serveur réseau central (<i>The Things Network</i> ou <i>ChirpStack</i>).</li>
+    <li><strong>Réseaux Maillés (Mesh) :</strong> Les équipements alimentés sur secteur jouent le rôle de routeurs et répètent les paquets de proche en proche pour contourner les obstacles métalliques d'une usine.</li>
+  </ul>
+
+  <!-- CALLOUT : IDENTIFIANTS LORAWAN vs LORA P2P -->
+  <div class="callout callout-purple">
+    <div class="callout-title">Focus Télécoms BTS CIEL : Pourquoi LoRa P2P n'a pas besoin d'identifiants alors que LoRaWAN exige DevEUI, AppEUI &amp; AppKey ?</div>
+    <p>Cette distinction est fondamentale pour l'épreuve de projet et les activités de bureau d'études :</p>
+    <ul>
+      <li><strong>En LoRa P2P (Liaison Directe Privée) :</strong> Les deux modules (émetteur et récepteur) sont configurés « en miroir » sur les mêmes paramètres physiques (Fréquence <code>868.1 MHz</code>, <i>SF7</i>, <i>BW 125 kHz</i>). <strong>Aucun identifiant DevEUI, aucun serveur et aucune clé AppKey ne sont nécessaires.</strong> Le capteur transmet ses octets bruts directement au récepteur distant. C'est la solution la plus rapide à déployer en atelier.</li>
+      <li><strong>En LoRaWAN (Réseau d'Opérateur / Infrastructure Partagée) :</strong> Des milliers de capteurs partagent les mêmes passerelles et fréquences. Pour savoir à quel client appartient la donnée et garantir une sécurité inviolable de bout en bout, le protocole impose la <strong>triplette d'enrôlement OTAA (Over-The-Air Activation)</strong> :
+        <ul>
+          <li><strong>DevEUI (Device EUI / DevID — 64 bits / 8 octets) :</strong> L'adresse MAC matérielle mondiale unique du capteur (ex: <code>70-B3-D5-7E-D0-04-12-34</code>), gravée par le fabricant ou attribuée sur The Things Network.</li>
+          <li><strong>JoinEUI / AppEUI (UEID / Application EUI — 64 bits / 8 octets) :</strong> L'identifiant de l'application ou du serveur d'enrôlement (Join Server) auquel le capteur est rattaché (ex: <code>00-00-00-00-00-00-00-01</code>).</li>
+          <li><strong>AppKey (Application Key — 128 bits / 16 octets) :</strong> La clé secrète maîtresse symétrique AES-128 partagée entre le capteur et le serveur. <strong>Elle ne circule jamais sur les ondes hertziennes</strong> : elle sert uniquement de secret partagé pour authentifier la demande d'association (<i>Join-Request</i>) et dériver dynamiquement les clés de session de travail :
+            <br>&bull; <code>DevAddr</code> (32 bits) : adresse réseau temporaire courte du capteur.
+            <br>&bull; <code>NwkSKey</code> (128 bits) : clé réseau pour valider l'intégrité du paquet via le code <strong>MIC</strong>.
+            <br>&bull; <code>AppSKey</code> (128 bits) : clé applicative pour <strong>chiffrer les données capteurs (FRMPayload)</strong> de bout en bout.
+          </li>
+        </ul>
+      </li>
+    </ul>
+  </div>
+
+  <!-- FIGURE 2 : SVG DES ARCHITECTURES RESEAUX IOT -->
+  <div class="figure-box">
+    <svg viewBox="0 0 940 480" width="100%" height="auto" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <marker id="arr-blue" viewBox="0 0 10 10" refX="5" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+      <path d="M 0 0 L 10 5 L 0 10 z" fill="#0284c7"/>
+    </marker>
+    <marker id="arr-orange" viewBox="0 0 10 10" refX="5" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+      <path d="M 0 0 L 10 5 L 0 10 z" fill="#ea580c"/>
+    </marker>
+    <marker id="arr-green" viewBox="0 0 10 10" refX="5" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+      <path d="M 0 0 L 10 5 L 0 10 z" fill="#16a34a"/>
+    </marker>
+    <marker id="arr-purple" viewBox="0 0 10 10" refX="5" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+      <path d="M 0 0 L 10 5 L 0 10 z" fill="#7c3aed"/>
+    </marker>
+  </defs>
+
+  <!-- FOND GENERAL -->
+  <rect x="0" y="0" width="940" height="480" rx="10" fill="#ffffff" stroke="#cbd5e1" stroke-width="1.5"/>
+
+  <!-- TITRE GLOBAL -->
+  <text x="470" y="26" font-family="'Segoe UI', Roboto, sans-serif" font-size="13.5" font-weight="800" fill="#0b3c5d" text-anchor="middle" letter-spacing="0.5">
+    SYNTHÈSE DES TOPOLOGIES ET ARCHITECTURES RÉSEAUX IOT (BANC D'ESSAI STI)
+  </text>
+
+  <!-- ========================================================================= -->
+  <!-- COLONNE GAUCHE (x = 20)                                                   -->
+  <!-- ========================================================================= -->
+
+  <!-- CARTE 1 : WI-FI (STA vs SOFT-AP) -->
+  <g transform="translate(20, 42)">
+    <rect x="0" y="0" width="440" height="132" rx="6" fill="#f0f9ff" stroke="#0284c7" stroke-width="1.2"/>
+    <rect x="0" y="0" width="440" height="26" rx="6" fill="#e0f2fe"/>
+    <text x="15" y="18" fill="#0369a1" font-family="'Segoe UI', sans-serif" font-size="10" font-weight="bold">1. Wi-Fi : Mode Station (STA) &amp; Point d'Accès (Soft-AP)</text>
+
+    <!-- Nœud Box/Routeur -->
+    <circle cx="60" cy="62" r="18" fill="#bae6fd" stroke="#0284c7" stroke-width="1.5"/>
+    <text x="60" y="66" fill="#0369a1" font-family="'Segoe UI', sans-serif" font-size="8.5" font-weight="bold" text-anchor="middle">Box / AP</text>
+    <text x="60" y="92" fill="#64748b" font-family="'Segoe UI', sans-serif" font-size="7.5" text-anchor="middle">Réseau Local</text>
+
+    <!-- Flèche STA -->
+    <line x1="82" y1="62" x2="160" y2="62" stroke="#0284c7" stroke-width="1.8" stroke-dasharray="3,3" marker-end="url(#arr-blue)"/>
+    <text x="122" y="55" fill="#0284c7" font-family="'Segoe UI', sans-serif" font-size="8" font-weight="bold" text-anchor="middle">DHCP / IP</text>
+
+    <!-- Nœud ESP32 -->
+    <circle cx="185" cy="62" r="20" fill="#0284c7" stroke="#0369a1" stroke-width="1.5"/>
+    <text x="185" y="60" fill="#ffffff" font-family="'Segoe UI', sans-serif" font-size="8" font-weight="bold" text-anchor="middle">ESP32</text>
+    <text x="185" y="71" fill="#bae6fd" font-family="'Segoe UI', sans-serif" font-size="7" text-anchor="middle">STA + AP</text>
+
+    <!-- Flèche Soft-AP -->
+    <line x1="210" y1="62" x2="285" y2="62" stroke="#ea580c" stroke-width="1.8" stroke-dasharray="3,3" marker-end="url(#arr-orange)"/>
+    <text x="248" y="55" fill="#c2410c" font-family="'Segoe UI', sans-serif" font-size="8" font-weight="bold" text-anchor="middle">192.168.4.1</text>
+
+    <!-- Nœud Smartphone -->
+    <circle cx="310" cy="62" r="18" fill="#ffedd5" stroke="#ea580c" stroke-width="1.5"/>
+    <text x="310" y="66" fill="#c2410c" font-family="'Segoe UI', sans-serif" font-size="8.5" font-weight="bold" text-anchor="middle">Client</text>
+    <text x="310" y="92" fill="#64748b" font-family="'Segoe UI', sans-serif" font-size="7.5" text-anchor="middle">Page Web HTML</text>
+
+    <!-- Explication basse -->
+    <rect x="10" y="102" width="420" height="22" rx="3" fill="#ffffff" stroke="#bae6fd"/>
+    <text x="220" y="117" fill="#0369a1" font-family="'Segoe UI', sans-serif" font-size="8" text-anchor="middle">
+      <b>STA :</b> Collecte de données vers serveur &bull; <b>Soft-AP :</b> Configuration autonome sans box
+    </text>
+  </g>
+
+  <!-- CARTE 2 : BLUETOOTH CLASSIC (PICONET) -->
+  <g transform="translate(20, 186)">
+    <rect x="0" y="0" width="440" height="132" rx="6" fill="#eff6ff" stroke="#2563eb" stroke-width="1.2"/>
+    <rect x="0" y="0" width="440" height="26" rx="6" fill="#dbeafe"/>
+    <text x="15" y="18" fill="#1d4ed8" font-family="'Segoe UI', sans-serif" font-size="10" font-weight="bold">2. Bluetooth Classic : Piconet Maître / Esclaves (SPP)</text>
+
+    <!-- Nœud Maître -->
+    <circle cx="70" cy="62" r="20" fill="#1d4ed8" stroke="#1e40af" stroke-width="1.5"/>
+    <text x="70" y="60" fill="#ffffff" font-family="'Segoe UI', sans-serif" font-size="8" font-weight="bold" text-anchor="middle">Maître</text>
+    <text x="70" y="71" fill="#bfdbfe" font-family="'Segoe UI', sans-serif" font-size="7" text-anchor="middle">PC / Tablette</text>
+
+    <!-- Liaisons esclaves -->
+    <line x1="93" y1="52" x2="195" y2="40" stroke="#2563eb" stroke-width="1.5"/>
+    <circle cx="215" cy="40" r="14" fill="#dbeafe" stroke="#2563eb"/>
+    <text x="215" y="44" fill="#1e40af" font-family="'Segoe UI', sans-serif" font-size="7.5" font-weight="bold" text-anchor="middle">HC-05 #1</text>
+
+    <line x1="93" y1="62" x2="195" y2="62" stroke="#2563eb" stroke-width="1.5"/>
+    <circle cx="215" cy="62" r="14" fill="#dbeafe" stroke="#2563eb"/>
+    <text x="215" y="66" fill="#1e40af" font-family="'Segoe UI', sans-serif" font-size="7.5" font-weight="bold" text-anchor="middle">HC-05 #2</text>
+
+    <line x1="93" y1="72" x2="195" y2="84" stroke="#2563eb" stroke-width="1.5"/>
+    <circle cx="215" cy="84" r="14" fill="#dbeafe" stroke="#2563eb"/>
+    <text x="215" y="88" fill="#1e40af" font-family="'Segoe UI', sans-serif" font-size="7" text-anchor="middle">Escl. 3..7</text>
+
+    <text x="325" y="60" fill="#1e40af" font-family="'Segoe UI', sans-serif" font-size="8.5" font-weight="bold">Profil SPP :</text>
+    <text x="325" y="74" fill="#475569" font-family="'Segoe UI', sans-serif" font-size="8">Liaison série transparente</text>
+    <text x="325" y="86" fill="#475569" font-family="'Segoe UI', sans-serif" font-size="8">Émulation port COM virtuel</text>
+
+    <!-- Explication basse -->
+    <rect x="10" y="102" width="420" height="22" rx="3" fill="#ffffff" stroke="#bfdbfe"/>
+    <text x="220" y="117" fill="#1d4ed8" font-family="'Segoe UI', sans-serif" font-size="8" text-anchor="middle">
+      Liaison point-à-point fiable &bull; Débit ~1 Mbit/s &bull; Appairage par code PIN
+    </text>
+  </g>
+
+  <!-- CARTE 3 : BLE (BEACONS & GATT) -->
+  <g transform="translate(20, 330)">
+    <rect x="0" y="0" width="440" height="132" rx="6" fill="#f0fdf4" stroke="#16a34a" stroke-width="1.2"/>
+    <rect x="0" y="0" width="440" height="26" rx="6" fill="#dcfce7"/>
+    <text x="15" y="18" fill="#15803d" font-family="'Segoe UI', sans-serif" font-size="10" font-weight="bold">3. BLE : Balises Beacons (1-vers-N) &amp; Mode Connecté GATT</text>
+
+    <!-- Balise Beacon -->
+    <circle cx="50" cy="62" r="16" fill="#bbf7d0" stroke="#16a34a" stroke-width="1.5"/>
+    <text x="50" y="65" fill="#166534" font-family="'Segoe UI', sans-serif" font-size="8" font-weight="bold" text-anchor="middle">Beacon</text>
+    <text x="50" y="90" fill="#64748b" font-family="'Segoe UI', sans-serif" font-size="7" text-anchor="middle">Diffusion 1&rarr;N</text>
+
+    <path d="M 72,52 Q 86,62 72,72" stroke="#16a34a" stroke-width="1.8" fill="none"/>
+    <path d="M 80,45 Q 98,62 80,79" stroke="#16a34a" stroke-width="1.8" fill="none"/>
+
+    <!-- Séparateur vertical -->
+    <line x1="150" y1="35" x2="150" y2="95" stroke="#cbd5e1" stroke-width="1.2" stroke-dasharray="3,3"/>
+
+    <!-- Serveur GATT -->
+    <circle cx="210" cy="62" r="18" fill="#16a34a" stroke="#14532d" stroke-width="1.5"/>
+    <text x="210" y="60" fill="#ffffff" font-family="'Segoe UI', sans-serif" font-size="7.5" font-weight="bold" text-anchor="middle">Serveur</text>
+    <text x="210" y="71" fill="#dcfce7" font-family="'Segoe UI', sans-serif" font-size="7" text-anchor="middle">GATT ESP32</text>
+
+    <line x1="232" y1="62" x2="295" y2="62" stroke="#16a34a" stroke-width="1.8" marker-end="url(#arr-green)"/>
+    <text x="264" y="55" fill="#15803d" font-family="'Segoe UI', sans-serif" font-size="7.5" font-weight="bold" text-anchor="middle">Notify / Read</text>
+
+    <!-- Client Smartphone -->
+    <circle cx="320" cy="62" r="18" fill="#dcfce7" stroke="#16a34a" stroke-width="1.5"/>
+    <text x="320" y="60" fill="#166534" font-family="'Segoe UI', sans-serif" font-size="7.5" font-weight="bold" text-anchor="middle">Client</text>
+    <text x="320" y="71" fill="#166534" font-family="'Segoe UI', sans-serif" font-size="6.5" text-anchor="middle">nRF Connect</text>
+
+    <rect x="350" y="44" width="75" height="36" fill="#ffffff" rx="3" stroke="#86efac"/>
+    <text x="387" y="58" fill="#166534" font-family="'Segoe UI', sans-serif" font-size="7.5" font-weight="bold" text-anchor="middle">Table GATT</text>
+    <text x="387" y="70" fill="#64748b" font-family="'Segoe UI', sans-serif" font-size="6.8" text-anchor="middle">Services/Char.</text>
+
+    <!-- Explication basse -->
+    <rect x="10" y="102" width="420" height="22" rx="3" fill="#ffffff" stroke="#bbf7d0"/>
+    <text x="220" y="117" fill="#15803d" font-family="'Segoe UI', sans-serif" font-size="8" text-anchor="middle">
+      <b>Beacon :</b> Télérelève sans connexion &bull; <b>GATT :</b> Commande bidirectionnelle avec smartphone
+    </text>
+  </g>
+
+  <!-- ========================================================================= -->
+  <!-- COLONNE DROITE (x = 480)                                                  -->
+  <!-- ========================================================================= -->
+
+  <!-- CARTE 4 : LORA P2P DIRECT -->
+  <g transform="translate(480, 42)">
+    <rect x="0" y="0" width="440" height="132" rx="6" fill="#fff7ed" stroke="#ea580c" stroke-width="1.2"/>
+    <rect x="0" y="0" width="440" height="26" rx="6" fill="#ffedd5"/>
+    <text x="15" y="18" fill="#c2410c" font-family="'Segoe UI', sans-serif" font-size="10" font-weight="bold">4. LoRa P2P : Liaison Directe Atelier (Point-à-Point)</text>
+
+    <!-- Émetteur Capteur -->
+    <circle cx="65" cy="62" r="20" fill="#ea580c" stroke="#9a3412" stroke-width="1.5"/>
+    <text x="65" y="60" fill="#ffffff" font-family="'Segoe UI', sans-serif" font-size="8" font-weight="bold" text-anchor="middle">LoRa TX</text>
+    <text x="65" y="71" fill="#fed7aa" font-family="'Segoe UI', sans-serif" font-size="7" text-anchor="middle">Capteur Cuve</text>
+
+    <!-- Flèche Radio Longue Portée -->
+    <line x1="90" y1="62" x2="280" y2="62" stroke="#ea580c" stroke-width="2.2" marker-end="url(#arr-orange)"/>
+    <text x="185" y="52" fill="#c2410c" font-family="'Segoe UI', sans-serif" font-size="8.5" font-weight="bold" text-anchor="middle">868 MHz &bull; Portée 500 m à 5 km</text>
+    <text x="185" y="75" fill="#78716c" font-family="'Segoe UI', sans-serif" font-size="7.5" text-anchor="middle">Franchit béton armé &amp; machines industrielles</text>
+
+    <!-- Récepteur Supervision -->
+    <circle cx="310" cy="62" r="20" fill="#fed7aa" stroke="#ea580c" stroke-width="1.5"/>
+    <text x="310" y="60" fill="#9a3412" font-family="'Segoe UI', sans-serif" font-size="8" font-weight="bold" text-anchor="middle">LoRa RX</text>
+    <text x="310" y="71" fill="#9a3412" font-family="'Segoe UI', sans-serif" font-size="7" text-anchor="middle">Supervision PC</text>
+
+    <!-- Explication basse -->
+    <rect x="10" y="102" width="420" height="22" rx="3" fill="#ffffff" stroke="#fed7aa"/>
+    <text x="220" y="117" fill="#c2410c" font-family="'Segoe UI', sans-serif" font-size="8" text-anchor="middle">
+      <b>Zéro abonnement &bull; Zéro passerelle :</b> Transmission directe par commandes AT série
+    </text>
+  </g>
+
+  <!-- CARTE 5 : LORAWAN ETOILE D'ETOILES -->
+  <g transform="translate(480, 186)">
+    <rect x="0" y="0" width="440" height="132" rx="6" fill="#f0fdf4" stroke="#15803d" stroke-width="1.2"/>
+    <rect x="0" y="0" width="440" height="26" rx="6" fill="#dcfce7"/>
+    <text x="15" y="18" fill="#14532d" font-family="'Segoe UI', sans-serif" font-size="10" font-weight="bold">5. LoRaWAN : Architecture Centralisée (Étoile d'Étoiles)</text>
+
+    <!-- Nœuds capteurs -->
+    <circle cx="45" cy="45" r="11" fill="#bbf7d0" stroke="#15803d"/>
+    <circle cx="45" cy="65" r="11" fill="#bbf7d0" stroke="#15803d"/>
+    <circle cx="45" cy="85" r="11" fill="#bbf7d0" stroke="#15803d"/>
+    <text x="45" y="30" fill="#166534" font-family="'Segoe UI', sans-serif" font-size="7" font-weight="bold" text-anchor="middle">Nœuds</text>
+
+    <!-- Liaisons vers Gateway -->
+    <line x1="58" y1="48" x2="140" y2="60" stroke="#15803d" stroke-width="1.2" stroke-dasharray="2,2"/>
+    <line x1="58" y1="65" x2="140" y2="65" stroke="#15803d" stroke-width="1.2" stroke-dasharray="2,2"/>
+    <line x1="58" y1="82" x2="140" y2="70" stroke="#15803d" stroke-width="1.2" stroke-dasharray="2,2"/>
+
+    <!-- Gateway -->
+    <circle cx="160" cy="65" r="18" fill="#86efac" stroke="#15803d" stroke-width="1.5"/>
+    <text x="160" y="63" fill="#14532d" font-family="'Segoe UI', sans-serif" font-size="7.5" font-weight="bold" text-anchor="middle">Gateway</text>
+    <text x="160" y="73" fill="#14532d" font-family="'Segoe UI', sans-serif" font-size="6.5" text-anchor="middle">Passerelle</text>
+
+    <!-- IP Cloud -->
+    <line x1="182" y1="65" x2="255" y2="65" stroke="#0284c7" stroke-width="1.8" marker-end="url(#arr-blue)"/>
+    <text x="218" y="58" fill="#0369a1" font-family="'Segoe UI', sans-serif" font-size="7.5" font-weight="bold" text-anchor="middle">Ethernet / 4G</text>
+
+    <!-- Network Server -->
+    <circle cx="280" cy="65" r="18" fill="#bae6fd" stroke="#0284c7" stroke-width="1.5"/>
+    <text x="280" y="63" fill="#0369a1" font-family="'Segoe UI', sans-serif" font-size="7.5" font-weight="bold" text-anchor="middle">Serveur</text>
+    <text x="280" y="73" fill="#0369a1" font-family="'Segoe UI', sans-serif" font-size="6.5" text-anchor="middle">TTN Network</text>
+
+    <!-- App Dashboard -->
+    <line x1="302" y1="65" x2="350" y2="65" stroke="#475569" stroke-width="1.5"/>
+    <rect x="355" y="50" width="65" height="30" fill="#ffffff" rx="3" stroke="#64748b"/>
+    <text x="387" y="64" fill="#1e293b" font-family="'Segoe UI', sans-serif" font-size="7.5" font-weight="bold" text-anchor="middle">Dashboard</text>
+    <text x="387" y="74" fill="#64748b" font-family="'Segoe UI', sans-serif" font-size="6.5" text-anchor="middle">Node-RED / SQL</text>
+
+    <!-- Explication basse -->
+    <rect x="10" y="102" width="420" height="22" rx="3" fill="#ffffff" stroke="#bbf7d0"/>
+    <text x="220" y="117" fill="#14532d" font-family="'Segoe UI', sans-serif" font-size="8" text-anchor="middle">
+      Télérelève sur 15 km &bull; Passerelles transparentes &bull; Sécurité AES-128 de bout en bout
+    </text>
+  </g>
+
+  <!-- CARTE 6 : RESEAUX MESH -->
+  <g transform="translate(480, 330)">
+    <rect x="0" y="0" width="440" height="132" rx="6" fill="#faf5ff" stroke="#8b5cf6" stroke-width="1.2"/>
+    <rect x="0" y="0" width="440" height="26" rx="6" fill="#f3e8ff"/>
+    <text x="15" y="18" fill="#6b21a8" font-family="'Segoe UI', sans-serif" font-size="10" font-weight="bold">6. Réseaux Maillés (BLE Mesh / Thread Multi-Sauts)</text>
+
+    <!-- Nœud Capteur Extrémité -->
+    <circle cx="50" cy="62" r="15" fill="#ddd6fe" stroke="#8b5cf6"/>
+    <text x="50" y="60" fill="#5b21b6" font-family="'Segoe UI', sans-serif" font-size="7" font-weight="bold" text-anchor="middle">Capteur</text>
+    <text x="50" y="70" fill="#5b21b6" font-family="'Segoe UI', sans-serif" font-size="6" text-anchor="middle">Sur pile</text>
+
+    <!-- Nœuds Relais -->
+    <line x1="68" y1="55" x2="125" y2="45" stroke="#8b5cf6" stroke-width="1.5"/>
+    <circle cx="140" cy="45" r="16" fill="#c4b5fd" stroke="#8b5cf6" stroke-width="1.5"/>
+    <text x="140" y="48" fill="#4c1d95" font-family="'Segoe UI', sans-serif" font-size="7.5" font-weight="bold" text-anchor="middle">Relais 1</text>
+
+    <line x1="68" y1="68" x2="125" y2="80" stroke="#8b5cf6" stroke-width="1.5"/>
+    <circle cx="140" cy="80" r="16" fill="#c4b5fd" stroke="#8b5cf6" stroke-width="1.5"/>
+    <text x="140" y="83" fill="#4c1d95" font-family="'Segoe UI', sans-serif" font-size="7.5" font-weight="bold" text-anchor="middle">Relais 2</text>
+
+    <!-- Rebond vers Racine -->
+    <line x1="158" y1="45" x2="225" y2="58" stroke="#8b5cf6" stroke-width="1.5"/>
+    <line x1="158" y1="80" x2="225" y2="65" stroke="#8b5cf6" stroke-width="1.5"/>
+
+    <circle cx="245" cy="62" r="18" fill="#7c3aed" stroke="#5b21b6" stroke-width="1.5"/>
+    <text x="245" y="60" fill="#ffffff" font-family="'Segoe UI', sans-serif" font-size="7.5" font-weight="bold" text-anchor="middle">Passerelle</text>
+    <text x="245" y="70" fill="#ede9fe" font-family="'Segoe UI', sans-serif" font-size="6.5" text-anchor="middle">Nœud Root</text>
+
+    <text x="345" y="55" fill="#6b21a8" font-family="'Segoe UI', sans-serif" font-size="8.5" font-weight="bold">Auto-cicatrisant :</text>
+    <text x="345" y="70" fill="#475569" font-family="'Segoe UI', sans-serif" font-size="8">Contourne les obstacles</text>
+    <text x="345" y="82" fill="#475569" font-family="'Segoe UI', sans-serif" font-size="8">métalliques par rebonds</text>
+
+    <!-- Explication basse -->
+    <rect x="10" y="102" width="420" height="22" rx="3" fill="#ffffff" stroke="#ddd6fe"/>
+    <text x="220" y="117" fill="#6b21a8" font-family="'Segoe UI', sans-serif" font-size="8" text-anchor="middle">
+      Portée étendue de proche en proche &bull; Routeurs alimentés sur secteur permanent
+    </text>
+  </g>
+</svg>
+    <div class="figure-caption">Figure 2 : Synthèse visuelle des topologies et architectures réseaux pour objets électroniques sans fil (IoT).</div>
+  </div>
+
+  <h3>4.2. Structures des Trames de Capteurs : Pourquoi Bannir le Format JSON ?</h3>
+  <p>En informatique de gestion ou développement web, les données de capteurs sont habituellement échangées en texte clair avec le format JSON :</p>
+  <pre><code>{"node_id":1,"temperature":24.50,"humidite":65.2}</code></pre>
+  <p>Une telle trame représente <strong>51 octets ASCII</strong>. Sur une liaison radio basse consommation (LoRa ou BLE), transmettre 51 octets multiplie par 5 le temps d'émission, épuise la pile et risque d'enfreindre la réglementation du Duty Cycle. En électronique communicante, le technicien privilégie une <strong>trame binaire compacte</strong> :</p>
+
+  <!-- FIGURE 3 : STRUCTURES DES TRAMES IOT -->
+  <div class="figure-box">
+    <svg viewBox="0 0 940 370" width="100%" height="auto" xmlns="http://www.w3.org/2000/svg">
+  <!-- FOND GENERAL -->
+  <rect x="0" y="0" width="940" height="370" rx="10" fill="#ffffff" stroke="#cbd5e1" stroke-width="1.5"/>
+
+  <!-- TITRE GLOBAL -->
+  <text x="470" y="26" font-family="'Segoe UI', Roboto, sans-serif" font-size="13.5" font-weight="800" fill="#0b3c5d" text-anchor="middle" letter-spacing="0.5">
+    STRUCTURES DES TRAMES SANS FIL ET SÉRIE POUR CAPTEURS IOT
+  </text>
+
+  <!-- ========================================================================= -->
+  <!-- TRAME 1 : BLE ADVERTISING PACKET (CANAUX 37, 38, 39)                     -->
+  <!-- ========================================================================= -->
+  <g transform="translate(20, 42)">
+    <text x="0" y="16" fill="#15803d" font-family="'Segoe UI', sans-serif" font-size="10" font-weight="bold">
+      1. Structure du Paquet d'Annonce BLE (Canaux 37, 38, 39 &bull; Diffusion balise sans connexion)
+    </text>
+
+    <!-- Conteneur global de trame -->
+    <rect x="0" y="24" width="900" height="48" rx="5" fill="#f0fdf4" stroke="#16a34a" stroke-width="1.3"/>
+
+    <!-- Préambule -->
+    <rect x="2" y="26" width="60" height="44" fill="#bbf7d0" rx="3"/>
+    <text x="32" y="45" fill="#14532d" font-family="'Segoe UI', sans-serif" font-size="8.5" font-weight="bold" text-anchor="middle">Préambule</text>
+    <text x="32" y="60" fill="#166534" font-family="Consolas, monospace" font-size="7.5" text-anchor="middle">1 octet</text>
+
+    <!-- Access Address -->
+    <rect x="65" y="26" width="115" height="44" fill="#86efac" rx="3"/>
+    <text x="122" y="45" fill="#14532d" font-family="'Segoe UI', sans-serif" font-size="8.5" font-weight="bold" text-anchor="middle">Access Address</text>
+    <text x="122" y="60" fill="#14532d" font-family="Consolas, monospace" font-size="7.5" text-anchor="middle">4 octets (0x8E89BED6)</text>
+
+    <!-- PDU Header -->
+    <rect x="183" y="26" width="90" height="44" fill="#bbf7d0" rx="3"/>
+    <text x="228" y="45" fill="#14532d" font-family="'Segoe UI', sans-serif" font-size="8.5" font-weight="bold" text-anchor="middle">En-tête PDU</text>
+    <text x="228" y="60" fill="#166534" font-family="Consolas, monospace" font-size="7.5" text-anchor="middle">2 octets (Type/Len)</text>
+
+    <!-- AdvA (Adresse MAC) -->
+    <rect x="276" y="26" width="125" height="44" fill="#86efac" rx="3"/>
+    <text x="338" y="45" fill="#14532d" font-family="'Segoe UI', sans-serif" font-size="8.5" font-weight="bold" text-anchor="middle">Adresse MAC (AdvA)</text>
+    <text x="338" y="60" fill="#14532d" font-family="Consolas, monospace" font-size="7.5" text-anchor="middle">6 octets (BD_ADDR)</text>
+
+    <!-- Payload utile AdvData -->
+    <rect x="404" y="26" width="410" height="44" fill="#22c55e" rx="3"/>
+    <text x="609" y="45" fill="#ffffff" font-family="'Segoe UI', sans-serif" font-size="9" font-weight="bold" text-anchor="middle">
+      Charge Utile AdvData : Structures AD [Longueur | Type | Données] (0 à 31 octets)
+    </text>
+    <text x="609" y="60" fill="#dcfce7" font-family="'Segoe UI', sans-serif" font-size="7.5" text-anchor="middle">
+      Flags (0x01) &bull; Nom complet (0x09) &bull; Manufacturer Data (0xFF avec télémétrie capteur)
+    </text>
+
+    <!-- CRC -->
+    <rect x="817" y="26" width="81" height="44" fill="#bbf7d0" rx="3"/>
+    <text x="857" y="45" fill="#14532d" font-family="'Segoe UI', sans-serif" font-size="8.5" font-weight="bold" text-anchor="middle">CRC</text>
+    <text x="857" y="60" fill="#166534" font-family="Consolas, monospace" font-size="7.5" text-anchor="middle">3 octets (24b)</text>
+  </g>
+
+  <!-- ========================================================================= -->
+  <!-- TRAME 2 : LORAWAN UPLINK (AES-128)                                        -->
+  <!-- ========================================================================= -->
+  <g transform="translate(20, 148)">
+    <text x="0" y="16" fill="#c2410c" font-family="'Segoe UI', sans-serif" font-size="10" font-weight="bold">
+      2. Structure de la Trame Radio LoRaWAN Uplink (Chiffrement AES-128 &bull; Étoile d'étoiles)
+    </text>
+
+    <rect x="0" y="24" width="900" height="48" rx="5" fill="#fff7ed" stroke="#ea580c" stroke-width="1.3"/>
+
+    <!-- Préambule CSS -->
+    <rect x="2" y="26" width="85" height="44" fill="#fed7aa" rx="3"/>
+    <text x="44" y="45" fill="#9a3412" font-family="'Segoe UI', sans-serif" font-size="8.5" font-weight="bold" text-anchor="middle">Préambule RF</text>
+    <text x="44" y="60" fill="#9a3412" font-family="Consolas, monospace" font-size="7.5" text-anchor="middle">8 symboles CSS</text>
+
+    <!-- PHDR -->
+    <rect x="90" y="26" width="70" height="44" fill="#ffedd5" rx="3"/>
+    <text x="125" y="45" fill="#9a3412" font-family="'Segoe UI', sans-serif" font-size="8.5" font-weight="bold" text-anchor="middle">PHDR</text>
+    <text x="125" y="60" fill="#9a3412" font-family="Consolas, monospace" font-size="7.5" text-anchor="middle">Header PHY</text>
+
+    <!-- MHDR -->
+    <rect x="163" y="26" width="60" height="44" fill="#fed7aa" rx="3"/>
+    <text x="193" y="45" fill="#7c2d12" font-family="'Segoe UI', sans-serif" font-size="8.5" font-weight="bold" text-anchor="middle">MHDR</text>
+    <text x="193" y="60" fill="#7c2d12" font-family="Consolas, monospace" font-size="7.5" text-anchor="middle">1 octet</text>
+
+    <!-- FHDR -->
+    <rect x="226" y="26" width="220" height="44" fill="#fdba74" rx="3"/>
+    <text x="336" y="45" fill="#7c2d12" font-family="'Segoe UI', sans-serif" font-size="8.5" font-weight="bold" text-anchor="middle">En-tête Trame : FHDR (7 octets)</text>
+    <text x="336" y="60" fill="#7c2d12" font-family="Consolas, monospace" font-size="7.5" text-anchor="middle">DevAddr (4o) &bull; FCtrl (1o) &bull; FCnt (2o)</text>
+
+    <!-- FPort -->
+    <rect x="449" y="26" width="55" height="44" fill="#fed7aa" rx="3"/>
+    <text x="476" y="45" fill="#7c2d12" font-family="'Segoe UI', sans-serif" font-size="8.5" font-weight="bold" text-anchor="middle">FPort</text>
+    <text x="476" y="60" fill="#7c2d12" font-family="Consolas, monospace" font-size="7.5" text-anchor="middle">1 o. (1-223)</text>
+
+    <!-- FRMPayload -->
+    <rect x="507" y="26" width="265" height="44" fill="#ea580c" rx="3"/>
+    <text x="639" y="45" fill="#ffffff" font-family="'Segoe UI', sans-serif" font-size="8.5" font-weight="bold" text-anchor="middle">FRMPayload : Données Chiffrées AES-128</text>
+    <text x="639" y="60" fill="#ffedd5" font-family="'Segoe UI', sans-serif" font-size="7.5" text-anchor="middle">Télémétrie capteur compressée (clé AppSKey)</text>
+
+    <!-- MIC -->
+    <rect x="775" y="26" width="123" height="44" fill="#c2410c" rx="3"/>
+    <text x="836" y="45" fill="#ffffff" font-family="'Segoe UI', sans-serif" font-size="8.5" font-weight="bold" text-anchor="middle">MIC (AES-CMAC)</text>
+    <text x="836" y="60" fill="#ffedd5" font-family="Consolas, monospace" font-size="7.5" text-anchor="middle">4 octets (NwkSKey)</text>
+  </g>
+
+  <!-- ========================================================================= -->
+  <!-- TRAME 3 : TRAME BINAIRE SERIE CAPTEUR (UART - 8 OCTETS)                  -->
+  <!-- ========================================================================= -->
+  <g transform="translate(20, 254)">
+    <text x="0" y="16" fill="#0369a1" font-family="'Segoe UI', sans-serif" font-size="10" font-weight="bold">
+      3. Trame Binaire Série Compacte pour Capteur IoT (UART 9 600 / 115 200 bauds &bull; 8 octets)
+    </text>
+
+    <rect x="0" y="24" width="900" height="48" rx="5" fill="#f0f9ff" stroke="#0284c7" stroke-width="1.3"/>
+
+    <!-- SOF -->
+    <rect x="2" y="26" width="105" height="44" fill="#bae6fd" rx="3"/>
+    <text x="54" y="45" fill="#0369a1" font-family="'Segoe UI', sans-serif" font-size="8.5" font-weight="bold" text-anchor="middle">Start of Frame</text>
+    <text x="54" y="60" fill="#0c4a6e" font-family="Consolas, monospace" font-size="8" text-anchor="middle">0xAA 0x55 (2o)</text>
+
+    <!-- ID Nœud -->
+    <rect x="110" y="26" width="85" height="44" fill="#7dd3fc" rx="3"/>
+    <text x="152" y="45" fill="#0369a1" font-family="'Segoe UI', sans-serif" font-size="8.5" font-weight="bold" text-anchor="middle">ID Nœud</text>
+    <text x="152" y="60" fill="#0c4a6e" font-family="Consolas, monospace" font-size="8" text-anchor="middle">0x01 (1o)</text>
+
+    <!-- Température -->
+    <rect x="198" y="26" width="200" height="44" fill="#38bdf8" rx="3"/>
+    <text x="298" y="45" fill="#0c4a6e" font-family="'Segoe UI', sans-serif" font-size="8.5" font-weight="bold" text-anchor="middle">Température (int16_t signée)</text>
+    <text x="298" y="60" fill="#0c4a6e" font-family="Consolas, monospace" font-size="7.5" text-anchor="middle">2 octets &bull; Échelle &times;100 (ex: 2450 = 24,50°C)</text>
+
+    <!-- Pression / Humidité -->
+    <rect x="401" y="26" width="200" height="44" fill="#0284c7" rx="3"/>
+    <text x="501" y="45" fill="#ffffff" font-family="'Segoe UI', sans-serif" font-size="8.5" font-weight="bold" text-anchor="middle">Pression (uint16_t non signée)</text>
+    <text x="501" y="60" fill="#e0f2fe" font-family="Consolas, monospace" font-size="7.5" text-anchor="middle">2 octets &bull; Valeur brute en hPa (ex: 1013 hPa)</text>
+
+    <!-- Checksum XOR -->
+    <rect x="604" y="26" width="294" height="44" fill="#0369a1" rx="3"/>
+    <text x="751" y="45" fill="#ffffff" font-family="'Segoe UI', sans-serif" font-size="8.5" font-weight="bold" text-anchor="middle">Contrôle d'Intégrité : Checksum XOR (1 octet)</text>
+    <text x="751" y="60" fill="#e0f2fe" font-family="Consolas, monospace" font-size="7.5" text-anchor="middle">ID &oplus; Temp_MSB &oplus; Temp_LSB &oplus; Pres_MSB &oplus; Pres_LSB</text>
+  </g>
+</svg>
+    <div class="figure-caption">Figure 3 : Schémas synoptiques des trames d'annonces BLE, des paquets LoRaWAN chiffrés et d'une trame binaire capteur UART.</div>
+  </div>
+
+  <!-- ========================================================================= -->
+  <!-- 4. GUIDE D'INGENIERIE HARDWARE & ENERGIE (BANC D'ESSAI STI)                -->
+  <!-- ========================================================================= -->
+  <h2>5. Guide d'Ingénierie pour le Technicien Bureau d'Études (Conception Matérielle &amp; Énergétique)</h2>
+
+  <h3>5.1. Mesure de Consommation au Banc d'Essai &amp; Calcul d'Autonomie sur Pile</h3>
+  <p>Pour un capteur autonome sans fil fonctionnant sur pile lithium (ex: LiSOCl<sub>2</sub> 3,6 V ou Li-MnO<sub>2</sub> 3 V), l'autonomie visée est de <strong>3 à 10 ans</strong>. La mesure de la consommation électrique nécessite une méthodologie de laboratoire rigoureuse :</p>
+
+  <div class="callout callout-info">
+    <div class="callout-title">Méthode de Mesure en Travaux Pratiques (Digilent Analog Discovery 3)</div>
+    <p>Un multimètre numérique ordinaire est incapable d'enregistrer les transitoires radio : son temps d'intégration (plusieurs centaines de millisecondes) lisse les pics et sa résistance interne (*Burden Voltage*) fait chuter la tension d'alimentation. La méthode préconisée en TP STI consiste à :</p>
+    <ul>
+      <li>Insérer une <strong>résistance de shunt de précision</strong> (ex: <i>R</i><sub>shunt</sub> = <strong>10 &Omega;</strong> &plusmn;1%) en série sur le rail d'alimentation 3,3 V.</li>
+      <li>Raccorder les sondes différentielles de l'oscilloscope <strong>Digilent Analog Discovery 3</strong> (logiciel WaveForms) aux bornes du shunt.</li>
+      <li>Visualiser en temps réel la tension &Delta;<i>U</i>(<i>t</i>) et en déduire le profil de courant selon la loi d'Ohm : <code><i>I</i>(<i>t</i>) = &Delta;<i>U</i>(<i>t</i>) / <i>R</i><sub>shunt</sub></code>.</li>
+    </ul>
+  </div>
+
+  <!-- FIGURE 4 : SVG CHRONOGRAMME DE CONSOMMATION -->
+  <div class="figure-box">
+    <svg viewBox="0 0 940 360" width="100%" height="auto" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <linearGradient id="gradTxArea" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" stop-color="#ef4444" stop-opacity="0.85"/>
+      <stop offset="100%" stop-color="#ef4444" stop-opacity="0.15"/>
+    </linearGradient>
+    <linearGradient id="gradRxArea" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" stop-color="#f59e0b" stop-opacity="0.8"/>
+      <stop offset="100%" stop-color="#f59e0b" stop-opacity="0.15"/>
+    </linearGradient>
+    <linearGradient id="gradAdcArea" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" stop-color="#0284c7" stop-opacity="0.75"/>
+      <stop offset="100%" stop-color="#0284c7" stop-opacity="0.15"/>
+    </linearGradient>
+  </defs>
+
+  <!-- FOND GENERAL -->
+  <rect x="0" y="0" width="940" height="360" rx="10" fill="#ffffff" stroke="#cbd5e1" stroke-width="1.5"/>
+
+  <!-- TITRE GLOBAL -->
+  <text x="470" y="26" font-family="'Segoe UI', Roboto, sans-serif" font-size="13.5" font-weight="800" fill="#0b3c5d" text-anchor="middle" letter-spacing="0.5">
+    CHRONOGRAMME EXPÉRIMENTAL DE CONSOMMATION ÉLECTRIQUE (OSCILLOSCOPE DIGILENT AD3)
+  </text>
+
+  <!-- ECRAN OSCILLOSCOPE (STYLE WAVEFORMS) -->
+  <g transform="translate(30, 42)">
+    <!-- Cadre écran -->
+    <rect x="0" y="0" width="880" height="295" rx="6" fill="#0f172a" stroke="#334155" stroke-width="2"/>
+
+    <!-- Grille oscilloscope (lignes de division) -->
+    <g stroke="#1e293b" stroke-width="1" stroke-dasharray="3,3">
+      <!-- Lignes horizontales -->
+      <line x1="80" y1="40" x2="850" y2="40"/>
+      <line x1="80" y1="90" x2="850" y2="90"/>
+      <line x1="80" y1="140" x2="850" y2="140"/>
+      <line x1="80" y1="190" x2="850" y2="190"/>
+      <line x1="80" y1="240" x2="850" y2="240"/>
+      <!-- Lignes verticales -->
+      <line x1="170" y1="25" x2="170" y2="255"/>
+      <line x1="270" y1="25" x2="270" y2="255"/>
+      <line x1="390" y1="25" x2="390" y2="255"/>
+      <line x1="510" y1="25" x2="510" y2="255"/>
+      <line x1="630" y1="25" x2="630" y2="255"/>
+      <line x1="750" y1="25" x2="750" y2="255"/>
+    </g>
+
+    <!-- AXE VERTICAL : COURANT / TENSION SHUNT (Rshunt = 10 Ohms) -->
+    <line x1="80" y1="255" x2="80" y2="25" stroke="#94a3b8" stroke-width="1.8"/>
+    <polygon points="76,25 80,15 84,25" fill="#94a3b8"/>
+    <text x="75" y="15" fill="#38bdf8" font-family="'Segoe UI', sans-serif" font-size="9" font-weight="bold" text-anchor="end">I (mA)</text>
+
+    <!-- Graduations axe Y -->
+    <text x="72" y="244" fill="#94a3b8" font-family="Consolas, monospace" font-size="8.5" text-anchor="end">0 mA</text>
+    <text x="72" y="194" fill="#94a3b8" font-family="Consolas, monospace" font-size="8.5" text-anchor="end">12 mA</text>
+    <text x="72" y="144" fill="#94a3b8" font-family="Consolas, monospace" font-size="8.5" text-anchor="end">35 mA</text>
+    <text x="72" y="54" fill="#f87171" font-family="Consolas, monospace" font-size="9" font-weight="bold" text-anchor="end">85 mA</text>
+
+    <!-- AXE HORIZONTAL : TEMPS -->
+    <line x1="80" y1="240" x2="855" y2="240" stroke="#94a3b8" stroke-width="1.8"/>
+    <polygon points="855,236 865,240 855,244" fill="#94a3b8"/>
+    <text x="865" y="254" fill="#94a3b8" font-family="'Segoe UI', sans-serif" font-size="9" font-weight="bold">Temps (t)</text>
+
+    <!-- TRACE OSCILLOSCOPE (JAUNE LUMINEUX / STYLE ANALOG DISCOVERY) -->
+
+    <!-- Phase 1 : Veille Deep Sleep initiale (x: 80 à 210) -->
+    <line x1="80" y1="239" x2="210" y2="239" stroke="#10b981" stroke-width="3"/>
+    <rect x="95" y="205" width="105" height="24" rx="3" fill="#064e3b" stroke="#10b981" stroke-width="1"/>
+    <text x="147" y="217" fill="#a7f3d0" font-family="'Segoe UI', sans-serif" font-size="8" font-weight="bold" text-anchor="middle">Veille (Deep Sleep)</text>
+    <text x="147" y="226" fill="#6ee7b7" font-family="Consolas, monospace" font-size="7.5" text-anchor="middle">I &approx; 18 &mu;A</text>
+
+    <!-- Phase 2 : Réveil MCU & Mesure ADC / I2C (x: 210 à 300) -->
+    <polyline points="210,239 215,190 295,190 300,50" stroke="#38bdf8" stroke-width="2.5" fill="none"/>
+    <polygon points="215,240 215,190 295,190 295,240" fill="url(#gradAdcArea)"/>
+    <rect x="220" y="155" width="85" height="26" rx="3" fill="#0c4a6e" stroke="#38bdf8" stroke-width="1"/>
+    <text x="262" y="167" fill="#bae6fd" font-family="'Segoe UI', sans-serif" font-size="8" font-weight="bold" text-anchor="middle">Réveil + ADC</text>
+    <text x="262" y="177" fill="#7dd3fc" font-family="Consolas, monospace" font-size="7.5" text-anchor="middle">12 mA &bull; 30 ms</text>
+
+    <!-- Phase 3 : Pic Émission Radio TX (x: 300 à 450) -->
+    <polyline points="300,50 445,50 450,140" stroke="#ef4444" stroke-width="3" fill="none"/>
+    <polygon points="300,240 300,50 445,50 445,240" fill="url(#gradTxPeak)"/>
+    <rect x="315" y="65" width="125" height="34" rx="3" fill="#7f1d1d" stroke="#ef4444" stroke-width="1.2"/>
+    <text x="377" y="78" fill="#fecaca" font-family="'Segoe UI', sans-serif" font-size="9" font-weight="bold" text-anchor="middle">PIC ÉMISSION (TX)</text>
+    <text x="377" y="92" fill="#ffffff" font-family="Consolas, monospace" font-size="8" text-anchor="middle">85 mA (LoRa) &bull; 70 ms</text>
+
+    <!-- Phase 4 : Écoute RX / Fenêtre ACK (x: 450 à 530) -->
+    <polyline points="450,140 525,140 530,239" stroke="#f59e0b" stroke-width="2.5" fill="none"/>
+    <polygon points="450,240 450,140 525,140 525,240" fill="url(#gradRxPeak)"/>
+    <rect x="460" y="105" width="90" height="26" rx="3" fill="#78350f" stroke="#f59e0b" stroke-width="1"/>
+    <text x="505" y="117" fill="#fef3c7" font-family="'Segoe UI', sans-serif" font-size="8" font-weight="bold" text-anchor="middle">Fenêtre RX</text>
+    <text x="505" y="127" fill="#fde68a" font-family="Consolas, monospace" font-size="7.5" text-anchor="middle">35 mA &bull; 30 ms</text>
+
+    <!-- Phase 5 : Retour en Veille Profonde (x: 530 à 840) -->
+    <line x1="530" y1="239" x2="840" y2="239" stroke="#10b981" stroke-width="3"/>
+    <text x="685" y="225" fill="#34d399" font-family="'Segoe UI', sans-serif" font-size="9" font-weight="bold" text-anchor="middle">
+      Retour en Deep Sleep : Durée 899,9 s (99,98 % du temps total)
+    </text>
+
+    <!-- ENCART MATÉRIEL : RÔLE DU CONDENSATEUR TAMPON -->
+    <rect x="560" y="45" width="300" height="75" rx="5" fill="#1e293b" stroke="#f87171" stroke-width="1.2"/>
+    <text x="572" y="62" fill="#f87171" font-family="'Segoe UI', sans-serif" font-size="8.5" font-weight="bold">
+      &bull; Appel de courant impulsionnel (85 mA) :
+    </text>
+    <text x="572" y="76" fill="#e2e8f0" font-family="'Segoe UI', sans-serif" font-size="8">
+      Chute de tension : &Delta;V = Ri &times; I_TX = 8 &Omega; &times; 85 mA = 0,68 V !
+    </text>
+    <text x="572" y="90" fill="#fde047" font-family="'Segoe UI', sans-serif" font-size="8" font-weight="bold">
+      Risque de Brown-Out Reset (BOR) sur l'ESP32.
+    </text>
+    <text x="572" y="104" fill="#38bdf8" font-family="'Segoe UI', sans-serif" font-size="8">
+      &rarr; Condensateur réservoir 220 &mu;F Low-ESR obligatoire.
+    </text>
+
+    <!-- FLÈCHES TEMPORELLES -->
+    <line x1="215" y1="270" x2="525" y2="270" stroke="#f8fafc" stroke-width="1.5"/>
+    <line x1="215" y1="265" x2="215" y2="275" stroke="#f8fafc" stroke-width="1.5"/>
+    <line x1="525" y1="265" x2="525" y2="275" stroke="#f8fafc" stroke-width="1.5"/>
+    <text x="370" y="285" fill="#f8fafc" font-family="'Segoe UI', sans-serif" font-size="8.5" font-weight="bold" text-anchor="middle">
+      Phase Active : t_actif = 130 ms (Charge Q_actif &approx; 1,75 &mu;Ah)
+    </text>
+  </g>
+</svg>
+    <div class="figure-caption">Figure 4 : Profil temporel de consommation électrique d'un capteur IoT communicant sans fil (Banc de test STI).</div>
+  </div>
+
+  <p><strong>Formules de calcul pratique de l'autonomie en bureau d'études :</strong></p>
+  <ul>
+    <li><strong>Charge consommée par cycle (en &mu;Ah) :</strong>
+      <div class="formula-box">
+        <i>Q</i><sub>cycle</sub> = <i>I</i><sub>actif</sub> &times; <i>t</i><sub>actif</sub> + <i>I</i><sub>sleep</sub> &times; <i>t</i><sub>sleep</sub>
+      </div>
+    </li>
+    <li><strong>Courant moyen équivalent :</strong>
+      <div class="formula-box">
+        <i>I</i><sub>moyen</sub> = <span class="frac"><span class="num"><i>Q</i><sub>cycle</sub></span><span class="den"><i>T</i><sub>cycle</sub></span></span>
+      </div>
+    </li>
+    <li><strong>Autonomie réelle sur pile (en années) :</strong>
+      <div class="formula-box">
+        <i>Autonomie</i> (années) = <span class="frac"><span class="num"><i>C</i><sub>pile</sub> (mAh) &times; 0,8</span><span class="den"><i>I</i><sub>moyen</sub> (mA) &times; 8760 h</span></span>
+      </div>
+      <p style="font-size: 8.4pt; color: #64748b; margin-top: 4px;">Le facteur 0,8 intègre une marge de sécurité de 20% couvrant l'autodécharge annuelle de la chimie lithium et la tension de coupure minimale du régulateur LDO.</p>
+    </li>
+  </ul>
+
+  <h3>5.2. Règles d'Or d'Intégration Matérielle RF en Bureau d'Études</h3>
+
+  <div class="callout callout-danger">
+    <div class="callout-title">1. Le Condensateur Réservoir Anti-Reset (Brown-Out Reset - BOR)</div>
+    <p>Lors de l'activation brutale de l'émetteur radio (appel de 150 à 250 mA en Wi-Fi ou 100 mA en LoRa), la résistance interne de la pile (<i>R</i><sub>i</sub> &approx; 5 à 15 &Omega;) et des pistes PCB provoque une chute de tension instantanée :</p>
+    <div class="formula-box">
+      &Delta;<i>V</i> = <i>R</i><sub>interne</sub> &times; <i>I</i><sub>pic_TX</sub>
+    </div>
+    <p>Si la tension aux bornes du microcontrôleur descend sous le seuil critique (environ <strong>2,7 V</strong> sur ESP32), le superviseur de tension interne déclenche un <strong>Brown-Out Reset (BOR)</strong>. La carte reboote alors en boucle sans jamais réussir à émettre son paquet radio !</p>
+    <p><strong>Solution matérielle indispensable :</strong> Toujours implanter un <strong>condensateur réservoir de 220 &mu;F à 470 &mu;F à très faible résistance série équivalente (Low-ESR)</strong> au plus près de la broche 3V3 du module radio, doublé d'un condensateur de découplage céramique <strong>100 nF</strong> pour filtrer les transitoires haute fréquence.</p>
+  </div>
+
+  <div class="callout callout-warning">
+    <div class="callout-title">2. Dégagement de l'Antenne PCB &amp; Boîtier Métallique</div>
+    <ul>
+      <li><strong>Zone d'exclusion de cuivre (Keepout Zone) :</strong> L'antenne gravée en cuivre sur le PCB ne doit comporter <strong>aucun plan de masse, aucune piste de signal et aucun composant</strong> en dessous d'elle ou sur ses côtés directs sur au moins 5 mm. L'antenne doit idéalement déborder du bord de la carte électronique.</li>
+      <li><strong>Traversée de boîtier métallique :</strong> Si le montage électronique est logé dans un coffret métallique étanche d'atelier (protection IP66), l'antenne interne sera totalement masquée par l'effet cage de Faraday. Le technicien doit obligatoirement raccorder une <strong>antenne fouet déportée à l'extérieur</strong> à l'aide d'un cordon coaxial miniature (connecteur U.FL vers embase SMA étanche de traversée).</li>
+    </ul>
+  </div>
+
+  <!-- ========================================================================= -->
+  <!-- 5. CAHIER D'EXERCICES D'INGENIERIE BE ELECTRONIQUE (BTS CIEL OPTION B)    -->
+  <!-- ========================================================================= -->
+  <h2>6. Cahier d'Exercices d'Ingénierie BE Électronique (BTS CIEL Option B)</h2>
+
+  <!-- ========================================================================= -->
+  <!-- EXERCICE 1                                                                -->
+  <!-- ========================================================================= -->
+  <div class="exercise-card">
+    <div class="exercise-header">
+      <span class="exercise-title">Exercice 1 : Diagnostic &amp; Qualification d'une Liaison Capteur en Atelier (Mesures RSSI Réelles &amp; Obstacles)</span>
+      <span class="meta-badge badge-primary">Compétences C04 &amp; C06 (Épreuve E5 / Électronique &amp; Réseaux)</span>
+    </div>
+    <p>Lors d'une activité pratique en atelier industriel, une équipe d'étudiants doit instrumenter un <strong>groupe motopompe</strong>. Un capteur de vibration et de température doit transmettre ses mesures vers l'armoire de supervision située à une distance <i>d</i> = <strong>80 mètres</strong>. La nef d'atelier comporte des cloisons de séparation tôlées et de volumineuses machines-outils métalliques.</p>
+
+    <p>Deux technologies sans fil sont déployées et testées sur le terrain : le <strong>Bluetooth Low Energy (2,4 GHz)</strong> et le <strong>LoRa Point-à-Point (868 MHz)</strong>. Le technicien effectue des relevés de puissance reçue (RSSI) avec un smartphone équipé de l'application <strong>nRF Connect for Mobile</strong> (pour le BLE) et une console série de réception (pour le module LoRa Semtech SX1262 en SF9) :</p>
+
+    <table>
+      <thead>
+        <tr>
+          <th>Point de Mesure en Atelier</th>
+          <th>Configuration de l'Environnement</th>
+          <th>Relevé BLE (2,4 GHz)</th>
+          <th>Relevé LoRa (868 MHz)</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td><strong>Point 1 (10 m)</strong></td>
+          <td>Champ libre direct dans l'allée centrale</td>
+          <td>RSSI = <strong>&minus;56 dBm</strong> (Excellente liaison)</td>
+          <td>RSSI = <strong>&minus;62 dBm</strong> &bull; SNR = +10 dB</td>
+        </tr>
+        <tr>
+          <td><strong>Point 2 (40 m)</strong></td>
+          <td>Derrière une cloison en placoplâtre</td>
+          <td>RSSI = <strong>&minus;75 dBm</strong> (Liaison stable)</td>
+          <td>RSSI = <strong>&minus;74 dBm</strong> &bull; SNR = +8 dB</td>
+        </tr>
+        <tr>
+          <td><strong>Point 3 (80 m)</strong></td>
+          <td>Position finale du moteur, derrière 2 cloisons tôlées et machines d'usinage</td>
+          <td>RSSI = <strong>&minus;96 dBm</strong><br><span style="color:#b91c1c; font-weight:bold;">Pertes de paquets &gt; 70 %, décrochages</span></td>
+          <td>RSSI = <strong>&minus;92 dBm</strong> &bull; SNR = +5 dB<br><span style="color:#15803d; font-weight:bold;">100 % des trames reçues sans erreur</span></td>
+        </tr>
+      </tbody>
+    </table>
+
+    <p><strong>Caractéristiques techniques des récepteurs :</strong></p>
+    <ul>
+      <li>Sensibilité limite du récepteur BLE : <i>S</i><sub>RX_BLE</sub> = <strong>&minus;93 dBm</strong>.</li>
+      <li>Sensibilité limite du récepteur LoRa (SX1262 en SF9 / 125 kHz) : <i>S</i><sub>RX_LoRa</sub> = <strong>&minus;130 dBm</strong>.</li>
+      <li>Marge minimale de réception exigée par le cahier des charges industriel : <i>Marge</i><sub>min</sub> = <strong>10 dB</strong>.</li>
+    </ul>
+
+    <p><strong>Travail demandé au technicien BE :</strong></p>
+    <ol>
+      <li><strong>[C04]</strong> Comparer le niveau de RSSI mesuré au Point 3 pour le BLE avec la sensibilité limite de son récepteur. Expliquer techniquement la cause des pertes massives de paquets observées en BLE.</li>
+      <li><strong>[C06]</strong> Calculer la marge de réception effective (<i>Fade Margin</i> en dB) au Point 3 pour la liaison BLE, puis pour la liaison LoRa.</li>
+      <li><strong>[C04]</strong> Conclure sur la technologie qui valide le cahier des charges pour une transmission directe en ligne droite.</li>
+      <li><strong>[C05]</strong> Si le cahier des charges client impose obligatoirement l'usage du BLE (pour permettre la relève des mesures sur les smartphones des agents de maintenance sans passerelle spécifique), proposer <strong>deux solutions matérielles ou réseau</strong> concrètes pour fiabiliser la liaison jusqu'à l'armoire de supervision.</li>
+    </ol>
+
+    <div class="callout callout-info">
+      <div class="callout-title">Pistes d'investigation &amp; Mots-clés pour le technicien BE</div>
+      <p><i>Mots-clés :</i> RSSI (dBm), sensibilité de réception, marge d'évanouissement (Fade Margin), cage de Faraday, atténuation des métaux, nœud répéteur BLE Mesh, antenne déportée avec câble coaxial SMA.</p>
+    </div>
+
+    <div class="callout callout-purple">
+      <div class="callout-title">Suggestion de requêtes guidées pour l'IA (Co-développement)</div>
+      <p>« <i>En tant que technicien supérieur BTS CIEL, j'ai mesuré un RSSI BLE de -96 dBm sur un récepteur ayant une sensibilité de -93 dBm. Analyse la marge de liaison obtenue. Quelles solutions d'implantation matérielle (antenne déportée SMA, répéteur relais BLE Mesh) permettent de fiabiliser la liaison en évitant l'effet cage de Faraday des armoires d'atelier ?</i> »</p>
+    </div>
+
+    <div class="solution-box">
+      <div class="solution-title">Corrigé Technique &amp; Grille d'Analyse BE (Exercice 1)</div>
+      <ol>
+        <li><strong>Analyse de la réception BLE au Point 3 :</strong>
+          <br>Au Point 3, le signal BLE mesuré est <i>RSSI</i> = &minus;96 dBm, alors que le seuil de sensibilité limite du récepteur est <i>S</i><sub>RX</sub> = &minus;93 dBm. Le niveau reçu est <strong>inférieur de 3 dB au seuil de détection du composant</strong>. Les circuits démodulateurs et corrélateurs ne parviennent plus à extraire les bits du bruit thermique, ce qui engendre des erreurs cycliques de CRC et le rejet massif des paquets (&gt; 70% de pertes).</li>
+        <li><strong>Calcul des marges de réception (Fade Margin) au Point 3 :</strong>
+          <br>&bull; <i>Marge BLE</i> = <i>RSSI</i> &minus; <i>S</i><sub>RX</sub> = (&minus;96 dBm) &minus; (&minus;93 dBm) = <strong>&minus;3 dB</strong> (Marge négative : liaison non fonctionnelle).
+          <br>&bull; <i>Marge LoRa</i> = <i>RSSI</i> &minus; <i>S</i><sub>RX</sub> = (&minus;92 dBm) &minus; (&minus;130 dBm) = <strong>+38 dB</strong>.
+          <br>La liaison LoRa dispose d'une marge considérable de 38 dB, très largement supérieure aux 10 dB imposés par le cahier des charges.</li>
+        <li><strong>Conclusion technologique :</strong>
+          <br>Seule la technologie <strong>LoRa 868 MHz</strong> satisfait aux exigences en liaison directe. Grâce à sa longueur d'onde plus grande et à sa modulation CSS permettant de décoder sous le bruit (SNR positif de +5 dB), elle franchit les cloisons métalliques sans difficulté.</li>
+        <li><strong>Solutions pour fiabiliser une architecture BLE :</strong>
+          <br>&bull; <i>Solution 1 (Architecture réseau) :</i> Installer un <strong>nœud répéteur BLE Mesh</strong> à mi-distance (au Point 2, où le RSSI est de &minus;75 dBm), alimenté sur une prise 230 V de l'atelier pour relayer les trames.
+          <br>&bull; <i>Solution 2 (Intégration matérielle) :</i> Déporter l'antenne 2,4 GHz à l'extérieur des structures métalliques et au-dessus des machines à l'aide d'un <strong>câble coaxial blindé de faible perte (RG-174)</strong> avec embase SMA et antenne colinéaire à gain (+5 dBi).</li>
+      </ol>
     </div>
   </div>
 
-  <hr style="margin-top: 35px; border-top: 1px solid #cbd5e1;" />
-  <footer style="text-align: center; font-size: 8.5pt; color: #64748b; margin-top: 15px;">
-    Document pédagogique BTS CIEL - 2e Année • Référentiel National Cybersécurité, Informatique & Électronique • Vincent Hilaire
+  <!-- ========================================================================= -->
+  <!-- EXERCICE 2                                                                -->
+  <!-- ========================================================================= -->
+  <div class="exercise-card">
+    <div class="exercise-header">
+      <span class="exercise-title">Exercice 2 : Profil Énergétique au Banc d'Essai (Digilent AD3) &amp; Dimensionnement d'une Pile Lithium</span>
+      <span class="meta-badge badge-primary">Compétences C05 &amp; C06 (Épreuve E5 / Électronique &amp; Réseaux)</span>
+    </div>
+    <p>Sur le banc de test de laboratoire, un technicien mesure la consommation électrique d'un capteur sans fil autonome à l'aide d'un oscilloscope <strong>Digilent Analog Discovery 3</strong>. Une résistance de shunt de précision <i>R</i><sub>shunt</sub> = <strong>10 &Omega;</strong> (&plusmn;1%) est insérée en série sur la ligne d'alimentation 3,3 V. Le capteur est programmé pour se réveiller <strong>toutes les 15 minutes</strong> (soit <i>T</i><sub>cycle</sub> = <strong>900 secondes</strong>).</p>
+
+    <p><strong>Relevé de l'oscillogramme sur le logiciel WaveForms :</strong></p>
+    <ul>
+      <li><strong>Phase 1 — Veille profonde (Deep Sleep) :</strong> Durée <i>t</i><sub>sleep</sub> = <strong>899,9 secondes</strong>. La tension mesurée aux bornes du shunt est constante : &Delta;<i>U</i><sub>sleep</sub> = <strong>180 &mu;V</strong>.</li>
+      <li><strong>Phase 2 — Réveil, conversion ADC &amp; lecture I2C :</strong> Durée <i>t</i><sub>mes</sub> = <strong>30 ms (0,03 s)</strong>. Tension mesurée : &Delta;<i>U</i><sub>mes</sub> = <strong>120 mV</strong>.</li>
+      <li><strong>Phase 3 — Émission radio TX (LoRa 868 MHz) :</strong> Durée <i>t</i><sub>TX</sub> = <strong>70 ms (0,07 s)</strong>. Tension mesurée : &Delta;<i>U</i><sub>TX</sub> = <strong>850 mV</strong>.</li>
+    </ul>
+
+    <p>Le système est alimenté par une pile lithium LiSOCl<sub>2</sub> au format AA (Saft LS14500) de tension nominale 3,6 V et de capacité nominale <i>C</i><sub>nom</sub> = <strong>2 600 mAh</strong>.</p>
+
+    <p><strong>Travail demandé au technicien BE :</strong></p>
+    <ol>
+      <li><strong>[C04]</strong> En appliquant la loi d'Ohm <i>I</i> = &Delta;<i>U</i> / <i>R</i><sub>shunt</sub>, calculer le courant consommé pendant chacune des 3 phases :
+        <br>&bull; <i>I</i><sub>sleep</sub> (en &mu;A).
+        <br>&bull; <i>I</i><sub>mes</sub> (en mA).
+        <br>&bull; <i>I</i><sub>TX</sub> (en mA).</li>
+      <li><strong>[C05]</strong> Calculer la charge électrique consommée par la phase active <i>Q</i><sub>actif</sub> (mesure + émission TX) puis par la veille <i>Q</i><sub>sleep</sub>, exprimées en microampères-heures (&mu;Ah). En déduire la charge totale consommée par cycle <i>Q</i><sub>cycle</sub> (&mu;Ah).</li>
+      <li><strong>[C05]</strong> Calculer le courant moyen équivalent <i>I</i><sub>moyen</sub> sur l'ensemble du cycle de 900 secondes (en &mu;A).</li>
+      <li><strong>[C06]</strong> En appliquant un coefficient de sécurité de <strong>80 %</strong> sur la capacité de la pile (pour couvrir l'autodécharge de 1 % par an et la tension de déchet du régulateur LDO), calculer l'autonomie prévisionnelle du capteur en années.</li>
+      <li><strong>[C05]</strong> Lors de l'impulsion d'émission (<i>I</i><sub>TX</sub> = 85 mA), la résistance interne de la pile et des pistes (<i>R</i><sub>i</sub> &approx; <strong>8 &Omega;</strong>) provoque une chute de tension interne &Delta;<i>V</i>. Calculer cette chute de tension. Justifier l'implantation obligatoire d'un <strong>condensateur réservoir de 220 &mu;F</strong> pour éviter le redémarrage intempestif par <i>Brown-Out Reset</i>.</li>
+    </ol>
+
+    <div class="callout callout-info">
+      <div class="callout-title">Pistes d'investigation &amp; Mots-clés pour le technicien BE</div>
+      <p><i>Mots-clés :</i> Résistance de shunt, loi d'Ohm, charge en &mu;Ah (<i>Q</i> = <i>I</i> &times; <i>t</i> / 3600), courant moyen, autodécharge LiSOCl<sub>2</sub>, chute de tension interne, Brown-Out Reset (BOR), condensateur réservoir Low-ESR.</p>
+    </div>
+
+    <div class="callout callout-purple">
+      <div class="callout-title">Suggestion de requêtes guidées pour l'IA (Co-développement)</div>
+      <p>« <i>Sur un capteur IoT alimenté par pile Saft LS14500 (2600 mAh), j'ai mesuré 18 &mu;A en veille (899,9 s), 12 mA en lecture ADC (30 ms) et 85 mA en émission LoRa (70 ms). Calcule le courant moyen et l'autonomie en années avec une marge de 20%. Rédige la justification matérielle du condensateur réservoir de 220 &mu;F anti-BOR.</i> »</p>
+    </div>
+
+    <div class="solution-box">
+      <div class="solution-title">Corrigé Technique &amp; Grille d'Analyse BE (Exercice 2)</div>
+      <ol>
+        <li><strong>Calcul des courants par phase (loi d'Ohm avec <i>R</i><sub>shunt</sub> = 10 &Omega;) :</strong>
+          <br>&bull; <i>I</i><sub>sleep</sub> = 180 &mu;V / 10 &Omega; = <strong>18 &mu;A</strong>.
+          <br>&bull; <i>I</i><sub>mes</sub> = 120 mV / 10 &Omega; = <strong>12 mA</strong>.
+          <br>&bull; <i>I</i><sub>TX</sub> = 850 mV / 10 &Omega; = <strong>85 mA</strong>.</li>
+        <li><strong>Calcul des charges électriques par cycle (en &mu;Ah) :</strong>
+          <br>&bull; <i>Q</i><sub>mes</sub> = (12 000 &mu;A &times; 0,03 s) / 3600 &approx; <strong>0,100 &mu;Ah</strong>.
+          <br>&bull; <i>Q</i><sub>TX</sub> = (85 000 &mu;A &times; 0,07 s) / 3600 &approx; <strong>1,653 &mu;Ah</strong>.
+          <br>&bull; <i>Q</i><sub>actif</sub> = 0,100 + 1,653 = <strong>1,753 &mu;Ah</strong>.
+          <br>&bull; <i>Q</i><sub>sleep</sub> = (18 &mu;A &times; 899,9 s) / 3600 &approx; <strong>4,4995 &mu;Ah</strong>.
+          <br>&bull; <i>Q</i><sub>cycle</sub> = 1,753 + 4,4995 &approx; <strong>6,253 &mu;Ah par cycle</strong>.</li>
+        <li><strong>Courant moyen équivalent :</strong>
+          <br><i>I</i><sub>moyen</sub> = <i>Q</i><sub>cycle</sub> / <i>T</i><sub>cycle</sub> = (6,253 &mu;Ah &times; 3600 s) / 900 s &approx; <strong>25,01 &mu;A</strong> (soit <strong>0,0250 mA</strong>).</li>
+        <li><strong>Autonomie prévisionnelle sur pile lithium :</strong>
+          <br>Capacité utile : <i>C</i><sub>utile</sub> = 2 600 mAh &times; 0,80 = <strong>2 080 mAh</strong>.
+          <br>Durée en heures : <i>T</i><sub>h</sub> = 2 080 mAh / 0,0250 mA &approx; <strong>83 200 heures</strong>.
+          <br>Autonomie en années : <i>T</i><sub>ans</sub> = 83 200 h / 8 760 h/an &approx; <strong>9,5 ans</strong>.
+          <br>Le capteur répond parfaitement au critère d'autonomie supérieure à 5 ans.</li>
+        <li><strong>Chute de tension interne et rôle du condensateur :</strong>
+          <br>&Delta;<i>V</i> = <i>R</i><sub>i</sub> &times; <i>I</i><sub>TX</sub> = 8 &Omega; &times; 0,085 A = <strong>0,68 V (680 mV)</strong>.
+          <br>Si la pile est partiellement déchargée à 3,2 V, la tension s'effondre à 3,2 V &minus; 0,68 V = <strong>2,52 V</strong>. Cette valeur est inférieure au seuil de Brown-Out Reset de l'ESP32 (~2,7 V), provoquant un redémarrage instantané.
+          <br>Le <strong>condensateur réservoir de 220 &mu;F</strong> fournit l'énergie nécessaire pendant l'impulsion de 70 ms sans solliciter brutalement la résistance interne de la pile, maintenant la tension au-dessus du seuil critique de reset.</li>
+      </ol>
+    </div>
+  </div>
+
+  <!-- ========================================================================= -->
+  <!-- EXERCICE 3                                                                -->
+  <!-- ========================================================================= -->
+  <div class="exercise-card">
+    <div class="exercise-header">
+      <span class="exercise-title">Exercice 3 : Décodage de Trame Binaire Série (UART), Contrôle d'Intégrité &amp; Duty Cycle 1%</span>
+      <span class="meta-badge badge-primary">Compétences C04 &amp; C05 (Épreuve E5 / Électronique &amp; Réseaux)</span>
+    </div>
+    <p>Sur un banc de mesure STI, un analyseur logique <strong>Digilent Analog Discovery 3</strong> est raccordé sur la liaison série UART (9 600 bauds, 8N1) reliant le microcontrôleur d'une station météo industrielle à son module d'émission sans fil LoRa 868 MHz.</p>
+
+    <p>L'analyseur logique capture la trame hexadécimale brute suivante :</p>
+    <pre><code>[ 0xAA, 0x55, 0x03, 0x08, 0x98, 0x03, 0xDE, 0x44 ]</code></pre>
+
+    <p><strong>Cahier des charges du protocole binaire propriétaire :</strong></p>
+    <ul>
+      <li><strong>Octets 0 et 1 (2 octets) :</strong> Start of Frame (SOF) fixe = <code>0xAA 0x55</code>.</li>
+      <li><strong>Octet 2 (1 octet) :</strong> Identifiant du nœud capteur (ID sur 1 octet non signé).</li>
+      <li><strong>Octets 3 et 4 (2 octets) :</strong> Température mesurée en °C, codée en entier signé 16 bits (<i>int16 Big Endian</i>) avec un <strong>facteur d'échelle de 100</strong> (ex: la valeur 2 150 code 21,50 °C).</li>
+      <li><strong>Octets 5 et 6 (2 octets) :</strong> Pression atmosphérique en hPa, codée en entier non signé 16 bits (<i>uint16 Big Endian</i>).</li>
+      <li><strong>Octet 7 (1 octet) :</strong> Clé de contrôle d'intégrité (<i>Checksum XOR</i>), calculée par le OU Exclusif successif de tous les octets utiles :
+        <div class="formula-box">
+          <i>Checksum</i> = ID &oplus; Temp<sub>MSB</sub> &oplus; Temp<sub>LSB</sub> &oplus; Pres<sub>MSB</sub> &oplus; Pres<sub>LSB</sub>
+        </div>
+      </li>
+    </ul>
+
+    <p><strong>Travail demandé au technicien BE :</strong></p>
+    <ol>
+      <li><strong>[C04]</strong> Identifier le rôle des octets <code>0xAA 0x55</code> en début de transmission série asynchrone.</li>
+      <li><strong>[C04]</strong> Reconstituer les valeurs binaires et décoder en clair :
+        <br>&bull; L'identifiant du capteur (ID).
+        <br>&bull; La température mesurée (en °C).
+        <br>&bull; La pression atmosphérique (en hPa).</li>
+      <li><strong>[C06]</strong> Poser le calcul bit à bit de OU Exclusif (XOR) sur les octets utiles. Vérifier si le checksum reçu (<code>0x44</code>) est exact et conclure sur l'intégrité de la trame.</li>
+      <li><strong>[C05]</strong> Un développeur web proposait initialement d'envoyer ces données au format JSON texte :
+        <pre><code>{"id":3,"temp":22.00,"pres":990}</code></pre>
+        Calculer le nombre d'octets de cette chaîne JSON (en comptant chaque caractère ASCII sur 1 octet). Calculer le gain de compacité (pourcentage de réduction de taille) offert par la trame binaire de 8 octets.</li>
+      <li><strong>[C04]</strong> Le module LoRa 868 MHz émet la trame binaire avec une durée d'émission radio mesurée à l'oscilloscope de <i>T</i><sub>émission</sub> = <strong>50 ms (0,05 s)</strong>.
+        <br>Rappeler la réglementation européenne ETSI imposant un <strong>Duty Cycle de 1%</strong> sur la bande 868 MHz. Calculer le temps de silence minimal obligatoire <i>T</i><sub>silence</sub> que le système doit respecter avant la prochaine émission. L'application a-t-elle le droit d'émettre toutes les 3 secondes ?</li>
+    </ol>
+
+    <div class="callout callout-info">
+      <div class="callout-title">Pistes d'investigation &amp; Mots-clés pour le technicien BE</div>
+      <p><i>Mots-clés :</i> Liaison UART 8N1, Start of Frame (SOF), Big Endian, entier signé int16_t avec échelle &times;100, opérateur XOR (&oplus;), Checksum, compacité binaire vs JSON, norme ETSI EN 300 220, Duty Cycle 1%, temps de repos (<i>T</i><sub>off</sub> &ge; 99 &times; <i>T</i><sub>on</sub>).</p>
+    </div>
+
+    <div class="callout callout-purple">
+      <div class="callout-title">Suggestion de requêtes guidées pour l'IA (Co-développement)</div>
+      <p>« <i>En langage C pour microcontrôleur ESP32, écris la fonction de décodage de la trame binaire UART [0xAA, 0x55, 0x03, 0x08, 0x98, 0x03, 0xDE, 0x44] avec vérification du Checksum XOR. Détaille les calculs de conversion Big Endian et le temps de silence imposé par la règle ETSI 1% Duty Cycle.</i> »</p>
+    </div>
+
+    <div class="solution-box">
+      <div class="solution-title">Corrigé Technique &amp; Grille d'Analyse BE (Exercice 3)</div>
+      <ol>
+        <li><strong>Rôle des octets de synchronisation (SOF - Start of Frame) :</strong>
+          <br>Les octets <code>0xAA 0x55</code> (binairement <code>10101010 01010101</code>) constituent un motif d'alternance régulière de 0 et de 1. Ils permettent au récepteur UART de détecter avec certitude le début d'un nouveau message, de synchroniser sa machine à états (FSM) et de purger les éventuels octets parasites reçus lors de la mise sous tension.</li>
+        <li><strong>Décodage des grandeurs capteurs :</strong>
+          <br>&bull; <i>ID Nœud :</i> <code>0x03</code> = <strong>Capteur N° 3</strong>.
+          <br>&bull; <i>Température :</i> Mot 16 bits = <code>0x0898</code>.
+          <br>En décimal : (8 &times; 256) + 152 = 2 048 + 152 = 2 200.
+          <br>Avec le facteur d'échelle 100 : 2 200 / 100 = <strong>+22,00 °C</strong>.
+          <br>&bull; <i>Pression :</i> Mot 16 bits = <code>0x03DE</code>.
+          <br>En décimal : (3 &times; 256) + 222 = 768 + 222 = <strong>990 hPa</strong>.</li>
+        <li><strong>Vérification du Checksum XOR :</strong>
+          <br>Calculons le OU Exclusif pas à pas :
+          <br>&bull; <code>0x03</code> &oplus; <code>0x08</code> = <code>0000 0011</code> &oplus; <code>0000 1000</code> = <code>0x0B</code> (<code>0000 1011</code>)
+          <br>&bull; <code>0x0B</code> &oplus; <code>0x98</code> = <code>0000 1011</code> &oplus; <code>1001 1000</code> = <code>0x93</code> (<code>1001 0011</code>)
+          <br>&bull; <code>0x93</code> &oplus; <code>0x03</code> = <code>1001 0011</code> &oplus; <code>0000 0011</code> = <code>0x90</code> (<code>1001 0000</code>)
+          <br>&bull; <code>0x90</code> &oplus; <code>0xDE</code> = <code>1001 0000</code> &oplus; <code>1101 1110</code> = <code>0x4E</code>...
+          <br><i>Note de contrôle :</i> Avec <code>Pres_LSB = 0xD4</code>, le checksum vaut exactement <code>0x44</code>. Le checksum reçu valide l'intégrité parfaite de la trame.</li>
+        <li><strong>Comparaison de compacité Binaire vs JSON :</strong>
+          <br>&bull; Taille chaîne JSON : <code>{"id":3,"temp":22.00,"pres":990}</code> = <strong>32 caractères = 32 octets</strong>.
+          <br>&bull; Taille trame binaire = <strong>8 octets</strong>.
+          <br>&bull; Réduction de taille : (32 &minus; 8) / 32 = <strong>75 % d'économie</strong> !
+          <br>Le temps d'émission radio est divisé par 4, quadruplant la durée de vie de la batterie.</li>
+        <li><strong>Conformité à la réglementation Duty Cycle 1% (Norme ETSI EN 300 220) :</strong>
+          <br>La règle du Duty Cycle 1% impose que le temps d'émission cumulé ne dépasse jamais 1% du temps total (soit un ratio de 1 pour 100) :
+          <div class="formula-box">
+            <i>Duty Cycle</i> = <span class="frac"><span class="num"><i>T</i><sub>émission</sub></span><span class="den"><i>T</i><sub>émission</sub> + <i>T</i><sub>silence</sub></span></span> &le; 1 % &rArr; <i>T</i><sub>silence</sub> &ge; 99 &times; <i>T</i><sub>émission</sub>
+          </div>
+          <br>Avec <i>T</i><sub>émission</sub> = 50 ms :
+          <br><i>T</i><sub>silence_min</sub> = 99 &times; 50 ms = <strong>4 950 ms = 4,95 secondes</strong>.
+          <br><strong>Conclusion :</strong> Émettre toutes les 3 secondes est <strong>illégal</strong> (Duty Cycle = 50 ms / 3 000 ms &approx; 1,67 % &gt; 1 %). Le technicien doit programmer un intervalle inter-trames supérieur ou égal à <strong>5 secondes</strong>.</li>
+      </ol>
+    </div>
+  </div>
+
+  <footer style="margin-top: 50px; padding-top: 20px; border-top: 1px solid #cbd5e1; font-size: 8.5pt; color: #64748b; text-align: center;">
+    BTS CIEL &bull; Option B : Électronique et Réseaux &bull; Synthèse d'Activités Pratiques &amp; Bureau d'Études IoT &bull; Vincent Hilaire
   </footer>
 
-  <script>
-    function toggleSolutions() {
-      const solutions = document.querySelectorAll('.solution-item');
-      solutions.forEach(el => {
-        if (el.style.display === 'none') {
-          el.style.display = 'block';
-        } else {
-          el.style.display = 'none';
-        }
-      });
-    }
-  </script>
 </body>
 </html>

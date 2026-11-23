@@ -4,24 +4,25 @@
   <meta charset="utf-8" />
   <meta name="generator" content="BTS CIEL - Vincent Hilaire" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes" />
-  <title>TP (3h) : Mise en œuvre d'une liaison LoRaWAN — Passerelle Dragino LPS8v3, Arduino Nano + Grove LoRa-E5, Node-RED &amp; Digilent AD3 - BTS CIEL 2</title>
+  <title>TP : Mise en œuvre d'une liaison LoRaWAN — Passerelle Dragino, Nœud Arduino Nano + Grove LoRa-E5, Node-RED &amp; Digilent AD3 — BTS CIEL 2</title>
+  
   <style>
-@page {
+    @page {
       margin: 1.5cm;
       size: A4;
     }
 
     html {
       color: #1a1a1a;
-      background-color: #fdfdfd;
+      background-color: #f8fafc;
       -webkit-text-size-adjust: 100%;
     }
 
     body {
       font-family: 'Segoe UI', -apple-system, BlinkMacSystemFont, Roboto, Helvetica, Arial, sans-serif;
       line-height: 1.55;
-      color: #1a1a1a;
-      max-width: 960px;
+      color: #1e293b;
+      max-width: 1040px;
       margin: 0 auto;
       padding: 25px 30px;
       hyphens: auto;
@@ -38,25 +39,23 @@
       h1 {
         font-size: 1.5em !important;
       }
-      .montage-grid {
-        grid-template-columns: 1fr !important;
-      }
     }
 
     @media print {
       html { background-color: white; }
-      body { background-color: transparent; color: black; font-size: 9.8pt; max-width: 100%; padding: 0; }
+      body { background-color: transparent; color: black; font-size: 9.5pt; max-width: 100%; padding: 0; }
       p, h2, h3 { orphans: 3; widows: 3; }
       h2, h3, h4 { page-break-after: avoid; }
-      pre, blockquote, table, .figure-box, .student-response, .callout, .montage-card { page-break-inside: avoid; }
+      pre, blockquote, table, .figure-box, .image-card, .step-box, .question-card, .student-response { page-break-inside: avoid; }
       .no-print { display: none !important; }
-      .step-box { border: 1px solid #94a3b8 !important; box-shadow: none !important; }
+      .page-break { page-break-before: always; }
+      pre.code { max-height: none !important; white-space: pre-wrap !important; }
     }
 
     header {
       margin-bottom: 2em;
       text-align: center;
-      border-bottom: 3px solid #0b3c5d;
+      border-bottom: 3px solid #0284c7;
       padding-bottom: 16px;
     }
 
@@ -64,7 +63,7 @@
       display: inline-block;
       background: #e1ecf4;
       color: #0b3c5d;
-      font-size: 0.84em;
+      font-size: 0.82em;
       font-weight: 600;
       padding: 4px 10px;
       border-radius: 20px;
@@ -72,56 +71,67 @@
       border: 1px solid #7aa7c7;
     }
 
-    .badge-primary { background: #0b3c5d; color: #ffffff; border: 1px solid #0b3c5d; }
+    .badge-primary { background: #0369a1; color: #ffffff; border: 1px solid #0284c7; }
     .badge-alert { background: #fee2e2; color: #991b1b; border: 1px solid #f87171; }
     .badge-success { background: #dcfce7; color: #166534; border: 1px solid #86efac; }
     .badge-warning { background: #fef3c7; color: #92400e; border: 1px solid #fcd34d; }
     .badge-purple { background: #f3e8ff; color: #6b21a8; border: 1px solid #d8b4fe; }
     .badge-orange { background: #ffedd5; color: #c2410c; border: 1px solid #fdba74; }
+    .badge-cyan { background: #e0f2fe; color: #0369a1; border: 1px solid #7dd3fc; }
+    .badge-dark { background: #1e293b; color: #f8fafc; border: 1px solid #0f172a; }
 
     h1, h2, h3, h4 {
-      color: #0b3c5d;
+      color: #0f172a;
       font-weight: 700;
     }
 
     h1 {
-      font-size: 18.5pt;
-      margin-top: 0.55em;
-      margin-bottom: 0.35em;
-      letter-spacing: -0.4px;
+      font-size: 18pt;
+      margin-top: 0.5em;
+      margin-bottom: 0.3em;
+      color: #0369a1;
+      letter-spacing: -0.5px;
       line-height: 1.25;
     }
 
     h2 {
-      font-size: 14pt;
+      font-size: 13.5pt;
       margin-top: 28px;
       margin-bottom: 12px;
-      border-bottom: 1.5px solid #d0d7de;
+      border-bottom: 2px solid #cbd5e1;
       padding-bottom: 6px;
+      color: #0f172a;
+      display: flex;
+      align-items: center;
+      gap: 8px;
     }
 
+    .section-part-1 { border-bottom-color: #0284c7; color: #0369a1; }
+    .section-part-2 { border-bottom-color: #7c3aed; color: #6d28d9; }
+
     h3 {
-      font-size: 11.5pt;
+      font-size: 11pt;
       margin-top: 20px;
       margin-bottom: 8px;
-      border-left: 4.5px solid #328cc1;
+      border-left: 4px solid #0284c7;
       padding-left: 10px;
+      color: #1e293b;
     }
 
     h4 {
-      font-size: 10.5pt;
+      font-size: 10pt;
       margin-top: 15px;
       margin-bottom: 6px;
       color: #1d5f8a;
     }
 
     p {
-      margin: 0.75em 0;
+      margin: 0.7em 0;
     }
 
     ul, ol {
-      padding-left: 1.6em;
-      margin: 0.75em 0;
+      padding-left: 1.5em;
+      margin: 0.7em 0;
     }
 
     li {
@@ -130,29 +140,31 @@
 
     hr {
       border: 0;
-      border-top: 1px solid #d0d7de;
-      margin: 26px 0;
+      border-top: 1px solid #e2e8f0;
+      margin: 24px 0;
     }
 
     table {
       border-collapse: collapse;
       width: 100%;
       margin: 14px 0;
-      font-size: 9.1pt;
+      font-size: 8.8pt;
       background-color: #ffffff;
-      box-shadow: 0 1px 3px rgba(0,0,0,0.05);
+      box-shadow: 0 1px 3px rgba(0,0,0,0.03);
+      border-radius: 6px;
+      overflow: hidden;
     }
 
     th, td {
-      border: 1px solid #d0d7de;
+      border: 1px solid #cbd5e1;
       padding: 7px 10px;
       text-align: left;
       vertical-align: middle;
     }
 
     th {
-      background-color: #f0f4f8;
-      color: #0b3c5d;
+      background-color: #f1f5f9;
+      color: #0f172a;
       font-weight: 700;
     }
 
@@ -160,26 +172,31 @@
       background-color: #f8fafc;
     }
 
+    tr:hover {
+      background-color: #f1f5f9;
+    }
+
     code {
-      background-color: #eff1f3;
+      background-color: #e2e8f0;
       padding: 2px 5px;
       border-radius: 4px;
       font-size: 88%;
       font-family: Consolas, 'Courier New', Monaco, monospace;
-      color: #0969da;
+      color: #0369a1;
+      font-weight: 600;
     }
 
     .callout {
       border-radius: 6px;
-      padding: 13px 17px;
-      margin: 16px 0;
-      font-size: 9.4pt;
-      border-left: 5px solid;
+      padding: 12px 16px;
+      margin: 14px 0;
+      font-size: 9.2pt;
+      border-left: 4.5px solid;
     }
 
     .callout-info {
       background-color: #f0f7fc;
-      border-color: #328cc1;
+      border-color: #0284c7;
       color: #1a446c;
     }
 
@@ -201,6 +218,12 @@
       color: #14532d;
     }
 
+    .callout-purple {
+      background-color: #faf5ff;
+      border-color: #a855f7;
+      color: #581c87;
+    }
+
     .callout-classroom {
       background-color: #f5f3ff;
       border-color: #7c3aed;
@@ -209,20 +232,21 @@
 
     .callout-title {
       font-weight: 700;
-      margin-bottom: 6px;
+      margin-bottom: 4px;
       display: flex;
       align-items: center;
       gap: 6px;
-      font-size: 10pt;
+      font-size: 9.8pt;
     }
 
     .step-box {
-      background-color: #ffffff;
+      background: #ffffff;
       border: 1px solid #cbd5e1;
-      border-radius: 8px;
-      padding: 18px 22px;
-      margin: 22px 0;
-      box-shadow: 0 2px 5px rgba(0,0,0,0.04);
+      border-left: 4.5px solid #0284c7;
+      border-radius: 6px;
+      padding: 16px 20px;
+      margin: 20px 0;
+      box-shadow: 0 1px 3px rgba(0,0,0,0.03);
     }
 
     .step-header {
@@ -231,20 +255,32 @@
       align-items: center;
       flex-wrap: wrap;
       gap: 8px;
-      border-bottom: 2px solid #e2e8f0;
+      border-bottom: 1px solid #e2e8f0;
       padding-bottom: 8px;
-      margin-bottom: 14px;
+      margin-bottom: 12px;
     }
 
     .step-title {
-      font-size: 12pt;
       font-weight: 700;
-      color: #0b3c5d;
-      margin: 0;
+      font-size: 11pt;
+      color: #0f172a;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .step-badge {
+      background: #e0f2fe;
+      color: #0369a1;
+      font-size: 7.8pt;
+      padding: 2px 8px;
+      border-radius: 12px;
+      font-weight: 700;
+      text-transform: uppercase;
     }
 
     .timing-badge {
-      background: #0b3c5d;
+      background: #0369a1;
       color: #ffffff;
       font-size: 0.82em;
       font-weight: 700;
@@ -253,92 +289,63 @@
       white-space: nowrap;
     }
 
-    /* Grille et Cartes des 6 Montages Proteus */
-    .montage-grid {
-      display: grid;
-      grid-template-columns: 1fr 1fr;
-      gap: 16px;
-      margin: 16px 0;
-    }
-
-    .montage-card {
-      background: #ffffff;
-      border: 1.5px solid #cbd5e1;
-      border-radius: 8px;
-      overflow: hidden;
-      display: flex;
-      flex-direction: column;
-      box-shadow: 0 2px 4px rgba(0,0,0,0.04);
-    }
-
-    .montage-card-header {
-      background: #0b3c5d;
-      color: #ffffff;
-      padding: 8px 12px;
-      font-size: 9.6pt;
-      font-weight: 700;
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-    }
-
-    .montage-badge {
-      background: #38bdf8;
-      color: #0f172a;
-      font-size: 7.8pt;
-      font-weight: 700;
-      padding: 2px 8px;
-      border-radius: 10px;
-    }
-
-    .montage-img-wrap {
-      background: #0f172a;
-      padding: 8px;
-      text-align: center;
-      border-bottom: 1px solid #cbd5e1;
-    }
-
-    .montage-img-wrap img {
-      width: 100%;
-      height: auto;
-      display: block;
-      border-radius: 4px;
-    }
-
-    .montage-body {
-      padding: 10px 13px;
-      font-size: 8.9pt;
-      flex: 1;
-      display: flex;
-      flex-direction: column;
-      justify-content: space-between;
-      gap: 8px;
-    }
-
-    .proteus-trans {
+    .deliverable-box {
       background: #f8fafc;
-      border-left: 3px solid #64748b;
-      padding: 6px 9px;
+      border: 1px dashed #94a3b8;
+      border-radius: 5px;
+      padding: 8px 12px;
+      margin-top: 10px;
       font-size: 8.5pt;
       color: #334155;
-      border-radius: 0 4px 4px 0;
     }
 
-    .reallife-box {
-      background: #ecfdf5;
-      border: 1px solid #86efac;
-      border-left: 4px solid #16a34a;
-      border-radius: 5px;
-      padding: 8px 10px;
-      color: #14532d;
-      font-size: 8.7pt;
-    }
-
-    .reallife-title {
+    .deliverable-title {
       font-weight: 700;
-      color: #15803d;
+      color: #0f172a;
+      display: flex;
+      align-items: center;
+      gap: 4px;
       margin-bottom: 3px;
-      display: block;
+    }
+
+    .image-grid {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 14px;
+      justify-content: center;
+      align-items: stretch;
+      margin: 14px 0;
+    }
+
+    .image-card {
+      flex: 1 1 210px;
+      max-width: 280px;
+      background: #ffffff;
+      border: 1px solid #cbd5e1;
+      border-radius: 8px;
+      padding: 10px;
+      text-align: center;
+      box-shadow: 0 1px 4px rgba(0,0,0,0.04);
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+    }
+
+    .image-card img {
+      width: 100%;
+      height: 140px;
+      object-fit: contain;
+      background-color: #fafbfc;
+      border-radius: 6px;
+      border: 1px solid #e2e8f0;
+      padding: 4px;
+    }
+
+    .image-card .card-caption {
+      font-size: 8pt;
+      color: #334155;
+      font-weight: 600;
+      margin-top: 6px;
     }
 
     .figure-box {
@@ -366,12 +373,12 @@
     .formula-box {
       background: #f8fafc;
       border: 1px solid #cbd5e1;
-      border-left: 4px solid #0b3c5d;
+      border-left: 4px solid #0284c7;
       border-radius: 5px;
-      padding: 9px 14px;
+      padding: 8px 14px;
       margin: 10px 0;
       font-family: 'Segoe UI', sans-serif;
-      font-size: 9.8pt;
+      font-size: 9.5pt;
       text-align: center;
     }
 
@@ -475,7 +482,7 @@
       align-items: flex-start;
       gap: 8px;
     }
-    /* ===== Compléments spécifiques au TP LoRaWAN ===== */
+
     pre.code {
       background: #0f172a;
       color: #e2e8f0;
@@ -488,6 +495,7 @@
       margin: 8px 0;
       white-space: pre;
     }
+
     .code-wrap { position: relative; margin: 10px 0; }
     .code-title {
       background: #1e293b; color: #93c5fd; font-size: 8.6pt; font-weight: 700;
@@ -495,37 +503,76 @@
       justify-content: space-between; align-items: center; gap: 8px; flex-wrap: wrap;
     }
     .code-wrap pre.code { margin-top: 0; border-radius: 0 0 6px 6px; max-height: 420px; }
+
     .btn-copy-code {
       background: #334155; color: #e2e8f0; border: 1px solid #64748b; border-radius: 4px;
       padding: 2px 9px; font-size: 8pt; font-weight: 600; cursor: pointer;
     }
     .btn-copy-code:hover { background: #475569; }
+
     .fiche-salle td:nth-child(2) { background: #fffbeb; min-width: 220px; }
-    @media print { pre.code { max-height: none; white-space: pre-wrap; } .code-wrap pre.code { max-height: none; } }
+
+    .nav-tabs {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      margin: 15px 0 25px 0;
+      border-bottom: 2px solid #cbd5e1;
+      padding-bottom: 10px;
+    }
+
+    .nav-btn {
+      padding: 7px 14px;
+      font-size: 8.8pt;
+      font-weight: 700;
+      border-radius: 6px;
+      text-decoration: none;
+      transition: 0.2s;
+      background: #0369a1;
+      color: #ffffff;
+    }
+
+    .nav-btn:hover { background: #0284c7; text-decoration: none; }
+    .nav-btn-purple { background: #7c3aed; }
+    .nav-btn-purple:hover { background: #6d28d9; }
+    .nav-btn-orange { background: #ea580c; }
+    .nav-btn-orange:hover { background: #c2410c; }
   </style>
 </head>
 <body>
 
 <header id="title-block-header">
-  <div style="text-transform: uppercase; font-size: 0.88em; font-weight: 700; letter-spacing: 1px; color: #328cc1; margin-bottom: 4px;">
+  <div style="text-transform: uppercase; font-size: 0.88em; font-weight: 700; letter-spacing: 1px; color: #0284c7; margin-bottom: 4px;">
     BTS Cybersécurité, Informatique et Réseaux, Électronique (CIEL) — 2<sup>e</sup> Année • Enseignement Technologique (STI)
   </div>
-  <h1 class="title">TP (3h) : Mise en œuvre d'une liaison LoRaWAN — Paramétrage de la passerelle Dragino, nœud Arduino Nano + Grove LoRa-E5, supervision Node-RED &amp; mesures Digilent AD3</h1>
-  <div style="margin-top: 10px;">
+  <h1 class="title">TP (3h) : Déploiement d'une Liaison LoRaWAN — Passerelle Dragino LPS8v3, Nœud Arduino Nano &amp; Grove LoRa-E5, Supervision Node-RED &amp; Instrumentation Digilent AD3</h1>
+  <div style="font-weight: 600; color: #475569; font-size: 1.02em; margin-top: 4px;">
+    Architecture LPWAN de bout en bout : Télé-exploitation, Dialogue AT, Association OTAA, Télémétrie binaire 5 octets &amp; Métrologie radiofréquence
+  </div>
+  <div style="margin-top: 12px;">
     <span class="meta-badge badge-primary">⏱ Durée : 3h00</span>
     <span class="meta-badge badge-purple">📡 LoRaWAN EU868 (868 MHz)</span>
-    <span class="meta-badge badge-warning">🧰 Arduino Nano + Shield &amp; modules Grove</span>
+    <span class="meta-badge badge-warning">🧰 Arduino Nano + Grove LoRa-E5</span>
     <span class="meta-badge badge-orange">🔬 Digilent Analog Discovery 3</span>
     <span class="meta-badge badge-success">📝 Livrable : Google Docs (Classroom)</span>
   </div>
 </header>
+
+<div class="nav-tabs no-print">
+  <a href="#partie-0" class="nav-btn">📊 Fiche 0 : Analyse &amp; Choix LoRa</a>
+  <a href="#partie-1" class="nav-btn">🌐 Fiche 1 : Passerelle &amp; ChirpStack</a>
+  <a href="#partie-2" class="nav-btn nav-btn-purple">📡 Fiche 2 : Nœud Nano &amp; LoRa-E5</a>
+  <a href="#partie-3" class="nav-btn nav-btn-purple">🖥️ Fiche 3 : Supervision Node-RED</a>
+  <a href="#partie-4" class="nav-btn nav-btn-orange">⚡ Fiche 4 : Mesures AD3 &amp; Portée</a>
+  <a href="#evaluation" class="nav-btn">📋 Barème &amp; Checklist</a>
+</div>
 
 <!-- ========================================================================= -->
 <!-- CLASSROOM + TRAME COPIABLE                                                -->
 <!-- ========================================================================= -->
 <div class="callout callout-classroom">
   <div class="callout-title">🎓 Consignes de Rendu — Compte-Rendu Numérique sous Google Classroom (Google Docs)</div>
-  <p style="margin-top: 4px;">Toutes vos réponses (<code>Q0.1</code> à <code>Q4.3</code>), vos tableaux (<code>T1</code> à <code>T5</code>) et vos <strong>8 captures d'écran (<code>C1</code> à <code>C8</code>)</strong> sont à compléter dans le document <strong>Google Docs</strong> associé au devoir dans <strong>Google Classroom</strong>. Chaque encadré jaune possède un bouton « Copier pour Docs ».</p>
+  <p style="margin-top: 4px;">Toutes vos réponses (<code>Q0.1</code> à <code>Q4.3</code>), vos tableaux (<code>T1</code> à <code>T6</code>) et vos <strong>8 captures d'écran (<code>C1</code> à <code>C8</code>)</strong> sont à consigner directement dans le document <strong>Google Docs</strong> associé à votre devoir dans <strong>Google Classroom</strong>. Cliquez sur le bouton ci-dessous pour copier l'intégralité de la trame préformatée.</p>
   <div class="no-print" style="margin-top: 10px; display: flex; align-items: center; gap: 12px; flex-wrap: wrap;">
     <button type="button" class="btn-copy-docs" onclick="copierTrameComplete()">📋 Copier toute la trame du Compte-Rendu (pour coller dans Google Docs)</button>
     <span id="copy-global-feedback" style="font-weight: 700; color: #166534; font-size: 9pt;"></span>
@@ -536,63 +583,67 @@
 <!-- MISE EN SITUATION                                                         -->
 <!-- ========================================================================= -->
 <div class="callout callout-info">
-  <div class="callout-title">🏫 Mise en situation : surveiller un local éloigné sur le campus du lycée</div>
-  <p style="margin-top: 4px;">Le lycée est vaste. Le service technique souhaite surveiller la <strong>température d'un local éloigné</strong> (atelier, chaufferie, serre, gymnase…) où il n'y a <strong>ni câble réseau, ni couverture Wi-Fi fiable, ni prise secteur</strong> : le capteur devra fonctionner <strong>sur batterie</strong> pendant le plus longtemps possible. Les mesures doivent arriver sur un PC de supervision, être affichées en temps réel et <strong>archivées dans un fichier</strong>.</p>
-  <p style="margin-bottom: 0;"><strong>Votre mission :</strong> mettre en œuvre une chaîne <strong>LoRaWAN</strong> complète (capteur → radio → passerelle → serveur → supervision), puis <strong>valider par des mesures</strong> les avantages de cette technologie (portée, faible consommation, simplicité de déploiement) et ses limites.</p>
+  <div class="callout-title">🏫 Mise en situation : surveillance thermique d'un local éloigné sur le campus du lycée</div>
+  <p style="margin-top: 4px;">Le lycée s'étend sur plusieurs hectares. Les services techniques municipaux et scolaires souhaitent surveiller en continu la <strong>température d'un local technique distant</strong> (serre pédagogique, chaufferie, atelier de maintenance, gymnase) dépourvu de <strong>câblage réseau Ethernet, de couverture Wi-Fi exploitable et de prise d'alimentation permanente</strong>. Le système doit impérativement fonctionner <strong>sur batterie autonome</strong> pendant plusieurs mois.</p>
+  <p style="margin-bottom: 0;"><strong>Votre mission :</strong> Concevoir et déployer une chaîne <strong>LoRaWAN</strong> complète (capteur analogique &rarr; traitement embarqué Nano &rarr; émetteur radio LoRa-E5 &rarr; passerelle Dragino LPS8v3 &rarr; serveur réseau ChirpStack &rarr; supervision Node-RED &amp; archivage CSV). Vous validerez ensuite par la mesure à l'<strong>Analog Discovery 3</strong> les avantages technologiques (portée en champ réel, bilan énergétique, temps de trame) et identifierez ses limites d'application.</p>
 </div>
 
 <div class="callout callout-info">
-  <div class="callout-title">🎯 Objectifs &amp; Compétences visées (Référentiel BTS CIEL — Enseignement Technologique STI)</div>
+  <div class="callout-title">🎯 Référentiel BTS CIEL — Compétences et Savoirs Visés</div>
   <ul>
-    <li><strong>C05 Concevoir :</strong> justifier un choix de transmission en espace libre dans un réseau, structurer la chaîne capteur → traitement → transmission → supervision.</li>
-    <li><strong>C06 Valider :</strong> « Réseaux informatiques (protocoles TCP-UDP/IP, <strong>LPWAN</strong>…) — Niveau 3 », « Caractéristiques des communications », <em>« Appareils de mesure et bancs de test »</em> et <em>« Mesures et incertitudes »</em> (Niveau 3) : campagne de mesures radio et de consommation au Digilent AD3.</li>
-    <li><strong>C07 Réaliser :</strong> câbler la maquette, coder et déboguer le programme embarqué, vérifier que « la carte est fonctionnelle et le logiciel embarqué fonctionnel ».</li>
-    <li><strong>C09 Installer :</strong> « IOT (incl. <strong>LPWAN</strong>) — Niveau 3 » : paramétrer une passerelle, déclarer un équipement sur un serveur réseau et le raccorder à une supervision.</li>
+    <li><strong>C04 Analyser :</strong> Décoder la structure d'une trame binaire LoRaWAN, comparer les technologies de transmission sans fil IoT (débit, portée, consommation), justifier le compromis du facteur d'étalement (SF).</li>
+    <li><strong>C05 Concevoir :</strong> Structurer la chaîne capteur &rarr; traitement &rarr; trame radio &rarr; serveur &rarr; supervision. Définir un format de charge utile compact et optimiser l'autonomie sur accumulateur.</li>
+    <li><strong>C06 Valider :</strong> Mettre en œuvre le banc de test <strong>Digilent Analog Discovery 3 (AD3)</strong> : mesure du profil de courant d'émission, caractérisation des fenêtres de réception RX1/RX2, campagne de portée radio (RSSI, SNR, marge de liaison).</li>
+    <li><strong>C07 Réaliser :</strong> Câbler la maquette sans court-circuit, programmer le microcontrôleur ATmega328P avec l'assistance d'une IA, déboguer les commandes AT du modem Wio-E5.</li>
+    <li><strong>C09 Installer :</strong> Paramétrer une passerelle LPWAN (packet forwarder UDP 1700), déclarer un équipement OTAA sur le serveur de réseau (ChirpStack) et intégrer le flux de télémétrie dans Node-RED.</li>
   </ul>
-  <p style="margin-bottom: 0;"><em>Ce TP est un TP de technologie : on lit des fiches constructeur, on paramètre, on câble, on programme à partir d'exemples fournis et on mesure. Aucune démonstration mathématique n'est demandée.</em></p>
 </div>
 
 <div class="callout callout-warning">
-  <div class="callout-title">⚠️ Organisation de la salle &amp; règles de sécurité radio</div>
+  <div class="callout-title">⚠️ Organisation de la salle &amp; règles de sécurité radiofréquence</div>
   <ul style="margin: 4px 0;">
-    <li><strong>Une seule passerelle pour toute la classe</strong> : l'enseignant désigne à tour de rôle un binôme « rapporteur » qui conduit les réglages de la Partie 1 sur la passerelle ; <strong>les autres binômes ne modifient aucun paramètre</strong> de la passerelle (lecture seule) mais relèvent les valeurs et vérifient la réception côté serveur.</li>
-    <li><strong>Jamais d'émission sans antenne</strong> : vissez l'antenne 868 MHz sur le module <code>Grove LoRa-E5</code> <em>avant</em> la mise sous tension (risque de détérioration de l'étage de sortie radio).</li>
-    <li><strong>Réglementation européenne (bande ISM 868 MHz) :</strong> puissance limitée à <code>14 dBm</code> (25 mW) et <strong>taux d'occupation (« duty cycle ») ≤ 1 %</strong> sur les canaux par défaut : on n'émet donc <em>pas</em> une trame toutes les secondes ! Période minimale imposée dans ce TP : <strong>60 s</strong>.</li>
+    <li><strong>Une seule passerelle Dragino pour la classe :</strong> L'enseignant désigne un binôme rapporteur chargé de la configuration initiale de la passerelle. Les autres binômes travaillent en consultation seule sur l'interface et déclarent leur nœud sur le serveur réseau ChirpStack.</li>
+    <li><strong>Jamais d'émission sans antenne :</strong> Vissez impérativement l'antenne hélicoïdale 868 MHz sur le connecteur SMA du module <code>Grove LoRa-E5</code> <em>avant</em> toute mise sous tension. L'absence d'antenne crée une onde stationnaire réfléchie susceptible de détruire irrémédiablement l'étage amplificateur de puissance (PA) du modem.</li>
+    <li><strong>Réglementation européenne (Bande ISM 868 MHz) :</strong> La puissance d'émission est bridée à <code>14 dBm</code> (25 mW) avec un <strong>taux d'occupation spectral (Duty-Cycle) &le; 1 %</strong> sur les canaux par défaut (868,1 MHz, 868,3 MHz, 868,5 MHz). Une période d'émission minimale de <strong>60 secondes</strong> est strictement imposée dans ce TP.</li>
   </ul>
 </div>
 
-<h2>Matériel et Fiche de paramètres de la salle</h2>
+<!-- ========================================================================= -->
+<!-- MATÉRIEL & RESSOURCES VISUELLES DU PROJET                                 -->
+<!-- ========================================================================= -->
+<h2>📦 Ressources Matérielles Mis à Disposition</h2>
+
+<div class="image-grid">
+  <div class="image-card">
+    <img src="images/arduino_nano_board.png" alt="Arduino Nano v3" />
+    <div class="card-caption"><strong>Arduino Nano v3</strong><br>ATmega328P @ 16 MHz, 5V TTL (Mini-USB natif, 2 Ko SRAM)</div>
+  </div>
+  <div class="image-card">
+    <img src="images/asx00061_carrier_top.png" alt="Carrier ASX00061 / Grove Shield" />
+    <div class="card-caption"><strong>Platine Support Grove</strong><br>Carrier ASX00061 ou Grove Shield Nano (Connecteurs D2, A0, UART, I²C)</div>
+  </div>
+  <div class="image-card">
+    <img src="images/arduino_nano_pinout.png" alt="Brochage Arduino Nano" />
+    <div class="card-caption"><strong>Brochage Arduino Nano</strong><br>D0/D1 (UART matériel USB), D2/D3 (SoftwareSerial LoRa), A0 (Capteur)</div>
+  </div>
+  <div class="image-card">
+    <img src="images/wf_step4_interface_complete.png" alt="Digilent AD3 & WaveForms" />
+    <div class="card-caption"><strong>Digilent Analog Discovery 3</strong><br>Oscilloscope différentiel Scope 1+/1−, Analyseur Logique &amp; Logiciel WaveForms</div>
+  </div>
+</div>
 
 <table>
-  <thead><tr><th>Élément</th><th>Rôle dans la chaîne</th><th>Quantité</th></tr></thead>
+  <thead><tr><th>Élément Matériel</th><th>Rôle dans la chaîne</th><th>Quantité</th></tr></thead>
   <tbody>
-    <tr><td><strong>Arduino Nano + Grove Shield for Nano</strong></td><td>Cerveau du nœud (ATmega328P) : lit le capteur, pilote le modem radio</td><td>1 par binôme</td></tr>
-    <tr><td><strong>Grove LoRa-E5</strong> (modem <code>Wio-E5</code>, antenne 868 MHz)</td><td>Modem LoRaWAN piloté par <strong>commandes AT</strong> en liaison série (UART)</td><td>1 par binôme</td></tr>
-    <tr><td><strong>Capteur Grove de température</strong> (analogique, v1.2)</td><td>Grandeur mesurée — branché sur l'entrée <code>A0</code></td><td>1 par binôme</td></tr>
-    <tr><td><strong>Powerbank VARTA</strong> + câble USB</td><td>Alimentation autonome du nœud (5 V)</td><td>1 par binôme</td></tr>
-    <tr><td><strong>Passerelle Dragino LPS8v3</strong> (EU868, option 4G <code>EC25</code>)</td><td>Reçoit les trames radio et les transmet au serveur (Ethernet / Wi-Fi / 4G)</td><td>1 pour la classe</td></tr>
-    <tr><td><strong>PC</strong> : Arduino IDE, navigateur, <strong>Node-RED</strong></td><td>Programmation du nœud, supervision, stockage CSV</td><td>1 par binôme</td></tr>
-    <tr><td><strong>Digilent Analog Discovery 3</strong> (WaveForms) + résistance <code>1,1 &Omega;</code> du <em>TI myParts Kit</em></td><td>Mesure du courant consommé et de la durée d'émission (Partie 4)</td><td>1 par binôme</td></tr>
+    <tr><td><strong>Arduino Nano v3 + Platine Grove</strong></td><td>Unité de traitement embarquée (ATmega328P) : lecture capteur, formatage trame et dialogue AT</td><td>1 par binôme</td></tr>
+    <tr><td><strong>Grove LoRa-E5</strong> (puce STM32WLE5JC, antenne 868 MHz)</td><td>Modem radio LoRaWAN piloté par commandes AT série (port Grove <code>D2</code>)</td><td>1 par binôme</td></tr>
+    <tr><td><strong>Capteur de Température Grove v1.2</strong></td><td>Thermistance CTN (B=4275, R0=100 k&Omega;) connectée sur l'entrée analogique <code>A0</code></td><td>1 par binôme</td></tr>
+    <tr><td><strong>Powerbank autonome 5V</strong> + cordon USB préparé</td><td>Alimentation isolée du nœud avec résistance shunt de <code>1,1 &Omega;</code> insérée en série</td><td>1 par binôme</td></tr>
+    <tr><td><strong>Passerelle Dragino LPS8v3</strong> (EU868, option 4G EC25)</td><td>Concentrateur radio 8 canaux vers IP (relais transparent Semtech UDP 1700)</td><td>1 pour la classe</td></tr>
+    <tr><td><strong>Serveur ChirpStack v4 &amp; Broker MQTT</strong></td><td>Serveur de réseau LoRaWAN (déchiffrement AES-128, gestion des sessions et publication MQTT)</td><td>1 instance salle</td></tr>
+    <tr><td><strong>Digilent Analog Discovery 3 (AD3)</strong></td><td>Mesure du profil de courant d'émission, durée de trame, fenêtres RX1/RX2 et analyse UART</td><td>1 par binôme</td></tr>
   </tbody>
 </table>
-
-<div class="student-response fiche-salle" id="bloc-fiche">
-  <button type="button" class="btn-copy-small no-print" onclick="copierBloc('bloc-fiche', this)">📋 Copier pour Docs</button>
-  <span class="docs-tag">Fiche de paramètres de la salle</span><strong>À compléter avec l'enseignant (tableau ou feuille distribuée) :</strong>
-  <table>
-    <thead><tr><th>Paramètre</th><th>Valeur de la salle</th></tr></thead>
-    <tbody>
-      <tr><td>Adresse IP de la passerelle (page Web)</td><td>.......................................</td></tr>
-      <tr><td>Compte / mot de passe de la passerelle</td><td>.......................................</td></tr>
-      <tr><td>Adresse IP du serveur réseau LoRaWAN (ChirpStack)</td><td>.......................................</td></tr>
-      <tr><td>Compte / mot de passe ChirpStack</td><td>.......................................</td></tr>
-      <tr><td>Nom de l'application ChirpStack &amp; profil d'équipement</td><td>.......................................</td></tr>
-      <tr><td>Adresse du serveur MQTT (IP : port) pour Node-RED</td><td>.......................................</td></tr>
-      <tr><td><strong>AppKey</strong> de votre binôme (32 caractères hexadécimaux)</td><td>.......................................</td></tr>
-      <tr><td>Nom de votre équipement (ex. <code>groupe-3</code>)</td><td>.......................................</td></tr>
-    </tbody>
-  </table>
-</div>
 
 <!-- FIGURE 1 : ARCHITECTURE -->
 <div class="figure-box">
@@ -662,7 +713,7 @@
       <text x="450" y="345" fill="#065f46" font-size="7.8pt" font-weight="bold" text-anchor="middle">Topologie en étoile : un seul nœud dans ce TP, mais une passerelle peut desservir des centaines de capteurs sur plusieurs kilomètres.</text>
     </svg>
   </div>
-  <div class="figure-caption">Figure 1 : Chaîne complète mise en œuvre — du capteur au fichier CSV (les numéros ①…⑥ sont repris dans les questions)</div>
+  <div class="figure-caption">Figure 1 : Chaîne globale LoRaWAN mise en œuvre — Du capteur physique à l'archivage de supervision (les numéros ① à ⑥ sont exploités dans l'analyse)</div>
 </div>
 
 <hr />
@@ -670,45 +721,45 @@
 <!-- ========================================================================= -->
 <!-- PARTIE 0 : POURQUOI LORA ? (0h15)                                         -->
 <!-- ========================================================================= -->
-<div class="step-box">
+<div class="step-box" id="partie-0">
   <div class="step-header">
-    <span class="step-title">PARTIE 0 : Pourquoi LoRa ? Lire une fiche de synthèse et choisir une technologie</span>
-    <span class="timing-badge">⏱ Durée conseillée : 0h15</span>
+    <span class="step-title">PARTIE 0 : Pourquoi LoRa ? Analyse Comparative &amp; Compromis SF</span>
+    <span class="timing-badge">⏱ Durée : 0h15</span>
   </div>
 
-  <p><strong>LoRa</strong> est la technique de modulation radio (couche physique) ; <strong>LoRaWAN</strong> est le protocole réseau défini au-dessus (adressage, sécurité, accès au réseau). Ensemble, ils appartiennent à la famille des réseaux <strong>LPWAN</strong> (<em>Low Power Wide Area Network</em> : « longue portée, basse consommation »), dédiés à l'<strong>IoT</strong>.</p>
+  <p><strong>LoRa</strong> (<em>Long Range</em>) désigne la couche physique de modulation radio propriétaire à étalement de spectre (Chirp Spread Spectrum). <strong>LoRaWAN</strong> désigne le protocole de contrôle d'accès au médium (MAC) et de routage réseau situé au-dessus, normalisé par l'Alliance LoRa. Ensemble, ils constituent un réseau de type <strong>LPWAN</strong> (<em>Low Power Wide Area Network</em>), optimisé pour les petits volumes de données à longue portée.</p>
 
-  <h4>0.1. Fiche de synthèse comparative (valeurs typiques constructeurs)</h4>
+  <h4>0.1. Synthèse comparative des technologies de communication IoT</h4>
   <table>
     <thead>
-      <tr><th>Critère</th><th>Bluetooth LE</th><th>Wi-Fi (2,4 GHz)</th><th>4G / LTE</th><th style="background:#ffedd5;">LoRaWAN (868 MHz)</th></tr>
+      <tr><th>Critère Technique</th><th>Bluetooth LE</th><th>Wi-Fi (2,4 GHz)</th><th>Cellulaire 4G / LTE</th><th style="background:#ffedd5;">LoRaWAN (868 MHz)</th></tr>
     </thead>
     <tbody>
-      <tr><td><strong>Portée typique</strong></td><td>10 à 100 m</td><td>30 à 100 m</td><td>plusieurs km (réseau opérateur)</td><td><strong>2 à 5 km en ville, 10 à 15 km en rural</strong></td></tr>
-      <tr><td><strong>Débit</strong></td><td>1 à 2 Mbit/s</td><td>10 à 600 Mbit/s</td><td>10 à 100 Mbit/s</td><td><strong>0,3 à 5,5 kbit/s</strong></td></tr>
-      <tr><td><strong>Courant en émission</strong></td><td>10 à 15 mA</td><td>100 à 300 mA</td><td>200 mA à 1 A</td><td>≈ 40 à 120 mA (en veille profonde : quelques µA)</td></tr>
-      <tr><td><strong>Autonomie sur pile</strong></td><td>mois</td><td>heures à jours</td><td>jours</td><td><strong>mois à années</strong></td></tr>
-      <tr><td><strong>Infrastructure / coût d'usage</strong></td><td>aucune (appairage)</td><td>point d'accès + clé Wi-Fi</td><td>carte SIM + abonnement</td><td><strong>passerelle (réseau privé) : pas d'abonnement</strong></td></tr>
-      <tr><td><strong>Bande de fréquence</strong></td><td>2,4 GHz ISM</td><td>2,4 / 5 GHz ISM</td><td>bandes sous licence</td><td><strong>868 MHz ISM libre, sub-GHz</strong> (traverse mieux les murs)</td></tr>
-      <tr><td><strong>Taille d'un message</strong></td><td>grande</td><td>grande</td><td>grande</td><td>petite : 51 à 222 octets</td></tr>
-      <tr><td><strong>Contrainte réglementaire</strong></td><td>—</td><td>—</td><td>—</td><td>duty cycle ≤ 1 %, 14 dBm</td></tr>
+      <tr><td><strong>Portée typique</strong></td><td>10 à 100 m</td><td>30 à 100 m</td><td>Plusieurs km (antennes relais)</td><td><strong>2 à 5 km (ville), 10 à 15 km (rural)</strong></td></tr>
+      <tr><td><strong>Débit binaire</strong></td><td>1 à 2 Mbit/s</td><td>10 à 600 Mbit/s</td><td>10 à 100 Mbit/s</td><td><strong>0,3 à 5,5 kbit/s</strong></td></tr>
+      <tr><td><strong>Courant en émission</strong></td><td>10 à 15 mA</td><td>100 à 300 mA</td><td>200 mA à 1 A</td><td>&approx; 40 à 120 mA (Veille profonde : &approx; 2 &mu;A)</td></tr>
+      <tr><td><strong>Autonomie sur pile</strong></td><td>Plusieurs mois</td><td>Quelques heures / jours</td><td>Quelques jours</td><td><strong>Plusieurs mois à plusieurs années</strong></td></tr>
+      <tr><td><strong>Modèle d'infrastructure</strong></td><td>Point à point / Mesh</td><td>Point d'accès privé</td><td>Opérateur (Carte SIM / Abonnement)</td><td><strong>Réseau privé autonome (Passerelle sans abonnement)</strong></td></tr>
+      <tr><td><strong>Bande de fréquence</strong></td><td>2,4 GHz ISM libre</td><td>2,4 / 5 GHz ISM libre</td><td>Bandes sous licence payante</td><td><strong>868 MHz ISM libre sub-GHz</strong> (pénétration optimale)</td></tr>
+      <tr><td><strong>Taille maximale charge</strong></td><td>Moyenne à grande</td><td>Très grande</td><td>Très grande</td><td>Petite : <strong>51 à 222 octets</strong></td></tr>
+      <tr><td><strong>Contrainte légale</strong></td><td>—</td><td>—</td><td>Norme 3GPP</td><td><strong>Duty-Cycle &le; 1 %, puissance &le; 14 dBm</strong></td></tr>
     </tbody>
   </table>
 
-  <h4>0.2. Le compromis « portée ↔ durée d'émission » : le facteur d'étalement (SF)</h4>
-  <p>En LoRa, l'émetteur choisit un <strong>facteur d'étalement</strong> <code>SF7</code> à <code>SF12</code> (dans LoRaWAN, on parle de <em>Data Rate</em> <code>DR5</code> à <code>DR0</code>). Plus le SF est grand, plus le récepteur peut « entendre » un signal faible (<strong>portée accrue</strong>), mais plus la trame est <strong>longue</strong> (le débit chute et la consommation par trame augmente).</p>
+  <h4>0.2. Compromis physique : Facteur d'étalement (Spreading Factor - SF)</h4>
+  <p>En modulation LoRa, la durée d'un symbole binaire est définie par le facteur d'étalement <code>SF7</code> à <code>SF12</code> (correspondant aux débits <code>DR5</code> à <code>DR0</code> en région Europe EU868). Plus le SF est élevé, plus le récepteur est capable de discriminer un signal faible sous le plancher de bruit thermique (<strong>sensibilité et portée accrues</strong>), mais plus la trame met de temps à être émise (le débit s'effondre et l'énergie par message est multipliée).</p>
 
   <table>
     <thead>
-      <tr><th>Réglage LoRaWAN</th><th>SF (bande passante 125 kHz)</th><th>Débit binaire</th><th>Sensibilité du récepteur</th><th>Durée d'une trame de 18 octets</th><th>Intervalle mini (duty cycle 1 %)</th></tr>
+      <tr><th>Débit LoRaWAN</th><th>Facteur (Bande 125 kHz)</th><th>Débit utile</th><th>Sensibilité récepteur</th><th>Durée de trame (18 octets)</th><th>Intervalle mini (Duty-Cycle 1 %)</th></tr>
     </thead>
     <tbody>
-      <tr><td><code>DR5</code></td><td>SF7</td><td>5,5 kbit/s</td><td>≈ −123 dBm</td><td><strong>51,5 ms</strong></td><td>5,2 s</td></tr>
-      <tr><td><code>DR4</code></td><td>SF8</td><td>3,1 kbit/s</td><td>≈ −126 dBm</td><td>92,7 ms</td><td>9,3 s</td></tr>
-      <tr><td><code>DR3</code></td><td>SF9</td><td>1,8 kbit/s</td><td>≈ −129 dBm</td><td>185 ms</td><td>18,5 s</td></tr>
-      <tr><td><code>DR2</code></td><td>SF10</td><td>0,98 kbit/s</td><td>≈ −132 dBm</td><td>330 ms</td><td>33 s</td></tr>
-      <tr><td><code>DR1</code></td><td>SF11</td><td>0,54 kbit/s</td><td>≈ −134,5 dBm</td><td>660 ms</td><td>66 s</td></tr>
-      <tr><td><code>DR0</code></td><td>SF12</td><td>0,29 kbit/s</td><td><strong>≈ −137 dBm</strong></td><td><strong>1 319 ms</strong></td><td>132 s</td></tr>
+      <tr><td><code>DR5</code></td><td>SF7</td><td>5,5 kbit/s</td><td>&approx; &minus;123 dBm</td><td><strong>51,5 ms</strong></td><td>5,2 s</td></tr>
+      <tr><td><code>DR4</code></td><td>SF8</td><td>3,1 kbit/s</td><td>&approx; &minus;126 dBm</td><td>92,7 ms</td><td>9,3 s</td></tr>
+      <tr><td><code>DR3</code></td><td>SF9</td><td>1,8 kbit/s</td><td>&approx; &minus;129 dBm</td><td>185 ms</td><td>18,5 s</td></tr>
+      <tr><td><code>DR2</code></td><td>SF10</td><td>0,98 kbit/s</td><td>&approx; &minus;132 dBm</td><td>330 ms</td><td>33 s</td></tr>
+      <tr><td><code>DR1</code></td><td>SF11</td><td>0,54 kbit/s</td><td>&approx; &minus;134,5 dBm</td><td>660 ms</td><td>66 s</td></tr>
+      <tr><td><code>DR0</code></td><td>SF12</td><td>0,29 kbit/s</td><td><strong>&approx; &minus;137 dBm</strong></td><td><strong>1 319 ms</strong></td><td>132 s</td></tr>
     </tbody>
   </table>
 
@@ -749,24 +800,24 @@
           <text x="490" y="268">SF10 / DR2</text><text x="610" y="268">SF11 / DR1</text><text x="730" y="268">SF12 / DR0</text>
         </g>
         <g font-size="7.2pt" fill="#475569" text-anchor="middle">
-          <text x="130" y="283">−123 dBm</text><text x="250" y="283">−126 dBm</text><text x="370" y="283">−129 dBm</text>
-          <text x="490" y="283">−132 dBm</text><text x="610" y="283">−134,5 dBm</text><text x="730" y="283">−137 dBm</text>
+          <text x="130" y="283">&minus;123 dBm</text><text x="250" y="283">&minus;126 dBm</text><text x="370" y="283">&minus;129 dBm</text>
+          <text x="490" y="283">&minus;132 dBm</text><text x="610" y="283">&minus;134,5 dBm</text><text x="730" y="283">&minus;137 dBm</text>
           <text x="130" y="297">5,5 kbit/s</text><text x="250" y="297">3,1 kbit/s</text><text x="370" y="297">1,8 kbit/s</text>
           <text x="490" y="297">0,98 kbit/s</text><text x="610" y="297">0,54 kbit/s</text><text x="730" y="297">0,29 kbit/s</text>
         </g>
         <rect x="60" y="308" width="800" height="24" rx="5" fill="#fffbeb" stroke="#fcd34d"/>
-        <text x="460" y="324" fill="#78350f" font-size="7.8pt" font-weight="bold" text-anchor="middle">Chaque pas de SF : portée ↑ (≈ +2,5 à 3 dB de sensibilité) mais durée d'émission ×2, débit ÷2, énergie par trame ×2.</text>
+        <text x="460" y="324" fill="#78350f" font-size="7.8pt" font-weight="bold" text-anchor="middle">Chaque pas de SF : portée accrue (&approx; +2,5 à 3 dB de sensibilité) mais durée d'émission &times; 2, débit divisé par 2, énergie par trame &times; 2.</text>
       </svg>
     </div>
-    <div class="figure-caption">Figure 3 : Durée d'émission d'une trame LoRaWAN de 18 octets (5 octets utiles + 13 octets d'en-tête et de sécurité) pour chaque facteur d'étalement</div>
+    <div class="figure-caption">Figure 3 : Durée d'émission d'une trame LoRaWAN de 18 octets (5 octets utiles + 13 octets de surcharge MAC/sécurité) pour chaque facteur d'étalement</div>
   </div>
 
   <div class="student-response" id="bloc-q0">
     <button type="button" class="btn-copy-small no-print" onclick="copierBloc('bloc-q0', this)">📋 Copier pour Docs</button>
-    <span class="docs-tag">Google Docs — Étude Q0.1 &amp; Q0.2</span><strong>Choix de la technologie et compromis SF :</strong>
+    <span class="docs-tag">Google Docs — Étude Q0.1 &amp; Q0.2</span><strong>Justification du choix technologique et compromis SF :</strong>
     <ol>
-      <li><strong>Q0.1 — Choix pour la mise en situation :</strong> À l'aide du tableau 0.1, justifiez en quelques lignes pourquoi <strong>LoRaWAN</strong> est mieux adapté que le Wi-Fi, le Bluetooth LE ou la 4G pour le local éloigné du lycée. Citez <strong>au moins 3 critères</strong> du tableau (avec la valeur correspondante) et indiquez <strong>un inconvénient</strong> de LoRaWAN que le service technique devra accepter.</li>
-      <li><strong>Q0.2 — Lecture de la Figure 3 :</strong> Par combien est multipliée la durée d'émission lorsqu'on passe de <code>SF7</code> à <code>SF12</code> ? Quel gain de sensibilité (en dB) obtient-on en échange ? Pourquoi un nœud qui émet en <code>SF12</code> épuise-t-il plus vite sa batterie, et que devient l'intervalle minimal entre deux trames imposé par le duty cycle de 1 % ?</li>
+      <li><strong>Q0.1 — Choix pour la mise en situation :</strong> À l'aide du tableau 0.1, justifiez en quelques lignes pourquoi <strong>LoRaWAN</strong> est la solution technique la plus pertinente par rapport au Wi-Fi, au Bluetooth LE et à la 4G pour le local isolé du lycée. Argumentez sur <strong>au moins 3 critères chiffrés</strong> et explicitez <strong>un inconvénient majeur</strong> que le service technique devra accepter.</li>
+      <li><strong>Q0.2 — Lecture de la Figure 3 :</strong> Par combien est multipliée la durée d'émission lorsqu'on passe de <code>SF7</code> à <code>SF12</code> ? Quel gain de sensibilité (en dB) obtient-on en contrepartie ? Pourquoi un nœud qui émet en <code>SF12</code> épuise-t-il plus rapidement sa batterie, et quelle contrainte cela impose-t-il sur l'intervalle minimal d'émission réglementaire (Duty-Cycle de 1 %) ?</li>
     </ol>
   </div>
 </div>
@@ -774,70 +825,74 @@
 <!-- ========================================================================= -->
 <!-- PARTIE 1 : PASSERELLE (0h35)                                              -->
 <!-- ========================================================================= -->
-<div class="step-box">
+<div class="step-box" id="partie-1">
   <div class="step-header">
-    <span class="step-title">PARTIE 1 : Paramétrage de la passerelle Dragino LPS8v3</span>
-    <span class="timing-badge">⏱ Durée conseillée : 0h35</span>
+    <span class="step-title">PARTIE 1 : Paramétrage de la Passerelle Dragino LPS8v3 &amp; Serveur ChirpStack</span>
+    <span class="timing-badge">⏱ Durée : 0h35</span>
   </div>
 
   <div class="callout callout-info">
-    <div class="callout-title">🔧 Fiche métier : le rôle d'une passerelle LoRaWAN</div>
+    <div class="callout-title">🔧 Fiche technique : Rôle d'une passerelle LoRaWAN transparente</div>
     <ul style="margin: 4px 0;">
-      <li>La passerelle est un <strong>relais transparent</strong> : elle écoute <em>en même temps</em> plusieurs canaux et facteurs d'étalement, puis <strong>recopie chaque trame radio</strong> reçue dans un paquet <strong>UDP/IP</strong> (protocole « Semtech packet forwarder », port <code>1700</code>) vers le serveur réseau.</li>
-      <li>Elle ne <strong>comprend pas</strong> le contenu : les données sont chiffrées (AES-128) de bout en bout entre le nœud et le serveur. Elle ajoute seulement des informations de réception (<strong>RSSI</strong>, <strong>SNR</strong>, horodatage, fréquence).</li>
-      <li>La liaison vers le serveur peut passer par <strong>Ethernet</strong>, <strong>Wi-Fi</strong> ou par la <strong>4G</strong> (module <code>EC25</code> de la version utilisée) : pratique pour un site sans réseau câblé.</li>
+      <li>La passerelle radio est un <strong>relais transparent (bridge)</strong> : elle écoute simultanément plusieurs canaux (8 canaux en EU868) sur différents facteurs d'étalement, puis encapsule chaque trame radio reçue dans des paquets <strong>UDP/IP</strong> (protocole « Semtech packet forwarder » sur le port <code>1700</code>) à destination du serveur de réseau.</li>
+      <li>Elle ne <strong>déchiffre pas</strong> le contenu applicatif : les données sont sécurisées de bout en bout en <strong>AES-128</strong> entre le nœud capteur et le serveur de réseau. La passerelle y adjoint uniquement les métadonnées de réception (<strong>RSSI</strong>, <strong>SNR</strong>, horodatage UTC, fréquence du canal).</li>
+      <li>La liaison amont vers le serveur s'effectue indifféremment par <strong>Ethernet filaire</strong>, <strong>Wi-Fi</strong> ou réseau <strong>Cellulaire 4G</strong> (module <code>EC25</code>).</li>
     </ul>
   </div>
 
-  <h4>1.1. Accès à la passerelle et relevé de son identité</h4>
+  <h4>1.1. Accès à l'interface d'administration et identification</h4>
+
+  <div class="figure-box" style="margin: 12px 0;">
+    <img src="images/dragino_credentials.png" alt="Paramètres et identifiants par défaut de la passerelle Dragino LPS8v3" style="max-width: 820px; width: 100%; height: auto; border: 1px solid #cbd5e1; border-radius: 6px;" />
+    <div class="figure-caption">Paramètres et identifiants par défaut pour accéder à la passerelle Dragino (Web HTTP <code>admin</code>/<code>dragino</code> via <code>http://10.130.1.1</code> ou IP locale, SSH <code>root</code>/<code>dragino</code>, Wi-Fi AP <code>dragino-xxxxxx</code> / <code>dragino+dragino</code>)</div>
+  </div>
+
   <ol>
-    <li>Alimenter la passerelle et attendre que la LED <code>SYS</code> devienne <strong>bleue fixe</strong> (environ 2 minutes). <em>Diagnostic : bleue clignotante = réseau OK mais serveur LoRaWAN injoignable ; autre état → consulter le manuel Dragino.</em></li>
-    <li>Connecter le PC au même réseau que la passerelle (câble Ethernet, ou réseau Wi-Fi de la passerelle de la forme <code>dragino-xxxxxx</code>) puis ouvrir dans le navigateur l'<strong>adresse IP</strong> de la <em>Fiche de paramètres de la salle</em> et vous identifier.</li>
-    <li>Page d'état (<em>Status / System Overview</em>) : relever le <strong>Gateway EUI</strong> (identifiant unique sur 64 bits = 16 caractères hexadécimaux) et l'état de la connexion réseau (Ethernet / Wi-Fi / 4G).</li>
+    <li>Mettre sous tension la passerelle Dragino LPS8v3 et observer la LED <code>SYS</code> : attendre qu'elle devienne <strong>bleue fixe</strong> (environ 2 minutes). <em>Diagnostic : bleue clignotante = réseau IP accessible mais serveur ChirpStack injoignable.</em></li>
+    <li>Connecter le PC au réseau local du lycée ou au point d'accès Wi-Fi de maintenance de la passerelle (SSID <code>dragino-xxxxxx</code>, mot de passe <code>dragino+dragino</code>). Ouvrir un navigateur web à l'adresse IP de la passerelle (ou <code>http://10.130.1.1</code> en accès direct Wi-Fi AP) et vous identifier (utilisateur <code>admin</code>, mot de passe <code>dragino</code>).</li>
+    <li>Dans le menu <strong>Status &rarr; System Overview</strong>, relever l'identifiant unique <strong>Gateway EUI</strong> (identifiant IEEE EUI-64 codé sur 16 caractères hexadécimaux).</li>
   </ol>
 
-  <h4>1.2. Paramétrage du transfert vers le serveur et du plan de fréquences</h4>
-  <p><em>Les intitulés des menus peuvent légèrement varier selon la version du firmware : en cas de doute, vous disposez du manuel Dragino LPS8v3 sur le poste enseignant. <strong>Seul le binôme rapporteur modifie ces réglages</strong> (les autres observent et recopient).</em></p>
+  <h4>1.2. Configuration du transfert de trames et plan de fréquences</h4>
   <table>
-    <thead><tr><th>Menu de la passerelle</th><th>Paramètre à régler / vérifier</th><th>Valeur attendue</th></tr></thead>
+    <thead><tr><th>Menu de la passerelle</th><th>Paramètre à configurer</th><th>Valeur attendue / Réglage</th></tr></thead>
     <tbody>
-      <tr><td><strong>LoRaWAN</strong> (transfert des trames)</td><td>Mode / fournisseur de service</td><td><code>Semtech UDP packet forwarder</code> — serveur « personnalisé / privé »</td></tr>
-      <tr><td></td><td>Adresse du serveur</td><td>IP du serveur ChirpStack (fiche de la salle)</td></tr>
-      <tr><td></td><td>Ports montant / descendant</td><td><code>1700</code> / <code>1700</code> (UDP)</td></tr>
-      <tr><td></td><td>Gateway ID</td><td>= Gateway EUI relevé en 1.1</td></tr>
-      <tr><td><strong>LoRa</strong> (paramètres radio)</td><td>Région / plan de fréquences</td><td><strong>EU868</strong> : canaux 868,1 – 868,3 – 868,5 MHz (obligatoires) + canaux additionnels, largeur 125 kHz</td></tr>
-      <tr><td></td><td>Mode réseau</td><td><strong>LoRaWAN public</strong> (mot de synchronisation public)</td></tr>
-      <tr><td><strong>Network</strong> (option 4G)</td><td>Cellulaire <code>EC25</code> : APN, carte SIM</td><td>À observer uniquement (culture : liaison de secours / sites isolés)</td></tr>
+      <tr><td><strong>LoRaWAN &rarr; LoRaWAN Settings</strong></td><td>Service Provider / Mode</td><td><code>Semtech UDP packet forwarder</code> (Serveur privé)</td></tr>
+      <tr><td></td><td>Server Address</td><td>Adresse IP du serveur ChirpStack de la salle</td></tr>
+      <tr><td></td><td>Uplink / Downlink Port</td><td><code>1700</code> / <code>1700</code> (Protocole UDP)</td></tr>
+      <tr><td></td><td>Gateway ID</td><td>Identifiant <strong>Gateway EUI</strong> relevé en 1.1</td></tr>
+      <tr><td><strong>LoRa &rarr; Radio Settings</strong></td><td>Frequency Plan / Région</td><td><strong>EU868</strong> (Canaux obligatoires : 868,1 ; 868,3 ; 868,5 MHz — BW 125 kHz)</td></tr>
+      <tr><td></td><td>Network Mode</td><td><strong>Public LoRaWAN</strong> (mot de synchro <code>0x34</code>)</td></tr>
     </tbody>
   </table>
   <ol start="4">
-    <li>Enregistrer puis <strong>appliquer</strong> les réglages (le service du « packet forwarder » redémarre). Ouvrir ensuite la page de journal des trames radio de la passerelle (<em>LoRa Log</em> / journal du <em>packet forwarder</em>) : vous verrez plus tard apparaître les trames de votre nœud.</li>
-    <li>Ouvrir l'interface <strong>ChirpStack</strong> (adresse de la fiche) &rarr; menu <strong>Gateways</strong> : vérifier que la passerelle apparaît avec une colonne <em>Last seen</em> de quelques secondes (si elle n'est pas déclarée, l'enseignant l'ajoute avec son <strong>Gateway EUI</strong>).</li>
+    <li>Enregistrer et appliquer les modifications (<em>Save &amp; Apply</em>). Ouvrir le menu <strong>LoRa Log</strong> pour visualiser en direct le journal des réceptions radio du concentrateur.</li>
+    <li>Accéder à la console web du serveur <strong>ChirpStack v4</strong> (port <code>8080</code>). Dans le menu <strong>Gateways</strong>, localiser la passerelle : contrôler que le statut <em>Last seen</em> s'actualise toutes les quelques secondes.</li>
   </ol>
 
   <div class="capture-box">
-    <strong>📸 Captures C1 &amp; C2 à insérer dans votre Google Docs :</strong><br>
-    • <strong>Capture C1 (passerelle) :</strong> page d'état de la passerelle montrant le <strong>Gateway EUI</strong> et la page de configuration du transfert (adresse serveur, ports <code>1700</code>).<br>
-    • <strong>Capture C2 (ChirpStack) :</strong> liste des <em>Gateways</em> avec la passerelle <em>Last seen</em> récente.
+    <strong>📸 Captures C1 &amp; C2 à insérer dans votre compte-rendu :</strong><br>
+    • <strong>Capture C1 (Passerelle Dragino) :</strong> Page <em>System Overview</em> montrant le Gateway EUI et page <em>LoRaWAN Settings</em> affichant le serveur UDP 1700.<br>
+    • <strong>Capture C2 (Console ChirpStack) :</strong> Menu <em>Gateways</em> montrant la passerelle active avec un horodatage <em>Last seen</em> récent.
   </div>
 
   <div class="student-response" id="bloc-q1">
     <button type="button" class="btn-copy-small no-print" onclick="copierBloc('bloc-q1', this)">📋 Copier pour Docs</button>
-    <span class="docs-tag">Google Docs — Tableau T1 &amp; Étude Q1</span><strong>Identité et paramètres de la passerelle :</strong>
+    <span class="docs-tag">Google Docs — Tableau T1 &amp; Étude Q1</span><strong>Relevés et questions sur la passerelle Dragino :</strong>
     <table>
-      <thead><tr><th>Paramètre relevé</th><th>Valeur</th></tr></thead>
+      <thead><tr><th>Paramètre d'exploitation</th><th>Valeur relevée</th></tr></thead>
       <tbody>
         <tr><td>Gateway EUI</td><td>................................................</td></tr>
-        <tr><td>Type de liaison vers le serveur utilisée (Ethernet / Wi-Fi / 4G)</td><td>................................................</td></tr>
-        <tr><td>Adresse du serveur &amp; port UDP</td><td>................................................</td></tr>
-        <tr><td>Plan de fréquences (région) et canaux de base (MHz)</td><td>................................................</td></tr>
-        <tr><td>Mode LoRaWAN (public / privé)</td><td>................................................</td></tr>
+        <tr><td>Liaison amont vers le réseau (Ethernet / Wi-Fi / 4G)</td><td>................................................</td></tr>
+        <tr><td>Adresse IP du serveur de réseau &amp; port UDP</td><td>................................................</td></tr>
+        <tr><td>Plan de fréquences (Région &amp; canaux de base)</td><td>................................................</td></tr>
+        <tr><td>Mode LoRaWAN (Public / Privé)</td><td>................................................</td></tr>
       </tbody>
     </table>
     <ol>
-      <li><strong>Q1.1 —</strong> Dans la Figure 1, la passerelle ④ comprend-elle les mesures de température ? Justifiez, et expliquez pourquoi on dit qu'elle est « transparente ».</li>
-      <li><strong>Q1.2 —</strong> Pourquoi la liaison ④ → ⑤ utilise-t-elle <strong>UDP</strong> plutôt que TCP ? Quelles informations ajoute la passerelle à chaque trame reçue (voir ci-dessus) ?</li>
-      <li><strong>Q1.3 —</strong> Que contrôleriez-vous, dans l'ordre, si la passerelle n'apparaissait pas dans ChirpStack (3 points de vérification) ?</li>
+      <li><strong>Q1.1 —</strong> La passerelle Dragino LPS8v3 est-elle capable de lire directement la température émise par le capteur ? Justifiez votre réponse et explicitez la notion de passerelle « transparente ».</li>
+      <li><strong>Q1.2 —</strong> Pourquoi le protocole de transport <strong>UDP</strong> est-il systématiquement privilégié par rapport à TCP pour la liaison passerelle &rarr; serveur de réseau ? Quelles informations métrologiques essentielles la passerelle greffe-t-elle à chaque trame reçue ?</li>
+      <li><strong>Q1.3 —</strong> En cas d'inactivité de la passerelle dans la console ChirpStack (statut <em>Never seen</em>), listez de façon ordonnée les <strong>3 étapes de diagnostic matériel et réseau</strong> à exécuter pour identifier la panne.</li>
     </ol>
   </div>
 </div>
@@ -845,17 +900,18 @@
 <!-- ========================================================================= -->
 <!-- PARTIE 2 : LE NOEUD (0h50)                                                -->
 <!-- ========================================================================= -->
-<div class="step-box">
+<div class="step-box" id="partie-2">
   <div class="step-header">
-    <span class="step-title">PARTIE 2 : Réalisation du nœud capteur (Arduino Nano + Grove LoRa-E5) et première transmission</span>
-    <span class="timing-badge">⏱ Durée conseillée : 0h50</span>
+    <span class="step-title">PARTIE 2 : Réalisation du Nœud Capteur (Arduino Nano + Grove LoRa-E5) &amp; Télémétrie</span>
+    <span class="timing-badge">⏱ Durée : 0h50</span>
   </div>
 
-  <h4>2.1. Câblage du nœud (hors tension)</h4>
+  <h4>2.1. Câblage matériel du nœud capteur</h4>
   <ol>
-    <li>Emboîter l'<strong>Arduino Nano</strong> sur le <strong>Grove Shield for Nano</strong> en respectant le sens des broches.</li>
-    <li>Brancher le <strong>Grove LoRa-E5</strong> sur le connecteur Grove <code>D2</code> (broches <code>D2</code>/<code>D3</code>) et <strong>visser l'antenne 868 MHz</strong>. Brancher le <strong>capteur de température</strong> sur le connecteur <code>A0</code> (voir Figure 2).</li>
-    <li>Relier le Nano au PC en USB (pour la programmation).</li>
+    <li>Enficher l'<strong>Arduino Nano v3</strong> sur sa platine support Grove (vérifier le sens d'insertion des broches et que le sélecteur d'alimentation est réglé sur <strong>5V</strong>).</li>
+    <li>Raccorder le modem <strong>Grove LoRa-E5</strong> sur le connecteur Grove <strong><code>D2</code></strong> (broches <code>D2=RX Nano</code> &larr; TX modem, <code>D3=TX Nano</code> &rarr; RX modem). <strong>Visser l'antenne 868 MHz</strong>.</li>
+    <li>Raccorder le <strong>capteur de température Grove v1.2</strong> sur le port Grove analogique <strong><code>A0</code></strong>.</li>
+    <li>Relier le câble Mini-USB du Nano au PC de développement.</li>
   </ol>
 
   <!-- FIGURE 2 : CABLAGE -->
@@ -923,89 +979,65 @@
         <rect x="640" y="300" width="240" height="112" rx="6" fill="#ffffff" stroke="#cbd5e1"/>
         <text x="652" y="320" fill="#0b3c5d" font-size="7.8pt" font-weight="bold">Raccordements à réaliser :</text>
         <g font-size="7pt" fill="#334155">
-          <text x="652" y="338">• LoRa-E5 → connecteur Grove D2</text>
-          <text x="652" y="354">• Capteur de température → A0</text>
-          <text x="652" y="370">• Powerbank → USB du Nano (via shunt)</text>
+          <text x="652" y="338">• LoRa-E5 &rarr; connecteur Grove D2</text>
+          <text x="652" y="354">• Capteur de température &rarr; A0</text>
+          <text x="652" y="370">• Powerbank &rarr; USB du Nano (via shunt)</text>
           <text x="652" y="386">• Antenne vissée AVANT mise sous tension</text>
           <text x="652" y="402">• Pas de PC en USB pendant la mesure</text>
         </g>
       </svg>
     </div>
-    <div class="figure-caption">Figure 2 : Câblage du nœud (LoRa-E5 sur D2, capteur sur A0) et, pour la Partie 4, insertion d'une résistance de shunt de 1,1 Ω entre la Powerbank et le Nano pour mesurer le courant avec l'AD3</div>
+    <div class="figure-caption">Figure 2 : Schéma de câblage complet — Nœud capteur autonome et raccordement du shunt de mesure 1,1 &Omega; vers l'Analog Discovery 3</div>
   </div>
 
-  <h4>2.2. Découverte des commandes AT : le Nano devient un « pont » USB ↔ LoRa-E5</h4>
-  <p>Le modem <code>Wio-E5</code> se pilote avec des <strong>commandes AT</strong> (texte ASCII) envoyées sur une liaison série à <code>9600 Bd</code>. Pour les découvrir, téléversez ce programme qui relaie tout ce que vous tapez dans le moniteur série vers le modem (et inversement) :</p>
+  <h4>2.2. Étape 1 : Le Pont Série AT (Configuration &amp; Audit du Modem)</h4>
+  <p>Le modem <code>Grove LoRa-E5</code> embarque un microcontrôleur STM32WLE5JC piloté par des <strong>commandes AT</strong> en liaison série asynchrone à <strong>9600 bauds</strong>. Pour auditer le modem et extraire ses identifiants uniques sans bibliothèque logicielle, l'Arduino Nano doit opérer en <strong>passerelle MultiSerial bidirectionnelle</strong>.</p>
+
+  <!-- ENCADRE IA 1 -->
+  <div class="callout callout-purple">
+    <div class="callout-title">🤖 Pistes de recherche &amp; Co-développement IA — Le Pont Série AT MultiSerial</div>
+    <p><strong>Cahier des charges logiciel :</strong> Développer un sketch Arduino établissant un pont transparent non-bloquant entre la console USB du PC (<code>Serial</code> à 9600 bauds) et le modem LoRa-E5 émulé sur un port série logiciel (<code>SoftwareSerial</code> sur D2=RX, D3=TX à 9600 bauds).</p>
+    <ul>
+      <li><strong>Mots-clés techniques :</strong> <code>SoftwareSerial.h</code>, <code>Serial.available()</code>, <code>Serial.read()</code>, <code>write()</code>, <code>ATmega328P</code>, <code>9600 bauds</code>, <code>Both NL &amp; CR</code>.</li>
+      <li><strong>Suggestion de prompt pour votre assistant IA :</strong><br>
+      <em>« Pour une carte Arduino Nano v3 (microcontrôleur ATmega328P), écris un programme en C++ Arduino créant un pont série bidirectionnel transparent :
+      1. La liaison USB matérielle Serial est initialisée à 9600 bauds.
+      2. Une liaison série logicielle SoftwareSerial (baptisée loraSerial) est configurée à 9600 bauds sur la broche D2 (RX du Nano, reliée au TX du module) et la broche D3 (TX du Nano, reliée au RX du module).
+      3. Dans loop(), redirige de manière instantanée et non-bloquante tous les caractères reçus de Serial vers loraSerial, et inversement tous les caractères de loraSerial vers Serial.
+      4. Optimise les échanges sans delay() pour ne saturer aucun tampon de réception. »</em></li>
+      <li><strong>Esprit critique &amp; Validation :</strong> Analysez le code fourni par l'IA. Quel réglage de terminateur de ligne (<em>Line ending</em>) dans le moniteur série de l'Arduino IDE est exigé par le firmware du modem LoRa-E5 pour valider une commande ? (Indice : le modem attend les deux caractères <code>\r\n</code>). Vérifiez le pont en envoyant <code>AT</code> : le modem doit répondre immédiatement <code>+AT: OK</code>.</li>
+    </ul>
+  </div>
 
   <div class="code-wrap">
-    <div class="code-title"><span>📄 Sketch 1 — Pont série USB ↔ LoRa-E5 (Pont_AT_LoRaE5.ino)</span><button type="button" class="btn-copy-code no-print" onclick="copierCode('code-bridge', this)">📋 Copier le code</button></div>
-    <pre class="code" id="code-bridge">/*
- * TP LoRaWAN BTS CIEL 2 - Sketch 1 : Pont Serie de Configuration AT
- * Cible : Arduino Nano (ATmega328P 5V) + Shield Grove + Grove LoRa-E5 (Wio-E5)
- * Cablage Grove : Port D2 (D2 = Nano RX &lt;- TX LoRa-E5, D3 = Nano TX -&gt; RX LoRa-E5)
- *
- * Utilisation :
- * 1. Televerser le code dans l&#x27;Arduino Nano.
- * 2. Ouvrir le Moniteur Serie de l&#x27;IDE Arduino.
- * 3. Regler la vitesse sur 9600 bauds et le terminateur sur &quot;Les deux (NL et CR)&quot; / &quot;Both NL &amp; CR&quot;.
- * 4. Taper &quot;AT&quot; puis Entree -&gt; Le module repond &quot;+AT: OK&quot;.
- */
+    <div class="code-title"><span>📄 Structure architecturale du Pont Série (À compléter avec l'IA)</span><button type="button" class="btn-copy-code no-print" onclick="copierCode('code-bridge-skel', this)">📋 Copier le squelette</button></div>
+    <pre class="code" id="code-bridge-skel">#include &lt;SoftwareSerial.h&gt;
 
-#include &lt;SoftwareSerial.h&gt;
-
-// Broches de communication avec le module Grove LoRa-E5
-const uint8_t LORA_RX_PIN = 2; // Broche D2 du Nano connectee au TX du module LoRa
-const uint8_t LORA_TX_PIN = 3; // Broche D3 du Nano connectee au RX du module LoRa
+const uint8_t LORA_RX_PIN = 2; // Nano RX &lt;- LoRa TX
+const uint8_t LORA_TX_PIN = 3; // Nano TX -&gt; LoRa RX
 
 SoftwareSerial loraSerial(LORA_RX_PIN, LORA_TX_PIN);
 
 void setup() {
-  // Initialisation du port serie USB vers le PC
   Serial.begin(9600);
-  while (!Serial) {
-    ; // Attendre l&#x27;enumeration USB
-  }
-
-  // Initialisation du port serie logiciel vers le module LoRa-E5
-  // Vitesse d&#x27;usine par defaut du firmware LoRa-E5 AT : 9600 bauds
+  while (!Serial);
   loraSerial.begin(9600);
-
-  Serial.println(F(&quot;============================================================&quot;));
-  Serial.println(F(&quot;  BTS CIEL 2 - Pont Serie AT Arduino Nano &lt;-&gt; Grove LoRa-E5 &quot;));
-  Serial.println(F(&quot;  Communication etablie a 9600 bauds.                      &quot;));
-  Serial.println(F(&quot;  Commandes utiles :                                        &quot;));
-  Serial.println(F(&quot;    AT+VER       -&gt; Version du firmware                    &quot;));
-  Serial.println(F(&quot;    AT+ID        -&gt; DevEUI, AppEUI (JoinEUI), DevAddr      &quot;));
-  Serial.println(F(&quot;    AT+MODE=LWOTAA -&gt; Passage en mode LoRaWAN OTAA          &quot;));
-  Serial.println(F(&quot;    AT+DR=EU868  -&gt; Region Europe 868 MHz                  &quot;));
-  Serial.println(F(&quot;============================================================&quot;));
+  Serial.println(F("Pont Serie AT initialise. Vitesse : 9600 bauds (Both NL &amp; CR)"));
 }
 
 void loop() {
-  // Transfert de l&#x27;invite de commande de l&#x27;utilisateur (PC -&gt; LoRa-E5)
-  if (Serial.available()) {
-    char c = Serial.read();
-    loraSerial.write(c);
-  }
-
-  // Transfert de la reponse du modem LoRa (LoRa-E5 -&gt; Moniteur Serie PC)
-  if (loraSerial.available()) {
-    char c = loraSerial.read();
-    Serial.write(c);
-  }
+  // TODO : Redirection transparente bidirectionnelle Serial &lt;-&gt; loraSerial
+  // A completer a l'aide de l'assistant IA
 }</pre>
   </div>
 
-  <ol>
-    <li>Téléverser, ouvrir le <strong>Moniteur série</strong> à <code>9600</code> bauds avec la fin de ligne <strong>« NL et CR »</strong> (Both NL &amp; CR).</li>
-    <li>Taper successivement les commandes du tableau ci-dessous et noter les réponses. <em>Si <code>AT</code> ne répond rien : vérifier l'antenne et l'alimentation, puis inverser les deux numéros dans <code>SoftwareSerial lora(2, 3);</code> → <code>(3, 2)</code>.</em></li>
-  </ol>
+  <p>Une fois le pont téléversé, ouvrez le <strong>Moniteur Série</strong> (9600 bauds, terminateur <strong>« NL et CR » / Both NL &amp; CR</strong>). Exécutez les commandes AT suivantes et consignez les retours :</p>
 
   <div class="student-response" id="bloc-q2a">
     <button type="button" class="btn-copy-small no-print" onclick="copierBloc('bloc-q2a', this)">📋 Copier pour Docs</button>
-    <span class="docs-tag">Google Docs — Tableau T2 &amp; Étude Q2.1</span><strong>Exploration des commandes AT :</strong>
+    <span class="docs-tag">Google Docs — Tableau T2 &amp; Étude Q2.1</span><strong>Exploration des commandes AT du modem Wio-E5 :</strong>
     <table>
-      <thead><tr><th>Commande tapée</th><th>Réponse du modem</th><th>Rôle de la commande (avec vos mots)</th></tr></thead>
+      <thead><tr><th>Commande AT exécutée</th><th>Réponse brute du modem</th><th>Rôle fonctionnel de la commande</th></tr></thead>
       <tbody>
         <tr><td><code>AT</code></td><td>..............................</td><td>..............................................</td></tr>
         <tr><td><code>AT+VER</code></td><td>..............................</td><td>..............................................</td></tr>
@@ -1014,221 +1046,131 @@ void loop() {
         <tr><td><code>AT+CH</code></td><td>..............................</td><td>..............................................</td></tr>
       </tbody>
     </table>
-    <p><strong>Q2.1 —</strong> Parmi les identifiants donnés par <code>AT+ID</code>, lequel est <strong>unique au monde pour votre modem</strong> (écrivez-le ici) ? Pourquoi le serveur en a-t-il besoin ?</p>
+    <p><strong>Q2.1 —</strong> Dans la réponse de <code>AT+ID</code>, identifiez l'identifiant matériel unique au monde gravé en usine dans votre modem (le <strong>DevEUI</strong> sur 64 bits = 16 caractères hexadécimaux). Notez-le soigneusement et expliquez son utilité lors de l'authentification réseau.</p>
   </div>
 
-  <h4>2.3. Déclaration de l'équipement dans le serveur ChirpStack</h4>
+  <h4>2.3. Déclaration de l'équipement dans le serveur ChirpStack v4</h4>
   <ol>
-    <li>Dans ChirpStack : <strong>Applications</strong> → application de la salle → <strong>Add device</strong>.</li>
-    <li>Renseigner : <strong>Name</strong> = nom de votre binôme (fiche), <strong>Device EUI</strong> = le <code>DevEui</code> relevé avec <code>AT+ID</code>, <strong>Device profile</strong> = profil de la salle (EU868, LoRaWAN 1.0.3, classe A, activation OTAA) ; le champ <em>Join EUI / AppEUI</em> peut rester à sa valeur par défaut.</li>
-    <li>Onglet <strong>OTAA keys</strong> → champ <strong>Application key</strong> = l'<strong>AppKey</strong> de votre binôme (fiche). <em>L'AppKey est un secret partagé : c'est elle qui permet au serveur et au nœud de s'authentifier et de dériver les clés de chiffrement.</em></li>
+    <li>Dans l'interface web de <strong>ChirpStack</strong> : <strong>Applications &rarr; <code>lycee-lora</code> &rarr; Add device</strong>.</li>
+    <li>Compléter les champs : <strong>Name</strong> = identifiant de votre binôme (ex. <code>groupe-1</code>), <strong>Device EUI</strong> = le <code>DevEui</code> relevé avec la commande <code>AT+ID</code>, <strong>Device profile</strong> = <code>EU868 - LoRaWAN 1.0.3 OTAA</code>. Valider.</li>
+    <li>Dans l'onglet <strong>OTAA keys</strong>, saisir la clé <strong>Application key (AppKey)</strong> remise par l'enseignant (32 caractères hexadécimaux représentant un secret partagé de 128 bits).</li>
   </ol>
 
-  <h4>2.4. Programme autonome : rejoindre le réseau (OTAA) et envoyer la température</h4>
-  <p>Le programme ci-dessous configure le modem (mode <code>LWOTAA</code>, région <code>EU868</code>, <code>AppKey</code>), demande à rejoindre le réseau (<code>AT+JOIN</code>) puis envoie <strong>toutes les 60 s</strong> une trame de <strong>5 octets</strong> :</p>
+  <h4>2.4. Étape 2 : Firmware du Nœud Autonome &amp; Encodage de Télémétrie Binaire</h4>
+  <p>Le nœud capteur autonome doit réaliser l'acquisition périodique de son environnement, mesurer l'état de charge de sa batterie, compacter ces informations sous forme binaire et transmettre la charge utile au serveur en respectant la fenêtre légale d'émission.</p>
+
+  <p><strong>Cahier des charges de la trame binaire (5 octets) :</strong></p>
   <table>
-    <thead><tr><th>Octets</th><th>Contenu</th><th>Codage</th></tr></thead>
+    <thead><tr><th>Octets</th><th>Grandeur mesurée</th><th>Format binaire &amp; Représentation</th><th>Exemple décimal &rarr; Hexadécimal</th></tr></thead>
     <tbody>
-      <tr><td>0 – 1</td><td>Température en dixièmes de °C</td><td>entier 16 bits signé (complément à 2), octet de poids fort en premier</td></tr>
-      <tr><td>2 – 3</td><td>Tension d'alimentation du Nano en mV</td><td>entier 16 bits non signé</td></tr>
-      <tr><td>4</td><td>Compteur de trames</td><td>entier 8 bits non signé</td></tr>
+      <tr><td><strong>0 – 1</strong></td><td>Température ambiante</td><td>Entier signé 16 bits (<code>int16_t</code>) en <strong>dixièmes de &deg;C</strong>, Big-Endian (MSB first)</td><td>+24,5 &deg;C &rarr; 245 &rarr; <code>0x00F5</code><br>&minus;2,0 &deg;C &rarr; &minus;20 &rarr; <code>0xFFEC</code></td></tr>
+      <tr><td><strong>2 – 3</strong></td><td>Tension Vcc d'alimentation</td><td>Entier non signé 16 bits (<code>uint16_t</code>) en <strong>millivolts (mV)</strong>, Big-Endian (MSB first)</td><td>4 980 mV (4,98 V) &rarr; <code>0x1374</code></td></tr>
+      <tr><td><strong>4</strong></td><td>Compteur de trames</td><td>Entier non signé 8 bits (<code>uint8_t</code>), incrémenté à chaque message (0 à 255)</td><td>Trame n&deg; 7 &rarr; <code>0x07</code></td></tr>
     </tbody>
   </table>
 
+  <!-- ENCADRE IA 2 -->
+  <div class="callout callout-purple">
+    <div class="callout-title">🤖 Pistes de recherche &amp; Co-développement IA — Firmware Autonome &amp; Encodage Binaire</div>
+    <p><strong>Cahier des charges logiciel :</strong> Développer le programme autonome en C++ Arduino pour ATmega328P assurant la lecture de la thermistance CTN Grove sur A0 (relation de Steinhart-Hart B=4275), la mesure interne de la tension Vcc (bandgap 1,1 V sans pont diviseur externe), le formatage hexadécimal de la trame de 5 octets, la configuration OTAA et l'émission cadencée toutes les 60 secondes.</p>
+    <ul>
+      <li><strong>Mots-clés techniques :</strong> <code>Steinhart-Hart equation</code>, <code>CTN 100k B=4275</code>, <code>ADMUX internal 1.1V bandgap</code>, <code>AT+MODE=LWOTAA</code>, <code>AT+DR=EU868</code>, <code>AT+KEY=APPKEY</code>, <code>AT+JOIN</code>, <code>AT+MSGHEX</code>, <code>snprintf %04X%04X%02X</code>, <code>Duty-Cycle 1%</code>.</li>
+      <li><strong>Formule physique de conversion thermistance (Grove v1.2) :</strong><br>
+        1. Résistance de la thermistance : <i>R</i> = 100 000 &times; (1023 / <i>ADC</i> &minus; 1).<br>
+        2. Équation de Steinhart-Hart simplifiée : 1 / <i>T</i> = 1 / <i>T</i><sub>0</sub> + (1 / <i>B</i>) &times; ln(<i>R</i> / <i>R</i><sub>0</sub>) avec <i>T</i><sub>0</sub> = 298,15 K (25 &deg;C) et <i>B</i> = 4275. La température en degrés Celsius s'obtient par : <i>T</i>(&deg;C) = <i>T</i>(K) &minus; 273,15.
+      </li>
+      <li><strong>Suggestion de prompt pour votre assistant IA :</strong><br>
+      <em>« Pour un microcontrôleur ATmega328P (Arduino Nano v3 à 16 MHz, 5V TTL) équipé d'un modem Grove LoRa-E5 (SoftwareSerial sur D2=RX, D3=TX à 9600 bauds) et d'une thermistance analogique Grove v1.2 sur A0 :
+      Écris un programme C++ Arduino complet et modulaire qui :
+      1) Configure le modem LoRa-E5 en mode LoRaWAN OTAA, région EU868, classe A, et programme la clé APPKEY fournie.
+      2) Réalise la procédure d'association réseau avec la commande AT+JOIN (avec timeout de 25s et 3 tentatives).
+      3) Développe une fonction calculant la température en dixièmes de °C (int16_t) via l'équation de la thermistance B=4275 (R0=100k).
+      4) Développe une fonction lisant la tension d'alimentation Vcc en mV (uint16_t) en interrogeant la référence de tension interne 1.1V (registre ADMUX de l'ATmega328P).
+      5) Formate ces grandeurs sur 5 octets binaires compacts représentés sous forme d'une chaîne hexadécimale de 10 caractères (format: [Temp 2 octets signés MSB][Vcc 2 octets non signés MSB][Compteur 1 octet]).
+      6) Transmet la trame au modem avec la commande AT+MSGHEX="&lt;payload&gt;" et contrôle la réponse "+MSGHEX: Done".
+      7) Applique une temporisation de 60 secondes entre chaque émission pour respecter le Duty-Cycle européen de 1%.
+      Utilise la macro F() pour stocker les chaînes littérales en mémoire Flash. »</em></li>
+      <li><strong>Esprit critique &amp; Validation :</strong> Pourquoi la transmission sous forme d'octets binaires encodés en hexadécimal (5 octets) est-elle infiniment supérieure à l'envoi d'une chaîne de texte ASCII en clair (ex: <code>"24.5;4980;7"</code> = 11 caractères) sur un réseau LPWAN ? Comment le compilateur C++ code-t-il les températures négatives en complément à deux (testez avec &minus;2,0 &deg;C : quelle valeur hexadécimale obtient-on) ?</li>
+    </ul>
+  </div>
+
   <div class="code-wrap">
-    <div class="code-title"><span>📄 Sketch 2 — Nœud LoRaWAN autonome (LoRa_Noeud_Nano_E5.ino)</span><button type="button" class="btn-copy-code no-print" onclick="copierCode('code-node', this)">📋 Copier le code</button></div>
-    <pre class="code" id="code-node">/*
- * TP LoRaWAN BTS CIEL 2 - Sketch 2 : Noeud Autonome de Telemetrie Campus
- * Cible : Arduino Nano (ATmega328P 5V) + Shield Grove + Grove LoRa-E5 + Capteur Temperature Grove
- *
- * Cablage Grove :
- *   - Grove LoRa-E5 sur port D2 (RX=D2, TX=D3)
- *   - Capteur de Temperature Grove v1.2 (CTN B=4275, R0=100k) sur port A0
- *   - Alimentation autonome : VARTA Powerbank branchee sur le port Mini-USB du Nano
- *
- * Trame LoRaWAN binaire emise (5 octets) :
- *   [Octet 0-1] : Temperature signee x10 (int16_t, MSB first) -&gt; 215 = 21.5 deg C
- *   [Octet 2-3] : Tension Vcc en mV (uint16_t, MSB first) -&gt; 4980 = 4.98 V
- *   [Octet 4]   : Compteur d&#x27;emission sequentiel (uint8_t, 0 a 255)
- */
+    <div class="code-title"><span>📄 Structure du sketch autonome LoRaWAN (À co-développer avec l'IA)</span><button type="button" class="btn-copy-code no-print" onclick="copierCode('code-node-skel', this)">📋 Copier le squelette</button></div>
+    <pre class="code" id="code-node-skel">#include &lt;SoftwareSerial.h&gt;
 
-#include &lt;SoftwareSerial.h&gt;
-
-// Configuration broches LoRa
-const uint8_t LORA_RX_PIN = 2; // Broche D2 = RX Nano (TX LoRa-E5)
-const uint8_t LORA_TX_PIN = 3; // Broche D3 = TX Nano (RX LoRa-E5)
+const uint8_t LORA_RX_PIN = 2;
+const uint8_t LORA_TX_PIN = 3;
 SoftwareSerial lora(LORA_RX_PIN, LORA_TX_PIN);
 
-// Configuration capteur analogique
 const uint8_t TEMP_PIN = A0;
-const int B_COEFFICIENT = 4275; // Valeur B de la thermistance Grove v1.2
-const long R0 = 100000;         // R0 = 100 kOhm a 25 deg C
+const int B_COEFFICIENT = 4275;
+const long R0 = 100000;
 
-// Cles LoRaWAN OTAA (Remplacer la cle ci-dessous par celle remise par votre enseignant)
-// Format : 32 caracteres hexadecimaux (16 octets)
-const char APPKEY[] = &quot;2B7E151628AED2A6ABF7158809CF4F3C&quot;; 
+// TODO : Renseigner votre AppKey personnelle distribuée par l'enseignant
+const char APPKEY[] = "VOTRE_APPKEY_32_HEX"; 
 
 uint8_t packetCounter = 0;
 
-// Envoi d&#x27;une commande AT et attente d&#x27;une reponse specifique avec timeout
+// Envoi d'une commande AT avec verification de la reponse attendue
 bool sendATCommand(const char* cmd, const char* expectedResponse, unsigned long timeoutMs = 5000) {
-  lora.print(cmd);
-  lora.print(&quot;\r\n&quot;);
-  
-  unsigned long start = millis();
-  String response = &quot;&quot;;
-  while (millis() - start &lt; timeoutMs) {
-    while (lora.available()) {
-      char c = lora.read();
-      response += c;
-    }
-    if (response.indexOf(expectedResponse) != -1) {
-      Serial.print(F(&quot;[LoRa-E5] &quot;));
-      Serial.println(response);
-      return true;
-    }
-  }
-  Serial.print(F(&quot;[TIMEOUT/ERR] Cmd: &quot;));
-  Serial.print(cmd);
-  Serial.print(F(&quot; | Rep: &quot;));
-  Serial.println(response);
-  return false;
+  // A completer avec l'assistant IA
 }
 
-// Mesure de la tension d&#x27;alimentation interne Vcc via la reference 1.1V interne de l&#x27;ATmega328P
+// Mesure de la tension interne Vcc via la reference 1.1V
 uint16_t readVccMillivolts() {
-  #if defined(__AVR_ATmega328P__) || defined(__AVR_ATmega168__)
-    ADMUX = _BV(REFS0) | _BV(MUX3) | _BV(MUX2) | _BV(MUX1);
-  #elif defined(__AVR_ATmega32U4__)
-    ADMUX = _BV(REFS0) | _BV(MUX4) | _BV(MUX3) | _BV(MUX2) | _BV(MUX1);
-  #else
-    return 5000;
-  #endif
-  delay(3); // Stabilisation du convertisseur
-  ADCSRA |= _BV(ADSC); // Lancement conversion
-  while (bit_is_set(ADCSRA, ADSC));
-  uint8_t low  = ADCL;
-  uint8_t high = ADCH;
-  long result = (high &lt;&lt; 8) | low;
-  result = 1125300L / result; // Calcul : Vcc = 1.1V * 1023 * 1000 / ADC
-  return (uint16_t)result;
+  // A completer avec l'assistant IA
 }
 
-// Mesure et conversion de la temperature du capteur Grove (deg C x 10)
+// Conversion de la temperature du capteur Grove (deg C x 10)
 int16_t readTemperatureDecicelsius() {
-  int rawADC = analogRead(TEMP_PIN);
-  if (rawADC &lt;= 0) rawADC = 1;
-  if (rawADC &gt;= 1023) rawADC = 1022;
-  
-  // Calcul resistance CTN
-  float R = 1023.0 / rawADC - 1.0;
-  R = 100000.0 * R;
-  
-  // Equation de Steinhart-Hart simplifiee (parametre B)
-  float temperatureC = 1.0 / (log(R / 100000.0) / B_COEFFICIENT + 1.0 / 298.15) - 273.15;
-  
-  return (int16_t)(temperatureC * 10.0 + (temperatureC &gt;= 0 ? 0.5 : -0.5));
+  // A completer avec l'assistant IA
 }
 
 void setup() {
   Serial.begin(9600);
-  while (!Serial);
   lora.begin(9600);
-
-  Serial.println(F(&quot;\n========================================================&quot;));
-  Serial.println(F(&quot;  Initialisation du Noeud LoRaWAN - BTS CIEL 2           &quot;));
-  Serial.println(F(&quot;========================================================&quot;));
-
-  // 1. Test communication
-  sendATCommand(&quot;AT&quot;, &quot;+AT: OK&quot;, 2000);
-
-  // 2. Configuration LoRaWAN OTAA Europe 868 MHz
-  sendATCommand(&quot;AT+MODE=LWOTAA&quot;, &quot;+MODE: LWOTAA&quot;, 2000);
-  sendATCommand(&quot;AT+DR=EU868&quot;, &quot;+DR: EU868&quot;, 2000);
-  sendATCommand(&quot;AT+CLASS=A&quot;, &quot;+CLASS: A&quot;, 2000);
-
-  // 3. Configuration de la cle d&#x27;application (AppKey)
-  char cmdKey[64];
-  snprintf(cmdKey, sizeof(cmdKey), &quot;AT+KEY=APPKEY,\&quot;%s\&quot;&quot;, APPKEY);
-  sendATCommand(cmdKey, &quot;+KEY: APPKEY&quot;, 2000);
-
-  // 4. Procedure de Join OTAA (Association au reseau LoRaWAN)
-  Serial.println(F(&quot;Tentative de JOIN OTAA en cours... (patientez jusqu&#x27;a 20s)&quot;));
-  bool joined = false;
-  for (int attempt = 1; attempt &lt;= 3; attempt++) {
-    Serial.print(F(&quot;Tentative &quot;)); Serial.print(attempt); Serial.println(F(&quot;/3...&quot;));
-    if (sendATCommand(&quot;AT+JOIN&quot;, &quot;+JOIN: Done&quot;, 25000)) {
-      joined = true;
-      Serial.println(F(&quot;&gt;&gt; Felicitations : Noeud associe avec succes au reseau LoRaWAN !&quot;));
-      break;
-    }
-    delay(5000);
-  }
-
-  if (!joined) {
-    Serial.println(F(&quot;&gt;&gt; ALERTE : Echec du Join OTAA. Verifiez la passerelle Dragino et les cles EUI/AppKey.&quot;));
-  }
+  // Séquence d'initialisation AT : MODE, DR, CLASS, KEY, JOIN
 }
 
 void loop() {
-  // Lecture des capteurs et de la tension batterie
-  int16_t tempDeciC = readTemperatureDecicelsius();
-  uint16_t vccMilliV = readVccMillivolts();
-  packetCounter++;
-
-  Serial.print(F(&quot;\n[Trame #&quot;)); Serial.print(packetCounter); Serial.println(F(&quot;]&quot;));
-  Serial.print(F(&quot;  Temperature : &quot;)); Serial.print(tempDeciC / 10.0, 1); Serial.println(F(&quot; deg C&quot;));
-  Serial.print(F(&quot;  Tension Vcc : &quot;)); Serial.print(vccMilliV / 1000.0, 3); Serial.println(F(&quot; V&quot;));
-
-  // Encodage binaire en hexadecimal (5 octets = 10 caracteres hex)
-  // [0..1] Temp (int16_t) | [2..3] Vcc (uint16_t) | [4] Counter (uint8_t)
-  char hexPayload[16];
-  snprintf(hexPayload, sizeof(hexPayload), &quot;%04X%04X%02X&quot;,
-           (uint16_t)tempDeciC,
-           vccMilliV,
-           packetCounter);
-
-  Serial.print(F(&quot;  Payload HEX : &quot;)); Serial.println(hexPayload);
-
-  // Envoi LoRaWAN sans acquittement (Unconfirmed Data Up)
-  char sendCmd[40];
-  snprintf(sendCmd, sizeof(sendCmd), &quot;AT+MSGHEX=\&quot;%s\&quot;&quot;, hexPayload);
-  sendATCommand(sendCmd, &quot;+MSGHEX: Done&quot;, 12000);
-
-  // Cadence d&#x27;emission : 60 secondes (respect du Duty-Cycle 1%)
-  Serial.println(F(&quot;Attente 60 secondes avant prochaine emission...&quot;));
-  delay(60000);
+  // Mesures, formatage hexadécimal 5 octets et transmission AT+MSGHEX
+  // Temporisation de 60s (Duty-Cycle)
 }</pre>
   </div>
 
   <ol>
-    <li>Compléter la ligne <code>APPKEY</code> (fiche de la salle), téléverser, ouvrir le moniteur série à <code>9600</code> bauds.</li>
-    <li>Observer la séquence : réponses aux commandes de configuration → <code>+JOIN: Start</code> → … → <code>+JOIN: Network joined</code> → <code>+MSGHEX: ... Done</code>. <em>En cas d'échec du join : vérifier le DevEUI et l'AppKey dans ChirpStack, l'antenne, et que la passerelle est « vue » dans ChirpStack (Partie 1).</em></li>
-    <li>Dans ChirpStack, ouvrir votre équipement : onglets <strong>LoRaWAN frames</strong> (trames brutes, dont la demande de join) et <strong>Events</strong> (messages applicatifs <code>up</code>). Ouvrir un événement <code>up</code> et relever le champ <code>data</code> (en base64) ainsi que, dans <code>rxInfo</code>, les valeurs <code>rssi</code> et <code>snr</code>.</li>
+    <li>Compléter le programme avec votre assistant IA en intégrant votre <strong>AppKey</strong>, téléverser sur le Nano et ouvrir le moniteur série (9600 bauds).</li>
+    <li>Observer la séquence d'authentification : <code>+JOIN: Start</code> &rarr; <code>+JOIN: Network joined</code> &rarr; <code>+MSGHEX: ... Done</code>.</li>
+    <li>Dans la console ChirpStack, ouvrir votre équipement : examiner l'onglet <strong>Events</strong> (messages <code>up</code>) et l'onglet <strong>LoRaWAN frames</strong>. Ouvrir un événement <code>up</code> et relever la charge utile en <code>data</code> (Base64) ainsi que les indicateurs de qualité radio <code>rssi</code> et <code>snr</code>.</li>
   </ol>
 
   <div class="capture-box">
-    <strong>📸 Captures C3 &amp; C4 à insérer dans votre Google Docs :</strong><br>
-    • <strong>Capture C3 (Moniteur série) :</strong> séquence de join réussie (<code>Network joined</code>) puis première trame envoyée (<code>+MSGHEX: ... Done</code>).<br>
-    • <strong>Capture C4 (ChirpStack) :</strong> événement <code>up</code> de votre équipement montrant <code>data</code>, <code>rssi</code>, <code>snr</code>, <code>frequency</code> et <code>spreadingFactor</code>.
+    <strong>📸 Captures C3 &amp; C4 à insérer dans votre compte-rendu :</strong><br>
+    • <strong>Capture C3 (Moniteur série Arduino) :</strong> Séquence de Join OTAA réussie (<code>Network joined</code>) suivie de l'émission d'une trame (<code>+MSGHEX: ... Done</code>).<br>
+    • <strong>Capture C4 (Console ChirpStack) :</strong> Événement <code>up</code> montrant la charge <code>data</code> en Base64, la fréquence, le Spreading Factor, le <code>rssi</code> et le <code>snr</code>.
   </div>
 
   <div class="student-response" id="bloc-q2b">
     <button type="button" class="btn-copy-small no-print" onclick="copierBloc('bloc-q2b', this)">📋 Copier pour Docs</button>
-    <span class="docs-tag">Google Docs — Tableau T3 &amp; Étude Q2.2</span><strong>Première transmission LoRaWAN :</strong>
+    <span class="docs-tag">Google Docs — Tableau T3 &amp; Étude Q2.2</span><strong>Relevé de première transmission LoRaWAN :</strong>
     <table>
-      <thead><tr><th>Relevé</th><th>Valeur</th></tr></thead>
+      <thead><tr><th>Indicateur d'exploitation</th><th>Valeur observée</th></tr></thead>
       <tbody>
-        <tr><td>Durée entre <code>AT+JOIN</code> et <code>Network joined</code></td><td>......................... s</td></tr>
-        <tr><td>Champ <code>data</code> (base64) de la 1<sup>re</sup> trame et sa valeur hexadécimale (5 octets)</td><td>..............................................</td></tr>
-        <tr><td>Fréquence du canal utilisé (868,1 / 868,3 / 868,5 MHz ?)</td><td>......................... MHz</td></tr>
-        <tr><td>Facteur d'étalement (SF) et débit (DR) utilisés</td><td>..............................................</td></tr>
-        <tr><td>RSSI / SNR relevés par la passerelle</td><td>......................... dBm / ......................... dB</td></tr>
+        <tr><td>Délai écoulé entre la commande <code>AT+JOIN</code> et l'acquittement <code>Network joined</code></td><td>......................... s</td></tr>
+        <tr><td>Champ <code>data</code> (Base64) reçu dans ChirpStack et sa conversion en 5 octets hexadécimaux</td><td>..............................................</td></tr>
+        <tr><td>Fréquence radio du canal employé (868,1 / 868,3 / 868,5 MHz ?)</td><td>......................... MHz</td></tr>
+        <tr><td>Facteur d'étalement (SF) et Data Rate (DR) affectés</td><td>..............................................</td></tr>
+        <tr><td>Indicateurs de niveau radio relevés par la passerelle (RSSI / SNR)</td><td>......................... dBm / ......................... dB</td></tr>
       </tbody>
     </table>
     <ol>
-      <li><strong>Q2.2 — Décodage à la main :</strong> une trame reçue contient l'octet de données <code>00 F5 13 8A 07</code>. Convertir chaque champ en décimal et donner la <strong>température (°C)</strong>, la <strong>tension (mV)</strong> et le <strong>numéro de trame</strong>. <em>Bonus : que représente la valeur <code>FF EC</code> pour la température ?</em></li>
-      <li><strong>Q2.3 — Binaire ou texte ?</strong> Le même message écrit en texte (<code>"24.5;5.00;7"</code>) ferait 11 caractères au lieu de 5 octets. Pourquoi est-il préférable, en LoRaWAN, d'envoyer des <strong>octets codés</strong> plutôt que du texte ? (pensez à la durée d'émission, au duty cycle et à la batterie).</li>
+      <li><strong>Q2.2 — Décodage manuel d'une trame de télémétrie :</strong> Une trame radio capturée par ChirpStack contient la charge utile hexadécimale brute suivante : <code>00 F5 13 8A 07</code>.
+        <ul>
+          <li>Décodez chaque champ en décimal et donnez la <strong>température (&deg;C)</strong>, la <strong>tension Vcc (mV)</strong> et le <strong>numéro de séquence</strong> de la trame.</li>
+          <li><em>Question défi :</em> Si le capteur est placé dans un congélateur et que les deux premiers octets valent <code>FF EC</code>, quelle est la température en &deg;C ? Détaillez le calcul en complément à deux.</li>
+        </ul>
+      </li>
+      <li><strong>Q2.3 — Efficacité spectrale :</strong> Le même message transmis sous forme de texte ASCII brut (<code>"24.5;5.00;7"</code>) occuperait 11 octets de charge utile au lieu de 5. Calculez l'impact direct de ce surplus d'octets sur la durée d'occupation spectrale (Time-on-Air), le respect du Duty-Cycle et l'énergie prélevée sur la batterie.</li>
     </ol>
   </div>
 </div>
@@ -1236,188 +1178,119 @@ void loop() {
 <!-- ========================================================================= -->
 <!-- PARTIE 3 : NODE-RED (0h30)                                                -->
 <!-- ========================================================================= -->
-<div class="step-box">
+<div class="step-box" id="partie-3">
   <div class="step-header">
-    <span class="step-title">PARTIE 3 : Supervision sous Node-RED — affichage en temps réel et stockage dans un fichier</span>
-    <span class="timing-badge">⏱ Durée conseillée : 0h30</span>
+    <span class="step-title">PARTIE 3 : Supervision sous Node-RED, Décodage Base64 &amp; Stockage CSV</span>
+    <span class="timing-badge">⏱ Durée : 0h30</span>
   </div>
 
-  <p>Le serveur ChirpStack publie chaque trame reçue sur un <strong>serveur MQTT</strong> (message JSON). Node-RED s'abonne à ces messages, <strong>décode les 5 octets</strong>, affiche les valeurs sur un tableau de bord et les <strong>ajoute dans un fichier CSV</strong>.</p>
+  <p>Le serveur ChirpStack publie chaque trame validée sur un <strong>broker MQTT</strong> au format JSON sur le sujet <code>application/lycee-lora/device/+/event/up</code>. Le superviseur <strong>Node-RED</strong> s'abonne à ce flux, <strong>décode la chaîne Base64</strong> en variables physiques, actualise un tableau de bord graphique (Dashboard) et <strong>archive les mesures dans un fichier CSV</strong> horodaté.</p>
 
-  <h4>3.1. Installation du flux Node-RED</h4>
-  <ol>
-    <li>Démarrer Node-RED (<code>node-red</code> dans un terminal), ouvrir <code>http://localhost:1880</code>. Menu <strong>Manage palette</strong> → onglet <em>Install</em> → installer <code>node-red-dashboard</code> (si absent).</li>
-    <li>Menu ☰ → <strong>Import</strong> → coller le flux ci-dessous (bouton « Copier le flux ») → <strong>Import</strong>.</li>
-    <li>Double-cliquer sur le nœud bleu <em>Uplinks ChirpStack</em> puis sur le crayon du serveur MQTT : saisir l'<strong>adresse du serveur MQTT</strong> et le port de la fiche de la salle.</li>
-    <li>Double-cliquer sur le nœud <em>Décoder la trame</em> et modifier la constante <code>MON_DEVICE</code> avec <strong>le nom de votre équipement</strong> (pour ne traiter que vos propres trames, les autres binômes utilisant le même serveur).</li>
-    <li>Cliquer sur <strong>Deploy</strong>. Le tableau de bord est disponible sur <code>http://localhost:1880/ui</code>.</li>
-  </ol>
+  <h4>3.1. Architecture du flux et traitement des données</h4>
+  
+  <!-- ENCADRE IA 3 -->
+  <div class="callout callout-purple">
+    <div class="callout-title">🤖 Pistes de recherche &amp; Co-développement IA — Décodage Base64 &amp; Flux Node-RED</div>
+    <p><strong>Cahier des charges du traitement :</strong> Concevoir la fonction JavaScript d'un nœud <em>function</em> Node-RED qui intercepte le message JSON MQTT émis par ChirpStack v4, convertit la charge utile Base64 (<code>msg.payload.data</code>) en un tableau d'octets <code>Buffer</code>, désérialise les 5 octets en respectant le format Big-Endian, extrait les métadonnées radio (RSSI, SNR, SF, DevEUI, Nom) et prépare une ligne de texte formatée pour l'exportation CSV.</p>
+    <ul>
+      <li><strong>Mots-clés techniques :</strong> <code>Buffer.from(data, 'base64')</code>, <code>buf.readInt16BE(0)</code>, <code>buf.readUInt16BE(2)</code>, <code>buf.readUInt8(4)</code>, <code>rxInfo[0].rssi</code>, <code>rxInfo[0].snr</code>, <code>txInfo.modulation.lora.spreadingFactor</code>.</li>
+      <li><strong>Suggestion de prompt pour votre assistant IA :</strong><br>
+      <em>« Dans Node-RED, écris le code JavaScript d'un nœud "function" qui traite un message JSON reçu depuis un broker MQTT ChirpStack v4 :
+      1. Vérifie la présence de msg.payload.data (chaîne Base64).
+      2. Convertit cette chaîne en un objet Buffer Node.js et vérifie qu'il contient au moins 5 octets.
+      3. Désérialise les champs en respectant l'endianness Big-Endian :
+         - Octets 0-1 : Température signée (readInt16BE) divisée par 10.0 (en °C).
+         - Octets 2-3 : Tension Vcc non signée (readUInt16BE) divisée par 1000.0 (en V).
+         - Octet 4 : Numéro de séquence de trame (readUInt8).
+      4. Extrait les métadonnées de la trame : le DevEUI, le deviceName, le RSSI et le SNR du premier récepteur (rxInfo[0]), et le Spreading Factor (txInfo).
+      5. Prépare un objet structuré pour les jauges du Dashboard, et génère une chaîne formatée pour fichier CSV : "Horodatage;DevEUI;Nom;Compteur;Temperature_C;Vcc_V;RSSI_dBm;SNR_dB;SF\n".
+      Prévois une gestion robuste des erreurs pour éviter tout crash de Node-RED si un paquet est corrompu. »</em></li>
+      <li><strong>Esprit critique &amp; Validation :</strong> Pourquoi les serveurs IoT comme ChirpStack encodent-ils les charges binaires en Base64 dans les messages JSON ? Quelle méthode du Buffer de Node.js garantit la prise en compte du signe pour les températures négatives (<code>readInt16BE</code> vs <code>readUInt16BE</code>) ?</li>
+    </ul>
+  </div>
 
   <div class="code-wrap">
-    <div class="code-title"><span>📄 Flux Node-RED à importer (flux_nodered_lora_lycee.json)</span><button type="button" class="btn-copy-code no-print" onclick="copierCode('code-flow', this)">📋 Copier le flux</button></div>
-    <pre class="code" id="code-flow">[
-  {
-    &quot;id&quot;: &quot;tab_ciel_lora&quot;,
-    &quot;type&quot;: &quot;tab&quot;,
-    &quot;label&quot;: &quot;Liaison LoRaWAN BTS CIEL&quot;,
-    &quot;disabled&quot;: false,
-    &quot;info&quot;: &quot;Supervision pedagogique LoRaWAN ChirpStack -&gt; Node-RED&quot;
-  },
-  {
-    &quot;id&quot;: &quot;broker_chirpstack&quot;,
-    &quot;type&quot;: &quot;mqtt-broker&quot;,
-    &quot;name&quot;: &quot;ChirpStack LoRaWAN Local&quot;,
-    &quot;broker&quot;: &quot;127.0.0.1&quot;,
-    &quot;port&quot;: &quot;1883&quot;,
-    &quot;clientid&quot;: &quot;nodered-ciel-dashboard&quot;,
-    &quot;autoConnect&quot;: true,
-    &quot;usetls&quot;: false,
-    &quot;protocolVersion&quot;: &quot;4&quot;,
-    &quot;keepalive&quot;: &quot;60&quot;,
-    &quot;cleansession&quot;: true,
-    &quot;autoUnsubscribe&quot;: true,
-    &quot;birthTopic&quot;: &quot;&quot;,
-    &quot;birthQos&quot;: &quot;0&quot;,
-    &quot;birthPayload&quot;: &quot;&quot;,
-    &quot;birthMsg&quot;: {},
-    &quot;closeTopic&quot;: &quot;&quot;,
-    &quot;closeQos&quot;: &quot;0&quot;,
-    &quot;closePayload&quot;: &quot;&quot;,
-    &quot;closeMsg&quot;: {},
-    &quot;willTopic&quot;: &quot;&quot;,
-    &quot;willQos&quot;: &quot;0&quot;,
-    &quot;willPayload&quot;: &quot;&quot;,
-    &quot;willMsg&quot;: {},
-    &quot;userProps&quot;: &quot;&quot;,
-    &quot;sessionExpiry&quot;: &quot;&quot;
-  },
-  {
-    &quot;id&quot;: &quot;node_mqtt_in&quot;,
-    &quot;type&quot;: &quot;mqtt in&quot;,
-    &quot;z&quot;: &quot;tab_ciel_lora&quot;,
-    &quot;name&quot;: &quot;Evenements LoRaWAN (Uplink)&quot;,
-    &quot;topic&quot;: &quot;application/lycee-lora/device/+/event/up&quot;,
-    &quot;qos&quot;: &quot;0&quot;,
-    &quot;datatype&quot;: &quot;json&quot;,
-    &quot;broker&quot;: &quot;broker_chirpstack&quot;,
-    &quot;nl&quot;: false,
-    &quot;rap&quot;: true,
-    &quot;rh&quot;: 0,
-    &quot;inputs&quot;: 0,
-    &quot;x&quot;: 160,
-    &quot;y&quot;: 140,
-    &quot;wires&quot;: [
-      [
-        &quot;node_decode_lora&quot;
-      ]
-    ]
-  },
-  {
-    &quot;id&quot;: &quot;node_decode_lora&quot;,
-    &quot;type&quot;: &quot;function&quot;,
-    &quot;z&quot;: &quot;tab_ciel_lora&quot;,
-    &quot;name&quot;: &quot;Decodage Trame &amp; Metadonnees&quot;,
-    &quot;func&quot;: &quot;let pl = msg.payload;\nif (typeof pl === &#x27;string&#x27;) {\n  try { pl = JSON.parse(pl); } catch(e) { return null; }\n}\nif (!pl || !pl.data) return null;\n\n// Decodage payload binaire Base64 -&gt; Buffer\nconst buf = Buffer.from(pl.data, &#x27;base64&#x27;);\nif (buf.length &lt; 5) return null;\n\nconst tempDeci = buf.readInt16BE(0);\nconst vccMilli = buf.readUInt16BE(2);\nconst counter  = buf.readUInt8(4);\n\nconst devEui = (pl.deviceInfo &amp;&amp; pl.deviceInfo.devEui) ? pl.deviceInfo.devEui : (pl.devEui || &#x27;Inconnu&#x27;);\nconst devName = (pl.deviceInfo &amp;&amp; pl.deviceInfo.deviceName) ? pl.deviceInfo.deviceName : &#x27;Nano-E5&#x27;;\n\nlet rssi = -120;\nlet snr = 0;\nif (pl.rxInfo &amp;&amp; pl.rxInfo.length &gt; 0) {\n  rssi = pl.rxInfo[0].rssi;\n  snr = pl.rxInfo[0].snr;\n}\n\nlet sf = 7;\nif (pl.txInfo &amp;&amp; pl.txInfo.modulation &amp;&amp; pl.txInfo.modulation.lora) {\n  sf = pl.txInfo.modulation.lora.spreadingFactor;\n}\n\nconst decoded = {\n  timestamp: new Date().toISOString(),\n  devEui: devEui,\n  devName: devName,\n  counter: counter,\n  temperature: Number((tempDeci / 10.0).toFixed(1)),\n  vcc: Number((vccMilli / 1000.0).toFixed(3)),\n  rssi: rssi,\n  snr: snr,\n  sf: sf\n};\n\nmsg.payload = decoded;\nreturn msg;&quot;,
-    &quot;outputs&quot;: 1,
-    &quot;timeout&quot;: 0,
-    &quot;noerr&quot;: 0,
-    &quot;initialize&quot;: &quot;&quot;,
-    &quot;finalize&quot;: &quot;&quot;,
-    &quot;libs&quot;: [],
-    &quot;x&quot;: 450,
-    &quot;y&quot;: 140,
-    &quot;wires&quot;: [
-      [
-        &quot;node_debug_out&quot;,
-        &quot;node_format_csv&quot;
-      ]
-    ]
-  },
-  {
-    &quot;id&quot;: &quot;node_format_csv&quot;,
-    &quot;type&quot;: &quot;function&quot;,
-    &quot;z&quot;: &quot;tab_ciel_lora&quot;,
-    &quot;name&quot;: &quot;Formatage Ligne CSV&quot;,
-    &quot;func&quot;: &quot;const p = msg.payload;\n// Structure : Horodatage;DevEUI;Nom;Compteur;Temperature_C;Vcc_V;RSSI_dBm;SNR_dB;SF\nmsg.payload = `${p.timestamp};${p.devEui};${p.devName};${p.counter};${p.temperature};${p.vcc};${p.rssi};${p.snr};SF${p.sf}\\n`;\nreturn msg;&quot;,
-    &quot;outputs&quot;: 1,
-    &quot;timeout&quot;: 0,
-    &quot;noerr&quot;: 0,
-    &quot;initialize&quot;: &quot;&quot;,
-    &quot;finalize&quot;: &quot;&quot;,
-    &quot;libs&quot;: [],
-    &quot;x&quot;: 720,
-    &quot;y&quot;: 140,
-    &quot;wires&quot;: [
-      [
-        &quot;node_write_csv&quot;
-      ]
-    ]
-  },
-  {
-    &quot;id&quot;: &quot;node_write_csv&quot;,
-    &quot;type&quot;: &quot;file&quot;,
-    &quot;z&quot;: &quot;tab_ciel_lora&quot;,
-    &quot;name&quot;: &quot;C:/LoRa/mesures_lora.csv&quot;,
-    &quot;filename&quot;: &quot;C:/LoRa/mesures_lora.csv&quot;,
-    &quot;filenameType&quot;: &quot;str&quot;,
-    &quot;appendNewline&quot;: false,
-    &quot;createDir&quot;: true,
-    &quot;overwriteFile&quot;: &quot;false&quot;,
-    &quot;encoding&quot;: &quot;utf8&quot;,
-    &quot;x&quot;: 970,
-    &quot;y&quot;: 140,
-    &quot;wires&quot;: [
-      []
-    ]
-  },
-  {
-    &quot;id&quot;: &quot;node_debug_out&quot;,
-    &quot;type&quot;: &quot;debug&quot;,
-    &quot;z&quot;: &quot;tab_ciel_lora&quot;,
-    &quot;name&quot;: &quot;Affichage Objet Decode&quot;,
-    &quot;active&quot;: true,
-    &quot;tosidebar&quot;: true,
-    &quot;console&quot;: false,
-    &quot;tostatus&quot;: false,
-    &quot;complete&quot;: &quot;payload&quot;,
-    &quot;targetType&quot;: &quot;msg&quot;,
-    &quot;statusVal&quot;: &quot;&quot;,
-    &quot;statusType&quot;: &quot;auto&quot;,
-    &quot;x&quot;: 730,
-    &quot;y&quot;: 220,
-    &quot;wires&quot;: []
-  }
-]</pre>
+    <div class="code-title"><span>📄 Fonction JavaScript de décodage Node-RED (Issue du co-développement IA)</span><button type="button" class="btn-copy-code no-print" onclick="copierCode('code-js-decode', this)">📋 Copier le code JS</button></div>
+    <pre class="code" id="code-js-decode">let pl = msg.payload;
+if (typeof pl === 'string') {
+  try { pl = JSON.parse(pl); } catch(e) { return null; }
+}
+if (!pl || !pl.data) return null;
+
+// Décodage de la charge utile binaire Base64 vers un Buffer Node.js
+const buf = Buffer.from(pl.data, 'base64');
+if (buf.length < 5) return null;
+
+// Extraction des 5 octets en Big-Endian
+const tempDeci = buf.readInt16BE(0);
+const vccMilli = buf.readUInt16BE(2);
+const counter  = buf.readUInt8(4);
+
+// Extraction des métadonnées réseau ChirpStack
+const devEui = (pl.deviceInfo && pl.deviceInfo.devEui) ? pl.deviceInfo.devEui : (pl.devEui || 'Inconnu');
+const devName = (pl.deviceInfo && pl.deviceInfo.deviceName) ? pl.deviceInfo.deviceName : 'Nano-E5';
+
+let rssi = -120;
+let snr = 0;
+if (pl.rxInfo && pl.rxInfo.length > 0) {
+  rssi = pl.rxInfo[0].rssi;
+  snr = pl.rxInfo[0].snr;
+}
+
+let sf = 7;
+if (pl.txInfo && pl.txInfo.modulation && pl.txInfo.modulation.lora) {
+  sf = pl.txInfo.modulation.lora.spreadingFactor;
+}
+
+const decoded = {
+  timestamp: new Date().toISOString(),
+  devEui: devEui,
+  devName: devName,
+  counter: counter,
+  temperature: Number((tempDeci / 10.0).toFixed(1)),
+  vcc: Number((vccMilli / 1000.0).toFixed(3)),
+  rssi: rssi,
+  snr: snr,
+  sf: sf
+};
+
+// Sortie 1 : Objet pour Dashboard | Sortie 2 : Ligne formatee CSV
+msg.payload = decoded;
+msg.csvLine = `${decoded.timestamp};${decoded.devEui};${decoded.devName};${decoded.counter};${decoded.temperature};${decoded.vcc};${decoded.rssi};${decoded.snr};SF${decoded.sf}\n`;
+return msg;</pre>
   </div>
 
-  <h4>3.2. Archivage dans un fichier CSV</h4>
+  <h4>3.2. Déploiement du flux Node-RED et archivage CSV</h4>
   <ol>
-    <li>Cliquer une fois sur le bouton du nœud <em>Créer l'entête CSV</em> (écrit la ligne de titres dans le fichier).</li>
-    <li>Attendre l'arrivée d'au moins <strong>5 trames</strong>, puis ouvrir le fichier <code>C:/LoRa/mesures_lora.csv</code> avec un tableur ou un éditeur de texte.</li>
+    <li>Démarrer Node-RED (ouvrir <code>http://localhost:1880</code>). Installer la palette <code>node-red-dashboard</code> si nécessaire.</li>
+    <li>Créer ou importer le flux de supervision : configurer le nœud MQTT In sur l'adresse du serveur ChirpStack (port 1883) et écouter le topic <code>application/lycee-lora/device/+/event/up</code>.</li>
+    <li>Relier le nœud <em>Function</em> de décodage vers un nœud <strong>File Out</strong> configuré pour ajouter les données (<em>Append to file</em>) dans <code>C:/LoRa/mesures_lora.csv</code>.</li>
+    <li>Déployer le flux. Ouvrir le tableau de bord à l'adresse <code>http://localhost:1880/ui</code> et vérifier l'affichage en direct des jauges de température, de tension de batterie et des indicateurs radio RSSI/SNR.</li>
+    <li>Attendre l'arrivée d'au moins <strong>5 trames</strong> d'émission consécutives, puis ouvrir le fichier <code>C:/LoRa/mesures_lora.csv</code> dans un tableur ou un éditeur de texte.</li>
   </ol>
 
   <div class="capture-box">
-    <strong>📸 Captures C5 &amp; C6 à insérer dans votre Google Docs :</strong><br>
-    • <strong>Capture C5 (Node-RED) :</strong> le flux déployé (éditeur) et le tableau de bord <code>/ui</code> avec la courbe de température, la tension du nœud et le couple RSSI/SNR.<br>
-    • <strong>Capture C6 (fichier) :</strong> le fichier <code>mesures_lora.csv</code> ouvert avec au moins 5 lignes de mesures.
+    <strong>📸 Captures C5 &amp; C6 à insérer dans votre compte-rendu :</strong><br>
+    • <strong>Capture C5 (Dashboard Node-RED) :</strong> Vue de l'interface <code>/ui</code> affichant les courbes de température, la jauge de tension Vcc et les graphes de niveau RSSI/SNR.<br>
+    • <strong>Capture C6 (Fichier CSV) :</strong> Fichier <code>mesures_lora.csv</code> ouvert montrant au moins 5 lignes d'enregistrements horodatés conformes.
   </div>
 
   <div class="student-response" id="bloc-q3">
     <button type="button" class="btn-copy-small no-print" onclick="copierBloc('bloc-q3', this)">📋 Copier pour Docs</button>
-    <span class="docs-tag">Google Docs — Tableau T4 &amp; Étude Q3</span><strong>Analyse de la chaîne de transmission :</strong>
+    <span class="docs-tag">Google Docs — Tableau T4 &amp; Étude Q3</span><strong>Analyse structurelle de la chaîne de transmission :</strong>
     <table>
-      <thead><tr><th>Liaison (Figure 1)</th><th>Support / protocole utilisé</th><th>Information transportée</th></tr></thead>
+      <thead><tr><th>Liaison (selon Figure 1)</th><th>Support physique &amp; Protocole de communication</th><th>Nature de l'information transportée</th></tr></thead>
       <tbody>
-        <tr><td>① → ②</td><td>..................................</td><td>..................................</td></tr>
-        <tr><td>② → ③</td><td>..................................</td><td>..................................</td></tr>
-        <tr><td>③ → ④</td><td>..................................</td><td>..................................</td></tr>
-        <tr><td>④ → ⑤</td><td>..................................</td><td>..................................</td></tr>
-        <tr><td>⑤ → ⑥</td><td>..................................</td><td>..................................</td></tr>
+        <tr><td>① Capteur &rarr; ② Nano</td><td>..................................</td><td>..................................</td></tr>
+        <tr><td>② Nano &rarr; ③ LoRa-E5</td><td>..................................</td><td>..................................</td></tr>
+        <tr><td>③ LoRa-E5 &rarr; ④ Dragino</td><td>..................................</td><td>..................................</td></tr>
+        <tr><td>④ Dragino &rarr; ⑤ ChirpStack</td><td>..................................</td><td>..................................</td></tr>
+        <tr><td>⑤ ChirpStack &rarr; ⑥ Node-RED</td><td>..................................</td><td>..................................</td></tr>
       </tbody>
     </table>
     <ol>
-      <li><strong>Q3.1 —</strong> Le champ <code>data</code> du message MQTT est en <strong>base64</strong> : à quel moment du flux est-il converti en température ? Pourquoi le serveur ne fournit-il pas directement la température ?</li>
-      <li><strong>Q3.2 —</strong> Quel est l'intérêt, pour le service technique, d'archiver aussi le <strong>RSSI</strong>, le <strong>SNR</strong> et la <strong>tension</strong> du nœud dans le fichier, et pas seulement la température ?</li>
+      <li><strong>Q3.1 —</strong> À quelle étape précise de la chaîne le format Base64 est-il converti en grandeurs physiques compréhensibles par l'utilisateur ? Pourquoi le serveur de réseau ChirpStack ne réalise-t-il pas automatiquement cette conversion sans adjonction d'un décodeur spécifique ?</li>
+      <li><strong>Q3.2 —</strong> Quel intérêt majeur présente l'archivage simultané des métadonnées <strong>RSSI</strong>, <strong>SNR</strong> et de la <strong>tension de batterie Vcc</strong> aux côtés de la température pour le service technique chargé de la maintenance prédictive du site ?</li>
     </ol>
   </div>
 </div>
@@ -1425,94 +1298,153 @@ void loop() {
 <!-- ========================================================================= -->
 <!-- PARTIE 4 : CAMPAGNE DE MESURES (0h30)                                     -->
 <!-- ========================================================================= -->
-<div class="step-box">
+<div class="step-box" id="partie-4">
   <div class="step-header">
-    <span class="step-title">PARTIE 4 : Campagne de mesures — portée sur le campus, consommation au Digilent AD3 et bilan des avantages</span>
-    <span class="timing-badge">⏱ Durée conseillée : 0h30</span>
+    <span class="step-title">PARTIE 4 : Campagne de Mesures — Portée Campus &amp; Métrologie Énergétique AD3</span>
+    <span class="timing-badge">⏱ Durée : 0h30</span>
   </div>
 
-  <h4>4.1. Mesures de portée sur le campus (« marche test »)</h4>
-  <p>Débrancher le PC du Nano et l'alimenter avec la <strong>Powerbank VARTA</strong> (le programme redémarre seul et rejoint le réseau). Le PC reste en salle et affiche le tableau de bord ; un membre du binôme se déplace avec le nœud.</p>
+  <h4>4.1. Mesures de portée radiofréquence en environnement réel (« Marche Test »)</h4>
+  <p>Déconnecter le câble USB de programmation du PC et alimenter le nœud capteur exclusivement par la <strong>Powerbank autonome 5V</strong>. Le PC de supervision reste en salle de cours connecté au tableau de bord Node-RED. Un membre du binôme emporte le nœud autonome sur le campus.</p>
   <ol>
-    <li>Se placer successivement en <strong>3 lieux de plus en plus éloignés de la passerelle</strong> (A : salle de TP ; B : un autre bâtiment ; C : le point le plus éloigné autorisé du lycée, ou l'extérieur). Attendre <strong>3 trames</strong> par lieu (≈ 3 minutes).</li>
-    <li>Relever <strong>RSSI</strong> et <strong>SNR</strong> (tableau de bord ou fichier CSV) et estimer la distance sur le plan du lycée. Calculer la <strong>marge de liaison</strong> = <code>RSSI − sensibilité du SF utilisé</code> (tableau 0.2) : plus elle est grande, plus la liaison est fiable.</li>
+    <li>Se positionner successivement en <strong>3 points stratégiques</strong> de plus en plus distants de la passerelle :
+      <ul>
+        <li><strong>Point A :</strong> En salle de travaux pratiques (ligne de vue directe, courte distance &approx; 10 à 30 m).</li>
+        <li><strong>Point B :</strong> Dans un bâtiment adjacent ou un couloir traversant (atténuation par les cloisons &approx; 100 à 250 m).</li>
+        <li><strong>Point C :</strong> À l'extérieur ou au point le plus reculé autorisé du campus (&gt; 350 m).</li>
+      </ul>
+    </li>
+    <li>Pour chaque emplacement, patienter pendant l'émission d'au moins <strong>3 trames successives</strong> (3 minutes). Noter les valeurs moyennes de <strong>RSSI</strong> et <strong>SNR</strong>.</li>
+    <li>Calculer la <strong>marge de liaison radio</strong> :<br>
+      <div class="formula-box"><i>Marge</i> (dB) = <i>RSSI</i> (dBm) &minus; <i>Sensibilité</i><sub>théorique</sub> (dBm)</div>
+      <em>(Pour SF7 : Sensibilité = &minus;123 dBm. Plus la marge est positive et supérieure à 10 dB, plus la communication est immune aux perturbations).</em>
+    </li>
   </ol>
 
   <div class="student-response" id="bloc-q4a">
     <button type="button" class="btn-copy-small no-print" onclick="copierBloc('bloc-q4a', this)">📋 Copier pour Docs</button>
-    <span class="docs-tag">Google Docs — Tableau T5</span><strong>Marche test sur le campus (SF utilisé : ........ ):</strong>
+    <span class="docs-tag">Google Docs — Tableau T5</span><strong>Campagne de portée radiofréquence sur le campus (Facteur SF utilisé : ........ ) :</strong>
     <table>
-      <thead><tr><th>Lieu</th><th>Distance estimée à la passerelle</th><th>Trames reçues / envoyées</th><th>RSSI moyen (dBm)</th><th>SNR moyen (dB)</th><th>Marge de liaison (dB)</th></tr></thead>
+      <thead><tr><th>Point de mesure</th><th>Distance estimée à la passerelle</th><th>Trames reçues / émises</th><th>RSSI moyen (dBm)</th><th>SNR moyen (dB)</th><th>Marge de liaison calculée (dB)</th></tr></thead>
       <tbody>
-        <tr><td>A — Salle de TP</td><td>........ m</td><td>... / 3</td><td>........</td><td>........</td><td>........</td></tr>
-        <tr><td>B — Autre bâtiment</td><td>........ m</td><td>... / 3</td><td>........</td><td>........</td><td>........</td></tr>
-        <tr><td>C — Point éloigné</td><td>........ m</td><td>... / 3</td><td>........</td><td>........</td><td>........</td></tr>
+        <tr><td><strong>A — Salle de TP</strong></td><td>........ m</td><td>... / 3</td><td>........ dBm</td><td>........ dB</td><td>........ dB</td></tr>
+        <tr><td><strong>B — Autre bâtiment</strong></td><td>........ m</td><td>... / 3</td><td>........ dBm</td><td>........ dB</td><td>........ dB</td></tr>
+        <tr><td><strong>C — Point éloigné campus</strong></td><td>........ m</td><td>... / 3</td><td>........ dBm</td><td>........ dB</td><td>........ dB</td></tr>
       </tbody>
     </table>
   </div>
 
-  <h4>4.2. Mesure du courant et de la durée d'émission avec le Digilent AD3</h4>
+  <h4>4.2. Caractérisation de la consommation et du profil temporel à l'Analog Discovery 3</h4>
+  <p>L'autonomie d'un capteur IoT repose sur l'alternance entre de longues phases de repos et de brèves impulsions d'émission radio. Vous allez mesurer la durée effective de l'impulsion et l'énergie appelée.</p>
+
   <ol>
-    <li><strong>Hors tension</strong>, utiliser le montage de la <strong>Figure 2</strong> : le shunt de <code>1,1 &Omega;</code> est placé <strong>en série sur le fil +5 V</strong> entre la Powerbank et le Nano (câble de mesure préparé par l'enseignant, ou résistance sur la breadboard). Brancher <code>1+</code> (Orange) côté Powerbank, <code>1−</code> (Orange/Blanc) côté Nano.</li>
-    <li>Dans <strong>WaveForms → Scope</strong> : voie 1, <code>20 mV/div</code>, base de temps <code>200 ms/div</code>, déclenchement <em>Single</em> sur front montant (≈ 40 mV), mesures automatiques <em>Average</em> et <em>Maximum</em>. Le courant se déduit de la tension aux bornes du shunt : <code>I = U / 1,1 &Omega;</code>.</li>
-    <li><strong>Relever</strong> : le courant « de repos » entre deux trames (<code>I<sub>veille</sub></code>), le courant maximal pendant l'émission (<code>I<sub>TX</sub></code>) et la <strong>durée de l'émission</strong> avec les curseurs. Repérer aussi les deux petites fenêtres qui suivent l'émission (<strong>RX1</strong> après 1 s, <strong>RX2</strong> après 2 s : fenêtres d'écoute de la classe A).</li>
-    <li>Refaire la mesure en <code>SF12</code> : dans le sketch 2, remplacer <code>"AT+DR=DR5"</code> par <code>"AT+DR=DR0"</code>, téléverser, puis relancer. <em>(Base de temps <code>500 ms/div</code>.)</em></li>
-    <li><strong>Option (si le temps le permet) :</strong> avec l'analyseur logique de l'AD3 (<code>DIO0</code> sur <code>D3</code> du Nano, masse commune), décoder en <em>UART 9600 Bd</em> la commande <code>AT+MSGHEX=…</code> envoyée au modem.</li>
+    <li><strong>Hors tension</strong>, insérer le shunt de précision de <code>1,1 &Omega;</code> en série sur le fil d'alimentation +5V entre la Powerbank et l'entrée USB de l'Arduino Nano (voir schéma Figure 2).</li>
+    <li>Raccorder les sondes différentielles de l'<strong>Oscilloscope Voie 1 de l'AD3</strong> :
+      <ul>
+        <li>Voie <code>1+</code> (Fil Orange) reliée en amont du shunt (côté Powerbank 5V).</li>
+        <li>Voie <code>1&minus;</code> (Fil Orange/Blanc) reliée en aval du shunt (côté entrée Nano).</li>
+      </ul>
+      <em>Attention : La mesure étant différentielle, ne raccordez pas la pointe 1&minus; à la masse GND !</em>
+    </li>
+    <li>Dans <strong>WaveForms Scope</strong> :
+      <ul>
+        <li>Calibre vertical : <code>20 mV/div</code>, base de temps : <code>200 ms/div</code>.</li>
+        <li>Déclenchement (Trigger) : Mode <em>Single</em> sur front montant à <code>40 mV</code>.</li>
+        <li>La conversion tension/courant s'applique selon la loi d'Ohm : <code>I = U / 1,1 &Omega;</code> (une chute de tension de 110 mV correspond à un appel de courant de 100 mA).</li>
+      </ul>
+    </li>
+    <li>Déclencher une émission en <code>DR5 / SF7</code> : Relever le courant de veille (<code>I<sub>veille</sub></code>), le courant crête d'émission (<code>I<sub>TX</sub></code>) et mesurer avec les curseurs temporels la <strong>durée d'émission exacte de la trame radio</strong>.</li>
+    <li>Repérer les deux fenêtres d'écoute de réception descendantes normalisées LoRaWAN Classe A : <strong>RX1</strong> (exactement 1 seconde après la fin de transmission) et <strong>RX2</strong> (exactement 2 secondes après la fin de transmission).</li>
+    <li><strong>Mesure comparative en SF12 :</strong> Modifier la commande dans le programme pour passer en <code>AT+DR=DR0</code> (ou <code>AT+DR=0</code>), régler la base de temps du scope sur <code>500 ms/div</code> et relever la nouvelle durée d'émission en SF12.</li>
   </ol>
 
   <div class="capture-box">
-    <strong>📸 Captures C7 &amp; C8 à insérer dans votre Google Docs :</strong><br>
-    • <strong>Capture C7 (AD3 Scope, DR5/SF7) :</strong> courant pendant une émission avec les curseurs de durée et les mesures.<br>
-    • <strong>Capture C8 (AD3 Scope, DR0/SF12) :</strong> même relevé en SF12.
+    <strong>📸 Captures C7 &amp; C8 à insérer dans votre compte-rendu :</strong><br>
+    • <strong>Capture C7 (WaveForms Scope en SF7 / DR5) :</strong> Chronogramme du courant d'émission avec curseurs de mesure de durée et mise en évidence des fenêtres RX1/RX2.<br>
+    • <strong>Capture C8 (WaveForms Scope en SF12 / DR0) :</strong> Chronogramme comparatif montrant l'étalement temporel de l'impulsion en SF12.
   </div>
 
   <div class="student-response" id="bloc-q4b">
     <button type="button" class="btn-copy-small no-print" onclick="copierBloc('bloc-q4b', this)">📋 Copier pour Docs</button>
-    <span class="docs-tag">Google Docs — Tableau T6 &amp; Étude Q4</span><strong>Consommation, durée d'émission et autonomie :</strong>
+    <span class="docs-tag">Google Docs — Tableau T6 &amp; Étude Q4</span><strong>Profil de consommation, durée d'émission et autonomie :</strong>
     <table>
-      <thead><tr><th>Réglage</th><th><code>I<sub>veille</sub></code> (mA)</th><th><code>I<sub>TX</sub></code> max (mA)</th><th>Durée d'émission mesurée (ms)</th><th>Durée théorique (Figure 3)</th><th>Écart (%)</th></tr></thead>
+      <thead><tr><th>Configuration radio</th><th><code>I<sub>veille</sub></code> mesuré (mA)</th><th><code>I<sub>TX</sub></code> crête mesuré (mA)</th><th>Durée d'émission mesurée (ms)</th><th>Durée théorique (Fig. 3)</th><th>Écart relatif (%)</th></tr></thead>
       <tbody>
-        <tr><td><code>DR5</code> / SF7</td><td>........</td><td>........</td><td>........</td><td>51,5 ms</td><td>........</td></tr>
-        <tr><td><code>DR0</code> / SF12</td><td>........</td><td>........</td><td>........</td><td>1 319 ms</td><td>........</td></tr>
+        <tr><td><strong>DR5 / SF7</strong></td><td>........ mA</td><td>........ mA</td><td>........ ms</td><td>51,5 ms</td><td>........ %</td></tr>
+        <tr><td><strong>DR0 / SF12</strong></td><td>........ mA</td><td>........ mA</td><td>........ ms</td><td>1 319 ms</td><td>........ %</td></tr>
       </tbody>
     </table>
     <ol>
-      <li><strong>Q4.1 — Incertitude :</strong> citez deux causes qui expliquent l'écart entre durée mesurée et durée théorique (résolution de lecture des curseurs, tolérance de la résistance <code>1,1 &Omega;</code> du kit, bruit de mesure…).</li>
-      <li><strong>Q4.2 — Estimation d'autonomie.</strong> Capacité de la Powerbank (étiquette) : <code>C = ........ mAh</code>, utilisable à <code>70 %</code>. Courant moyen sur une période de 60 s, avec <code>t<sub>TX</sub></code> la durée d'émission en secondes :
-        <div class="formula-box"><i>I</i><sub>moy</sub> = <i>I</i><sub>veille</sub> + (<i>I</i><sub>TX</sub> − <i>I</i><sub>veille</sub>) × <i>t</i><sub>TX</sub> / 60 &nbsp;&nbsp;→&nbsp;&nbsp; Autonomie (h) = 0,7 × <i>C</i> / <i>I</i><sub>moy</sub></div>
-        Calculer l'autonomie en <code>SF7</code> et en <code>SF12</code>. Quelle part du courant moyen est due à la <strong>radio</strong> ? Quel composant consomme l'essentiel (indice : <code>I<sub>veille</sub></code>) et quelle solution (vue au TP « Autonomie ») permettrait de passer de quelques jours à plusieurs mois ?</li>
-      <li><strong>Q4.3 — Synthèse : avantages démontrés et limites.</strong> En vous appuyant sur <strong>vos mesures</strong> (T5, T6), citez <strong>3 avantages</strong> de LoRaWAN pour la mise en situation (portée, énergie par trame, simplicité d'une seule passerelle…) et <strong>2 limites</strong> constatées (débit / taille de trame, duty cycle, latence, SF12 coûteux…). Quelle autre technologie du programme (Bluetooth, Wi-Fi, 4G) choisiriez-vous si le capteur devait envoyer une <strong>image</strong> toutes les 10 s ? Pourquoi ?</li>
+      <li><strong>Q4.1 — Métrologie &amp; Incertitudes :</strong> Citez au moins <strong>deux causes physiques d'incertitude</strong> expliquant l'écart observé entre la durée d'émission mesurée aux curseurs et la valeur théorique calculée (tolérance de la résistance de shunt de 1,1 &Omega;, temps de commutation de l'oscillateur local, résolution d'échantillonnage de l'AD3).</li>
+      <li><strong>Q4.2 — Évaluation de l'autonomie sur batterie :</strong> Soit une Powerbank de capacité nominale <code>C = ........ mAh</code> dont 70 % de l'énergie est utilement restituable (rendement du convertisseur boost interne).
+        <div class="formula-box">
+          <i>I</i><sub>moyen</sub> = <i>I</i><sub>veille</sub> + (<i>I</i><sub>TX</sub> &minus; <i>I</i><sub>veille</sub>) &times; (<i>t</i><sub>TX</sub> / 60) &nbsp;&nbsp;&rarr;&nbsp;&nbsp;
+          <i>Autonomie</i> (heures) = (0,7 &times; <i>C</i>) / <i>I</i><sub>moyen</sub>
+        </div>
+        <ul>
+          <li>Calculez le courant moyen consommé et l'autonomie théorique résultante en <strong>SF7</strong> puis en <strong>SF12</strong> pour une cadence d'une trame par minute.</li>
+          <li>Quelle part du courant moyen global est imputable à l'émetteur radio ? Quel élément électronique de la maquette consomme l'essentiel du courant en veille (<code>I<sub>veille</sub></code>), et quel mode d'économie d'énergie (déjà étudié sur microcontrôleur) permettrait d'atteindre plusieurs années d'autonomie ?</li>
+        </ul>
+      </li>
+      <li><strong>Q4.3 — Bilan critique de synthèse :</strong> En vous fondant sur l'ensemble de vos mesures expérimentales, synthétisez <strong>3 avantages décisifs</strong> de la technologie LoRaWAN pour la problématique du lycée et <strong>2 limites techniques majeures</strong> constatées. Si le cahier des charges exigeait d'envoyer une <strong>image couleur VGA toutes les 10 secondes</strong>, quelle technologie radio (Bluetooth, Wi-Fi, 4G) retiendriez-vous impérativement ? Justifiez précisément l'incompatibilité de LoRaWAN avec cette exigence.</li>
     </ol>
-    <div class="callout callout-warning" style="margin-top: 8px;"><div class="callout-title">⚠️ Retour d'expérience Powerbank</div><p style="margin: 0;">Certaines Powerbank <strong>se coupent toutes seules</strong> lorsque le courant tiré est trop faible. Si votre nœud s'éteint pendant la marche test, notez-le dans votre compte-rendu : c'est une contrainte réelle d'installation (alimentation à choisir en conséquence).</p></div>
   </div>
 </div>
 
 <hr />
 
-<h2>Checklist de Fin de Séance (3h) &amp; Barème du Compte-Rendu (/20)</h2>
+<!-- ========================================================================= -->
+<!-- EVALUATION & CHECKLIST                                                    -->
+<!-- ========================================================================= -->
+<h2 id="evaluation">📋 Checklist de Fin de Séance &amp; Grille d'Évaluation STI (/20)</h2>
 
 <div class="callout callout-success">
-  <div class="callout-title">✅ Auto-contrôle avant de cliquer sur « Rendre le devoir » dans Google Classroom</div>
+  <div class="callout-title">✅ Auto-contrôle avant de valider votre compte-rendu dans Google Classroom</div>
   <ul class="checklist-grid">
-    <li><input type="checkbox" id="k0"><label for="k0"><strong>Partie 0 :</strong> <code>Q0.1</code>, <code>Q0.2</code> rédigées avec les valeurs du tableau et de la Figure 3.</label></li>
-    <li><input type="checkbox" id="k1"><label for="k1"><strong>Partie 1 :</strong> <code>Tableau T1</code>, <code>Q1.1</code> à <code>Q1.3</code> + <strong>Captures C1, C2</strong>.</label></li>
-    <li><input type="checkbox" id="k2"><label for="k2"><strong>Partie 2 :</strong> <code>T2</code>, <code>T3</code>, <code>Q2.1</code> à <code>Q2.3</code> (décodage de <code>00 F5 13 8A 07</code>) + <strong>Captures C3, C4</strong>.</label></li>
-    <li><input type="checkbox" id="k3"><label for="k3"><strong>Partie 3 :</strong> <code>T4</code>, <code>Q3.1</code>, <code>Q3.2</code> + <strong>Captures C5, C6</strong> (dashboard + fichier CSV).</label></li>
-    <li><input type="checkbox" id="k4"><label for="k4"><strong>Partie 4 :</strong> <code>T5</code>, <code>T6</code>, <code>Q4.1</code> à <code>Q4.3</code> + <strong>Captures C7, C8</strong> (AD3).</label></li>
-    <li><input type="checkbox" id="k5"><label for="k5"><strong>Rangement :</strong> antenne dévissée proprement, Grove et Nano rangés, AD3 déconnecté, Powerbank rechargée.</label></li>
+    <li><input type="checkbox" id="ck0"><label for="ck0"><strong>Fiche 0 :</strong> Questions <code>Q0.1</code> et <code>Q0.2</code> rédigées avec les valeurs comparatives et l'analyse du SF.</label></li>
+    <li><input type="checkbox" id="ck1"><label for="ck1"><strong>Fiche 1 :</strong> Tableau <code>T1</code> renseigné, questions <code>Q1.1</code> à <code>Q1.3</code> complétées et <strong>Captures C1 &amp; C2</strong> insérées.</label></li>
+    <li><input type="checkbox" id="ck2"><label for="ck2"><strong>Fiche 2 :</strong> Tableaux <code>T2</code> et <code>T3</code> complétés, décodage hexadécimal <code>Q2.2</code> rédigé et <strong>Captures C3 &amp; C4</strong> insérées.</label></li>
+    <li><input type="checkbox" id="ck3"><label for="ck3"><strong>Fiche 3 :</strong> Tableau <code>T4</code> renseigné, questions <code>Q3.1</code> et <code>Q3.2</code> traitées et <strong>Captures C5 &amp; C6</strong> validées.</label></li>
+    <li><input type="checkbox" id="ck4"><label for="ck4"><strong>Fiche 4 :</strong> Tableaux de mesures <code>T5</code> et <code>T6</code> complets, calculs d'autonomie <code>Q4.2</code> et <strong>Captures C7 &amp; C8</strong> insérées.</label></li>
+    <li><input type="checkbox" id="ck5"><label for="ck5"><strong>Rangement :</strong> Dévisser l'antenne radio avec précaution, déconnecter l'AD3 et remettre la Powerbank en charge.</label></li>
   </ul>
 </div>
 
 <table>
   <thead>
-    <tr><th style="width: 18%;">Compétence (STI)</th><th style="width: 62%;">Indicateurs d'évaluation</th><th style="width: 10%;">Barème</th><th style="width: 10%;">Note</th></tr>
+    <tr><th style="width: 20%;">Compétence BTS CIEL</th><th style="width: 60%;">Critères d'Évaluation &amp; Tâches Réalisées</th><th style="width: 10%;">Barème</th><th style="width: 10%;">Note</th></tr>
   </thead>
   <tbody>
-    <tr><td><strong>C04 — Analyser</strong></td><td>Comparaison argumentée des technologies (Q0), compréhension de la chaîne et des rôles de chaque élément (T4, Q1, Q3), décodage de la trame et choix binaire/texte (Q2.2, Q2.3).</td><td><strong>/ 4 pts</strong></td><td></td></tr>
-    <tr><td><strong>C05 — Concevoir</strong></td><td>Justification du choix LoRaWAN et du facteur d'étalement, estimation d'autonomie et propositions d'optimisation (Q0.2, Q4.2, Q4.3).</td><td><strong>/ 3 pts</strong></td><td></td></tr>
-    <tr><td><strong>C06 — Valider</strong></td><td>Rigueur des mesures radio (T5) et énergétiques à l'AD3 (T6, C7, C8), calculs de marge et d'écart, prise en compte des incertitudes (Q4.1).</td><td><strong>/ 6 pts</strong></td><td></td></tr>
-    <tr><td><strong>C07 / C09 — Réaliser / Installer</strong></td><td>Paramétrage de la passerelle (T1, C1, C2), déclaration de l'équipement, join réussi (C3, C4), flux Node-RED fonctionnel et fichier CSV (C5, C6), câblage soigné et règles de sécurité radio respectées.</td><td><strong>/ 5 pts</strong></td><td></td></tr>
-    <tr><td><strong>C01 — Communiquer</strong></td><td>Qualité du Google Docs rendu sur Classroom : structure, lisibilité des 8 captures, unités et vocabulaire technique.</td><td><strong>/ 2 pts</strong></td><td></td></tr>
+    <tr>
+      <td><strong>C04 — Analyser</strong></td>
+      <td>Pertinence de l'analyse comparative des technologies IoT (Q0.1), compréhension de l'architecture de bout en bout (T4, Q1.1, Q3.1) et décodage manuel exact de la trame binaire 5 octets (Q2.2).</td>
+      <td><strong>/ 4 pts</strong></td>
+      <td></td>
+    </tr>
+    <tr>
+      <td><strong>C05 — Concevoir</strong></td>
+      <td>Justification rigoureuse du compromis SF, structuration du payload binaire compact, calculs d'autonomie énergétique et proposition d'optimisations en veille (Q0.2, Q2.3, Q4.2, Q4.3).</td>
+      <td><strong>/ 3 pts</strong></td>
+      <td></td>
+    </tr>
+    <tr>
+      <td><strong>C06 — Valider</strong></td>
+      <td>Rigueur de la campagne de mesure radio en champ réel (T5), qualité des relevés différentiels de courant et fenêtres RX à l'AD3 (T6, C7, C8), analyse critique des incertitudes (Q4.1).</td>
+      <td><strong>/ 6 pts</strong></td>
+      <td></td>
+    </tr>
+    <tr>
+      <td><strong>C07 / C09 — Réaliser &amp; Installer</strong></td>
+      <td>Paramétrage opérationnel de la passerelle Dragino (T1, C1, C2), join OTAA effectif du nœud Nano (C3, C4), flux Node-RED fonctionnel et archivage CSV (C5, C6), respect des règles de sécurité RF.</td>
+      <td><strong>/ 5 pts</strong></td>
+      <td></td>
+    </tr>
+    <tr>
+      <td><strong>C01 — Communiquer</strong></td>
+      <td>Qualité formelle du compte-rendu Google Docs, clarté rédactionnelle, lisibilité des 8 captures légendées et respect de la typographie scientifique.</td>
+      <td><strong>/ 2 pts</strong></td>
+      <td></td>
+    </tr>
   </tbody>
 </table>
 
@@ -1520,102 +1452,103 @@ void loop() {
 <!-- TRAME CACHEE POUR GOOGLE DOCS                                             -->
 <!-- ========================================================================= -->
 <div id="gdocs-master-template" style="display: none;">
-  <h1>COMPTE-RENDU DE TP (3h) — BTS CIEL 2 (Technologie STI)</h1>
-  <h2>Mise en œuvre d'une liaison LoRaWAN : passerelle Dragino, nœud Arduino Nano + Grove LoRa-E5, Node-RED &amp; Digilent AD3</h2>
-  <p><strong>Binôme :</strong> NOM 1 Prénom 1 &amp; NOM 2 Prénom 2 &nbsp;|&nbsp; <strong>Date :</strong> ../../2026 &nbsp;|&nbsp; <strong>Équipement :</strong> ........</p>
+  <h1>COMPTE-RENDU DE TRAVAUX PRATIQUES (3h) — BTS CIEL 2</h1>
+  <h2>Déploiement d'une Liaison LoRaWAN : Passerelle Dragino LPS8v3, Nœud Arduino Nano &amp; Grove LoRa-E5, Supervision Node-RED &amp; Instrumentation Digilent AD3</h2>
+  <p><strong>Binôme d'étudiants :</strong> ............................................................ &nbsp;|&nbsp; <strong>Date de la séance :</strong> ../../2026 &nbsp;|&nbsp; <strong>Équipement / Poste :</strong> ....................</p>
   <hr>
 
-  <h2>PARTIE 0 — Pourquoi LoRa ?</h2>
+  <h2>PARTIE 0 — Pourquoi LoRa ? Analyse Comparative &amp; Compromis SF</h2>
   <ul>
-    <li><strong>Q0.1 — Pourquoi LoRaWAN pour le local éloigné (3 critères chiffrés + 1 inconvénient) :</strong> <em>[Rédiger ici]</em></li>
-    <li><strong>Q0.2 — SF7 → SF12 : facteur sur la durée, gain de sensibilité, effet sur la batterie et sur l'intervalle mini (duty cycle) :</strong> <em>[Rédiger ici]</em></li>
+    <li><strong>Q0.1 — Justification du choix technologique pour le local isolé (3 critères chiffrés + 1 inconvénient) :</strong><br><em>[Rédiger ici votre réponse]</em></li>
+    <li><strong>Q0.2 — Analyse du passage SF7 &rarr; SF12 (facteur temporel, gain de sensibilité, effet batterie et intervalle minimal) :</strong><br><em>[Rédiger ici votre réponse]</em></li>
   </ul>
 
-  <h2>PARTIE 1 — Paramétrage de la passerelle Dragino LPS8v3</h2>
-  <p><strong>[Insérer ici la Capture C1 — Page d'état (Gateway EUI) et configuration du transfert UDP 1700]</strong></p>
-  <p><strong>[Insérer ici la Capture C2 — ChirpStack : passerelle « Last seen » récent]</strong></p>
+  <h2>PARTIE 1 — Paramétrage de la Passerelle Dragino LPS8v3 &amp; Serveur ChirpStack</h2>
+  <p><strong>[Insérer ici la Capture C1 — Passerelle Dragino : Page d'état avec Gateway EUI et configuration UDP 1700]</strong></p>
+  <p><strong>[Insérer ici la Capture C2 — Console ChirpStack : Liste des Gateways montrant la passerelle active]</strong></p>
   <h3>Tableau T1 : Identité et paramètres de la passerelle</h3>
   <table border="1" cellpadding="6" cellspacing="0" style="border-collapse: collapse; width: 100%;">
-    <tr><th>Paramètre</th><th>Valeur</th></tr>
+    <tr><th>Paramètre d'exploitation</th><th>Valeur observée</th></tr>
     <tr><td>Gateway EUI</td><td></td></tr>
-    <tr><td>Liaison vers le serveur (Ethernet / Wi-Fi / 4G)</td><td></td></tr>
-    <tr><td>Adresse du serveur &amp; port UDP</td><td></td></tr>
-    <tr><td>Plan de fréquences et canaux de base (MHz)</td><td></td></tr>
-    <tr><td>Mode LoRaWAN (public / privé)</td><td></td></tr>
+    <tr><td>Type de liaison vers le serveur (Ethernet / Wi-Fi / 4G)</td><td></td></tr>
+    <tr><td>Adresse IP du serveur de réseau &amp; port UDP</td><td></td></tr>
+    <tr><td>Plan de fréquences (Région &amp; canaux)</td><td></td></tr>
+    <tr><td>Mode LoRaWAN (Public / Privé)</td><td></td></tr>
   </table>
   <ul>
-    <li><strong>Q1.1 — La passerelle comprend-elle les mesures ? Pourquoi « transparente » ? :</strong> <em>[Rédiger ici]</em></li>
-    <li><strong>Q1.2 — Pourquoi UDP ? Informations ajoutées par la passerelle :</strong> <em>[Rédiger ici]</em></li>
-    <li><strong>Q1.3 — 3 points de vérification si la passerelle n'apparaît pas dans ChirpStack :</strong> <em>[Rédiger ici]</em></li>
+    <li><strong>Q1.1 — La passerelle comprend-elle les mesures ? Définition de « passerelle transparente » :</strong><br><em>[Rédiger ici votre réponse]</em></li>
+    <li><strong>Q1.2 — Justification du protocole UDP et informations radio ajoutées par la passerelle :</strong><br><em>[Rédiger ici votre réponse]</em></li>
+    <li><strong>Q1.3 — Démarche de diagnostic méthodique si la passerelle n'apparaît pas dans ChirpStack :</strong><br><em>[Rédiger ici votre réponse]</em></li>
   </ul>
 
-  <h2>PARTIE 2 — Nœud capteur Arduino Nano + Grove LoRa-E5</h2>
-  <h3>Tableau T2 : Exploration des commandes AT</h3>
+  <h2>PARTIE 2 — Nœud Capteur Arduino Nano &amp; Grove LoRa-E5</h2>
+  <h3>Tableau T2 : Exploration des commandes AT du modem Wio-E5</h3>
   <table border="1" cellpadding="6" cellspacing="0" style="border-collapse: collapse; width: 100%;">
-    <tr><th>Commande</th><th>Réponse du modem</th><th>Rôle</th></tr>
+    <tr><th>Commande AT exécutée</th><th>Réponse brute du modem</th><th>Rôle fonctionnel</th></tr>
     <tr><td>AT</td><td></td><td></td></tr>
     <tr><td>AT+VER</td><td></td><td></td></tr>
     <tr><td>AT+ID</td><td></td><td></td></tr>
     <tr><td>AT+DR</td><td></td><td></td></tr>
     <tr><td>AT+CH</td><td></td><td></td></tr>
   </table>
-  <p><strong>Q2.1 — Identifiant unique de mon modem (DevEUI) et rôle pour le serveur :</strong> <em>[Rédiger ici]</em></p>
-  <p><strong>[Insérer ici la Capture C3 — Moniteur série : Network joined + MSGHEX Done]</strong></p>
-  <p><strong>[Insérer ici la Capture C4 — ChirpStack : événement up (data, rssi, snr, fréquence, SF)]</strong></p>
+  <p><strong>Q2.1 — Identifiant unique du modem (DevEUI sur 64 bits) et rôle dans l'authentification :</strong><br><em>[Rédiger ici votre réponse]</em></p>
+  <p><strong>[Insérer ici la Capture C3 — Moniteur série : Séquence Join OTAA réussie et première trame transmise]</strong></p>
+  <p><strong>[Insérer ici la Capture C4 — ChirpStack : Événement up affichant data Base64, rssi, snr, fréquence et SF]</strong></p>
   <h3>Tableau T3 : Première transmission LoRaWAN</h3>
   <table border="1" cellpadding="6" cellspacing="0" style="border-collapse: collapse; width: 100%;">
-    <tr><th>Relevé</th><th>Valeur</th></tr>
-    <tr><td>Durée JOIN → Network joined (s)</td><td></td></tr>
-    <tr><td>Champ data (base64) et valeur hexadécimale</td><td></td></tr>
-    <tr><td>Fréquence du canal utilisé (MHz)</td><td></td></tr>
-    <tr><td>SF et DR utilisés</td><td></td></tr>
-    <tr><td>RSSI (dBm) / SNR (dB)</td><td></td></tr>
+    <tr><th>Indicateur d'exploitation</th><th>Valeur</th></tr>
+    <tr><td>Délai entre AT+JOIN et Network joined (s)</td><td></td></tr>
+    <tr><td>Champ data (Base64) et conversion en 5 octets hex</td><td></td></tr>
+    <tr><td>Fréquence radio du canal utilisé (MHz)</td><td></td></tr>
+    <tr><td>Facteur d'étalement (SF) et Débit (DR)</td><td></td></tr>
+    <tr><td>Niveau radio mesuré par la passerelle (RSSI / SNR)</td><td></td></tr>
   </table>
   <ul>
-    <li><strong>Q2.2 — Décodage de 00 F5 13 8A 07 (température, tension, n° de trame) + bonus FF EC :</strong> <em>[Rédiger ici]</em></li>
-    <li><strong>Q2.3 — Pourquoi envoyer des octets codés plutôt que du texte :</strong> <em>[Rédiger ici]</em></li>
+    <li><strong>Q2.2 — Décodage manuel de la trame 00 F5 13 8A 07 (Température, Tension Vcc, Compteur) + cas FF EC :</strong><br><em>[Détailler ici les conversions et résultats]</em></li>
+    <li><strong>Q2.3 — Comparaison d'efficacité spectrale : trame binaire 5 octets vs texte ASCII 11 octets :</strong><br><em>[Rédiger ici votre réponse]</em></li>
   </ul>
 
-  <h2>PARTIE 3 — Supervision Node-RED et stockage CSV</h2>
-  <p><strong>[Insérer ici la Capture C5 — Node-RED : flux déployé + tableau de bord /ui]</strong></p>
-  <p><strong>[Insérer ici la Capture C6 — Fichier mesures_lora.csv (≥ 5 lignes)]</strong></p>
-  <h3>Tableau T4 : Liaisons de la chaîne</h3>
+  <h2>PARTIE 3 — Supervision Node-RED &amp; Stockage CSV</h2>
+  <p><strong>[Insérer ici la Capture C5 — Dashboard Node-RED : Interface /ui montrant jauges, tension et indicateurs radio]</strong></p>
+  <p><strong>[Insérer ici la Capture C6 — Fichier CSV : Contenu du fichier mesures_lora.csv avec au moins 5 trames]</strong></p>
+  <h3>Tableau T4 : Analyse des liaisons de la chaîne globale</h3>
   <table border="1" cellpadding="6" cellspacing="0" style="border-collapse: collapse; width: 100%;">
-    <tr><th>Liaison</th><th>Support / protocole</th><th>Information transportée</th></tr>
-    <tr><td>① → ②</td><td></td><td></td></tr>
-    <tr><td>② → ③</td><td></td><td></td></tr>
-    <tr><td>③ → ④</td><td></td><td></td></tr>
-    <tr><td>④ → ⑤</td><td></td><td></td></tr>
-    <tr><td>⑤ → ⑥</td><td></td><td></td></tr>
+    <tr><th>Liaison</th><th>Support physique &amp; Protocole</th><th>Information transportée</th></tr>
+    <tr><td>① &rarr; ②</td><td></td><td></td></tr>
+    <tr><td>② &rarr; ③</td><td></td><td></td></tr>
+    <tr><td>③ &rarr; ④</td><td></td><td></td></tr>
+    <tr><td>④ &rarr; ⑤</td><td></td><td></td></tr>
+    <tr><td>⑤ &rarr; ⑥</td><td></td><td></td></tr>
   </table>
   <ul>
-    <li><strong>Q3.1 — Où et pourquoi le base64 est-il décodé :</strong> <em>[Rédiger ici]</em></li>
-    <li><strong>Q3.2 — Intérêt d'archiver RSSI, SNR et tension du nœud :</strong> <em>[Rédiger ici]</em></li>
+    <li><strong>Q3.1 — Localisation du décodage Base64 et rôle du décodeur applicatif :</strong><br><em>[Rédiger ici votre réponse]</em></li>
+    <li><strong>Q3.2 — Utilité de l'archivage conjoint du RSSI, du SNR et de la tension de batterie :</strong><br><em>[Rédiger ici votre réponse]</em></li>
   </ul>
 
-  <h2>PARTIE 4 — Campagne de mesures et bilan</h2>
-  <h3>Tableau T5 : Marche test sur le campus (SF utilisé : ........)</h3>
+  <h2>PARTIE 4 — Campagne de Mesures Portée Campus &amp; AD3</h2>
+  <h3>Tableau T5 : Campagne de portée radiofréquence (SF utilisé : ........)</h3>
   <table border="1" cellpadding="6" cellspacing="0" style="border-collapse: collapse; width: 100%;">
-    <tr><th>Lieu</th><th>Distance estimée</th><th>Trames reçues / envoyées</th><th>RSSI moyen (dBm)</th><th>SNR moyen (dB)</th><th>Marge de liaison (dB)</th></tr>
+    <tr><th>Point de mesure</th><th>Distance estimée</th><th>Trames reçues / émises</th><th>RSSI moyen (dBm)</th><th>SNR moyen (dB)</th><th>Marge calculée (dB)</th></tr>
     <tr><td>A — Salle de TP</td><td></td><td></td><td></td><td></td><td></td></tr>
     <tr><td>B — Autre bâtiment</td><td></td><td></td><td></td><td></td><td></td></tr>
     <tr><td>C — Point éloigné</td><td></td><td></td><td></td><td></td><td></td></tr>
   </table>
-  <p><strong>[Insérer ici la Capture C7 — AD3 Scope : courant pendant une émission en DR5/SF7]</strong></p>
-  <p><strong>[Insérer ici la Capture C8 — AD3 Scope : courant pendant une émission en DR0/SF12]</strong></p>
-  <h3>Tableau T6 : Consommation, durée d'émission et autonomie</h3>
+  <p><strong>[Insérer ici la Capture C7 — WaveForms Scope : Profil de courant et durée de trame en SF7 / DR5]</strong></p>
+  <p><strong>[Insérer ici la Capture C8 — WaveForms Scope : Profil de courant comparatif en SF12 / DR0]</strong></p>
+  <h3>Tableau T6 : Métrologie énergétique et durée d'émission</h3>
   <table border="1" cellpadding="6" cellspacing="0" style="border-collapse: collapse; width: 100%;">
-    <tr><th>Réglage</th><th>I veille (mA)</th><th>I TX max (mA)</th><th>Durée mesurée (ms)</th><th>Durée théorique</th><th>Écart (%)</th></tr>
+    <tr><th>Configuration</th><th>I veille (mA)</th><th>I TX crête (mA)</th><th>Durée mesurée (ms)</th><th>Durée théorique</th><th>Écart (%)</th></tr>
     <tr><td>DR5 / SF7</td><td></td><td></td><td></td><td>51,5 ms</td><td></td></tr>
     <tr><td>DR0 / SF12</td><td></td><td></td><td></td><td>1 319 ms</td><td></td></tr>
   </table>
   <ul>
-    <li><strong>Q4.1 — Causes de l'écart (incertitudes) :</strong> <em>[Rédiger ici]</em></li>
-    <li><strong>Q4.2 — Autonomie estimée en SF7 et SF12 (capacité Powerbank : ...... mAh), part de la radio, solution d'optimisation :</strong> <em>[Rédiger ici]</em></li>
-    <li><strong>Q4.3 — 3 avantages démontrés, 2 limites constatées, techno à choisir pour une image toutes les 10 s :</strong> <em>[Rédiger ici]</em></li>
+    <li><strong>Q4.1 — Analyse des causes d'incertitude métrologique :</strong><br><em>[Rédiger ici votre réponse]</em></li>
+    <li><strong>Q4.2 — Calculs d'autonomie (SF7 vs SF12), impact de l'émetteur radio et optimisation en veille :</strong><br><em>[Détailler ici les calculs et conclusions]</em></li>
+    <li><strong>Q4.3 — Synthèse critique : 3 avantages démontrés, 2 limites majeures et technologie pour image VGA :</strong><br><em>[Rédiger ici votre bilan]</em></li>
   </ul>
-  <h2>Conclusion Générale du Binôme</h2>
-  <p><em>[Résumer en 4 à 5 lignes l'architecture LoRaWAN mise en œuvre, ses avantages mesurés et ses limites pour le service technique du lycée.]</em></p>
+
+  <h2>Conclusion Générale &amp; Bilan Technique du Binôme</h2>
+  <p><em>[Rédiger une synthèse technique personnelle de 4 à 6 lignes récapitulant les performances et la viabilité de la solution LoRaWAN pour les services techniques du lycée.]</em></p>
 </div>
 
 <script>
@@ -1636,10 +1569,10 @@ void loop() {
     const feedback = document.getElementById('copy-global-feedback');
     try {
       await copierHtmlVersPressePapier(tpl.innerHTML, tpl.innerText);
-      feedback.textContent = '✔ Trame complète copiée ! Ouvrez votre Google Docs dans Classroom et faites Ctrl + V.';
+      feedback.textContent = '✔ Trame complète copiée avec succès ! Collez-la directement dans votre Google Docs (Ctrl+V).';
       setTimeout(() => { feedback.textContent = ''; }, 6000);
     } catch (e) {
-      feedback.textContent = 'Sélectionnez le texte manuellement si le navigateur bloque le presse-papiers.';
+      feedback.textContent = 'Erreur d\'accès au presse-papiers du navigateur.';
     }
   }
 
@@ -1665,7 +1598,7 @@ void loop() {
       await navigator.clipboard.writeText(el.innerText);
       btn.textContent = '✔ Copié !';
     } catch (e) {
-      btn.textContent = 'Sélectionnez le texte à la main';
+      btn.textContent = 'Sélectionnez le texte manuellement';
     }
     setTimeout(() => { btn.textContent = original; }, 2500);
   }
