@@ -1,0 +1,596 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="utf-8" />
+  <meta name="generator" content="BTS CIEL - Vincent Hilaire" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes" />
+  <title>TP : Station Météo LoRaWAN Autonome — Dragino LA66, LPS8-V2, TTN &amp; Dashboard Node-RED — BTS CIEL</title>
+  <style>
+    @page {
+      margin: 1.3cm;
+      size: A4;
+    }
+
+    html {
+      color: #1e293b;
+      background-color: #f8fafc;
+      -webkit-text-size-adjust: 100%;
+    }
+
+    body {
+      font-family: 'Segoe UI', -apple-system, BlinkMacSystemFont, Roboto, Helvetica, Arial, sans-serif;
+      line-height: 1.5;
+      color: #1e293b;
+      max-width: 980px;
+      margin: 0 auto;
+      padding: 22px 26px;
+      overflow-wrap: break-word;
+    }
+
+    @media (max-width: 768px) {
+      body { padding: 14px; font-size: 0.95em; }
+      .grid-2 { grid-template-columns: 1fr !important; }
+      .grid-palette-flow { grid-template-columns: 1fr !important; }
+    }
+
+    @media print {
+      html { background: #fff; }
+      body { background: transparent; color: #000; font-size: 9.2pt; max-width: 100%; padding: 0; }
+      h2, h3 { page-break-after: avoid; }
+      .card, .callout, .figure-box, table, .grid-2, .grid-palette-flow { page-break-inside: avoid; }
+      .page-break { page-break-before: always; }
+    }
+
+    header {
+      text-align: center;
+      border-bottom: 3px solid #0284c7;
+      padding-bottom: 14px;
+      margin-bottom: 20px;
+    }
+
+    h1 {
+      font-size: 17.5pt;
+      margin: 6px 0 8px 0;
+      color: #0369a1;
+      line-height: 1.25;
+    }
+
+    .subtitle {
+      font-size: 10pt;
+      color: #475569;
+      margin: 0 0 10px 0;
+    }
+
+    .badge {
+      display: inline-block;
+      font-size: 0.78em;
+      font-weight: 600;
+      padding: 3px 10px;
+      border-radius: 999px;
+      margin: 2px 3px;
+      border: 1px solid;
+    }
+
+    .badge-blue { background: #e0f2fe; color: #0369a1; border-color: #7dd3fc; }
+    .badge-green { background: #dcfce7; color: #166534; border-color: #86efac; }
+    .badge-purple { background: #f3e8ff; color: #6b21a8; border-color: #d8b4fe; }
+    .badge-dark { background: #1e293b; color: #f8fafc; border-color: #0f172a; }
+
+    h2 {
+      font-size: 12.8pt;
+      color: #0369a1;
+      border-bottom: 2px solid #cbd5e1;
+      padding-bottom: 5px;
+      margin: 22px 0 10px 0;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    h2 .step-num {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      width: 24px;
+      height: 24px;
+      border-radius: 50%;
+      background: #0284c7;
+      color: #fff;
+      font-size: 0.85em;
+      font-weight: 700;
+      flex-shrink: 0;
+    }
+
+    h3 {
+      font-size: 10.5pt;
+      color: #0f172a;
+      border-left: 4px solid #0284c7;
+      padding-left: 9px;
+      margin: 14px 0 6px 0;
+    }
+
+    p { margin: 0.55em 0; }
+    ul, ol { margin: 0.5em 0; padding-left: 1.4em; }
+    li { margin-bottom: 0.3em; }
+
+    code {
+      background: #e2e8f0;
+      color: #0369a1;
+      padding: 1px 5px;
+      border-radius: 4px;
+      font-family: Consolas, 'Courier New', monospace;
+      font-size: 88%;
+      font-weight: 600;
+    }
+
+    pre {
+      background: #0f172a;
+      color: #e2e8f0;
+      padding: 10px 14px;
+      border-radius: 6px;
+      overflow-x: auto;
+      font-family: Consolas, 'Courier New', monospace;
+      font-size: 8.6pt;
+      line-height: 1.45;
+      margin: 8px 0;
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      margin: 10px 0;
+      font-size: 8.8pt;
+      background: #fff;
+      border-radius: 6px;
+      overflow: hidden;
+      box-shadow: 0 1px 2px rgba(0, 0, 0, 0.04);
+    }
+
+    th, td {
+      border: 1px solid #cbd5e1;
+      padding: 6px 9px;
+      text-align: left;
+      vertical-align: middle;
+    }
+
+    th {
+      background: #f1f5f9;
+      color: #0f172a;
+      font-weight: 700;
+    }
+
+    tr:nth-child(even) { background: #f8fafc; }
+
+    .callout {
+      border-radius: 6px;
+      padding: 10px 14px;
+      margin: 11px 0;
+      font-size: 9.1pt;
+      border-left: 4px solid;
+    }
+
+    .callout-title {
+      font-weight: 700;
+      margin-bottom: 4px;
+      font-size: 9.5pt;
+    }
+
+    .callout-info { background: #f0f9ff; border-color: #0284c7; color: #0c4a6e; }
+    .callout-ai { background: #faf5ff; border-color: #9333ea; color: #581c87; }
+    .callout-warn { background: #fffbeb; border-color: #f59e0b; color: #78350f; }
+    .callout-check { background: #f0fdf4; border-color: #16a34a; color: #14532d; }
+
+    .figure-box {
+      background: #fff;
+      border: 1px solid #cbd5e1;
+      border-radius: 8px;
+      padding: 10px;
+      margin: 12px 0;
+      text-align: center;
+      box-shadow: 0 1px 3px rgba(0, 0, 0, 0.04);
+    }
+
+    .figure-box img {
+      max-width: 100%;
+      height: auto;
+      border-radius: 4px;
+      border: 1px solid #e2e8f0;
+      display: block;
+      margin: 0 auto;
+    }
+
+    .figure-caption {
+      font-size: 8.4pt;
+      color: #475569;
+      margin-top: 6px;
+      font-style: italic;
+    }
+
+    .grid-2 {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 12px;
+      align-items: start;
+      margin: 10px 0;
+    }
+
+    .grid-palette-flow {
+      display: grid;
+      grid-template-columns: 190px 1fr;
+      gap: 12px;
+      align-items: center;
+      margin: 10px 0;
+    }
+
+    .inline-btn {
+      display: inline-block;
+      vertical-align: middle;
+      height: 24px;
+      border-radius: 3px;
+      margin: 0 3px;
+    }
+
+    .checklist {
+      list-style: none;
+      padding-left: 0;
+    }
+
+    .checklist li {
+      position: relative;
+      padding-left: 22px;
+      margin-bottom: 5px;
+    }
+
+    .checklist li::before {
+      content: "☐";
+      position: absolute;
+      left: 0;
+      top: 0;
+      color: #0284c7;
+      font-weight: 700;
+    }
+
+    .keywords {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 6px;
+      margin: 6px 0;
+    }
+
+    .kw {
+      background: #f1f5f9;
+      border: 1px solid #cbd5e1;
+      color: #334155;
+      font-size: 8.2pt;
+      padding: 2px 8px;
+      border-radius: 4px;
+      font-family: Consolas, monospace;
+    }
+
+    footer {
+      margin-top: 24px;
+      padding-top: 10px;
+      border-top: 1px solid #cbd5e1;
+      font-size: 8.2pt;
+      color: #64748b;
+      text-align: center;
+    }
+  </style>
+</head>
+<body>
+
+<header>
+  <div>
+    <span class="badge badge-dark">BTS CIEL</span>
+    <span class="badge badge-blue">LoRaWAN EU868</span>
+    <span class="badge badge-purple">MQTT TLS &amp; Node-RED</span>
+    <span class="badge badge-green">Durée : 2 h – 3 h</span>
+  </div>
+  <h1>TP : Station Météo LoRaWAN Autonome jusqu'au Dashboard Node-RED</h1>
+  <p class="subtitle">Chaîne IoT complète : Capteur DHT11 &rarr; Arduino Uno + Dragino LA66 &rarr; Passerelle LPS8-V2 &rarr; TTN &rarr; Dashboard Web</p>
+</header>
+
+<!-- ==================== SECTION 1 ==================== -->
+<h2><span class="step-num">1</span> Objectif &amp; Architecture du système</h2>
+
+<p>
+  L'objectif de ce TP est de mettre en service une <strong>station météo IoT autonome</strong> mesurant la température (en &deg;C) et l'humidité relative (en&nbsp;%) et affichant ces grandeurs en temps réel sur un tableau de bord web (<strong>Node-RED Dashboard</strong>) hébergé directement sur la passerelle <strong>Dragino LPS8-V2</strong> (sans PC allumé 24h/24).
+</p>
+
+<div class="figure-box">
+  <svg viewBox="0 0 920 175" width="100%" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Synoptique de la chaîne de transmission LoRaWAN vers Node-RED">
+    <defs>
+      <marker id="arrow" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+        <path d="M 0 1 L 10 5 L 0 9 z" fill="#0284c7" />
+      </marker>
+    </defs>
+
+    <!-- Bloc 1 : DHT11 -->
+    <rect x="8" y="34" width="110" height="86" rx="8" fill="#e0f2fe" stroke="#0284c7" stroke-width="2" />
+    <text x="63" y="58" text-anchor="middle" font-size="12" font-weight="700" fill="#0369a1">DHT11</text>
+    <text x="63" y="77" text-anchor="middle" font-size="10" fill="#334155">Temp. (&deg;C)</text>
+    <text x="63" y="92" text-anchor="middle" font-size="10" fill="#334155">Humidité (%)</text>
+    <text x="63" y="110" text-anchor="middle" font-size="9" fill="#0284c7">1-Wire numérique</text>
+
+    <!-- Flèche 1 -->
+    <line x1="118" y1="77" x2="148" y2="77" stroke="#0284c7" stroke-width="2" marker-end="url(#arrow)" />
+
+    <!-- Bloc 2 : Arduino + LA66 -->
+    <rect x="152" y="24" width="145" height="106" rx="8" fill="#fef3c7" stroke="#d97706" stroke-width="2" />
+    <text x="224" y="48" text-anchor="middle" font-size="11.5" font-weight="700" fill="#92400e">Arduino Uno</text>
+    <text x="224" y="65" text-anchor="middle" font-size="11" font-weight="700" fill="#b45309">+ Shield LA66</text>
+    <text x="224" y="84" text-anchor="middle" font-size="9.5" fill="#451a03">Activation OTAA</text>
+    <text x="224" y="99" text-anchor="middle" font-size="9.5" fill="#451a03">Payload : 2 octets</text>
+    <text x="224" y="118" text-anchor="middle" font-size="9" fill="#b45309">Commandes AT (UART)</text>
+
+    <!-- Flèche 2 : LoRaWAN -->
+    <line x1="297" y1="77" x2="352" y2="77" stroke="#0284c7" stroke-width="2" stroke-dasharray="5,3" marker-end="url(#arrow)" />
+    <text x="324" y="64" text-anchor="middle" font-size="9.5" font-weight="700" fill="#0284c7">LoRaWAN</text>
+    <text x="324" y="94" text-anchor="middle" font-size="9" fill="#475569">EU868</text>
+
+    <!-- Bloc 3 : Passerelle LPS8-V2 -->
+    <rect x="356" y="24" width="142" height="106" rx="8" fill="#dcfce7" stroke="#16a34a" stroke-width="2" />
+    <text x="427" y="47" text-anchor="middle" font-size="11.5" font-weight="700" fill="#166534">Dragino LPS8-V2</text>
+    <text x="427" y="64" text-anchor="middle" font-size="9.5" fill="#14532d">Passerelle LoRaWAN</text>
+    <text x="427" y="80" text-anchor="middle" font-size="9.5" fill="#14532d">Debian embarqué</text>
+    <text x="427" y="98" text-anchor="middle" font-size="9.5" font-weight="700" fill="#15803d">192.168.1.113</text>
+    <text x="427" y="116" text-anchor="middle" font-size="8.8" fill="#166534">Héberge Node-RED</text>
+
+    <!-- Flèche 3 : Internet vers TTN -->
+    <line x1="498" y1="62" x2="546" y2="62" stroke="#0284c7" stroke-width="2" marker-end="url(#arrow)" />
+    <text x="522" y="53" text-anchor="middle" font-size="8.8" fill="#475569">Uplink</text>
+
+    <!-- Bloc 4 : TTN -->
+    <rect x="550" y="24" width="128" height="106" rx="8" fill="#f3e8ff" stroke="#7c3aed" stroke-width="2" />
+    <text x="614" y="48" text-anchor="middle" font-size="11.5" font-weight="700" fill="#5b21b6">The Things</text>
+    <text x="614" y="64" text-anchor="middle" font-size="11.5" font-weight="700" fill="#5b21b6">Network (TTN)</text>
+    <text x="614" y="84" text-anchor="middle" font-size="9" fill="#4c1d95">eu1.cloud.thethings</text>
+    <text x="614" y="97" text-anchor="middle" font-size="9" fill="#4c1d95">.network</text>
+    <text x="614" y="116" text-anchor="middle" font-size="8.8" font-weight="700" fill="#6d28d9">Broker MQTT :8883</text>
+
+    <!-- Flèche 4 : MQTT TLS -->
+    <line x1="678" y1="77" x2="736" y2="77" stroke="#0284c7" stroke-width="2" marker-end="url(#arrow)" />
+    <text x="707" y="64" text-anchor="middle" font-size="9" font-weight="700" fill="#0284c7">MQTT TLS</text>
+    <text x="707" y="94" text-anchor="middle" font-size="8.5" fill="#475569">JSON + B64</text>
+
+    <!-- Bloc 5 : Node-RED & Dashboard -->
+    <rect x="740" y="24" width="172" height="106" rx="8" fill="#fee2e2" stroke="#dc2626" stroke-width="2" />
+    <text x="826" y="47" text-anchor="middle" font-size="11.5" font-weight="700" fill="#991b1b">Node-RED &amp; Dashboard</text>
+    <text x="826" y="65" text-anchor="middle" font-size="9.5" fill="#7f1d1d">(sur LPS8-V2 :1880)</text>
+    <text x="826" y="84" text-anchor="middle" font-size="9.5" fill="#7f1d1d">Décodage Base64</text>
+    <text x="826" y="99" text-anchor="middle" font-size="9.5" fill="#7f1d1d">Jauges + Courbes</text>
+    <text x="826" y="117" text-anchor="middle" font-size="8.8" font-weight="700" fill="#b91c1c">PC / Smartphone (Tailscale)</text>
+
+    <!-- Bandeau bas : autonomie -->
+    <path d="M 427 130 L 427 156 L 826 156 L 826 130" fill="none" stroke="#16a34a" stroke-width="1.5" stroke-dasharray="4,3" />
+    <text x="626" y="169" text-anchor="middle" font-size="9.5" font-weight="600" fill="#15803d">Node-RED tourne directement sur la passerelle Debian LPS8-V2 (fonctionnement autonome 24h/24)</text>
+  </svg>
+  <div class="figure-caption">Figure 1 — Chaîne de transmission complète, du capteur DHT11 jusqu'à l'affichage sur le Dashboard Node-RED.</div>
+</div>
+
+<table>
+  <thead>
+    <tr>
+      <th>Élément</th>
+      <th>Référence / Paramètre</th>
+      <th>Rôle dans le TP</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td><strong>Nœud capteur</strong></td>
+      <td>Arduino Uno + Shield <strong>Dragino LA66</strong> + <strong>DHT11</strong></td>
+      <td>Acquisition <i>T</i> (&deg;C) &amp; <i>HR</i> (%), émission LoRaWAN <code>EU868</code> (OTAA)</td>
+    </tr>
+    <tr>
+      <td><strong>Passerelle &amp; Serveur</strong></td>
+      <td><strong>Dragino LPS8-V2</strong> (<code>dragino-2ad184</code> — <code>192.168.1.113</code>)</td>
+      <td>Relais radio vers TTN + hébergement local de Node-RED (port <code>1880</code>)</td>
+    </tr>
+    <tr>
+      <td><strong>Serveur LoRaWAN</strong></td>
+      <td>TTN Europe : <code>eu1.cloud.thethings.network</code></td>
+      <td>Gestion réseau, déchiffrement LoRaWAN, exposition des données en <strong>MQTT TLS</strong> (port <code>8883</code>)</td>
+    </tr>
+    <tr>
+      <td><strong>Application TTN</strong></td>
+      <td>Utilisateur : <code>application-btsciel@ttn</code></td>
+      <td>Topic d'abonnement : <code>v3/application-btsciel@ttn/devices/+/up</code></td>
+    </tr>
+  </tbody>
+</table>
+
+<!-- ==================== SECTION 2 ==================== -->
+<h2><span class="step-num">2</span> Étape 1 — Faire communiquer le nœud Arduino + LA66 jusqu'à TTN</h2>
+
+<h3>2.1 Cahier des charges du nœud capteur</h3>
+<ul>
+  <li>Lire la température (entier non signé) et l'humidité relative (entier non signé) sur le capteur <strong>DHT11</strong> toutes les <strong>30&nbsp;s</strong> (respect du <em>duty cycle</em> 1&nbsp;% en bande <code>EU868</code>).</li>
+  <li>Établir une session LoRaWAN en mode <strong>OTAA</strong> via le shield <strong>Dragino LA66</strong> (dialoguant en commandes <strong>AT</strong> sur liaison série).</li>
+  <li>Transmettre une trame utile (<code>frm_payload</code>) compacte de <strong>2&nbsp;octets bruts</strong> : <code>bytes[0]</code> = température, <code>bytes[1]</code> = humidité.</li>
+</ul>
+
+<div class="figure-box">
+  <svg viewBox="0 0 860 96" width="100%" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Format de la trame utile sur 2 octets et encodage Base64">
+    <defs>
+      <marker id="arr2" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+        <path d="M 0 1 L 10 5 L 0 9 z" fill="#475569" />
+      </marker>
+    </defs>
+    <!-- Mesure -->
+    <rect x="8" y="14" width="175" height="66" rx="6" fill="#e0f2fe" stroke="#0284c7" stroke-width="1.5" />
+    <text x="95" y="36" text-anchor="middle" font-size="11" font-weight="700" fill="#0369a1">Mesure DHT11 (ex.)</text>
+    <text x="95" y="56" text-anchor="middle" font-size="11" fill="#0f172a">T = 19 &deg;C  |  HR = 54 %</text>
+    <text x="95" y="72" text-anchor="middle" font-size="9" fill="#475569">2 entiers (0..255)</text>
+
+    <line x1="183" y1="47" x2="218" y2="47" stroke="#475569" stroke-width="1.8" marker-end="url(#arr2)" />
+
+    <!-- 2 octets -->
+    <rect x="222" y="14" width="188" height="66" rx="6" fill="#fef3c7" stroke="#d97706" stroke-width="1.5" />
+    <text x="316" y="34" text-anchor="middle" font-size="10.5" font-weight="700" fill="#92400e">Trame LoRa (2 octets hex)</text>
+    <rect x="242" y="42" width="68" height="28" rx="4" fill="#fff" stroke="#d97706" />
+    <text x="276" y="60" text-anchor="middle" font-size="11" font-weight="700" fill="#b45309">0x13</text>
+    <rect x="322" y="42" width="68" height="28" rx="4" fill="#fff" stroke="#d97706" />
+    <text x="356" y="60" text-anchor="middle" font-size="11" font-weight="700" fill="#b45309">0x36</text>
+
+    <line x1="410" y1="47" x2="445" y2="47" stroke="#475569" stroke-width="1.8" marker-end="url(#arr2)" />
+
+    <!-- JSON TTN Base64 -->
+    <rect x="449" y="14" width="185" height="66" rx="6" fill="#f3e8ff" stroke="#7c3aed" stroke-width="1.5" />
+    <text x="541" y="35" text-anchor="middle" font-size="10.5" font-weight="700" fill="#5b21b6">JSON TTN (Base64)</text>
+    <text x="541" y="55" text-anchor="middle" font-size="10.5" font-family="Consolas, monospace" fill="#4c1d95">"frm_payload": "EzY="</text>
+    <text x="541" y="72" text-anchor="middle" font-size="9" fill="#6d28d9">Reçu sur MQTT par Node-RED</text>
+
+    <line x1="634" y1="47" x2="669" y2="47" stroke="#475569" stroke-width="1.8" marker-end="url(#arr2)" />
+
+    <!-- Décodage Node-RED -->
+    <rect x="673" y="14" width="179" height="66" rx="6" fill="#dcfce7" stroke="#16a34a" stroke-width="1.5" />
+    <text x="762" y="35" text-anchor="middle" font-size="10.5" font-weight="700" fill="#166534">Décodage Node-RED</text>
+    <text x="762" y="54" text-anchor="middle" font-size="10" font-family="Consolas, monospace" fill="#14532d">bytes[0] &rarr; 19 (&deg;C)</text>
+    <text x="762" y="70" text-anchor="middle" font-size="10" font-family="Consolas, monospace" fill="#14532d">bytes[1] &rarr; 54 (%)</text>
+  </svg>
+  <div class="figure-caption">Figure 2 — Encodage minimaliste sur 2 octets : conversion décimal &rarr; hexadécimal &rarr; Base64 (TTN) &rarr; décodage Node-RED.</div>
+</div>
+
+<h3>2.2 Pistes de recherche &amp; mise en œuvre</h3>
+<div class="keywords">
+  <span class="kw">Dragino LA66 AT Commands</span>
+  <span class="kw">SoftwareSerial (9600 bauds)</span>
+  <span class="kw">DHT.h</span>
+  <span class="kw">AT+DEUI=?</span>
+  <span class="kw">AT+APPEUI=?</span>
+  <span class="kw">AT+APPKEY=?</span>
+  <span class="kw">AT+JOIN</span>
+  <span class="kw">AT+SENDB</span>
+</div>
+<ol>
+  <li><strong>Enregistrement sur TTN :</strong> Récupérez les identifiants OTAA du module LA66 (<code>DevEUI</code>, <code>AppEUI / JoinEUI</code>, <code>AppKey</code>) et déclarez l'équipement dans l'application <code>application-btsciel@ttn</code> (plan <code>Europe 863-870 MHz</code>, LoRaWAN 1.0.3).</li>
+  <li><strong>Câblage :</strong> Vérifiez les cavaliers UART du shield LA66 (liaison <code>SoftwareSerial</code> vers l'Arduino Uno) et raccordez la broche DATA du DHT11 sur une broche numérique disponible.</li>
+  <li><strong>Développement du firmware :</strong> Concevez le programme Arduino qui initialise le DHT11, attend la connexion OTAA du LA66, puis formate et envoie les 2 octets en hexadécimal toutes les 30&nbsp;s.</li>
+</ol>
+
+<div class="callout callout-ai">
+  <div class="callout-title">Co-développement guidé par l'IA — Firmware Arduino Uno + LA66</div>
+  Formulez une requête précise à votre assistant IA pour obtenir la trame du programme en spécifiant : <em>« Arduino Uno, shield Dragino LA66 en commandes AT via SoftwareSerial (9600&nbsp;bauds, préciser vos broches RX/TX), capteur DHT11 (préciser la broche DATA), envoi périodique toutes les 30&nbsp;s de 2 octets hexadécimaux (température puis humidité) avec <code>AT+SENDB</code> après vérification du Join OTAA. »</em><br />
+  <strong>Esprit critique exigé :</strong> vérifiez le format exact de la commande <code>AT+SENDB</code> dans la datasheet du LA66, gérez le cas d'erreur de lecture <code>isnan()</code> du DHT11, commentez le code et validez dans le moniteur série.
+</div>
+
+<div class="callout callout-check">
+  <div class="callout-title">Point de contrôle 1 — Console TTN</div>
+  Dans l'onglet <strong>Live data</strong> de votre équipement sur TTN, vérifiez la réception du message <em>Accept join-request</em> puis d'un <em>Forward uplink data message</em> toutes les 30&nbsp;s contenant un champ <code>frm_payload</code> de 2 octets. Relevez le <strong>RSSI</strong> (dBm) et le <strong>SNR</strong> (dB).
+</div>
+
+<!-- ==================== SECTION 3 ==================== -->
+<h2 class="page-break"><span class="step-num">3</span> Étape 2 — Connecter Node-RED à TTN en MQTT TLS</h2>
+
+<p>
+  Node-RED est déjà installé sur la passerelle <strong>Dragino LPS8-V2</strong> (accès navigateur : <code>http://192.168.1.113:1880</code>).
+</p>
+
+<div class="callout callout-info">
+  <div class="callout-title">Mémo administratif (si déploiement initial sur une passerelle vierge en SSH)</div>
+  En SSH sur la passerelle (<code>ssh root@192.168.1.113</code>), l'installation de Node-RED et du Dashboard FlowFuse s'effectue via :
+  <pre>apt update &amp;&amp; apt install -y nodejs npm curl
+npm install -g --unsafe-perm node-red
+mkdir -p /root/.node-red &amp;&amp; cd /root/.node-red &amp;&amp; npm install @flowfuse/node-red-dashboard</pre>
+</div>
+
+<ol>
+  <li>Dans l'éditeur Node-RED, glissez un nœud <strong><code>mqtt in</code></strong> (catégorie <em>Réseau</em>) sur l'espace de travail.</li>
+  <li>Double-cliquez sur le nœud, configurez le <strong>Topic</strong> : <code>v3/application-btsciel@ttn/devices/+/up</code> et sélectionnez la sortie <strong>un objet JSON analysé</strong>.</li>
+  <li>Ajoutez un nouveau serveur MQTT (icône crayon) et renseignez les onglets <strong>Connexion</strong> et <strong>Sécurité</strong> comme ci-dessous (le mot de passe correspond à la <strong>clé API TTN</strong> générée dans <em>Integrations &rarr; MQTT</em>).</li>
+</ol>
+
+<div class="grid-2">
+  <div class="figure-box">
+    <img src="images/nodered_mqtt_connexion.png" alt="Propriétés MQTT Node-RED — Onglet Connexion" />
+    <div class="figure-caption">Figure 3 — Onglet Connexion : <code>eu1.cloud.thethings.network</code>, port <code>8883</code>, case <strong>Utiliser TLS</strong> cochée, <code>MQTT V3.1.1</code>.</div>
+  </div>
+  <div class="figure-box">
+    <img src="images/nodered_mqtt_securite.png" alt="Propriétés MQTT Node-RED — Onglet Sécurité" />
+    <div class="figure-caption">Figure 4 — Onglet Sécurité : nom d'utilisateur <code>application-btsciel@ttn</code> et clé API TTN en mot de passe.</div>
+  </div>
+</div>
+
+<p>
+  Cliquez sur le bouton <img class="inline-btn" src="images/nodered_bouton_deployer.png" alt="Bouton Déployer Node-RED" /> en haut à droite. Un voyant vert <strong>Connecté</strong> doit apparaître sous le nœud <code>mqtt in</code>.
+</p>
+
+<!-- ==================== SECTION 4 ==================== -->
+<h2><span class="step-num">4</span> Étape 3 — Décoder les trames &amp; construire le Dashboard</h2>
+
+<p>
+  Depuis la palette de gauche, assemblez le flux illustré ci-dessous en combinant un nœud <strong><code>function</code></strong> (à <strong>2 sorties</strong> : 1 pour la température, 1 pour l'humidité), un nœud <strong><code>debug</code></strong> et quatre widgets du tableau de bord (<strong>2 jauges</strong> + <strong>2 graphiques</strong>).
+</p>
+
+<div class="grid-palette-flow">
+  <div class="figure-box">
+    <img src="images/nodered_palette.png" alt="Palette des nœuds Node-RED" style="max-height: 280px;" />
+    <div class="figure-caption">Figure 5 — Palette Node-RED (<code>debug</code>, <code>function</code>…).</div>
+  </div>
+  <div class="figure-box">
+    <img src="images/nodered_flux_meteo.png" alt="Flux Node-RED complet de la station météo" />
+    <div class="figure-caption">Figure 6 — Flux cible : <code>mqtt in</code> &rarr; <code>function 1</code> (2 sorties) &rarr; jauge &amp; graphique Température, jauge &amp; graphique Humidité + <code>debug 1</code>.</div>
+  </div>
+</div>
+
+<h3>4.1 Pistes techniques pour le nœud <code>function</code></h3>
+<div class="keywords">
+  <span class="kw">msg.payload.uplink_message.frm_payload</span>
+  <span class="kw">Buffer.from(b64, 'base64')</span>
+  <span class="kw">return [msgTemp, msgHum]</span>
+  <span class="kw">Sorties : 2</span>
+</div>
+<ul>
+  <li>Dans l'onglet <em>Configuration</em> du nœud <code>function</code>, passez le nombre de <strong>Sorties</strong> à <strong>2</strong>.</li>
+  <li>La donnée utile brute reçue de TTN se trouve à l'adresse <code>msg.payload.uplink_message.frm_payload</code> (chaîne Base64).</li>
+  <li>Convertissez cette chaîne en tableau d'octets avec <code>Buffer.from(..., 'base64')</code>, extrayez <code>bytes[0]</code> (température) et <code>bytes[1]</code> (humidité), puis renvoyez deux messages distincts sous la forme <code>return [msgTemp, msgHum];</code>.</li>
+</ul>
+
+<div class="callout callout-ai">
+  <div class="callout-title">Co-développement guidé par l'IA — Fonction JavaScript Node-RED</div>
+  Demandez à l'IA : <em>« Écris le code JavaScript d'un nœud function Node-RED à 2 sorties qui lit <code>msg.payload.uplink_message.frm_payload</code> (encodé en Base64), vérifie que le champ existe et contient au moins 2 octets, décode <code>bytes[0]</code> en température et <code>bytes[1]</code> en humidité, et renvoie deux objets <code>{ payload: valeur }</code> sur les sorties 1 et 2. »</em><br />
+  <strong>Esprit critique exigé :</strong> testez le cas où une trame ne contient pas <code>frm_payload</code> (ex. message de Join) pour éviter toute erreur <code>TypeError</code> dans Node-RED.
+</div>
+
+<h3>4.2 Paramétrage du Dashboard (<code>@flowfuse/node-red-dashboard</code>)</h3>
+<ul>
+  <li>Créez une page <strong>Station Météo</strong> et un groupe (ex. <em>Mesures LoRaWAN</em>) dans les propriétés des nœuds Dashboard.</li>
+  <li>Configurez la jauge et le graphique <strong>Température</strong> (plage <code>0</code> à <code>50&nbsp;&deg;C</code>) sur la <strong>sortie&nbsp;1</strong>, et la jauge + graphique <strong>Humidité</strong> (plage <code>0</code> à <code>100&nbsp;%</code>) sur la <strong>sortie&nbsp;2</strong>.</li>
+</ul>
+
+<!-- ==================== SECTION 5 ==================== -->
+<h2><span class="step-num">5</span> Étape 4 — Validation, mesures &amp; compte-rendu</h2>
+
+<div class="grid-2" style="align-items: center;">
+  <div>
+    <p>
+      Après avoir cliqué sur <strong>Déployer</strong>, ouvrez l'onglet <strong>Messages de débogage</strong> (icône insecte à droite) pour vérifier l'arrivée périodique des valeurs décodées (toutes les 30&nbsp;s), puis affichez votre tableau de bord à l'adresse :
+    </p>
+    <p><code>http://192.168.1.113:1880/dashboard</code></p>
+    <div class="callout callout-warn">
+      <div class="callout-title">Test dynamique</div>
+      Réchauffez doucement le capteur DHT11 entre vos doigts (ou soufflez légèrement dessus) et observez l'évolution de la température et de l'humidité sur les jauges et les courbes au bout de 1 à 2 trames.
+    </div>
+  </div>
+  <div class="figure-box">
+    <img src="images/nodered_debug_messages.png" alt="Panneau Messages de débogage Node-RED" style="max-height: 250px;" />
+    <div class="figure-caption">Figure 7 — Exemple de validation dans le panneau de débogage (<code>payload: 19</code> reçu toutes les 30&nbsp;s).</div>
+  </div>
+</div>
+
+<h3>Grille de validation &amp; questions de synthèse (à rendre)</h3>
+<ul class="checklist">
+  <li><strong>Capture 1 :</strong> Trame <code>Live data</code> sur TTN avec la valeur de <code>frm_payload</code> (Base64), le <strong>RSSI</strong> et le <strong>SNR</strong>.</li>
+  <li><strong>Capture 2 :</strong> Flux Node-RED déployé (indicateur <code>Connecté</code> vert) + panneau de débogage montrant la valeur décodée.</li>
+  <li><strong>Capture 3 :</strong> Dashboard final montrant les 2 jauges et les 2 courbes après votre test dynamique sur le DHT11.</li>
+  <li><strong>Analyse 1 :</strong> À partir d'une trame <code>frm_payload</code> relevée sur TTN, vérifiez <em>à la main</em> (Base64 &rarr; hexadécimal &rarr; décimal) que les 2 octets correspondent bien aux valeurs affichées sur le Dashboard.</li>
+  <li><strong>Analyse 2 :</strong> Expliquez en 3 lignes pourquoi on transmet <strong>2 octets bruts</strong> au lieu d'une chaîne JSON texte en LoRaWAN, et quel est l'intérêt d'héberger Node-RED sur la passerelle <strong>LPS8-V2</strong> (combiné à un VPN type <strong>Tailscale</strong>).</li>
+</ul>
+
+<footer>
+  BTS CIEL — TP Station Météo LoRaWAN Autonome (Arduino Uno + Dragino LA66 / LPS8-V2 / TTN / Node-RED)
+</footer>
+
+</body>
+</html>

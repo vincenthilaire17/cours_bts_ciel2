@@ -1,0 +1,874 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="utf-8" />
+  <meta name="generator" content="BTS CIEL - Synthèse LoRa / LoRaWAN" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes" />
+  <title>Synthèse Visuelle : Réseaux LoRa &amp; LoRaWAN – BTS CIEL Option B</title>
+
+  <style>
+    @page {
+      margin: 1.0cm 1.2cm;
+      size: A4 portrait;
+    }
+
+    html {
+      color: #1a1a1a;
+      background-color: #f8fafc;
+      scroll-behavior: smooth;
+      -webkit-text-size-adjust: 100%;
+    }
+
+    body {
+      font-family: 'Segoe UI', -apple-system, BlinkMacSystemFont, Roboto, Helvetica, Arial, sans-serif;
+      line-height: 1.45;
+      color: #1e293b;
+      max-width: 980px;
+      margin: 0 auto;
+      padding: 22px 30px;
+      background-color: #ffffff;
+      box-shadow: 0 4px 16px rgba(0, 0, 0, 0.06);
+    }
+
+    @media (max-width: 768px) {
+      body { font-size: 0.95em; padding: 14px; }
+      h1 { font-size: 1.4em !important; }
+      .grid-2, .grid-3, .toc-nav { grid-template-columns: 1fr !important; }
+    }
+
+    @media print {
+      html { background-color: #ffffff; }
+      body {
+        background-color: transparent;
+        color: #000000;
+        font-size: 8.8pt;
+        max-width: 100%;
+        padding: 0;
+        box-shadow: none;
+      }
+      p, h2, h3 { orphans: 3; widows: 3; }
+      h2, h3, h4 { page-break-after: avoid; }
+      pre, blockquote, table, .figure-box, .visual-card, .callout { page-break-inside: avoid; }
+      .page-break { page-break-before: always; }
+      .no-print { display: none !important; }
+      a { color: #000000; text-decoration: none; }
+      .meta-badge {
+        border: 1px solid #64748b !important;
+        color: #000000 !important;
+        background: #f1f5f9 !important;
+      }
+    }
+
+    /* BARRE D'ACTIONS */
+    .btn-bar {
+      position: sticky;
+      top: 8px;
+      z-index: 1000;
+      background: rgba(255, 255, 255, 0.96);
+      backdrop-filter: blur(8px);
+      padding: 8px 14px;
+      border-radius: 8px;
+      border: 1px solid #cbd5e1;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 14px;
+      box-shadow: 0 3px 10px rgba(0, 0, 0, 0.06);
+      flex-wrap: wrap;
+      gap: 8px;
+    }
+
+    .btn {
+      background-color: #0b3c5d;
+      color: #ffffff;
+      border: none;
+      padding: 7px 14px;
+      border-radius: 6px;
+      font-weight: 600;
+      font-size: 8.5pt;
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      transition: background 0.2s;
+    }
+    .btn:hover { background-color: #08293f; }
+
+    /* EN-TETE */
+    header {
+      margin-bottom: 1.2em;
+      text-align: center;
+      border-bottom: 3px solid #0b3c5d;
+      padding-bottom: 12px;
+    }
+
+    .super-title {
+      font-size: 8.6pt;
+      color: #0284c7;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 1.4px;
+      margin-bottom: 4px;
+    }
+
+    h1 {
+      color: #0b3c5d;
+      font-size: 19pt;
+      margin: 0.2em 0;
+      letter-spacing: -0.4px;
+      font-weight: 800;
+      line-height: 1.2;
+    }
+
+    .subtitle {
+      font-size: 9.8pt;
+      color: #334155;
+      margin-bottom: 10px;
+      font-weight: 500;
+    }
+
+    .meta-badge {
+      display: inline-block;
+      font-size: 7.5pt;
+      font-weight: 600;
+      padding: 2.5px 9px;
+      border-radius: 14px;
+      margin: 2px 2px;
+      text-transform: uppercase;
+      letter-spacing: 0.4px;
+    }
+
+    .badge-primary { background: #0b3c5d; color: #ffffff; border: 1px solid #0b3c5d; }
+    .badge-alert   { background: #fee2e2; color: #991b1b; border: 1px solid #f87171; }
+    .badge-success { background: #dcfce7; color: #166534; border: 1px solid #86efac; }
+    .badge-warning { background: #fef3c7; color: #92400e; border: 1px solid #fcd34d; }
+    .badge-purple  { background: #f3e8ff; color: #6b21a8; border: 1px solid #d8b4fe; }
+    .badge-cyan    { background: #e0f2fe; color: #0369a1; border: 1px solid #7dd3fc; }
+    .badge-orange  { background: #ffedd5; color: #c2410c; border: 1px solid #fdba74; }
+    .badge-teal    { background: #ccfbf1; color: #0f766e; border: 1px solid #5eead4; }
+
+    /* SOMMAIRE RAPIDE */
+    .toc-nav {
+      background: #f8fafc;
+      border: 1px solid #cbd5e1;
+      border-radius: 8px;
+      padding: 9px 12px;
+      margin-bottom: 18px;
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 8px;
+      font-size: 8.4pt;
+    }
+    .toc-nav a {
+      color: #0369a1;
+      text-decoration: none;
+      font-weight: 600;
+      padding: 5px 8px;
+      border-radius: 5px;
+      background: #ffffff;
+      border: 1px solid #e2e8f0;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      transition: all 0.15s;
+    }
+    .toc-nav a:hover {
+      background: #e0f2fe;
+      border-color: #0284c7;
+      color: #0b3c5d;
+    }
+
+    h2 {
+      font-size: 12.8pt;
+      color: #0b3c5d;
+      margin-top: 22px;
+      margin-bottom: 10px;
+      border-bottom: 2px solid #cbd5e1;
+      padding-bottom: 4px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    h3 {
+      font-size: 10.3pt;
+      color: #1e3a8a;
+      margin-top: 14px;
+      margin-bottom: 7px;
+      border-left: 4px solid #0284c7;
+      padding-left: 9px;
+    }
+
+    p { margin: 0.4em 0; font-size: 9pt; }
+    ul, ol { padding-left: 1.3em; margin: 0.35em 0; font-size: 8.8pt; }
+    li { margin-bottom: 0.22em; }
+
+    /* GRILLES & CARTES */
+    .grid-2 {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 12px;
+      margin: 10px 0;
+    }
+    .grid-3 {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 10px;
+      margin: 10px 0;
+    }
+
+    .visual-card {
+      border: 1px solid #cbd5e1;
+      border-radius: 8px;
+      padding: 10px 12px;
+      background: #ffffff;
+      font-size: 8.5pt;
+      box-shadow: 0 1px 3px rgba(0, 0, 0, 0.02);
+    }
+
+    .visual-card-header {
+      font-weight: 700;
+      font-size: 9.2pt;
+      margin-bottom: 6px;
+      padding-bottom: 5px;
+      border-bottom: 1.5px solid #e2e8f0;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .card-blue   { border-top: 3.5px solid #0284c7; }
+    .card-indigo { border-top: 3.5px solid #2563eb; }
+    .card-green  { border-top: 3.5px solid #16a34a; }
+    .card-purple { border-top: 3.5px solid #7c3aed; }
+    .card-orange { border-top: 3.5px solid #ea580c; }
+    .card-teal   { border-top: 3.5px solid #0d9488; }
+    .card-red    { border-top: 3.5px solid #ef4444; }
+
+    .kv-list {
+      list-style: none;
+      padding-left: 0;
+      margin: 4px 0 0 0;
+    }
+    .kv-list li {
+      padding: 2.5px 0;
+      border-bottom: 1px dashed #e2e8f0;
+    }
+    .kv-list li:last-child { border-bottom: none; }
+
+    /* TABLEAUX */
+    table {
+      border-collapse: collapse;
+      width: 100%;
+      margin: 10px 0;
+      font-size: 8.3pt;
+      background-color: #ffffff;
+    }
+
+    th, td {
+      border: 1px solid #cbd5e1;
+      padding: 6px 8px;
+      text-align: left;
+      vertical-align: middle;
+    }
+
+    th {
+      background-color: #f1f5f9;
+      color: #0b3c5d;
+      font-weight: 700;
+    }
+
+    tr:nth-child(even) { background-color: #f8fafc; }
+
+    /* CALLOUTS */
+    .callout {
+      border-radius: 6px;
+      padding: 8px 12px;
+      margin: 10px 0;
+      font-size: 8.5pt;
+      border-left: 4px solid;
+    }
+    .callout-info    { background-color: #f0f7fc; border-color: #0284c7; color: #0c4a6e; }
+    .callout-warning { background-color: #fffbeb; border-color: #f59e0b; color: #92400e; }
+    .callout-danger  { background-color: #fef2f2; border-color: #ef4444; color: #991b1b; }
+    .callout-success { background-color: #f0fdf4; border-color: #22c55e; color: #166534; }
+    .callout-purple  { background-color: #f5f3ff; border-color: #7c3aed; color: #5b21b6; }
+
+    .callout-title {
+      font-weight: 700;
+      margin-bottom: 3px;
+    }
+
+    code {
+      background-color: #eff6ff;
+      color: #1d4ed8;
+      padding: 1px 4px;
+      border-radius: 4px;
+      font-size: 88%;
+      font-family: Consolas, 'Courier New', Monaco, monospace;
+      border: 1px solid #dbeafe;
+    }
+
+    /* FIGURES & IMAGES */
+    .figure-box {
+      margin: 10px 0;
+      padding: 9px 10px;
+      background-color: #f8fafc;
+      border: 1px solid #e2e8f0;
+      border-radius: 8px;
+      text-align: center;
+    }
+
+    .figure-box img {
+      max-width: 100%;
+      height: auto;
+      display: block;
+      margin: 0 auto;
+      border-radius: 4px;
+      background: #ffffff;
+    }
+
+    .img-sm { max-height: 175px; width: auto; }
+    .img-md { max-height: 215px; width: auto; }
+    .img-lg { max-height: 255px; width: auto; }
+
+    .figure-caption {
+      font-size: 7.9pt;
+      color: #475569;
+      margin-top: 6px;
+      font-style: italic;
+    }
+
+    .footer-note {
+      margin-top: 18px;
+      padding-top: 8px;
+      border-top: 1px solid #cbd5e1;
+      font-size: 7.6pt;
+      color: #64748b;
+      text-align: center;
+    }
+  </style>
+</head>
+<body>
+
+  <!-- BARRE D'ACTIONS RAPIDES -->
+  <div class="btn-bar no-print">
+    <button class="btn" onclick="window.print()">Imprimer en PDF (A4)</button>
+    <div>
+      <span class="meta-badge badge-primary">BTS CIEL 2</span>
+      <span class="meta-badge badge-teal">LoRa &amp; LoRaWAN</span>
+      <span class="meta-badge badge-orange">Fiche Bureau d'Études</span>
+    </div>
+  </div>
+
+  <!-- EN-TETE -->
+  <header>
+    <div class="super-title">BTS CIEL &bull; Option B : Électronique et Réseaux &bull; Enseignement Professionnel STI</div>
+    <h1>Synthèse Visuelle : Réseaux LoRa &amp; LoRaWAN pour l'IoT</h1>
+    <div class="subtitle">Architecture Réseau, Sécurité Cryptographique (AES-128, OTAA, Anti-Rejeu) &amp; Critères de Choix Bureau d'Études</div>
+    <div>
+      <span class="meta-badge badge-orange">Bande Libre 868 MHz (LPWAN)</span>
+      <span class="meta-badge badge-cyan">Architecture Étoile d'Étoiles</span>
+      <span class="meta-badge badge-purple">Double Sécurité AES-128</span>
+      <span class="meta-badge badge-success">Approche BE sans calcul</span>
+    </div>
+  </header>
+
+  <!-- SOMMAIRE -->
+  <nav class="toc-nav no-print">
+    <a href="#sec1"><span>1.</span> Architecture Réseau</a>
+    <a href="#sec2"><span>2.</span> Sécurité &amp; Activation</a>
+    <a href="#sec3"><span>3.</span> Classes &amp; Radio BE</a>
+    <a href="#sec4"><span>4.</span> Guide de Choix BE</a>
+  </nav>
+
+  <!-- ===================================================================== -->
+  <!-- 1. ARCHITECTURE D'UN RESEAU LORAWAN                                   -->
+  <!-- ===================================================================== -->
+  <h2 id="sec1">1. Structure d'un Réseau LoRaWAN (Étoile d'Étoiles)</h2>
+
+  <div class="callout callout-info">
+    <div class="callout-title">Ne pas confondre LoRa et LoRaWAN</div>
+    <strong>LoRa</strong> (<em>Long Range</em>) désigne uniquement la <strong>modulation radio</strong> (couche physique) en bande libre <strong>868 MHz</strong> en Europe, conçue pour les objets connectés (LPWAN : grande portée, faible débit, très faible consommation). <strong>LoRaWAN</strong> désigne le <strong>protocole réseau complet</strong> qui relie les capteurs aux serveurs applicatifs via Internet.
+  </div>
+
+  <div class="figure-box">
+    <img src="images/lora_architecture_globale.png" alt="Structure globale d'un réseau LoRaWAN" class="img-lg" />
+    <div class="figure-caption">Figure 1 : Chaîne de communication complète d'un réseau LoRaWAN, des capteurs (Devices) jusqu'à l'utilisateur final.</div>
+  </div>
+
+  <div class="grid-2">
+    <div class="visual-card card-orange">
+      <div class="visual-card-header" style="color:#c2410c;">
+        <span>1. Devices LoRa (Capteurs IoT)</span>
+        <span class="meta-badge badge-orange">Radio LoRa</span>
+      </div>
+      <ul class="kv-list">
+        <li><strong>Profil IoT :</strong> Faible consommation (pile/batterie), faible coût, petite taille et puissance de calcul réduite.</li>
+        <li><strong>Diffusion sans cible :</strong> Un capteur ne s'adresse pas à une Gateway précise &mdash; toutes les Gateways à portée captent sa trame.</li>
+        <li><strong>Flux principal :</strong> Majoritairement <strong>Uplink</strong> (capteur &rarr; serveur), mais <strong>Downlink</strong> possible (commandes).</li>
+      </ul>
+    </div>
+
+    <div class="visual-card card-blue">
+      <div class="visual-card-header" style="color:#0369a1;">
+        <span>2. Gateways (Passerelles)</span>
+        <span class="meta-badge badge-cyan">RF &harr; UDP/IP</span>
+      </div>
+      <ul class="kv-list">
+        <li><strong>Écoute simultanée :</strong> Reçoit sur <strong>8 canaux</strong> et sur <strong>6 Spreading Factors (SF7 à SF12)</strong> = 48 combinaisons en parallèle.</li>
+        <li><strong>Passerelle transparente :</strong> Encapsule la trame radio (payload en Base64 + métadonnées RSSI, SNR, SF, fréquence) en texte <strong>JSON sur UDP/IP (port 1700)</strong>.</li>
+        <li><strong>Identité :</strong> Chaque Gateway possède un identifiant unique <code>EUI</code> sur 64 bits.</li>
+      </ul>
+    </div>
+
+    <div class="visual-card card-indigo">
+      <div class="visual-card-header" style="color:#1d4ed8;">
+        <span>3. Network Server (Cœur Réseau)</span>
+        <span class="meta-badge badge-primary">Routage &amp; MIC</span>
+      </div>
+      <ul class="kv-list">
+        <li><strong>Dédoublonnage :</strong> Plusieurs Gateways peuvent relayer la même trame ; le Network Server ne conserve qu'un seul exemplaire.</li>
+        <li><strong>Authentification :</strong> Vérifie l'intégrité et l'origine de la trame grâce à la clé <code>NwkSKey</code> (sans pouvoir lire la mesure !).</li>
+        <li><strong>Pilotage :</strong> Sélectionne la meilleure Gateway pour le Downlink et optimise le débit radio (<strong>ADR</strong>).</li>
+      </ul>
+    </div>
+
+    <div class="visual-card card-teal">
+      <div class="visual-card-header" style="color:#0f766e;">
+        <span>4. Application Server &amp; App Web</span>
+        <span class="meta-badge badge-teal">Déchiffrement</span>
+      </div>
+      <ul class="kv-list">
+        <li><strong>Isolation :</strong> Sépare les flottes de capteurs par application métier.</li>
+        <li><strong>Déchiffrement :</strong> Décode les données utiles (<em>Frame Payload</em>) grâce à la clé <code>AppSKey</code>.</li>
+        <li><strong>Restitution utilisateur :</strong> Transfère les données vers votre application (Node-RED, base de données, serveur Web) en <strong>HTTP POST</strong> ou <strong>MQTT</strong>.</li>
+      </ul>
+    </div>
+  </div>
+
+  <div class="figure-box">
+    <img src="images/lora_gateway_passerelle.png" alt="Rôle de passerelle LoRa vers Internet de la Gateway" class="img-sm" />
+    <div class="figure-caption">Figure 2 : La Gateway assure uniquement la conversion entre la modulation radio LoRa et le réseau IP (UDP port 1700, format JSON).</div>
+  </div>
+
+  <!-- ===================================================================== -->
+  <!-- 2. SECURITE LORAWAN, ACTIVATION & ANTI-REJEU                          -->
+  <!-- ===================================================================== -->
+  <h2 id="sec2" class="page-break">2. Sécurité LoRaWAN : Double Protection, Activation &amp; Anti-Rejeu</h2>
+
+  <h3>2.1. Séparation des Clés AES-128 : Authentification (Réseau) vs Chiffrement (Application)</h3>
+  <p>LoRaWAN applique une <strong>double sécurité cryptographique AES-128 bits</strong> qui cloisonne strictement le rôle de l'opérateur réseau et celui du propriétaire des données :</p>
+
+  <div class="grid-2">
+    <div class="figure-box" style="margin:0;">
+      <img src="images/lora_authentification_mic.png" alt="Authentification MIC avec le Network Server via NwkSKey" class="img-md" />
+      <div class="figure-caption">Figure 3 : <strong>Authentification &amp; Intégrité</strong> (Device &harr; Network Server). La clé <code>NwkSKey</code> génère le champ <strong>MIC</strong> (<em>Message Integrity Code</em>) vérifié à la réception.</div>
+    </div>
+
+    <div class="figure-box" style="margin:0;">
+      <img src="images/lora_chiffrement_appskey.png" alt="Chiffrement des données avec AppSKey vers l'Application Server" class="img-md" />
+      <div class="figure-caption">Figure 4 : <strong>Confidentialité bout-en-bout</strong> (Device &harr; Application Server). La clé <code>AppSKey</code> chiffre la donnée utile : ni la Gateway ni le Network Server ne peuvent la lire.</div>
+    </div>
+  </div>
+
+  <div class="figure-box">
+    <img src="images/lora_trame_securisee.png" alt="Construction de la trame LoRaWAN : chiffrement puis authentification" class="img-md" />
+    <div class="figure-caption">Figure 5 : Construction combinée d'une trame LoRaWAN : les données sont d'abord chiffrées (<code>AppSKey</code>), puis l'ensemble Entête + Données chiffrées est signé par le <strong>MIC</strong> (<code>NwkSKey</code>).</div>
+  </div>
+
+  <h3>2.2. Enrôlement des Devices : ABP vs OTAA</h3>
+  <p>Pour communiquer, un capteur et les serveurs doivent partager <strong>3 éléments de session</strong> : <code>DevAddr</code> (adresse 32 bits), <code>NwkSKey</code> et <code>AppSKey</code>. Deux méthodes d'activation existent :</p>
+
+  <div class="grid-2">
+    <div class="visual-card card-orange">
+      <div class="visual-card-header" style="color:#c2410c;">
+        <span>ABP : Activation By Personalization</span>
+        <span class="meta-badge badge-warning">Tests &amp; Labo</span>
+      </div>
+      <div class="figure-box" style="padding:6px; margin:6px 0;">
+        <img src="images/lora_activation_abp.png" alt="Activation ABP en LoRaWAN" class="img-sm" />
+      </div>
+      <ul class="kv-list">
+        <li><strong>Principe :</strong> <code>DevAddr</code>, <code>NwkSKey</code> et <code>AppSKey</code> sont déjà programmés en dur dans le capteur et saisis sur les serveurs.</li>
+        <li><strong>Atout BE :</strong> Mise en route immédiate, aucune phase de négociation radio.</li>
+        <li><strong>Limite :</strong> Clés statiques à vie &rarr; sécurité réduite, sensible aux redémarrages (compteur remis à zéro).</li>
+      </ul>
+    </div>
+
+    <div class="visual-card card-green">
+      <div class="visual-card-header" style="color:#15803d;">
+        <span>OTAA : Over The Air Activation</span>
+        <span class="meta-badge badge-success">Recommandé Prod</span>
+      </div>
+      <div class="figure-box" style="padding:6px; margin:6px 0;">
+        <img src="images/lora_activation_otaa.png" alt="Activation OTAA en LoRaWAN" class="img-sm" />
+      </div>
+      <ul class="kv-list">
+        <li><strong>Identifiants de départ :</strong> <code>DevEUI</code> (64 bits, équivalent @MAC), <code>AppEUI</code> / <code>JoinEUI</code> (64 bits) et clé secrète <code>AppKey</code> (128 bits, partagée avec le serveur).</li>
+        <li><strong>Principe :</strong> Lors d'une <em>Join Request</em>, le capteur et le serveur négocient et dérivent dynamiquement <code>DevAddr</code>, <code>NwkSKey</code> et <code>AppSKey</code>.</li>
+        <li><strong>Atout BE :</strong> Clés renouvelées à chaque session &amp; réinitialisation propre des compteurs.</li>
+      </ul>
+    </div>
+  </div>
+
+  <h3>2.3. Attaque par REPLAY (Rejeu) &amp; Parade par Frame Counter</h3>
+
+  <div class="grid-2" style="align-items: center;">
+    <div class="figure-box" style="margin:0;">
+      <img src="images/lora_attaque_replay.png" alt="Schéma d'une attaque par REPLAY en LoRaWAN" class="img-md" />
+      <div class="figure-caption">Figure 6 : Attaque par <strong>REPLAY</strong> : (1) écoute d'une trame chiffrée valide, puis (2) réémission ultérieure par mimétisme.</div>
+    </div>
+
+    <div class="visual-card card-red">
+      <div class="visual-card-header" style="color:#b91c1c;">
+        <span>Menace &amp; Contre-mesure LoRaWAN</span>
+        <span class="meta-badge badge-alert">Cybersécurité</span>
+      </div>
+      <ul class="kv-list">
+        <li><strong>Le risque :</strong> Même sans déchiffrer la trame, un attaquant peut la réémettre plus tard pour rejouer une action (ex. ouvrir une vanne ou fausser une alerte).</li>
+        <li><strong>Parade (Frame Counter) :</strong> Chaque trame contient un compteur <code>FCnt</code> (16/32 bits). Le serveur n'accepte une trame que si <code>FCnt</code> reçu <strong>&gt;</strong> <code>FCnt</code> précédent.</li>
+        <li><strong>Piège classique au redémarrage en ABP :</strong> Le microcontrôleur repart à <code>FCnt = 0</code> et ses trames sont rejetées !</li>
+      </ul>
+      <div class="callout callout-warning" style="margin:6px 0 0 0; padding:6px 9px;">
+        <strong>3 solutions face au reboot :</strong> (1) Utiliser <strong>OTAA</strong> (compteur réinitialisé à chaque session) ; (2) Sauvegarder <code>FCnt</code> en mémoire non volatile (Flash/EEPROM) ; (3) Désactiver <em>Frame Counter Check</em> <strong>uniquement en test labo</strong> (faille de sécurité !).
+      </div>
+    </div>
+  </div>
+
+  <!-- ===================================================================== -->
+  <!-- 3. CLASSES LORAWAN & COMPROMIS RADIO (APPROCHE QUALITATIVE BE)        -->
+  <!-- ===================================================================== -->
+  <h2 id="sec3" class="page-break">3. Classes d'Écoute &amp; Compromis Radio (Sans Calcul)</h2>
+
+  <h3>3.1. Les 3 Classes de Devices LoRaWAN : Autonomie vs Réactivité Downlink</h3>
+
+  <div class="figure-box">
+    <svg viewBox="0 0 920 225" width="100%" height="auto" xmlns="http://www.w3.org/2000/svg">
+      <rect x="0" y="0" width="920" height="225" rx="8" fill="#ffffff" stroke="#cbd5e1" stroke-width="1.4"/>
+      <text x="460" y="21" font-family="'Segoe UI', sans-serif" font-size="11.5" font-weight="800" fill="#0b3c5d" text-anchor="middle">
+        COMPARATIF VISUEL DES 3 CLASSES LORAWAN (ÉMISSION UPLINK vs FENÊTRES D'ÉCOUTE DOWNLINK)
+      </text>
+
+      <!-- CLASSE A -->
+      <g transform="translate(14, 34)">
+        <rect x="0" y="0" width="892" height="54" rx="6" fill="#f0fdf4" stroke="#16a34a" stroke-width="1.2"/>
+        <rect x="8" y="8" width="138" height="38" rx="4" fill="#16a34a"/>
+        <text x="77" y="24" fill="#ffffff" font-family="'Segoe UI', sans-serif" font-size="9.5" font-weight="bold" text-anchor="middle">CLASSE A (All)</text>
+        <text x="77" y="38" fill="#dcfce7" font-family="'Segoe UI', sans-serif" font-size="7.5" text-anchor="middle">Pile &bull; Autonomie max</text>
+
+        <!-- Timeline Classe A -->
+        <line x1="164" y1="35" x2="645" y2="35" stroke="#64748b" stroke-width="1.4"/>
+        <rect x="176" y="13" width="66" height="22" rx="3" fill="#22c55e"/>
+        <text x="209" y="27" fill="#ffffff" font-family="'Segoe UI', sans-serif" font-size="8" font-weight="bold" text-anchor="middle">TX Uplink</text>
+        <text x="268" y="27" fill="#64748b" font-family="'Segoe UI', sans-serif" font-size="7.2" text-anchor="middle">1 s</text>
+        <rect x="290" y="13" width="44" height="22" rx="3" fill="#0284c7"/>
+        <text x="312" y="27" fill="#ffffff" font-family="'Segoe UI', sans-serif" font-size="7.8" font-weight="bold" text-anchor="middle">RX1</text>
+        <text x="355" y="27" fill="#64748b" font-family="'Segoe UI', sans-serif" font-size="7.2" text-anchor="middle">2 s</text>
+        <rect x="374" y="13" width="44" height="22" rx="3" fill="#0369a1"/>
+        <text x="396" y="27" fill="#ffffff" font-family="'Segoe UI', sans-serif" font-size="7.8" font-weight="bold" text-anchor="middle">RX2</text>
+        <rect x="430" y="18" width="205" height="14" rx="3" fill="#e2e8f0"/>
+        <text x="532" y="28" fill="#475569" font-family="'Segoe UI', sans-serif" font-size="7.5" font-weight="bold" text-anchor="middle">Sommeil profond (Deep Sleep &bull; &mu;A)</text>
+
+        <!-- Bilan droite -->
+        <text x="662" y="23" fill="#166534" font-family="'Segoe UI', sans-serif" font-size="8.2" font-weight="bold">Obligatoire sur tous les Devices.</text>
+        <text x="662" y="38" fill="#334155" font-family="'Segoe UI', sans-serif" font-size="7.8">Ne reçoit qu'après avoir émis (capteurs).</text>
+      </g>
+
+      <!-- CLASSE B -->
+      <g transform="translate(14, 96)">
+        <rect x="0" y="0" width="892" height="54" rx="6" fill="#fffbeb" stroke="#d97706" stroke-width="1.2"/>
+        <rect x="8" y="8" width="138" height="38" rx="4" fill="#d97706"/>
+        <text x="77" y="24" fill="#ffffff" font-family="'Segoe UI', sans-serif" font-size="9.5" font-weight="bold" text-anchor="middle">CLASSE B (Beacon)</text>
+        <text x="77" y="38" fill="#fef3c7" font-family="'Segoe UI', sans-serif" font-size="7.5" text-anchor="middle">Batterie &bull; Compromis</text>
+
+        <!-- Timeline Classe B -->
+        <line x1="164" y1="35" x2="645" y2="35" stroke="#64748b" stroke-width="1.4"/>
+        <rect x="176" y="13" width="54" height="22" rx="3" fill="#f59e0b"/>
+        <text x="203" y="27" fill="#ffffff" font-family="'Segoe UI', sans-serif" font-size="7.8" font-weight="bold" text-anchor="middle">Beacon</text>
+        <rect x="255" y="13" width="46" height="22" rx="3" fill="#0284c7"/>
+        <text x="278" y="27" fill="#ffffff" font-family="'Segoe UI', sans-serif" font-size="7.5" font-weight="bold" text-anchor="middle">RX Slot</text>
+        <rect x="330" y="13" width="46" height="22" rx="3" fill="#0284c7"/>
+        <text x="353" y="27" fill="#ffffff" font-family="'Segoe UI', sans-serif" font-size="7.5" font-weight="bold" text-anchor="middle">RX Slot</text>
+        <rect x="405" y="13" width="54" height="22" rx="3" fill="#f59e0b"/>
+        <text x="432" y="27" fill="#ffffff" font-family="'Segoe UI', sans-serif" font-size="7.8" font-weight="bold" text-anchor="middle">Beacon</text>
+        <rect x="486" y="13" width="46" height="22" rx="3" fill="#0284c7"/>
+        <text x="509" y="27" fill="#ffffff" font-family="'Segoe UI', sans-serif" font-size="7.5" font-weight="bold" text-anchor="middle">RX Slot</text>
+        <rect x="562" y="13" width="66" height="22" rx="3" fill="#22c55e"/>
+        <text x="595" y="27" fill="#ffffff" font-family="'Segoe UI', sans-serif" font-size="7.8" font-weight="bold" text-anchor="middle">TX Uplink</text>
+
+        <!-- Bilan droite -->
+        <text x="662" y="23" fill="#92400e" font-family="'Segoe UI', sans-serif" font-size="8.2" font-weight="bold">Balises de synchro + créneaux RX fixes.</text>
+        <text x="662" y="38" fill="#334155" font-family="'Segoe UI', sans-serif" font-size="7.8">Joignable périodiquement (vannes, volets).</text>
+      </g>
+
+      <!-- CLASSE C -->
+      <g transform="translate(14, 158)">
+        <rect x="0" y="0" width="892" height="54" rx="6" fill="#fef2f2" stroke="#dc2626" stroke-width="1.2"/>
+        <rect x="8" y="8" width="138" height="38" rx="4" fill="#dc2626"/>
+        <text x="77" y="24" fill="#ffffff" font-family="'Segoe UI', sans-serif" font-size="9.5" font-weight="bold" text-anchor="middle">CLASSE C (Continuous)</text>
+        <text x="77" y="38" fill="#fee2e2" font-family="'Segoe UI', sans-serif" font-size="7.5" text-anchor="middle">Secteur 230 V &bull; Temps réel</text>
+
+        <!-- Timeline Classe C -->
+        <line x1="164" y1="35" x2="645" y2="35" stroke="#64748b" stroke-width="1.4"/>
+        <rect x="176" y="13" width="62" height="22" rx="3" fill="#22c55e"/>
+        <text x="207" y="27" fill="#ffffff" font-family="'Segoe UI', sans-serif" font-size="8" font-weight="bold" text-anchor="middle">TX Uplink</text>
+        <rect x="242" y="13" width="322" height="22" rx="3" fill="#0284c7"/>
+        <text x="403" y="27" fill="#ffffff" font-family="'Segoe UI', sans-serif" font-size="8.2" font-weight="bold" text-anchor="middle">Écoute RX permanente (Réception Downlink immédiate)</text>
+        <rect x="568" y="13" width="62" height="22" rx="3" fill="#22c55e"/>
+        <text x="599" y="27" fill="#ffffff" font-family="'Segoe UI', sans-serif" font-size="8" font-weight="bold" text-anchor="middle">TX Uplink</text>
+
+        <!-- Bilan droite -->
+        <text x="662" y="23" fill="#991b1b" font-family="'Segoe UI', sans-serif" font-size="8.2" font-weight="bold">Très énergivore (alimentation secteur).</text>
+        <text x="662" y="38" fill="#334155" font-family="'Segoe UI', sans-serif" font-size="7.8">Actionneurs temps réel (éclairage public).</text>
+      </g>
+    </svg>
+    <div class="figure-caption">Figure 7 : Les 3 classes LoRaWAN déterminent le compromis entre durée de vie de la batterie et latence des commandes descendantes (Downlink).</div>
+  </div>
+
+  <div class="callout callout-info">
+    <div class="callout-title">Règle d'or du Downlink</div>
+    La Gateway choisie par le Network Server pour envoyer un message descendant est toujours <strong>celle qui a reçu le dernier Uplink du capteur</strong>. Conséquence : <strong>un capteur qui n'a jamais émis est injoignable</strong>, quelle que soit sa classe (A, B ou C).
+  </div>
+
+  <h3>3.2. Compromis Radio Qualitatif : Spreading Factor (SF7 &rarr; SF12) &amp; Duty Cycle 1%</h3>
+
+  <div class="figure-box">
+    <svg viewBox="0 0 920 175" width="100%" height="auto" xmlns="http://www.w3.org/2000/svg">
+      <rect x="0" y="0" width="920" height="175" rx="8" fill="#ffffff" stroke="#cbd5e1" stroke-width="1.4"/>
+
+      <!-- GAUCHE : BALANCE SF7 -> SF12 -->
+      <g transform="translate(14, 12)">
+        <rect x="0" y="0" width="540" height="151" rx="6" fill="#f8fafc" stroke="#0284c7" stroke-width="1.2"/>
+        <rect x="0" y="0" width="540" height="23" rx="6" fill="#e0f2fe"/>
+        <text x="270" y="15" fill="#0369a1" font-family="'Segoe UI', sans-serif" font-size="9.2" font-weight="bold" text-anchor="middle">
+          CURSEUR SPREADING FACTOR (SF7 &rarr; SF12) SUR CANAL 125 kHz
+        </text>
+
+        <!-- Badges SF -->
+        <rect x="14" y="32" width="76" height="22" rx="4" fill="#16a34a"/>
+        <text x="52" y="47" fill="#ffffff" font-family="Consolas, monospace" font-size="9" font-weight="bold" text-anchor="middle">SF7 (DR5)</text>
+        <rect x="102" y="32" width="76" height="22" rx="4" fill="#65a30d"/>
+        <text x="140" y="47" fill="#ffffff" font-family="Consolas, monospace" font-size="9" font-weight="bold" text-anchor="middle">SF8 (DR4)</text>
+        <rect x="190" y="32" width="76" height="22" rx="4" fill="#ca8a04"/>
+        <text x="228" y="47" fill="#ffffff" font-family="Consolas, monospace" font-size="9" font-weight="bold" text-anchor="middle">SF9 (DR3)</text>
+        <rect x="278" y="32" width="76" height="22" rx="4" fill="#ea580c"/>
+        <text x="316" y="47" fill="#ffffff" font-family="Consolas, monospace" font-size="9" font-weight="bold" text-anchor="middle">SF10 (DR2)</text>
+        <rect x="366" y="32" width="76" height="22" rx="4" fill="#dc2626"/>
+        <text x="404" y="47" fill="#ffffff" font-family="Consolas, monospace" font-size="9" font-weight="bold" text-anchor="middle">SF11 (DR1)</text>
+        <rect x="454" y="32" width="74" height="22" rx="4" fill="#991b1b"/>
+        <text x="491" y="47" fill="#ffffff" font-family="Consolas, monospace" font-size="9" font-weight="bold" text-anchor="middle">SF12 (DR0)</text>
+
+        <!-- Flèches qualitatives -->
+        <rect x="14" y="64" width="514" height="20" rx="4" fill="#dcfce7"/>
+        <text x="24" y="77" fill="#166534" font-family="'Segoe UI', sans-serif" font-size="8" font-weight="bold">&larr; Plus rapide (Débit max) &bull; Payload jusqu'à 222 o &bull; Trame courte = Batterie préservée</text>
+
+        <rect x="14" y="90" width="514" height="20" rx="4" fill="#fee2e2"/>
+        <text x="518" y="103" fill="#991b1b" font-family="'Segoe UI', sans-serif" font-size="8" font-weight="bold" text-anchor="end">Portée max &bull; Décode sous le bruit (SNR &minus;20 dB = bruit 100&times; &gt; signal) &bull; Payload max 51 o &rarr;</text>
+
+        <!-- Note ADR -->
+        <text x="270" y="128" fill="#0f172a" font-family="'Segoe UI', sans-serif" font-size="8" font-weight="bold" text-anchor="middle">
+          Règle BE : Chaque cran de SF (+1) double le temps d'émission radio (et divise l'autonomie par ~2).
+        </text>
+        <text x="270" y="142" fill="#475569" font-family="'Segoe UI', sans-serif" font-size="7.6" text-anchor="middle">
+          En LoRaWAN, activer l'ADR (Adaptive Data Rate) laisse le serveur descendre au SF le plus économe possible.
+        </text>
+      </g>
+
+      <!-- DROITE : DUTY CYCLE 1% -->
+      <g transform="translate(568, 12)">
+        <rect x="0" y="0" width="338" height="151" rx="6" fill="#fff7ed" stroke="#ea580c" stroke-width="1.2"/>
+        <rect x="0" y="0" width="338" height="23" rx="6" fill="#ffedd5"/>
+        <text x="169" y="15" fill="#c2410c" font-family="'Segoe UI', sans-serif" font-size="9.2" font-weight="bold" text-anchor="middle">
+          CONTRAINTE LÉGALE 868 MHz : DUTY CYCLE 1%
+        </text>
+
+        <!-- Barre 1% TX / 99% Silence -->
+        <rect x="16" y="38" width="14" height="24" rx="2" fill="#ea580c"/>
+        <rect x="32" y="38" width="290" height="24" rx="2" fill="#e2e8f0" stroke="#cbd5e1"/>
+        <text x="177" y="54" fill="#475569" font-family="'Segoe UI', sans-serif" font-size="8.2" font-weight="bold" text-anchor="middle">99% de silence obligatoire</text>
+        <text x="23" y="75" fill="#c2410c" font-family="'Segoe UI', sans-serif" font-size="7.5" font-weight="bold" text-anchor="middle">1% TX</text>
+
+        <text x="16" y="96" fill="#7c2d12" font-family="'Segoe UI', sans-serif" font-size="8.1" font-weight="bold">&bull; Maximum ~36 secondes d'émission par heure.</text>
+        <text x="16" y="113" fill="#334155" font-family="'Segoe UI', sans-serif" font-size="8">&bull; Inadapté au streaming, à la vidéo ou aux gros fichiers.</text>
+        <text x="16" y="130" fill="#15803d" font-family="'Segoe UI', sans-serif" font-size="8" font-weight="bold">&bull; Idéal : quelques octets toutes les 5 à 30 minutes</text>
+        <text x="24" y="143" fill="#475569" font-family="'Segoe UI', sans-serif" font-size="7.6">(température, niveau de cuve, compteur, alerte GPS).</text>
+      </g>
+    </svg>
+    <div class="figure-caption">Figure 8 : Impact qualitatif du Spreading Factor (portée vs vitesse/batterie) et règle réglementaire du Duty Cycle 1% en Europe.</div>
+  </div>
+
+  <!-- ===================================================================== -->
+  <!-- 4. CHOIX D'ARCHITECTURE POUR UN BUREAU D'ETUDES (BE)                  -->
+  <!-- ===================================================================== -->
+  <h2 id="sec4" class="page-break">4. Guide de Choix pour un Bureau d'Études (BE)</h2>
+
+  <h3>4.1. Quelle Infrastructure Réseau Choisir ?</h3>
+  <table>
+    <thead>
+      <tr>
+        <th style="width: 19%;">Architecture</th>
+        <th style="width: 24%;">Exemples &amp; Matériel</th>
+        <th style="width: 28%;">Avantages Clés</th>
+        <th style="width: 29%;">Limites &amp; Cas d'Usage BE</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><strong>LoRa P2P</strong><br><span class="meta-badge badge-orange">Sans serveur</span></td>
+        <td>2 modules LoRa (SX1262, RN2483, Grove E5)</td>
+        <td>Zéro abonnement, zéro passerelle, latence faible, mise en œuvre directe.</td>
+        <td>Pas d'accès Internet natif, sécurité à coder soi-même. <em>Usage : liaison locale point-à-point (1 à 5 km).</em></td>
+      </tr>
+      <tr>
+        <td><strong>LoRaWAN Opéré</strong><br><span class="meta-badge badge-primary">Clé en main</span></td>
+        <td>Orange, Objenious (Bouygues)</td>
+        <td>Couverture nationale gérée par l'opérateur, SLA industriel, rien à héberger.</td>
+        <td>Abonnement annuel par capteur, dépendance opérateur. <em>Usage : flotte mobile ou nationale.</em></td>
+      </tr>
+      <tr>
+        <td><strong>LoRaWAN Privé Cloud</strong><br><span class="meta-badge badge-cyan">Collaboratif</span></td>
+        <td><strong>The Things Network (TTN)</strong> + Gateway personnelle</td>
+        <td>Gratuit, Open Source, prise en main rapide, outils d'intégration prêts (MQTT/HTTP).</td>
+        <td>Partage communautaire de la Gateway, dépendance Internet/Cloud. <em>Usage : prototypes, TP, campus.</em></td>
+      </tr>
+      <tr>
+        <td><strong>LoRaWAN Privé Autonome</strong><br><span class="meta-badge badge-success">Souverain</span></td>
+        <td><strong>ChirpStack / LoRaServer</strong> sur Raspberry Pi ou serveur local</td>
+        <td>Maîtrise totale des données, fonctionnement possible en réseau local fermé, zéro abonnement.</td>
+        <td>Maintenance serveur et Gateway à assurer. <em>Usage : site industriel, usine, données sensibles.</em></td>
+      </tr>
+    </tbody>
+  </table>
+
+  <h3>4.2. Interfaçage vers votre Application : HTTP POST vs MQTT</h3>
+  <div class="grid-2">
+    <div class="visual-card card-blue">
+      <div class="visual-card-header" style="color:#0369a1;">
+        <span>HTTP POST (Webhook / REST)</span>
+        <span class="meta-badge badge-cyan">Client / Serveur</span>
+      </div>
+      <ul class="kv-list">
+        <li><strong>Principe :</strong> L'Application Server (ex. TTN) envoie une requête <code>HTTP POST</code> (JSON) vers l'URL de votre serveur Web dès qu'une mesure arrive.</li>
+        <li><strong>Usage BE :</strong> Idéal si vous disposez déjà d'un <strong>serveur Web / API PHP / Base SQL</strong> exposé sur Internet.</li>
+      </ul>
+    </div>
+
+    <div class="visual-card card-purple">
+      <div class="visual-card-header" style="color:#6b21a8;">
+        <span>MQTT (Publisher / Subscriber)</span>
+        <span class="meta-badge badge-purple">TCP 1883 &bull; Temps réel</span>
+      </div>
+      <ul class="kv-list">
+        <li><strong>Principe :</strong> Votre application s'abonne (<em>Subscribe</em>) à des <strong>Topics</strong> hiérarchiques sur un <strong>Broker</strong> (ex. <code>AppID/devices/+/up</code>) avec choix de <strong>QoS (0, 1, 2)</strong>.</li>
+        <li><strong>Usage BE :</strong> Référence IoT pour <strong>Node-RED</strong>, tableaux de bord temps réel et multiples abonnés sans exposer de serveur public.</li>
+      </ul>
+    </div>
+  </div>
+
+  <h3>4.3. Arbre de Décision Rapide en Projet BTS CIEL</h3>
+  <div class="figure-box">
+    <svg viewBox="0 0 920 215" width="100%" height="auto" xmlns="http://www.w3.org/2000/svg">
+      <defs>
+        <marker id="arr-be" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+          <path d="M 0 0 L 10 5 L 0 10 z" fill="#475569"/>
+        </marker>
+      </defs>
+      <rect x="0" y="0" width="920" height="215" rx="8" fill="#ffffff" stroke="#cbd5e1" stroke-width="1.4"/>
+      <text x="460" y="20" font-family="'Segoe UI', sans-serif" font-size="11" font-weight="800" fill="#0b3c5d" text-anchor="middle">
+        FEUILLE DE ROUTE BUREAU D'ÉTUDES : 4 DÉCISIONS POUR DIMENSIONNER SON PROJET LORA
+      </text>
+
+      <!-- ETAPE 1 : P2P vs LoRaWAN -->
+      <g transform="translate(16, 34)">
+        <rect x="0" y="0" width="204" height="168" rx="6" fill="#fff7ed" stroke="#ea580c" stroke-width="1.2"/>
+        <rect x="0" y="0" width="204" height="24" rx="6" fill="#ffedd5"/>
+        <text x="102" y="16" fill="#c2410c" font-family="'Segoe UI', sans-serif" font-size="8.6" font-weight="bold" text-anchor="middle">1. Besoin d'Internet / Cloud ?</text>
+
+        <rect x="12" y="36" width="180" height="46" rx="5" fill="#ffffff" stroke="#fdba74"/>
+        <text x="102" y="53" fill="#c2410c" font-family="'Segoe UI', sans-serif" font-size="8.3" font-weight="bold" text-anchor="middle">NON (Liaison locale simple)</text>
+        <text x="102" y="69" fill="#334155" font-family="'Segoe UI', sans-serif" font-size="7.8" text-anchor="middle">&rarr; Choisir LoRa P2P</text>
+
+        <rect x="12" y="96" width="180" height="58" rx="5" fill="#ffffff" stroke="#0284c7"/>
+        <text x="102" y="113" fill="#0369a1" font-family="'Segoe UI', sans-serif" font-size="8.3" font-weight="bold" text-anchor="middle">OUI (Supervision / Multi-capteurs)</text>
+        <text x="102" y="129" fill="#334155" font-family="'Segoe UI', sans-serif" font-size="7.8" text-anchor="middle">&rarr; Choisir LoRaWAN</text>
+        <text x="102" y="143" fill="#64748b" font-family="'Segoe UI', sans-serif" font-size="7.2" text-anchor="middle">(Opéré, TTN ou ChirpStack local)</text>
+      </g>
+
+      <line x1="222" y1="118" x2="240" y2="118" stroke="#475569" stroke-width="1.8" marker-end="url(#arr-be)"/>
+
+      <!-- ETAPE 2 : CLASSE -->
+      <g transform="translate(244, 34)">
+        <rect x="0" y="0" width="204" height="168" rx="6" fill="#f0fdf4" stroke="#16a34a" stroke-width="1.2"/>
+        <rect x="0" y="0" width="204" height="24" rx="6" fill="#dcfce7"/>
+        <text x="102" y="16" fill="#166534" font-family="'Segoe UI', sans-serif" font-size="8.6" font-weight="bold" text-anchor="middle">2. Énergie &amp; Downlink ?</text>
+
+        <rect x="12" y="34" width="180" height="36" rx="5" fill="#ffffff" stroke="#86efac"/>
+        <text x="102" y="49" fill="#15803d" font-family="'Segoe UI', sans-serif" font-size="8" font-weight="bold" text-anchor="middle">Capteur sur pile (2 à 10 ans)</text>
+        <text x="102" y="62" fill="#334155" font-family="'Segoe UI', sans-serif" font-size="7.6" text-anchor="middle">&rarr; Classe A (défaut)</text>
+
+        <rect x="12" y="78" width="180" height="36" rx="5" fill="#ffffff" stroke="#fcd34d"/>
+        <text x="102" y="93" fill="#92400e" font-family="'Segoe UI', sans-serif" font-size="8" font-weight="bold" text-anchor="middle">Batterie + Ordres périodiques</text>
+        <text x="102" y="106" fill="#334155" font-family="'Segoe UI', sans-serif" font-size="7.6" text-anchor="middle">&rarr; Classe B (Beacon)</text>
+
+        <rect x="12" y="122" width="180" height="36" rx="5" fill="#ffffff" stroke="#fca5a5"/>
+        <text x="102" y="137" fill="#b91c1c" font-family="'Segoe UI', sans-serif" font-size="8" font-weight="bold" text-anchor="middle">Secteur 230 V + Temps réel</text>
+        <text x="102" y="150" fill="#334155" font-family="'Segoe UI', sans-serif" font-size="7.6" text-anchor="middle">&rarr; Classe C (Écoute continue)</text>
+      </g>
+
+      <line x1="450" y1="118" x2="468" y2="118" stroke="#475569" stroke-width="1.8" marker-end="url(#arr-be)"/>
+
+      <!-- ETAPE 3 : SECURITE -->
+      <g transform="translate(472, 34)">
+        <rect x="0" y="0" width="204" height="168" rx="6" fill="#f5f3ff" stroke="#7c3aed" stroke-width="1.2"/>
+        <rect x="0" y="0" width="204" height="24" rx="6" fill="#ede9fe"/>
+        <text x="102" y="16" fill="#5b21b6" font-family="'Segoe UI', sans-serif" font-size="8.6" font-weight="bold" text-anchor="middle">3. Sécurité &amp; Activation ?</text>
+
+        <rect x="12" y="36" width="180" height="52" rx="5" fill="#ffffff" stroke="#c4b5fd"/>
+        <text x="102" y="52" fill="#5b21b6" font-family="'Segoe UI', sans-serif" font-size="8.2" font-weight="bold" text-anchor="middle">Prototype rapide sur table</text>
+        <text x="102" y="66" fill="#334155" font-family="'Segoe UI', sans-serif" font-size="7.6" text-anchor="middle">&rarr; ABP (clés fixes)</text>
+        <text x="102" y="79" fill="#92400e" font-family="'Segoe UI', sans-serif" font-size="7" text-anchor="middle">Attention au Frame Counter au reboot</text>
+
+        <rect x="12" y="98" width="180" height="56" rx="5" fill="#ffffff" stroke="#16a34a"/>
+        <text x="102" y="114" fill="#15803d" font-family="'Segoe UI', sans-serif" font-size="8.2" font-weight="bold" text-anchor="middle">Déploiement terrain / Industrie</text>
+        <text x="102" y="129" fill="#334155" font-family="'Segoe UI', sans-serif" font-size="7.6" text-anchor="middle">&rarr; OTAA obligatoire</text>
+        <text x="102" y="143" fill="#475569" font-family="'Segoe UI', sans-serif" font-size="7" text-anchor="middle">+ Frame Counter Check actif</text>
+      </g>
+
+      <line x1="678" y1="118" x2="696" y2="118" stroke="#475569" stroke-width="1.8" marker-end="url(#arr-be)"/>
+
+      <!-- ETAPE 4 : INTEGRATION -->
+      <g transform="translate(700, 34)">
+        <rect x="0" y="0" width="204" height="168" rx="6" fill="#f0f9ff" stroke="#0284c7" stroke-width="1.2"/>
+        <rect x="0" y="0" width="204" height="24" rx="6" fill="#e0f2fe"/>
+        <text x="102" y="16" fill="#0369a1" font-family="'Segoe UI', sans-serif" font-size="8.6" font-weight="bold" text-anchor="middle">4. Collecte Applicative ?</text>
+
+        <rect x="12" y="36" width="180" height="52" rx="5" fill="#ffffff" stroke="#7dd3fc"/>
+        <text x="102" y="52" fill="#0369a1" font-family="'Segoe UI', sans-serif" font-size="8.2" font-weight="bold" text-anchor="middle">Dashboard / Node-RED / IoT</text>
+        <text x="102" y="67" fill="#334155" font-family="'Segoe UI', sans-serif" font-size="7.6" text-anchor="middle">&rarr; MQTT (Broker + Topics)</text>
+        <text x="102" y="80" fill="#64748b" font-family="'Segoe UI', sans-serif" font-size="7" text-anchor="middle">Push temps réel, QoS 0/1/2</text>
+
+        <rect x="12" y="98" width="180" height="56" rx="5" fill="#ffffff" stroke="#7dd3fc"/>
+        <text x="102" y="114" fill="#0369a1" font-family="'Segoe UI', sans-serif" font-size="8.2" font-weight="bold" text-anchor="middle">Serveur Web / API existante</text>
+        <text x="102" y="129" fill="#334155" font-family="'Segoe UI', sans-serif" font-size="7.6" text-anchor="middle">&rarr; HTTP POST (JSON)</text>
+        <text x="102" y="143" fill="#64748b" font-family="'Segoe UI', sans-serif" font-size="7" text-anchor="middle">Webhook vers script PHP/Python</text>
+      </g>
+    </svg>
+    <div class="figure-caption">Figure 9 : Arbre de décision synthétique pour orienter les choix matériels, réseau et sécurité d'un projet IoT en BTS CIEL.</div>
+  </div>
+
+  <div class="callout callout-success">
+    <div class="callout-title">Check-list Mémo du Technicien BE avant validation</div>
+    <strong>1.</strong> Vérifier que le besoin correspond au LPWAN (quelques octets espacés de plusieurs minutes, pas de temps réel continu). &bull;
+    <strong>2.</strong> Garder un payload compact en binaire (ne pas envoyer de texte JSON sur la radio LoRa !). &bull;
+    <strong>3.</strong> Activer <strong>OTAA + Frame Counter Check + ADR</strong> en production. &bull;
+    <strong>4.</strong> Tester la couverture réelle sur site (ex. <em>TTN Mapper</em> ou relevé RSSI/SNR) et déporter l'antenne hors des coffrets métalliques.
+  </div>
+
+  <div class="footer-note">
+    Synthèse pédagogique BTS CIEL Option B &mdash; Basée sur le cours LoRa / LoRaWAN de Sylvain Montagny (Université Savoie Mont Blanc, v4.0).
+  </div>
+
+</body>
+</html>
