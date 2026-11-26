@@ -490,6 +490,7 @@
     </div>
   </header>
 
+<<<<<<< Updated upstream
   <!-- SOMMAIRE INTERACTIF -->
   <nav class="toc-nav no-print">
     <a href="#sec1"><span>1.</span> Bandes ISM 868 MHz vs 2,4 GHz &amp; Antennes</a>
@@ -504,6 +505,13 @@
   <!-- 1. FREQUENCES, ANTENNES & COMPORTEMENT EN ATELIER (ISM 868 MHz vs 2.4 GHz) -->
   <!-- ========================================================================= -->
   <h2 id="sec1">1. Bandes ISM (868 MHz vs 2,4 GHz), Antennes &amp; Obstacles d'Atelier</h2>
+=======
+
+  <!-- ========================================================================= -->
+  <!-- 1. SYNTHESE BLUETOOTH                                                     -->
+  <!-- ========================================================================= -->
+  <h2>1. Synthèse Technologique : Bluetooth (BR/EDR & SPP)</h2>
+>>>>>>> Stashed changes
 
   <!-- SCHEMA 1 : COMPARATIF VISUEL 868 MHz vs 2.4 GHz & ANTENNES -->
   <div class="figure-box">
@@ -592,6 +600,80 @@
     <div class="figure-caption">Figure 1 : Comparaison matérielle et physique des bandes 868 MHz (LoRa) et 2,4 GHz (Wi-Fi / Bluetooth) sur banc d'essai STI.</div>
   </div>
 
+<<<<<<< Updated upstream
+=======
+
+  <h3>1.1. Architecture Matérielle & Rôle des Liaisons Séries</h3>
+  <p>Dans un système communicant basé sur un microcontrôleur moderne (ex. RP2350 sur Raspberry Pi Pico 2 W), la séparation des canaux de communication est indispensable pour la supervision et la robustesse :</p>
+  <ul>
+    <li><strong>UART0 (GP0/GP1 - <code>Serial1</code>) :</strong> Réservé au dialogue avec les périphériques locaux (ex: clavier de saisie série).</li>
+    <li><strong>UART1 (GP4/GP5 - <code>Serial2</code>) :</strong> Relié au module émetteur-récepteur radio Bluetooth (Grove Bluetooth v3.0 / HC-05).</li>
+    <li><strong>USB CDC Natif (<code>Serial</code>) :</strong> Liaison virtuelle directe vers la console de débogage du PC de développement (115200 bauds).</li>
+  </ul>
+
+  <div class="callout callout-info">
+    <div class="callout-title">💡 Les Deux Modes Fondamentaux du Module Bluetooth Série</div>
+    <ul>
+      <li><strong>Mode Commande AT (LED d'état clignotante) :</strong> Tant qu'aucun terminal n'est connecté par radio, le module interprète les commandes textuelles reçues sur son UART (ex: <code>AT+NAMEPupitre_B1</code>, <code>AT+PIN9876</code>, <code>AT+BAUD?</code>).</li>
+      <li><strong>Mode Données Transparent (LED d'état allumée fixe) :</strong> Dès que l'appairage radio est validé, le module désactive l'interpréteur AT. Tout octet reçu sur l'UART est modulé directement sur l'onde radio (2.4 GHz) vers le terminal distant (et réciproquement).</li>
+    </ul>
+  </div>
+
+  <h3>1.2. Le Profil SPP (Serial Port Profile) & Pile Protocolaire</h3>
+  <p>Le profil <strong>SPP</strong> émule une liaison série RS-232 classique à travers le canal radio. Il repose sur le multiplexeur <strong>RFCOMM</strong>, lui-même encapsulé dans la couche <strong>L2CAP</strong> (<em>Logical Link Control and Adaptation Protocol</em>). Sur un système d'exploitation hôte (Windows/Linux/Android), l'appairage SPP instancie un <strong>port COM virtuel sortant</strong> permettant à n'importe quel logiciel applicatif (PuTTY, terminal de supervision, script Python) de communiquer sans modifier son code série.</p>
+
+  <h3>1.3. Métrologie avec l'Analog Discovery 3 (WaveForms)</h3>
+  <p>La validation de la couche physique et liaison fait appel à un analyseur logique configuré en conformité avec la norme UART asynchrone (format 8N1 : 1 Start, 8 Données, Pas de parité, 1 Stop) :</p>
+  
+  <div class="formula-box">
+    <span>Durée d'un bit :</span>
+    <i>T</i><sub>bit</sub> = <span class="frac"><span class="num">1</span><span class="den">Baudrate</span></span>
+    <span>&emsp;|&emsp;Exemple à 38 400 bauds :</span>
+    <i>T</i><sub>bit</sub> = <span class="frac"><span class="num">1</span><span class="den">38 400</span></span> &approx; <strong>26,04 &mu;s</strong>
+  </div>
+
+  <p>Un octet nécessitant 10 bits de transmission (1 bit Start à l'état bas + 8 bits de données LSB en premier + 1 bit Stop à l'état haut), la durée de transmission d'un octet est <i>T</i><sub>octet</sub> = 10 &times; <i>T</i><sub>bit</sub> &approx; <strong>260,4 &mu;s</strong>.</p>
+
+  <h3>1.4. Cybersécurité : Audit de l'Appairage Bluetooth Legacy (PIN fixe)</h3>
+  <p>Les modules industriels économiques (HC-05, Grove BT v3.0) utilisent le protocole historique <strong>Legacy Pairing</strong> (&le; Bluetooth 2.0). Deux faiblesses critiques en résultent :</p>
+  <ol>
+    <li><strong>Espace des clés dérisoire :</strong> Un code PIN à 4 chiffres (0000 à 9999) représente 10<sup>4</sup> = 10&nbsp;000 combinaisons possibles (soit seulement <strong>&approx; 13,3 bits d'entropie</strong>).</li>
+    <li><strong>Exposition de l'aléa radio :</strong> Les adresses MAC matérielles (<code>BD_ADDR</code>) et un nombre aléatoire de 128 bits (<code>IN_RAND</code>) sont transmis en clair lors de la négociation.</li>
+    <li><strong>Attaque hors-ligne (Offline Brute-Force) :</strong> Un attaquant muni d'un récepteur radio passif (sniffer Ubertooth / SDR) capture l'échange et fait tourner l'algorithme de dérivation <i>E</i><sub>22</sub>(PIN, IN_RAND, BD_ADDR) sur son processeur/GPU à plusieurs millions d'essais/s, trouvant le PIN en quelques millisecondes.</li>
+  </ol>
+
+  <!-- ========================================================================= -->
+  <!-- 2. SYNTHESE WI-FI & TCP/IP                                                -->
+  <!-- ========================================================================= -->
+  
+  <h3>1.5. Bluetooth Low Energy (BLE) : Architecture GAP, GATT & Mode Broadcast</h3>
+  <p>Le standard BLE (Bluetooth 4.2 / 5.x) opère sur 40 canaux de 2 MHz (au lieu de 79 canaux de 1 MHz). Il se divise en deux modes opérationnels majeurs :</p>
+  <ul>
+    <li><strong>Mode Broadcast (GAP Broadcaster &rarr; Observer) :</strong> Diffusion sans connexion de paquets d'annonces (<em>Advertising Data</em>) sur les canaux 37, 38 et 39. Permet à un nombre <strong>illimité de récepteurs</strong> d'intercepter la donnée simultanément en quelques dizaines de millisecondes (&Delta;<i>t</i> &lt; 200 ms).</li>
+    <li><strong>Mode Connecté GATT (Client &rarr; Serveur) :</strong> Base de données hiérarchique d'attributs structurée en <strong>Profils &rarr; Services &rarr; Caractéristiques &rarr; Descripteurs</strong>. Les échanges sont gérés par les opérations <code>READ</code>, <code>WRITE</code>, <code>NOTIFY</code> (sans acquittement applicatif) et <code>INDICATE</code> (avec acquittement).</li>
+    <li><strong>Descripteur CCCD (<code>0x2902</code>) :</strong> Attribut indispensable stocké dans le serveur GATT pour autoriser ou bloquer l'émission spontanée de notifications vers le client (écriture de <code>0x0001</code> pour activer Notify).</li>
+  </ul>
+
+<h2>2. Synthèse Technologique : Wi-Fi (IEEE 802.11) & Pile TCP/IP</h2>
+
+  <h3>2.1. Couche Liaison & Enrôlement Réseau (DHCP / ARP)</h3>
+  <ul>
+    <li><strong>Mode Station (STA) :</strong> Le module (ex: XIAO ESP32-S3 ou Pico W) s'associe à un point d'accès Wi-Fi d'infrastructure.</li>
+    <li><strong>Indicateur RSSI (dBm) :</strong> Valeur négative mesurant la puissance radio reçue. Typiquement : &minus;45 dBm (très proche), &minus;65 dBm (nominal), &lt;&minus;80 dBm (limite de décrochage).</li>
+    <li><strong>Négociation DHCP (Processus DORA en 4 étapes) :</strong>
+      <ol>
+        <li><strong>Discover :</strong> Le client sans IP diffuse un broadcast UDP (port 68 &rarr; 67, IP src <code>0.0.0.0</code>, IP dst <code>255.255.255.255</code>).</li>
+        <li><strong>Offer :</strong> Le serveur DHCP propose un bail IP unitaire.</li>
+        <li><strong>Request :</strong> Le client confirme et demande officiellement l'adresse retenue.</li>
+        <li><strong>Acknowledge (ACK) :</strong> Le serveur valide l'attribution et transmet masque, passerelle et DNS.</li>
+      </ol>
+    </li>
+    <li><strong>Résolution ARP :</strong> Avant d'émettre vers la passerelle par défaut, le microcontrôleur émet une requête ARP broadcast pour lier l'adresse IPv4 de la passerelle à son adresse physique MAC de couche 2.</li>
+  </ul>
+
+  <h3>2.2. Comparatif de la Couche Transport (L4) : UDP vs TCP</h3>
+
+>>>>>>> Stashed changes
   <table>
     <thead>
       <tr>
@@ -629,6 +711,7 @@
     </tbody>
   </table>
 
+<<<<<<< Updated upstream
   <!-- ========================================================================= -->
   <!-- 2. FICHES VISUELLES DES 6 PROTOCOLES IOT & ENROLEMENT LORAWAN             -->
   <!-- ========================================================================= -->
@@ -732,6 +815,31 @@
 
   <!-- SOUS-SECTION VISUELLE : REGLAGES LORA SF7 vs SF12 & ENROLEMENT OTAA -->
   <h3>2.1. Focus Visuel LoRa : Compromis du Spreading Factor (SF7 à SF12) &amp; Sécurité OTAA</h3>
+=======
+  <h3>2.3. Cybersécurité Applicative : HTTP en Clair vs Chiffrement TLS (HTTPS)</h3>
+  <div class="callout callout-danger">
+    <div class="callout-title">⚠️ Vulnérabilité des flux HTTP en clair (Port 80)</div>
+    <p>Lors d'un audit sous Wireshark avec la commande <code>Follow &gt; TCP Stream</code>, une requête HTTP injectée sur le réseau expose l'intégralité de la trame en texte clair : URL, verbes REST, paramètres JSON et en-têtes d'authentification sensibles (<code>Authorization: Bearer [TOKEN]</code>). Tout attaquant situé sur le même réseau Wi-Fi peut usurper l'équipement.</p>
+  </div>
+
+  <p><strong>Sécurisation par TLS (Transport Layer Security - Port 443) :</strong></p>
+  <ul>
+    <li>Utilisation de la bibliothèque <strong><code>WiFiClientSecure</code></strong> sur ESP32/Pico W.</li>
+    <li><strong>Handshake TLS :</strong> Authentification du serveur par son certificat numérique X.509 et échange de clés asymétrique (ECDHE) pour négocier une clé secrète éphémère.</li>
+    <li><strong>Chiffrement symétrique :</strong> Chiffrement rapide de tous les segments TCP au moyen d'AES-128-GCM ou ChaCha20.</li>
+    <li><strong>Bonne pratique contre le Man-in-the-Middle (MitM) :</strong> Toujours intégrer le certificat racine de l'autorité de certification (CA) via <code>setCACert()</code> et bannir la fonction permissive <code>setInsecure()</code> en environnement de production.</li>
+  </ul>
+
+  <!-- ========================================================================= -->
+  <!-- 4. CAHIER D'EXERCICES TYPE BTS CIEL                                       -->
+  <!-- ========================================================================= -->
+  <div class="page-break"></div>
+  
+  <!-- ========================================================================= -->
+  <!-- 3. METROLOGIE RF & BILAN ENERGETIQUE                                      -->
+  <!-- ========================================================================= -->
+  <h2>3. Métrologie RF &amp; Bilan Énergétique (Formules Clés Épreuve U4)</h2>
+>>>>>>> Stashed changes
 
   <div class="figure-box">
     <svg viewBox="0 0 940 235" width="100%" height="auto" xmlns="http://www.w3.org/2000/svg">
@@ -1461,6 +1569,7 @@
     <div class="figure-caption">Figure 5 : Planche comparative des 7 topologies réseaux IoT : Wi-Fi (STA &amp; Soft-AP), Bluetooth (Classic SPP, BLE Beacon/GATT, Mesh) et LoRa (LoRa P2P &amp; LoRaWAN).</div>
   </div>
 
+<<<<<<< Updated upstream
   <!-- 4.2. ANATOMIE DES TRAMES & CODAGE BINAIRE VS JSON -->
   <h3>4.2. Anatomie Comparée d'une Trame Complète (BLE vs LoRaWAN vs Wi-Fi) &amp; Codage Binaire vs JSON</h3>
 
@@ -1877,6 +1986,68 @@
           <br>&bull; <em>Armoire métallique IP66 :</em> Effet cage de Faraday &rarr; Traversée de cloison <strong>U.FL vers SMA étanche</strong> avec antenne fouet extérieure.</li>
       </ul>
     </div>
+=======
+  <h3>3.1. Bilan de Liaison Radiofréquence (RF Link Budget)</h3>
+  <p>Le bilan de liaison permet de dimensionner la portée maximale d'un système sans fil (Wi-Fi, Bluetooth Classic, BLE, LoRaWAN) et de vérifier que le signal reçu est suffisant pour assurer un taux d'erreur binaire (BER) acceptable :</p>
+  
+  <div class="formula-box">
+    <i>P</i><sub>RX</sub> (dBm) = <i>P</i><sub>TX</sub> (dBm) + <i>G</i><sub>TX</sub> (dBi) + <i>G</i><sub>RX</sub> (dBi) &minus; <i>L</i><sub>FSPL</sub> (dB) &minus; <i>L</i><sub>obstacles</sub> (dB)
+  </div>
+
+  <p><strong>Formule d'atténuation en espace libre (FSPL - Free Space Path Loss) :</strong></p>
+  <div class="formula-box">
+    <i>L</i><sub>FSPL</sub> (dB) = 20 &times; log<sub>10</sub>(<i>d</i><sub>km</sub>) + 20 &times; log<sub>10</sub>(<i>f</i><sub>MHz</sub>) + 32,44 &emsp;|&emsp; À 2,4 GHz : <i>L</i><sub>FSPL</sub> &approx; <strong>40 dB + 20 &times; log<sub>10</sub>(<i>d</i><sub>m</sub>)</strong>
+  </div>
+
+  <p><strong>Condition impérative de liaison opérationnelle :</strong> Le signal reçu <i>P</i><sub>RX</sub> (ou RSSI) doit dépasser le seuil de sensibilité limite du récepteur <i>S</i><sub>RX</sub> avec une <strong>marge de sécurité de liaison (Fade Margin)</strong> minimale :</p>
+  <div class="formula-box">
+    <i>Marge</i> = <i>P</i><sub>RX</sub> &minus; <i>S</i><sub>RX</sub> &ge; <strong>10 dB à 15 dB</strong>
+  </div>
+
+  <h3>3.2. Bilan de Consommation &amp; Autonomie Énergétique sur Batterie</h3>
+  <p>Un objet connecté IoT (sur ESP32, nRF52 ou Nano) alterne entre un mode actif bref (mesure, émission sans fil) et un mode sommeil profond (Deep Sleep) :</p>
+
+  <div class="formula-box">
+    <i>I</i><sub>moyen</sub> = <span class="frac"><span class="num">(<i>I</i><sub>on</sub> &times; <i>t</i><sub>on</sub>) + (<i>I</i><sub>sleep</sub> &times; <i>t</i><sub>sleep</sub>)</span><span class="den"><i>T</i><sub>cycle</sub></span></span>
+    &emsp;avec&emsp;<i>T</i><sub>cycle</sub> = <i>t</i><sub>on</sub> + <i>t</i><sub>sleep</sub>
+  </div>
+
+  <p><strong>Autonomie prévisionnelle de la pile / batterie (en heures ou années) :</strong></p>
+  <div class="formula-box">
+    <i>T</i><sub>autonomie</sub> (heures) = <span class="frac"><span class="num"><i>C</i><sub>nominale</sub> (mAh) &times; &eta;</span><span class="den"><i>I</i><sub>moyen</sub> (mA)</span></span>
+    &emsp;|&emsp;<i>T</i><sub>années</sub> = <span class="frac"><span class="num"><i>T</i><sub>autonomie</sub></span><span class="den">8 760 h/an</span></span>
+  </div>
+  <p>où &eta; est le coefficient d'efficacité et d'autodécharge de la batterie (&eta; &approx; 0,80 à 0,90).</p>
+
+  <div class="page-break"></div>
+    <h2>4. Cahier d'Exercices Type Épreuve BTS CIEL (U4)</h2>
+
+  <!-- EXERCICE 1 -->
+  <div class="exercise-card">
+    <div class="exercise-header">
+      <span class="exercise-title">Exercice 1 : Liaison Série Bluetooth &amp; Contrôle d'Intégrité par Checksum XOR</span>
+      <span class="meta-badge badge-primary">Compétences C04 &amp; C05</span>
+    </div>
+    <p>Un pupitre à base de <strong>Raspberry Pi Pico 2 W</strong> transmet périodiquement une trame de télémétrie vers un terminal de supervision via son port série <strong>UART1</strong> (relié au module Grove Bluetooth configuré à <strong>38 400 bauds, 8N1</strong>).</p>
+    <p>La trame binaire de 6 octets est structurée comme suit :</p>
+    <ul>
+      <li>Octet 0 : Début de trame <code>STX = 0x02</code></li>
+      <li>Octet 1 : Identifiant de la carte <code>ID = 0x42</code></li>
+      <li>Octet 2 : Donnée capteur Température <code>TEMP = 0x19</code> (25°C)</li>
+      <li>Octet 3 : Donnée capteur Humidité <code>HUM = 0x3C</code> (60%)</li>
+      <li>Octet 4 : Octet de contrôle <strong>Checksum XOR</strong> (calculé sur ID, TEMP et HUM)</li>
+      <li>Octet 5 : Fin de trame <code>ETX = 0x03</code></li>
+    </ul>
+
+    <p><strong>Questions :</strong></p>
+    <ol>
+      <li><strong>[C04]</strong> Calculer la durée théorique d'un bit élémentaire <i>T</i><sub>bit</sub> à 38 400 bauds.</li>
+      <li><strong>[C04]</strong> Préciser le nombre de bits réels transmis pour chaque octet (format 8N1). En déduire le temps nécessaire pour transmettre un octet complet <i>T</i><sub>octet</sub>.</li>
+      <li><strong>[C05]</strong> Calculer manuellement la valeur hexadécimale du <strong>Checksum XOR</strong> pour les trois octets de charge utile. Détailler le calcul bit à bit sous forme binaire.</li>
+      <li><strong>[C06]</strong> Lors d'une vérification avec l'analyseur logique <strong>Analog Discovery 3</strong>, déterminer la durée totale théorique d'occupation du bus série pour l'envoi de cette trame de 6 octets.</li>
+      <li><strong>[C05]</strong> Rédiger en langage C la fonction <code>uint8_t calculer_checksum(uint8_t id, uint8_t temp, uint8_t hum)</code>.</li>
+    </ol>
+>>>>>>> Stashed changes
   </div>
 
   <!-- ========================================================================= -->
@@ -1889,8 +2060,13 @@
   <!-- ========================================================================= -->
   <div class="exercise-card">
     <div class="exercise-header">
+<<<<<<< Updated upstream
       <span class="exercise-title">Exercice 1 : Diagnostic &amp; Qualification d'une Liaison Capteur en Atelier (Mesures RSSI &amp; Obstacles)</span>
       <span class="meta-badge badge-primary">Compétences C04 &amp; C06</span>
+=======
+      <span class="exercise-title">Exercice 2 : Audit de Sécurité du Bluetooth Legacy Pairing (Code PIN 4 Chiffres)</span>
+      <span class="meta-badge badge-alert">Compétences C04, C06 &amp; C10</span>
+>>>>>>> Stashed changes
     </div>
     <p>Un capteur de vibration/température sur un groupe motopompe doit transmettre ses mesures vers l'armoire de supervision à <strong><i>d</i> = 80 mètres</strong> à travers 2 cloisons tôlées et des machines d'usinage. Deux prototypes sont testés : <strong>BLE (2,4 GHz)</strong> avec l'application <em>nRF Connect</em> et <strong>LoRa P2P (868 MHz, SF9 / 125 kHz)</strong> sur module Semtech SX1262 :</p>
 
@@ -1928,6 +2104,7 @@
     <p><strong>Données récepteurs :</strong> Sensibilité limite BLE : <i>S</i><sub>RX_BLE</sub> = <strong>&minus;93 dBm</strong> &bull; Sensibilité limite LoRa SF9 : <i>S</i><sub>RX_LoRa</sub> = <strong>&minus;130 dBm</strong> &bull; Marge minimale exigée : <strong><i>Marge</i><sub>min</sub> = 10 dB</strong>.</p>
 
     <ol>
+<<<<<<< Updated upstream
       <li><strong>[C04]</strong> Comparer le RSSI BLE au Point 3 (&minus;96 dBm) avec sa sensibilité limite (&minus;93 dBm) et expliquer la cause physique des pertes de paquets.</li>
       <li><strong>[C06]</strong> Calculer la marge de réception (<i>Fade Margin</i> en dB) au Point 3 en BLE puis en LoRa. Conclure sur la technologie conforme en liaison directe.</li>
       <li><strong>[C05]</strong> Si le client impose le BLE (lecture sur smartphones de maintenance), proposer <strong>2 solutions techniques</strong> (réseau ou matérielle) pour fiabiliser la liaison.</li>
@@ -1951,6 +2128,17 @@
           <br>&bull; <em>Solution Matérielle :</em> Déporter l'antenne 2,4 GHz en hauteur hors des capotages métalliques via un câble coaxial faible perte (connecteur SMA + antenne colinéaire +5 dBi).</li>
       </ol>
     </details>
+=======
+      <li><strong>[C04]</strong> Calculer l'entropie cryptographique <i>H</i> (en bits) associée à ce secret à 4 chiffres décimaux :
+        <div class="formula-box">
+          <i>H</i> = log<sub>2</sub>(<i>N</i>) &emsp;avec&emsp;<i>N</i> = 10<sup>4</sup>
+        </div>
+      </li>
+      <li><strong>[C06]</strong> Un attaquant tente une attaque par force brute en ligne (<em>Online Brute-force</em>). Le module impose un délai de temporisation matériel de <strong>1,2 seconde</strong> après chaque échec d'association. Calculer la durée maximale (en heures et minutes) requise pour tester exhaustivement l'espace des clés. Indiquer pourquoi cette attaque est difficilement viable.</li>
+      <li><strong>[C10]</strong> L'attaquant capture désormais passivement la séquence d'appairage radio à l'aide d'une clé SDR. Il bascule sur une attaque hors-ligne (<em>Offline Brute-force</em>) sur son poste de travail, capable d'évaluer <strong>2,5 &times; 10<sup>6</sup> dérivations <i>E</i><sub>22</sub> par seconde</strong>. Calculer le temps maximal nécessaire pour retrouver le code PIN.</li>
+      <li><strong>[C04]</strong> Préciser quelle évolution de la norme Bluetooth élimine radicalement cette faille d'interception passive.</li>
+    </ol>
+>>>>>>> Stashed changes
   </div>
 
   <!-- ========================================================================= -->
@@ -1958,8 +2146,13 @@
   <!-- ========================================================================= -->
   <div class="exercise-card">
     <div class="exercise-header">
+<<<<<<< Updated upstream
       <span class="exercise-title">Exercice 2 : Profil Énergétique à l'Oscilloscope (Digilent AD3), Autonomie Pile &amp; Condensateur Anti-BOR</span>
       <span class="meta-badge badge-primary">Compétences C05 &amp; C06</span>
+=======
+      <span class="exercise-title">Exercice 3 : Analyse d'une Négociation Réseau Wi-Fi &amp; Transport sous Wireshark</span>
+      <span class="meta-badge badge-purple">Compétences C04, C06 &amp; C10</span>
+>>>>>>> Stashed changes
     </div>
     <p>Sur banc d'essai, la consommation d'un capteur LoRa autonome (période <strong><i>T</i><sub>cycle</sub> = 15 min = 900 s</strong>) est mesurée à l'oscilloscope <strong>Digilent AD3</strong> aux bornes d'un shunt <strong><i>R</i><sub>shunt</sub> = 10 &Omega;</strong> en série sur l'alimentation 3,3 V (Pile Lithium AA Saft LS14500 de capacité <strong><i>C</i><sub>nom</sub> = 2 600 mAh</strong>, résistance interne usée <strong><i>R</i><sub>i</sub> = 8 &Omega;</strong>) :</p>
     <ul>
@@ -1969,6 +2162,7 @@
     </ul>
 
     <ol>
+<<<<<<< Updated upstream
       <li><strong>[C04]</strong> Calculer les courants <i>I</i><sub>sleep</sub> (&mu;A), <i>I</i><sub>mes</sub> (mA) et <i>I</i><sub>TX</sub> (mA) par la loi d'Ohm (<i>I</i> = &Delta;<i>U</i> / <i>R</i><sub>shunt</sub>).</li>
       <li><strong>[C05]</strong> Calculer les charges <i>Q</i><sub>actif</sub> (mesure + TX) et <i>Q</i><sub>sleep</sub> en &mu;Ah, puis la charge totale par cycle <i>Q</i><sub>cycle</sub> (&mu;Ah).</li>
       <li><strong>[C06]</strong> En déduire le courant moyen <i>I</i><sub>moyen</sub> (&mu;A) sur 900 s et l'autonomie en années (avec facteur de sécurité de <strong>80 %</strong>).</li>
@@ -1995,6 +2189,14 @@
           <br>&Delta;<i>V</i> = 8 &Omega; &times; 0,085 A = <strong>0,68 V</strong>. Sur une pile à 3,2 V, la tension tombe à <strong>2,52 V &lt; 2,7 V (seuil BOR ESP32)</strong> &rarr; Reboot immédiat. Le condensateur <strong>220 &mu;F Low-ESR</strong> fournit localement l'impulsion de courant de 70 ms et maintient le rail 3,3 V stable.</li>
       </ol>
     </details>
+=======
+      <li><strong>[C10]</strong> Relever l'adresse IP et l'adresse MAC du microcontrôleur ainsi que celles de la passerelle / serveur DHCP.</li>
+      <li><strong>[C04]</strong> Expliciter la nécessité des adresses <code>0.0.0.0</code> et <code>255.255.255.255</code> dans la trame n°1 (DHCP Discover).</li>
+      <li><strong>[C04]</strong> Décrire précisément l'objectif de l'échange ARP (trames 5 et 6). Pourquoi cette étape est-elle indispensable avant la trame n°7 ?</li>
+      <li><strong>[C06]</strong> Identifier le protocole et la phase réseau observés entre les trames 7, 8 et 9. Quel est le rôle des drapeaux SYN et ACK ?</li>
+      <li><strong>[C05]</strong> Si l'application consistait à diffuser 50 fois par seconde une position angulaire sans besoin de confirmation, justifier pourquoi le protocole UDP aurait été préféré à TCP.</li>
+    </ol>
+>>>>>>> Stashed changes
   </div>
 
   <!-- ========================================================================= -->
@@ -2002,20 +2204,42 @@
   <!-- ========================================================================= -->
   <div class="exercise-card">
     <div class="exercise-header">
+<<<<<<< Updated upstream
       <span class="exercise-title">Exercice 3 : Décodage de Trame Binaire Capteur (UART), Checksum XOR &amp; Règle ETSI Duty Cycle 1%</span>
       <span class="meta-badge badge-primary">Compétences C04 &amp; C05</span>
+=======
+      <span class="exercise-title">Exercice 4 : Sécurisation IoT - Migration HTTP vers HTTPS/TLS</span>
+      <span class="meta-badge badge-alert">Compétences C04, C05 &amp; C10</span>
+>>>>>>> Stashed changes
     </div>
     <p>L'analyseur logique du <strong>Digilent AD3</strong> capture sur le bus UART (9 600 bauds, 8N1) entre un microcontrôleur et son émetteur LoRa 868 MHz la trame binaire de <strong>8 octets</strong> suivante :</p>
     <pre><code>[ 0xAA, 0x55, 0x03, 0x08, 0x98, 0x03, 0xDE, 0x4E ]</code></pre>
     <p><strong>Format du protocole binaire :</strong> Octets 0-1 : <code>SOF = 0xAA 0x55</code> &bull; Octet 2 : <code>ID</code> (uint8) &bull; Octets 3-4 : <code>Température</code> (int16 Big Endian, <strong>échelle &times;100</strong>) &bull; Octets 5-6 : <code>Pression</code> en hPa (uint16 Big Endian) &bull; Octet 7 : <code>Checksum XOR</code> = <code>ID &oplus; T_MSB &oplus; T_LSB &oplus; P_MSB &oplus; P_LSB</code>.</p>
 
     <ol>
+<<<<<<< Updated upstream
       <li><strong>[C04]</strong> Préciser le rôle des octets <code>0xAA 0x55</code> et décoder en clair l'<strong>ID du nœud</strong>, la <strong>Température (°C)</strong> et la <strong>Pression (hPa)</strong>.</li>
       <li><strong>[C06]</strong> Poser le calcul hexadécimal/binaire du OU Exclusif (XOR) des 5 octets de données et vérifier la validité du Checksum reçu (<code>0x4E</code>).</li>
       <li><strong>[C05]</strong> Comparer les 8 octets de cette trame binaire avec l'envoi de la chaîne JSON équivalente <code>{"id":3,"temp":22.00,"pres":990}</code> (32 octets ASCII). Calculer le gain de taille en %.</li>
       <li><strong>[C04]</strong> Le temps d'émission radio (<i>Time on Air</i>) mesuré est <i>T</i><sub>on</sub> = <strong>50 ms</strong>. Calculer le temps de silence minimal <i>T</i><sub>off</sub> imposé par le <strong>Duty Cycle de 1%</strong> (ETSI 868 MHz). Peut-on émettre toutes les 3 secondes ?</li>
+=======
+      <li><strong>[C10]</strong> Identifier la vulnérabilité majeure de ce message vis-à-vis d'un attaquant passif écoutant le réseau local.</li>
+      <li><strong>[C05]</strong> Pour remédier à cette faille, le développeur utilise la bibliothèque <code>WiFiClientSecure</code> en C++ pour basculer en HTTPS :
+        <ul>
+          <li>Quel est le port réseau standard assigné au protocole HTTPS ?</li>
+          <li>Quelles sont les deux garanties fondamentales apportées par la couche TLS (<em>Transport Layer Security</em>) ?</li>
+        </ul>
+      </li>
+      <li><strong>[C04]</strong> Dans certains tutoriels en ligne, la commande suivante est utilisée :
+        <pre><code>client.setInsecure(); // Désactive la vérification du certificat</code></pre>
+        Expliquer pourquoi cette instruction annule une part essentielle de la sécurité et à quelle attaque critique elle expose le microcontrôleur.
+      </li>
+      <li><strong>[C05]</strong> Indiquer la méthode correcte à adopter en environnement industriel pour assurer une authentification stricte du serveur.</li>
+>>>>>>> Stashed changes
     </ol>
+  </div>
 
+<<<<<<< Updated upstream
     <div class="callout callout-purple">
       <div class="callout-title">Pistes BE &amp; Prompt IA de Co-développement</div>
       <p><em>Mots-clés :</em> Big Endian <code>(MSB &lt;&lt; 8) | LSB</code>, Facteur d'échelle &divide;100, Checksum XOR (&oplus;), Duty Cycle 1% (<i>T</i><sub>off</sub> &ge; 99 &times; <i>T</i><sub>on</sub>).<br>
@@ -2126,5 +2350,307 @@
     BTS CIEL &bull; Option B : Électronique et Réseaux &bull; Synthèse Visuelle d'Activités Pratiques &amp; Bureau d'Études IoT &bull; Vincent Hilaire
   </footer>
 
+=======
+  <!-- EXERCICE 5 : BILAN DE LIAISON RF -->
+  <div class="exercise-card">
+    <div class="exercise-header">
+      <span class="exercise-title">Exercice 5 : Bilan de Liaison RF 2,4 GHz &amp; Détermination de la Portée d'une Balise BLE</span>
+      <span class="meta-badge badge-primary">Compétences C04 &amp; C06 (Épreuve U4)</span>
+    </div>
+    <p>Une station de surveillance industrielle reçoit les salves d'annonces émises par une balise nomade <strong>BLE Broadcaster (2,4 GHz)</strong> implantée dans un atelier d'assemblage.</p>
+    <p><strong>Données du constructeur :</strong></p>
+    <ul>
+      <li>Puissance d'émission de l'ESP32 : <i>P</i><sub>TX</sub> = +4 dBm (soit &approx; 2,5 mW).</li>
+      <li>Gain de l'antenne imprimée de la balise : <i>G</i><sub>TX</sub> = +2 dBi.</li>
+      <li>Gain de l'antenne de la station réceptrice : <i>G</i><sub>RX</sub> = +3 dBi.</li>
+      <li>Sensibilité limite du récepteur BLE : <i>S</i><sub>RX</sub> = &minus;93 dBm.</li>
+      <li>Marge de sécurité minimale requise face aux bruits industriels : <i>M</i><sub>sécu</sub> = 12 dB.</li>
+      <li>Affaiblissement moyen de l'onde 2,4 GHz provoqué par une cloison d'atelier : <i>L</i><sub>cloison</sub> = 6 dB.</li>
+    </ul>
+
+    <p><strong>Questions :</strong></p>
+    <ol>
+      <li><strong>[C04]</strong> Calculer la <strong>PIRE</strong> (Puissance Isotrope Rayonnée Équivalente) émise par la balise BLE en dBm puis en milliwatts.</li>
+      <li><strong>[C04]</strong> À une distance <i>d</i> = 25 m en visibilité directe sans obstacle (champ libre), calculer l'affaiblissement d'espace libre <i>L</i><sub>FSPL</sub>. En déduire la puissance reçue <i>P</i><sub>RX</sub> (RSSI attendu) à cette distance.</li>
+      <li><strong>[C06]</strong> Déterminer la puissance minimale admissible en entrée du récepteur <i>P</i><sub>RX_min</sub> pour respecter la marge de sécurité de 12 dB.</li>
+      <li><strong>[C06]</strong> Si l'onde traverse deux cloisons métalliques (<i>L</i><sub>obstacles</sub> = 12 dB), déterminer la portée maximale théorique <i>d</i><sub>max</sub> (en mètres) de la liaison radio.</li>
+    </ol>
+  </div>
+
+  <!-- EXERCICE 6 : BILAN ÉNERGÉTIQUE & AUTONOMIE -->
+  <div class="exercise-card">
+    <div class="exercise-header">
+      <span class="exercise-title">Exercice 6 : Bilan Énergétique &amp; Dimensionnement d'une Pile Bouton CR2032 (Épreuve U4)</span>
+      <span class="meta-badge badge-warning">Compétences C04 &amp; C05 (Épreuve U4)</span>
+    </div>
+    <p>Un capteur environnemental autonome mesure la température d'un atelier et transmet une salve radio toutes les <strong>10 secondes</strong> (<i>T</i><sub>cycle</sub> = 10 s). Le système est alimenté par une pile bouton Lithium <strong>CR2032 (3,0 V - capacité nominale <i>C</i> = 220 mAh)</strong> avec un coefficient d'efficacité utile &eta; = 0,85.</p>
+    
+    <p><strong>Profil temporel de consommation mesuré :</strong></p>
+    <ul>
+      <li><strong>Phase active d'éveil (Mesure ADC + Salve Broadcast BLE) :</strong> durée <i>t</i><sub>on</sub> = 10 ms, courant consommé <i>I</i><sub>on</sub> = 15 mA.</li>
+      <li><strong>Phase de sommeil profond (Deep Sleep) :</strong> durée <i>t</i><sub>sleep</sub> = 9 990 ms, courant de fuite <i>I</i><sub>sleep</sub> = 10 &mu;A (0,010 mA).</li>
+    </ul>
+
+    <p><strong>Questions :</strong></p>
+    <ol>
+      <li><strong>[C05]</strong> Calculer la quantité de charge électrique <i>Q</i><sub>on</sub> (en milliampères-secondes, mAs) consommée lors de la phase active, puis la charge <i>Q</i><sub>sleep</sub> consommée pendant le sommeil.</li>
+      <li><strong>[C05]</strong> En déduire le <strong>courant moyen</strong> <i>I</i><sub>moyen</sub> consommé par le capteur sur un cycle complet de 10 secondes.</li>
+      <li><strong>[C06]</strong> Déterminer l'<strong>autonomie théorique</strong> du capteur sur sa pile CR2032 en heures, puis en <strong>années</strong>.</li>
+      <li><strong>[C04]</strong> Si l'on remplaçait le protocole BLE Broadcast par un module <strong>Bluetooth Classic SPP</strong> restant connecté en continu (<i>I</i><sub>continu</sub> = 35 mA permanent), calculer la nouvelle durée de vie de la pile. Conclure de manière argumentée sur l'impératif du BLE pour l'IoT sur pile.</li>
+    </ol>
+  </div>
+
+  <!-- EXERCICE 7 : COMPARATIF TOPOLOGIES -->
+  <div class="exercise-card">
+    <div class="exercise-header">
+      <span class="exercise-title">Exercice 7 : Arbitrage Technologique &amp; Topologies Réseaux (Épreuve U4 BTS CIEL)</span>
+      <span class="meta-badge badge-primary">Compétences C04 &amp; C01 (Épreuve U4)</span>
+    </div>
+    <p>Une usine logistique 4.0 déploie une flotte de 100 palettes connectées réparties dans un entrepôt de 120 &times; 60 mètres. Chaque palette intègre un capteur de choc et de température. Une centrale de supervision doit collecter l'état des 100 palettes.</p>
+
+    <p><strong>Questions d'ingénierie BTS CIEL :</strong></p>
+    <ol>
+      <li><strong>[C04]</strong> Dans une architecture <strong>Bluetooth Classique (Piconet)</strong>, combien d'esclaves actifs peuvent être connectés simultanément à un seul maître ? Si la passerelle doit interroger séquentiellement les 100 palettes en se connectant tour à tour (durée moyenne de 2,5 s par connexion/déconnexion), quel serait le <strong>temps de cycle global</strong> pour un relevé complet ? Conclure sur la faisabilité.</li>
+      <li><strong>[C04]</strong> Dans une architecture <strong>BLE Broadcast (Balises d'annonces)</strong>, pourquoi la passerelle peut-elle intercepter les trames de l'ensemble des 100 palettes sans aucune limitation de connexion ? Pourquoi un technicien muni d'une tablette peut-il simultanément recevoir ces mêmes données sans perturber la centrale ?</li>
+      <li><strong>[C05]</strong> En raison de rayonnages métalliques massifs provoquant un affaiblissement de 25 dB, les palettes situées au fond du hangar ne sont plus à portée directe de la passerelle. Quelle topologie Bluetooth permet de contourner cet obstacle radio ? Expliquer succinctement le rôle du paramètre <strong>TTL (Time To Live)</strong> dans ce type de réseau.</li>
+    </ol>
+  </div>
+
+  <div class="page-break"></div>
+  <!-- ========================================================================= -->
+  <!-- 5. CORRIGES DETAILLES DES EXERCICES                                       -->
+  <!-- ========================================================================= -->
+  <h2>5. Corrigés Détaillés des Exercices</h2>
+
+  <!-- SOLUTION 1 -->
+  <div class="solution-box solution-item">
+    <div class="solution-title">📝 Corrigé Détaillé de l'Exercice 1</div>
+    <p><strong>1. Durée d'un bit :</strong></p>
+    <div class="formula-box">
+      <i>T</i><sub>bit</sub> = <span class="frac"><span class="num">1</span><span class="den">38 400</span></span> &approx; <strong>26,042 &mu;s</strong>
+    </div>
+
+    <p><strong>2. Format 8N1 et durée par octet :</strong><br>
+    Le format 8N1 comprend : 1 bit Start + 8 bits de données + 0 bit de parité + 1 bit Stop = <strong>10 bits par caractère</strong>.</p>
+    <div class="formula-box">
+      <i>T</i><sub>octet</sub> = 10 &times; <i>T</i><sub>bit</sub> = 10 &times; 26,042 &mu;s = <strong>260,42 &mu;s</strong>
+    </div>
+
+    <p><strong>3. Calcul du Checksum XOR bit à bit :</strong></p>
+    <ul>
+      <li><code>ID   = 0x42</code> &rarr; <code>0100 0010</code></li>
+      <li><code>TEMP = 0x19</code> &rarr; <code>0001 1001</code></li>
+      <li><code>HUM  = 0x3C</code> &rarr; <code>0011 1100</code></li>
+    </ul>
+    <pre><code>  0100 0010  (0x42)
+^ 0001 1001  (0x19)
+-----------
+  0101 1011  (Résultat intermédiaire = 0x5B)
+^ 0011 1100  (0x3C)
+-----------
+  0110 0111  (Checksum final = 0x67)</code></pre>
+    <p>La valeur hexadécimale du Checksum est <strong><code>0x67</code></strong>.</p>
+
+    <p><strong>4. Durée totale de la trame sous l'Analog Discovery 3 :</strong><br>
+    La trame contient 6 octets au total.</p>
+    <div class="formula-box">
+      <i>T</i><sub>totale</sub> = 6 &times; <i>T</i><sub>octet</sub> = 6 &times; 260,42 &mu;s &approx; <strong>1,562 ms</strong>
+    </div>
+
+    <p><strong>5. Fonction en C :</strong></p>
+    <pre><code>uint8_t calculer_checksum(uint8_t id, uint8_t temp, uint8_t hum) {
+    return (id ^ temp ^ hum);
+}</code></pre>
+  </div>
+
+  <!-- SOLUTION 2 -->
+  <div class="solution-box solution-item">
+    <div class="solution-title">📝 Corrigé Détaillé de l'Exercice 2</div>
+    <p><strong>1. Entropie du code PIN :</strong></p>
+    <div class="formula-box">
+      <i>H</i> = <span class="frac"><span class="num">ln(10&nbsp;000)</span><span class="den">ln(2)</span></span> &approx; <span class="frac"><span class="num">9,2103</span><span class="den">0,6931</span></span> &approx; <strong>13,29 bits</strong>
+    </div>
+    <p>Une sécurité de 13,3 bits est extrêmement faible (le standard minimal recommandé pour un secret symétrique est de 128 bits).</p>
+
+    <p><strong>2. Attaque en ligne (Online) :</strong><br>
+    Temps maximal pour 10 000 tentatives :</p>
+    <div class="formula-box">
+      <i>T</i><sub>max</sub> = 10&nbsp;000 &times; 1,2 s = 12&nbsp;000 s = <span class="frac"><span class="num">12&nbsp;000</span><span class="den">3&nbsp;600</span></span> &approx; <strong>3,33 heures</strong> (<strong>3 h 20 min</strong>)
+    </div>
+    <p><em>Analyse :</em> L'attaque en ligne est lente, génère des journaux d'erreurs d'appairage massifs et risque de saturer la pile radio du module. Elle n'est absolument pas discrète.</p>
+
+    <p><strong>3. Attaque hors-ligne (Offline) :</strong></p>
+    <div class="formula-box">
+      <i>T</i><sub>max</sub> = <span class="frac"><span class="num">10&nbsp;000</span><span class="den">2,5 &times; 10<sup>6</sup> op/s</span></span> = 0,004 seconde = <strong>4 millisecondes</strong>
+    </div>
+    <p><em>Conclusion :</em> L'attaque est quasi-instantanée et totalement invisible pour la cible.</p>
+
+    <p><strong>4. Évolution normative :</strong><br>
+    L'adoption du <strong>Secure Simple Pairing (SSP)</strong> introduit avec Bluetooth 2.1+, ou du <strong>BLE 4.2+ LE Secure Connections</strong>, qui reposent sur un échange de clés asymétriques à courbes elliptiques (<strong>ECDH</strong> - <em>Elliptic Curve Diffie-Hellman</em>). Même si un pirate intercepte la totalité des trames radio d'appairage, il lui est mathématiquement impossible de calculer la clé de session.</p>
+  </div>
+
+  <!-- SOLUTION 3 -->
+  <div class="solution-box solution-item">
+    <div class="solution-title">📝 Corrigé Détaillé de l'Exercice 3</div>
+    <p><strong>1. Identification des adresses :</strong></p>
+    <ul>
+      <li><strong>Microcontrôleur (XIAO ESP32-S3) :</strong> Adresse IP = <code>192.168.1.105</code> | Adresse MAC = <code>28:cd:c1:05:ab</code></li>
+      <li><strong>Passerelle / Serveur DHCP :</strong> Adresse IP = <code>192.168.1.254</code> | Adresse MAC = <code>00:1a:2b:3c:4d</code></li>
+    </ul>
+
+    <p><strong>2. Trame DHCP Discover :</strong><br>
+    Au démarrage, le microcontrôleur n'a pas encore d'adresse IP valide configurée sur sa pile, il utilise donc l'adresse source neutre <code>0.0.0.0</code>. Ignorant l'adresse du serveur DHCP sur le segment local, il émet sa requête vers l'adresse de diffusion générale <code>255.255.255.255</code> pour toucher tous les hôtes.</p>
+
+    <p><strong>3. Échange ARP (Address Resolution Protocol) :</strong><br>
+    Avant d'émettre un paquet IP vers <code>192.168.1.254</code>, la couche 2 (Liaison Ethernet/Wi-Fi) a impérativement besoin de connaître l'adresse physique matérielle (MAC) du récepteur pour constituer l'en-tête de trame. La trame 5 interroge le réseau en broadcast, et la trame 6 fournit la réponse (<code>00:1a:2b:3c:4d</code>).</p>
+
+    <p><strong>4. Établissement de connexion TCP (Three-Way Handshake) :</strong><br>
+    Les trames 7, 8 et 9 réalisent la poignée de main d'ouverture de session TCP :</p>
+    <ul>
+      <li><strong>Trame 7 [SYN] :</strong> Le client synchronise ses numéros de séquence (Seq=0).</li>
+      <li><strong>Trame 8 [SYN, ACK] :</strong> Le serveur accepte, synchronise son propre numéro de séquence (Seq=0) et acquitte celui du client (Ack=1).</li>
+      <li><strong>Trame 9 [ACK] :</strong> Le client acquitte le serveur (Ack=1). La connexion est désormais établie.</li>
+    </ul>
+
+    <p><strong>5. Intérêt d'UDP pour un flux angulaire temps réel :</strong><br>
+    UDP supprime le temps de latence de la négociation d'ouverture de session, n'effectue aucun accusé de réception ni retransmission en cas de perte (qui créerait des blocages et du jitter), et minimise la bande passante avec un en-tête très réduit de 8 octets contre 20 octets minimum pour TCP.</p>
+  </div>
+
+  <!-- SOLUTION 4 -->
+  <div class="solution-box solution-item">
+    <div class="solution-title">📝 Corrigé Détaillé de l'Exercice 4</div>
+    <p><strong>1. Vulnérabilité de la trame en clair :</strong><br>
+    La requête circulant sans chiffrement (HTTP port 80), l'en-tête d'authentification <code>Authorization: Bearer Key_CIEL_987654321</code> ainsi que les données du capteur sont lisibles en clair par simple écoute passive (sniffing). Un pirate peut voler le jeton (token) et usurper l'identité de l'objet connecté sur l'API centrale.</p>
+
+    <p><strong>2. Migration vers HTTPS / TLS :</strong></p>
+    <ul>
+      <li><strong>Port standard :</strong> Port TCP <strong>443</strong>.</li>
+      <li><strong>Deux garanties fondamentales de TLS :</strong>
+        <ol>
+          <li><strong>Confidentialité &amp; Intégrité :</strong> Chiffrement robuste de bout en bout des données empêchant toute lecture ou altération des paquets en transit.</li>
+          <li><strong>Authentification du serveur :</strong> Garantie formelle que le client dialogue bien avec le serveur légitime grâce à la chaîne de confiance du certificat numérique X.509.</li>
+        </ol>
+      </li>
+    </ul>
+
+    <p><strong>3. Danger de <code>client.setInsecure()</code> :</strong><br>
+    Cette fonction indique au microcontrôleur d'ignorer la validité du certificat délivré par le serveur (absence de contrôle de l'autorité émettrice et du nom de domaine). Le système devient alors immédiatement vulnérable à une attaque de type <strong>Homme du Milieu (MitM - Man-in-the-Middle)</strong> : un attaquant peut intercepter la liaison, présenter un certificat auto-signé frauduleux et déchiffrer/modifier toutes les données à l'insu de l'objet connecté.</p>
+
+    <p><strong>4. Solution industrielle recommandée :</strong><br>
+    Injecter dans la mémoire Flash du microcontrôleur l'empreinte racine de l'autorité de certification de confiance (<em>Root CA Certificate</em> au format PEM) et la charger dans le client via la méthode :
+    <pre><code>client.setCACert(root_ca_certificate);</code></pre>
+    Le microcontrôleur vérifie alors cryptographiquement la signature numérique du serveur avant tout échange de données.</p>
+  </div>
+
+  <!-- SOLUTION 5 -->
+  <div class="solution-box solution-item">
+    <div class="solution-title">📝 Corrigé Détaillé de l'Exercice 5</div>
+    <p><strong>1. Calcul de la PIRE :</strong></p>
+    <div class="formula-box">
+      PIRE = <i>P</i><sub>TX</sub> + <i>G</i><sub>TX</sub> = +4 dBm + 2 dBi = <strong>+6 dBm</strong>
+    </div>
+    <p>Conversion en milliwatts : <i>P</i><sub>mW</sub> = 10<sup>6 / 10</sup> = 10<sup>0,6</sup> &approx; <strong>3,98 mW</strong>.</p>
+
+    <p><strong>2. Affaiblissement d'espace libre et RSSI à 25 mètres :</strong></p>
+    <div class="formula-box">
+      <i>L</i><sub>FSPL</sub>(25 m) = 40 + 20 &times; log<sub>10</sub>(25) = 40 + 20 &times; 1,3979 = 40 + 27,96 = <strong>67,96 dB</strong>
+    </div>
+    <p>Puissance reçue en champ libre :</p>
+    <div class="formula-box">
+      <i>P</i><sub>RX</sub> = PIRE &minus; <i>L</i><sub>FSPL</sub> + <i>G</i><sub>RX</sub> = +6 &minus; 67,96 + 3 = <strong>&minus;58,96 dBm</strong>
+    </div>
+    <p>Le niveau RSSI attendu à 25 m est donc d'environ <strong>&minus;59 dBm</strong> (excellente liaison nominale).</p>
+
+    <p><strong>3. Puissance minimale admissible avec marge :</strong></p>
+    <div class="formula-box">
+      <i>P</i><sub>RX_min</sub> = <i>S</i><sub>RX</sub> + <i>M</i><sub>sécu</sub> = &minus;93 dBm + 12 dB = <strong>&minus;81 dBm</strong>
+    </div>
+
+    <p><strong>4. Portée maximale avec deux cloisons (12 dB) :</strong><br>
+    À la limite de portée : <i>P</i><sub>RX</sub> = <i>P</i><sub>RX_min</sub> = &minus;81 dBm.<br>
+    &minus;81 = PIRE &minus; <i>L</i><sub>FSPL</sub>(<i>d</i><sub>max</sub>) &minus; <i>L</i><sub>obstacles</sub> + <i>G</i><sub>RX</sub> = 6 &minus; <i>L</i><sub>FSPL</sub>(<i>d</i><sub>max</sub>) &minus; 12 + 3 = &minus;3 &minus; <i>L</i><sub>FSPL</sub>(<i>d</i><sub>max</sub>)</p>
+    <div class="formula-box">
+      <i>L</i><sub>FSPL</sub>(<i>d</i><sub>max</sub>) = 81 &minus; 3 = <strong>78 dB</strong>
+    </div>
+    <p>Or <i>L</i><sub>FSPL</sub> = 40 + 20 &times; log<sub>10</sub>(<i>d</i><sub>max</sub>) = 78 &rarr; 20 &times; log<sub>10</sub>(<i>d</i><sub>max</sub>) = 38 &rarr; log<sub>10</sub>(<i>d</i><sub>max</sub>) = 1,90</p>
+    <div class="formula-box">
+      <i>d</i><sub>max</sub> = 10<sup>1,90</sup> &approx; <strong>79,4 mètres</strong>
+    </div>
+  </div>
+
+  <!-- SOLUTION 6 -->
+  <div class="solution-box solution-item">
+    <div class="solution-title">📝 Corrigé Détaillé de l'Exercice 6</div>
+    <p><strong>1. Charges consommées par phase :</strong></p>
+    <div class="formula-box">
+      <i>Q</i><sub>on</sub> = <i>I</i><sub>on</sub> &times; <i>t</i><sub>on</sub> = 15 mA &times; 0,010 s = <strong>0,15 mAs</strong>
+    </div>
+    <div class="formula-box">
+      <i>Q</i><sub>sleep</sub> = <i>I</i><sub>sleep</sub> &times; <i>t</i><sub>sleep</sub> = 0,010 mA &times; 9,990 s = <strong>0,0999 mAs</strong>
+    </div>
+
+    <p><strong>2. Courant moyen sur un cycle de 10 s :</strong></p>
+    <div class="formula-box">
+      <i>Q</i><sub>total</sub> = <i>Q</i><sub>on</sub> + <i>Q</i><sub>sleep</sub> = 0,15 + 0,0999 = <strong>0,2499 mAs</strong>
+    </div>
+    <div class="formula-box">
+      <i>I</i><sub>moyen</sub> = <span class="frac"><span class="num"><i>Q</i><sub>total</sub></span><span class="den"><i>T</i><sub>cycle</sub></span></span> = <span class="frac"><span class="num">0,2499 mAs</span><span class="den">10 s</span></span> &approx; <strong>0,02499 mA</strong> &approx; <strong>25 &mu;A</strong>
+    </div>
+
+    <p><strong>3. Autonomie prévisionnelle sur pile CR2032 :</strong><br>
+    Capacité utile disponible : <i>C</i><sub>utile</sub> = 220 mAh &times; 0,85 = <strong>187 mAh</strong>.</p>
+    <div class="formula-box">
+      <i>T</i><sub>heures</sub> = <span class="frac"><span class="num"><i>C</i><sub>utile</sub></span><span class="den"><i>I</i><sub>moyen</sub></span></span> = <span class="frac"><span class="num">187 mAh</span><span class="den">0,02499 mA</span></span> &approx; <strong>7 483 heures</strong>
+    </div>
+    <p>En années (sachant qu'une année compte 365 &times; 24 = 8 760 heures) :</p>
+    <div class="formula-box">
+      <i>T</i><sub>années</sub> = <span class="frac"><span class="num">7 483</span><span class="den">8 760</span></span> &approx; <strong>0,85 an</strong> (soit plus de <strong>10 mois</strong>)
+    </div>
+    <p><em>Note : en espaçant les mesures à 60 secondes, l'autonomie dépasse 4 ans !</em></p>
+
+    <p><strong>4. Comparaison avec le Bluetooth Classic SPP continu :</strong></p>
+    <div class="formula-box">
+      <i>T</i><sub>Classic</sub> = <span class="frac"><span class="num">187 mAh</span><span class="den">35 mA</span></span> &approx; <strong>5,34 heures</strong> (moins d'une demi-journée !)
+    </div>
+    <p><strong>Conclusion :</strong> Le Bluetooth Classique est totalement inadapté aux équipements autonomes alimentés sur pile bouton en raison de sa liaison RF permanente et de ses sauts de fréquences FHSS ininterrompus. Le BLE est incontournable grâce à son ratio veille/activité supérieur à 99,9%.</p>
+  </div>
+
+  <!-- SOLUTION 7 -->
+  <div class="solution-box solution-item">
+    <div class="solution-title">📝 Corrigé Détaillé de l'Exercice 7</div>
+    <p><strong>1. Limites du Piconet Bluetooth Classic :</strong><br>
+    Un piconet est limité à <strong>7 esclaves actifs simultanés</strong> par maître.<br>
+    Temps de cycle séquentiel pour 100 palettes :</p>
+    <div class="formula-box">
+      <i>T</i><sub>cycle</sub> = 100 &times; 2,5 s = <strong>250 secondes</strong> &approx; <strong>4 minutes et 10 s</strong>
+    </div>
+    <p>Cette latence de plus de 4 minutes est inacceptable pour la détection réactive de chocs ou d'incidents logistiques.</p>
+
+    <p><strong>2. Avantage du Broadcast BLE :</strong><br>
+    Le mode Broadcast n'établit aucune connexion (absence d'appairage, diffusion sur canaux 37, 38, 39). Le nombre de récepteurs et d'émetteurs est virtuellement <strong>illimité</strong> : la passerelle et la tablette du technicien opèrent en <strong>écoute passive (Observer)</strong> sans jamais saturer les émetteurs.</p>
+
+    <p><strong>3. Topologie Maillée (Bluetooth Mesh) :</strong><br>
+    Pour contourner les zones d'ombre et obstacles métalliques, la solution est le <strong>Bluetooth Mesh (Réseau Maillé)</strong> utilisant le mécanisme d'<strong>inondation contrôlée (Managed Flooding)</strong> : les nœuds intermédiaires agissent comme <strong>Relais</strong> pour faire rebondir les paquets de proche en proche.<br>
+    <strong>Rôle du TTL (Time To Live) :</strong> Entier décrémenté de 1 à chaque saut de relais. Lorsqu'il atteint 0, le paquet est détruit, évitant ainsi la tempête de diffusion (<em>Broadcast Storm</em>) et le bouclage infini des trames dans le réseau.</p>
+  </div>
+
+  <hr style="margin-top: 35px; border-top: 1px solid #cbd5e1;" />
+  <footer style="text-align: center; font-size: 8.5pt; color: #64748b; margin-top: 15px;">
+    Document pédagogique BTS CIEL - 2e Année • Référentiel National Cybersécurité, Informatique &amp; Électronique • Vincent Hilaire
+  </footer>
+
+  <script>
+    function toggleSolutions() {
+      const solutions = document.querySelectorAll('.solution-item');
+      solutions.forEach(el => {
+        if (el.style.display === 'none') {
+          el.style.display = 'block';
+        } else {
+          el.style.display = 'none';
+        }
+      });
+    }
+  </script>
+>>>>>>> Stashed changes
 </body>
 </html>
