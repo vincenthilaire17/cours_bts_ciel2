@@ -1,0 +1,435 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="utf-8" />
+  <meta name="generator" content="BTS CIEL - Vincent Hilaire" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes" />
+  <title>Corrigé Professeur : Exercice BLE Connecté GATT (Battery Monitor), Autonomie &amp; Décodage de Trame – BTS CIEL</title>
+
+  <style>
+    @page {
+      margin: 1.2cm 1.3cm;
+      size: A4 portrait;
+    }
+
+    html {
+      color: #1a1a1a;
+      background-color: #f8fafc;
+    }
+
+    body {
+      font-family: 'Segoe UI', -apple-system, BlinkMacSystemFont, Roboto, Helvetica, Arial, sans-serif;
+      line-height: 1.5;
+      color: #1e293b;
+      max-width: 980px;
+      margin: 0 auto;
+      padding: 22px 30px;
+      background-color: #ffffff;
+      box-shadow: 0 4px 16px rgba(0,0,0,0.06);
+    }
+
+    @media print {
+      html { background-color: #ffffff; }
+      body {
+        background-color: transparent;
+        color: #000000;
+        font-size: 9.2pt;
+        max-width: 100%;
+        padding: 0;
+        box-shadow: none;
+      }
+      pre, table, .callout, .ans-block { page-break-inside: avoid; }
+      .page-break { page-break-before: always; }
+      .no-print { display: none !important; }
+    }
+
+    .btn-bar {
+      position: sticky;
+      top: 10px;
+      z-index: 1000;
+      background: rgba(255, 255, 255, 0.96);
+      padding: 10px 16px;
+      border-radius: 8px;
+      border: 1px solid #f87171;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 18px;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.07);
+    }
+
+    .btn {
+      background-color: #991b1b;
+      color: #ffffff;
+      border: none;
+      padding: 7px 14px;
+      border-radius: 6px;
+      font-weight: 600;
+      font-size: 8.6pt;
+      cursor: pointer;
+    }
+    .btn:hover { background-color: #7f1d1d; }
+
+    header {
+      margin-bottom: 1.4em;
+      text-align: center;
+      border-bottom: 3px solid #991b1b;
+      padding-bottom: 14px;
+    }
+
+    .super-title {
+      font-size: 8.8pt;
+      color: #b91c1c;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 1.4px;
+      margin-bottom: 4px;
+    }
+
+    h1 {
+      color: #0b3c5d;
+      font-size: 18pt;
+      margin: 0.25em 0;
+      font-weight: 800;
+    }
+
+    .subtitle {
+      font-size: 10pt;
+      color: #334155;
+      margin-bottom: 10px;
+    }
+
+    .meta-badge {
+      display: inline-block;
+      font-size: 7.7pt;
+      font-weight: 600;
+      padding: 3px 9px;
+      border-radius: 14px;
+      margin: 2px 3px;
+      text-transform: uppercase;
+    }
+    .badge-alert   { background: #fee2e2; color: #991b1b; border: 1px solid #f87171; }
+    .badge-primary { background: #0b3c5d; color: #ffffff; border: 1px solid #0b3c5d; }
+    .badge-success { background: #dcfce7; color: #166534; border: 1px solid #86efac; }
+    .badge-cyan    { background: #e0f2fe; color: #0369a1; border: 1px solid #7dd3fc; }
+
+    h2 {
+      font-size: 13pt;
+      color: #0b3c5d;
+      margin-top: 22px;
+      margin-bottom: 10px;
+      border-bottom: 2px solid #cbd5e1;
+      padding-bottom: 5px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .ans-block {
+      border-left: 4px solid #16a34a;
+      background: #f8fafc;
+      padding: 10px 14px;
+      margin: 10px 0;
+      border-radius: 0 6px 6px 0;
+    }
+    .ans-title {
+      font-weight: 700;
+      color: #0b3c5d;
+      margin-bottom: 5px;
+      display: flex;
+      justify-content: space-between;
+    }
+    .pts {
+      color: #15803d;
+      font-weight: 700;
+      font-size: 0.9em;
+    }
+
+    code {
+      font-family: Consolas, monospace;
+      background: #e2e8f0;
+      color: #0f172a;
+      padding: 1px 5px;
+      border-radius: 4px;
+      font-size: 0.9em;
+    }
+
+    pre {
+      background: #0f172a;
+      color: #e2e8f0;
+      padding: 12px 15px;
+      border-radius: 6px;
+      font-family: Consolas, monospace;
+      font-size: 8.5pt;
+      line-height: 1.45;
+      overflow-x: auto;
+    }
+    pre code { background: transparent; color: inherit; padding: 0; }
+
+    table {
+      border-collapse: collapse;
+      width: 100%;
+      margin: 10px 0;
+      font-size: 8.8pt;
+    }
+    th, td {
+      border: 1px solid #cbd5e1;
+      padding: 6px 9px;
+      text-align: left;
+    }
+    th { background: #0b3c5d; color: #ffffff; }
+    tr:nth-child(even) td { background: #f1f5f9; }
+
+    .callout {
+      border-radius: 6px;
+      padding: 10px 14px;
+      margin: 12px 0;
+      font-size: 9pt;
+      border-left: 5px solid #0284c7;
+      background: #f0f7fc;
+      color: #0c4a6e;
+    }
+  </style>
+</head>
+<body>
+
+  <div class="btn-bar no-print">
+    <span style="font-weight: 700; color: #991b1b; font-size: 9.2pt;">CORRIGÉ PROFESSEUR — Exercice BLE Connecté GATT (Battery Monitor)</span>
+    <button class="btn" onclick="window.print()">Imprimer / Exporter PDF</button>
+  </div>
+
+  <header>
+    <div class="super-title">Document Enseignant — Corrigé Détaillé &amp; Barème (/20)</div>
+    <h1>Corrigé : Capteur BLE Connecté — Serveur GATT « Battery Monitor »</h1>
+    <div class="subtitle">Firmware ArduinoBLE, Bilan Énergétique en Phase d'Advertising &amp; Décodage Notification GATT + CRC</div>
+    <div>
+      <span class="meta-badge badge-alert">Corrigé Prof</span>
+      <span class="meta-badge badge-primary">Durée : 1h00 à 1h30</span>
+      <span class="meta-badge badge-success">Barème : 20 points</span>
+      <span class="meta-badge badge-cyan">BTS CIEL Option B</span>
+    </div>
+  </header>
+
+  <!-- ========================================================================= -->
+  <!-- CORRIGE PARTIE 1                                                          -->
+  <!-- ========================================================================= -->
+  <h2>
+    <span>Corrigé Partie 1 : Analyse du Firmware « Battery Monitor »</span>
+    <span class="meta-badge badge-primary">6,5 points</span>
+  </h2>
+
+  <div class="ans-block">
+    <div class="ans-title"><span>Q1 — Service GATT <code>0x180F</code>, Caractéristique <code>0x2A19</code> et propriétés [Repère 1]</span><span class="pts">1 pt</span></div>
+    <ul>
+      <li><code>batteryService("180F")</code> déclare le service GATT standard Bluetooth SIG <strong>Battery Service</strong>.</li>
+      <li><code>batteryLevelChar("2A19", BLERead | BLENotify)</code> déclare la caractéristique standard <strong>Battery Level</strong>.</li>
+      <li><strong><code>BLERead</code> vs <code>BLENotify</code> :</strong> avec <code>BLERead</code>, c'est le Central qui initie ponctuellement une requête de lecture (<em>polling</em>). Avec <code>BLENotify</code>, une fois abonné (via le descripteur CCCD <code>0x2902</code>), le Central reçoit <strong>automatiquement</strong> chaque nouvelle valeur poussée par le Peripheral dès qu'elle change.</li>
+      <li><strong>Type et taille :</strong> <code>BLEUnsignedCharCharacteristic</code> correspond à un entier non signé sur <strong>1 octet (8 bits, <code>uint8_t</code>)</strong> codant 0 à 100 %.</li>
+    </ul>
+  </div>
+
+  <div class="ans-block">
+    <div class="ans-title"><span>Q2 — Initialisation <code>BLE.begin()</code> et boucle d'erreur [Repère 2]</span><span class="pts">0,75 pt</span></div>
+    <p><code>BLE.begin()</code> initialise la pile radio BLE et le matériel RF du microcontrôleur ; elle renvoie <code>true</code> (1) en cas de succès et <code>false</code> (0) en cas d'échec (défaut matériel, firmware radio absent ou conflit d'initialisation).</p>
+    <p>En cas d'échec (<code>!BLE.begin()</code>), le programme affiche le message d'erreur sur le port série puis exécute <code>while (1);</code> : cette <strong>boucle infinie bloque volontairement l'exécution</strong> du programme pour éviter d'appeler les fonctions BLE suivantes sur un matériel non initialisé.</p>
+  </div>
+
+  <div class="ans-block">
+    <div class="ans-title"><span>Q3 — Enchaînement Advertising &rarr; Connexion [Repères 3, 4 &amp; 5]</span><span class="pts">1 pt</span></div>
+    <ul>
+      <li>Dans <code>setup()</code>, la carte configure son nom local (<code>"BatteryMonitor"</code>), attache la caractéristique au service, ajoute le service au serveur GATT et démarre l'émission des trames d'Advertising connectables (<code>ADV_IND</code>) via <code>BLE.advertise()</code>.</li>
+      <li>Dans <code>loop()</code>, <code>BLE.central()</code> vérifie si un appareil Central s'est connecté (après envoi d'un paquet <code>CONNECT_IND</code>).</li>
+      <li>Dès qu'un smartphone se connecte : le Peripheral <strong>cesse d'émettre ses trames d'Advertising</strong> (il n'est plus visible des autres appareils), affiche l'adresse MAC du Central sur le moniteur série et <strong>allume la LED intégrée</strong> (<code>HIGH</code>) jusqu'à la déconnexion (<code>LOW</code>).</li>
+    </ul>
+  </div>
+
+  <div class="ans-block">
+    <div class="ans-title"><span>Q4 — Temporisation non bloquante <code>millis()</code> vs <code>delay(200)</code> [Repère 6]</span><span class="pts">0,75 pt</span></div>
+    <p><code>delay(200)</code> fige le processeur pendant 200 ms, ce qui empêche la pile BLE de traiter rapidement les événements radio (paquets de maintien de connexion, requêtes GATT, déconnexion immédiate). La comparaison <code>currentMillis - previousMillis &gt;= 200</code> est <strong>non bloquante</strong> : la boucle <code>while (central.connected())</code> continue de tourner et de maintenir une réactivité immédiate de la pile BLE tout en ne mesurant la batterie que toutes les 200 ms (5 Hz).</p>
+  </div>
+
+  <div class="ans-block">
+    <div class="ans-title"><span>Q5 — Acquisition analogique et optimisation dans <code>updateBatteryLevel()</code> [Repère 7]</span><span class="pts">2 pts</span></div>
+    <ul>
+      <li><strong><code>int battery = analogRead(A0);</code></strong> : lit la tension sur la broche <code>A0</code> via le <strong>CAN (ADC) 10 bits</strong> par défaut d'Arduino, retournant un entier brut compris entre <strong>0</strong> (0 V) et <strong>1 023</strong> ($2^{10} - 1$, correspondant à $V_{\text{ref}} = 3,3\,\text{V}$).</li>
+      <li><strong><code>int batteryLevel = map(battery, 0, 1023, 0, 100);</code></strong> : effectue une mise à l'échelle linéaire (règle de trois entière) de l'intervalle <code>[0 ; 1023]</code> vers <code>[0 ; 100]</code> (%) :
+        $$\text{batteryLevel} = \left\lfloor \frac{\text{battery} \times 100}{1023} \right\rfloor$$
+      </li>
+      <li><strong>Rôle de <code>if (batteryLevel != oldBatteryLevel)</code> :</strong> évite d'appeler <code>writeValue()</code> toutes les 200 ms lorsque le pourcentage n'a pas changé. On supprime ainsi les <strong>notifications radio BLE redondantes</strong>, ce qui réduit fortement la consommation énergétique et l'encombrement du canal 2,4 GHz.</li>
+    </ul>
+  </div>
+
+  <div class="ans-block">
+    <div class="ans-title"><span>Q6 — Audit Cybersécurité : Connexion BLE sans PIN ni chiffrement</span><span class="pts">1 pt</span></div>
+    <ul>
+      <li><strong>Deux risques concrets :</strong>
+        <ol>
+          <li><strong>Écoute passive / Lecture non autorisée :</strong> toute personne à portée peut lire les données (en se connectant ou en sniffant la trame transmise en clair).</li>
+          <li><strong>Déni de service (DoS) :</strong> comme le Peripheral n'accepte qu'un seul Central à la fois, un attaquant qui reste connecté empêche définitivement la tablette de maintenance d'accéder au capteur.</li>
+        </ol>
+      </li>
+      <li><strong>Mécanisme BLE de sécurisation :</strong> activer l'appairage <strong>LE Secure Connections (LESC — échange de clés ECDH P-256)</strong> avec authentification <strong>Passkey Entry</strong> (code PIN à 6 chiffres) ou <em>Numeric Comparison</em>, couplé au <strong>Bonding</strong> (stockage de la clé LTK) et au chiffrement <strong>AES-128-CCM</strong>.</li>
+    </ul>
+  </div>
+
+  <!-- ========================================================================= -->
+  <!-- CORRIGE PARTIE 2                                                          -->
+  <!-- ========================================================================= -->
+  <div class="page-break"></div>
+  <h2>
+    <span>Corrigé Partie 2 : Bilan Énergétique en Phase d'Advertising</span>
+    <span class="meta-badge badge-primary">6,5 points</span>
+  </h2>
+
+  <div class="ans-block">
+    <div class="ans-title"><span>Q7 — Calcul des intensités par phase (<i>R</i><sub>shunt</sub> = 10 &Omega;)</span><span class="pts">1 pt</span></div>
+    <ul>
+      <li><strong>Phase 1 (Réveil MCU) :</strong> <i>I</i><sub>1</sub> = 35 mV / 10 &Omega; = <strong>3,5 mA</strong> (3 500 &mu;A).</li>
+      <li><strong>Phase 2 (TX ADV_IND + RX) :</strong> <i>I</i><sub>RF</sub> = 120 mV / 10 &Omega; = <strong>12,0 mA</strong> (12 000 &mu;A).</li>
+      <li><strong>Phase 3 (Post-RF) :</strong> <i>I</i><sub>3</sub> = 30 mV / 10 &Omega; = <strong>3,0 mA</strong> (3 000 &mu;A).</li>
+    </ul>
+  </div>
+
+  <div class="ans-block">
+    <div class="ans-title"><span>Q8 — Limite de mesure du shunt en veille &amp; fenêtre RX post-TX</span><span class="pts">1 pt</span></div>
+    <ul>
+      <li><strong>Tension de veille :</strong> &Delta;<i>U</i><sub>sleep</sub> = 10 &Omega; &times; 5 &mu;A = <strong>50 &mu;V (0,05 mV)</strong>, valeur trop faible noyée dans le bruit de mesure de l'oscilloscope (nécessite un microampèremètre ou un shunt dédié de valeur plus élevée).</li>
+      <li><strong>Fenêtre d'écoute RX :</strong> en mode Advertising connectable (<code>ADV_IND</code>), le Peripheral doit écouter le canal pendant une brève fenêtre (150 &mu;s après la fin du TX) afin de recevoir une éventuelle requête <code>SCAN_REQ</code> ou <strong><code>CONNECT_IND</code></strong> émise par un Central souhaitant établir la connexion.</li>
+    </ul>
+  </div>
+
+  <div class="ans-block">
+    <div class="ans-title"><span>Q9 — Calcul du courant moyen <i>I</i><sub>moyen</sub> sur <i>T</i><sub>cycle</sub> = 1,0 s</span><span class="pts">1,75 pt</span></div>
+    <table>
+      <thead>
+        <tr><th>Phase</th><th>Courant <i>I</i><sub>k</sub></th><th>Durée <i>t</i><sub>k</sub></th><th>Produit <i>I</i><sub>k</sub> &times; <i>t</i><sub>k</sub> (&mu;A&middot;s)</th></tr>
+      </thead>
+      <tbody>
+        <tr><td>1. Réveil MCU</td><td>3 500 &mu;A</td><td>1,5 ms (0,0015 s)</td><td><strong>5,25 &mu;A&middot;s</strong></td></tr>
+        <tr><td>2. TX ADV_IND + RX (3 ch.)</td><td>12 000 &mu;A</td><td>1,5 ms (0,0015 s)</td><td><strong>18,00 &mu;A&middot;s</strong></td></tr>
+        <tr><td>3. Post-RF</td><td>3 000 &mu;A</td><td>1,0 ms (0,0010 s)</td><td><strong>3,00 &mu;A&middot;s</strong></td></tr>
+        <tr><td>4. Deep Sleep</td><td>5 &mu;A</td><td>996 ms (0,996 s)</td><td><strong>4,98 &mu;A&middot;s</strong></td></tr>
+        <tr><td><strong>TOTAL CYCLE</strong></td><td>—</td><td><strong>1,000 s</strong></td><td><strong>31,23 &mu;A&middot;s</strong></td></tr>
+      </tbody>
+    </table>
+    <p><strong>Courant moyen :</strong> <i>I</i><sub>moyen</sub> = 31,23 &mu;A&middot;s / 1,0 s = <strong>31,23 &mu;A = 0,03123 mA</strong>.</p>
+  </div>
+
+  <div class="ans-block">
+    <div class="ans-title"><span>Q10 — Autonomie prévisionnelle pour <i>T</i><sub>cycle</sub> = 1,0 s</span><span class="pts">1 pt</span></div>
+    <ul>
+      <li>Capacité utile : <i>C</i><sub>utile</sub> = 225 mAh &times; 0,80 = <strong>180 mAh</strong>.</li>
+      <li><i>T</i><sub>heures</sub> = 180 / 0,03123 = <strong>5 763,7 heures</strong> = <strong>240,2 jours</strong> &approx; <strong>7,9 mois</strong>.</li>
+    </ul>
+  </div>
+
+  <div class="ans-block">
+    <div class="ans-title"><span>Q11 — Optimisation avec <i>T</i><sub>cycle</sub> = 5,0 s et compromis ergonomique</span><span class="pts">1 pt</span></div>
+    <ul>
+      <li><i>t</i><sub>sleep_5s</sub> = 5,0 &minus; 0,004 = <strong>4,996 s</strong> &rArr; 5 &mu;A &times; 4,996 s = <strong>24,98 &mu;A&middot;s</strong>.</li>
+      <li><i>I</i><sub>moyen_5s</sub> = (26,25 + 24,98) / 5,0 = 51,23 / 5,0 = <strong>10,25 &mu;A (0,01025 mA)</strong>.</li>
+      <li>Autonomie = 180 / 0,01025 = <strong>17 568 h</strong> = <strong>732 jours</strong> = <strong>2,01 ans (~24 mois)</strong> (&ge; 18 mois &rarr; conforme).</li>
+      <li><strong>Compromis ergonomique :</strong> le technicien devra attendre jusqu'à <strong>5 secondes</strong> (voire plus en cas de collision radio) avant que <code>"BatteryMonitor"</code> n'apparaisse lors du scan sur sa tablette et que la connexion ne s'établisse.</li>
+    </ul>
+  </div>
+
+  <div class="ans-block">
+    <div class="ans-title"><span>Q12 — Chute de tension anti-BOR sur pile usée (<i>R</i><sub>i_usée</sub> = 80 &Omega;)</span><span class="pts">0,75 pt</span></div>
+    <p>&Delta;<i>V</i> = <i>R</i><sub>i_usée</sub> &times; <i>I</i><sub>RF</sub> = 80 &Omega; &times; 0,012 A = <strong>0,96 V</strong>. Cette chute de près de 1 V fait passer la tension d'une pile en fin de vie sous le seuil de fonctionnement du SoC (BOR). On place un <strong>condensateur réservoir Low-ESR de 47 &mu;F à 100 &mu;F</strong> (avec un 100 nF céramique) au plus près de l'alimentation pour absorber l'impulsion de courant RF.</p>
+  </div>
+
+  <!-- ========================================================================= -->
+  <!-- CORRIGE PARTIE 3                                                          -->
+  <!-- ========================================================================= -->
+  <div class="page-break"></div>
+  <h2>
+    <span>Corrigé Partie 3 : Décodage de la Notification GATT &amp; CRC</span>
+    <span class="meta-badge badge-primary">7 points</span>
+  </h2>
+
+  <div class="ans-block">
+    <div class="ans-title"><span>Q13 — Décodage Couche Liaison &amp; L2CAP (octets 00 à 10)</span><span class="pts">1,5 pt</span></div>
+    <ul>
+      <li><strong>Préambule (o.00) :</strong> <code>0xAA</code> (car le LSB de l'Access Address <code>0xA8</code> est 0).</li>
+      <li><strong>Access Address de connexion (o.01..04) :</strong> reçus <code>A8 5D 65 50</code> (Little Endian) &rArr; <strong><code>0x50655DA8</code></strong>. Contrairement à <code>0x8E89BED6</code> (fixe et publique pour l'Advertising), cette adresse est <strong>unique et aléatoire pour chaque connexion</strong> (négociée dans <code>CONNECT_IND</code>), permettant d'isoler cette liaison des autres équipements BLE voisins.</li>
+      <li><strong>En-tête PDU Données (o.05..06) :</strong> <code>LLID = 0x02</code> (début de message L2CAP), <strong>Longueur = <code>0x08</code> = 8 octets</strong> (4 o. L2CAP + 4 o. ATT).</li>
+      <li><strong>L2CAP CID (o.09..10) :</strong> reçus <code>04 00</code> (Little Endian) &rArr; <strong><code>0x0004</code></strong>, qui est bien le canal logique fixe réservé au protocole <strong>ATT / GATT</strong>.</li>
+    </ul>
+  </div>
+
+  <div class="ans-block">
+    <div class="ans-title"><span>Q14 — Décodage du message ATT / GATT (octets 11 à 14)</span><span class="pts">1,75 pt</span></div>
+    <table>
+      <thead>
+        <tr><th>Champ ATT / GATT</th><th>Octets bruts</th><th>Codage / Boutisme</th><th>Valeur décodée et signification</th></tr>
+      </thead>
+      <tbody>
+        <tr><td><strong>ATT Opcode</strong> (o.11)</td><td><code>1B</code></td><td>uint8</td><td><code>0x1B</code> = <strong>Handle Value Notification</strong> (<code>BLENotify</code>)</td></tr>
+        <tr><td><strong>Attribute Handle</strong> (o.12..13)</td><td><code>13 00</code></td><td>Little Endian (uint16)</td><td><code>0x0013</code> (19) = index GATT de <code>Battery Level (0x2A19)</code></td></tr>
+        <tr><td><strong>Attribute Value</strong> (o.14)</td><td><code>4B</code></td><td>uint8 (0..100 %)</td><td><code>0x4B</code> = (4 &times; 16) + 11 = <strong>75 %</strong></td></tr>
+      </tbody>
+    </table>
+  </div>
+
+  <div class="ans-block">
+    <div class="ans-title"><span>Q15 — Valeur brute ADC et tension sur <code>A0</code> pour 75 % (<i>V</i><sub>ref</sub> = 3,3 V)</span><span class="pts">1 pt</span></div>
+    <ul>
+      <li>Valeur brute <code>analogRead(A0)</code> : $75 \times 1023 / 100 = 767,25 \approx \mathbf{767}$ (sur 1 023).</li>
+      <li>Tension correspondante sur <code>A0</code> : $V_{A0} = \frac{767}{1023} \times 3,3\,\text{V} \approx \mathbf{2,47\,\text{V}}$ (ou $0,75 \times 3,3 = 2,475\,\text{V}$).</li>
+    </ul>
+  </div>
+
+  <div class="ans-block">
+    <div class="ans-title"><span>Q16 — Temps d'occupation radio (Time on Air à 1 Mbit/s)</span><span class="pts">0,5 pt</span></div>
+    <p>18 octets = 18 &times; 8 = <strong>144 bits</strong>. À 1 Mbit/s (1 &mu;s/bit) : <strong><i>T</i><sub>air</sub> = 144 &mu;s (0,144 ms)</strong>.</p>
+  </div>
+
+  <div class="ans-block">
+    <div class="ans-title"><span>Q17 — CRC-24 BLE &amp; Calcul manuel CRC-4 sur <code>0x4B</code></span><span class="pts">2,25 pts</span></div>
+    <p><strong>a) CRC-24 BLE (0,75 pt) :</strong></p>
+    <ul>
+      <li>Octets 15..17 : <strong><code>3C 22 D1</code></strong> (<code>0x3C22D1</code>).</li>
+      <li>Octets protégés : <strong>octets 05 à 14 inclus</strong> (En-tête PDU Données 2 o. + Payload L2CAP/ATT 8 o. = 10 octets).</li>
+      <li>En <strong>mode connecté BLE</strong>, si un bit est corrompu (CRC invalide), la couche Liaison du récepteur n'acquitte pas le paquet (via le mécanisme <em>SN / NESN</em>) et le Peripheral <strong>retransmet automatiquement la trame</strong> au rendez-vous suivant (fiabilité garantie au niveau Link Layer, contrairement au mode Beacon).</li>
+    </ul>
+
+    <p><strong>b) Calcul manuel du CRC-4 sur <code>0x4B</code> (<code>0100 1011</code>) avec <i>G</i>(<i>x</i>) = <i>x</i><sup>4</sup> + <i>x</i> + 1 (<code>10011</code>) (1,5 pt) :</strong></p>
+    <pre><code>Message + 4 zéros :  010010110000
+XOR 10011 (pos 1) :   10011
+                     ------------
+                     000001110000
+XOR 10011 (pos 5) :       10011
+                     ------------
+                     000000111100
+XOR 10011 (pos 6) :        10011
+                     ------------
+                     000000011010
+XOR 10011 (pos 7) :         10011
+                     ------------
+Reste final (4 b) :         01001  &rArr;  CRC-4 = 1001 (0x9)</code></pre>
+    <p><strong>Résultat :</strong> Le reste sur 4 bits est <strong><code>1001</code><sub>2</sub> = <code>0x9</code></strong>.</p>
+  </div>
+
+  <div class="callout">
+    <strong>Script Python de vérification du CRC-24 BLE réel de la trame (annexe enseignant) :</strong>
+    <pre><code>pdu = [
+  0x02, 0x08,       # Data PDU Header (LLID=0x02 L2CAP Start, Len=8)
+  0x04, 0x00,       # L2CAP Length = 4 octets
+  0x04, 0x00,       # L2CAP CID = 0x0004 (ATT/GATT)
+  0x1B,             # ATT Opcode = 0x1B (Handle Value Notification)
+  0x13, 0x00,       # Attribute Handle = 0x0013 (Battery Level 0x2A19)
+  0x4B              # Attribute Value = 75 %
+]
+crc = 0x1A2B3C      # CRCInit négocié dans CONNECT_IND
+for byte in pdu:
+    for i in range(8):
+        bit = (byte >> i) & 1
+        msb = (crc >> 23) & 1
+        crc = (crc << 1) & 0xFFFFFF
+        if bit ^ msb:
+            crc ^= 0x00065B
+print(f"CRC-24 BLE = 0x{crc:06X}")  # Affiche : CRC-24 BLE = 0x3C22D1</code></pre>
+  </div>
+
+</body>
+</html>

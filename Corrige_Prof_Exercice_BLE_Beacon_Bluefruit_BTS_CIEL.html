@@ -1,0 +1,441 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="utf-8" />
+  <meta name="generator" content="BTS CIEL - Vincent Hilaire" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes" />
+  <title>Corrigé Professeur : Exercice BLE Beacon (Adafruit Bluefruit nRF51822), Autonomie &amp; Décodage de Trame – BTS CIEL</title>
+
+  <style>
+    @page {
+      margin: 1.2cm 1.3cm;
+      size: A4 portrait;
+    }
+
+    html {
+      color: #1a1a1a;
+      background-color: #f8fafc;
+    }
+
+    body {
+      font-family: 'Segoe UI', -apple-system, BlinkMacSystemFont, Roboto, Helvetica, Arial, sans-serif;
+      line-height: 1.5;
+      color: #1e293b;
+      max-width: 980px;
+      margin: 0 auto;
+      padding: 22px 30px;
+      background-color: #ffffff;
+      box-shadow: 0 4px 16px rgba(0,0,0,0.06);
+    }
+
+    @media print {
+      html { background-color: #ffffff; }
+      body {
+        background-color: transparent;
+        color: #000000;
+        font-size: 9.2pt;
+        max-width: 100%;
+        padding: 0;
+        box-shadow: none;
+      }
+      pre, table, .callout, .formula-box { page-break-inside: avoid; }
+      .page-break { page-break-before: always; }
+      .no-print { display: none !important; }
+    }
+
+    .btn-bar {
+      position: sticky;
+      top: 10px;
+      z-index: 1000;
+      background: rgba(255, 255, 255, 0.96);
+      padding: 10px 16px;
+      border-radius: 8px;
+      border: 1px solid #f87171;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 18px;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.07);
+    }
+
+    .btn {
+      background-color: #991b1b;
+      color: #ffffff;
+      border: none;
+      padding: 7px 14px;
+      border-radius: 6px;
+      font-weight: 600;
+      font-size: 8.6pt;
+      cursor: pointer;
+    }
+    .btn:hover { background-color: #7f1d1d; }
+
+    header {
+      margin-bottom: 1.4em;
+      text-align: center;
+      border-bottom: 3px solid #991b1b;
+      padding-bottom: 14px;
+    }
+
+    .super-title {
+      font-size: 8.8pt;
+      color: #b91c1c;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 1.4px;
+      margin-bottom: 4px;
+    }
+
+    h1 {
+      color: #0b3c5d;
+      font-size: 18pt;
+      margin: 0.25em 0;
+      font-weight: 800;
+    }
+
+    .subtitle {
+      font-size: 10pt;
+      color: #334155;
+      margin-bottom: 10px;
+    }
+
+    .meta-badge {
+      display: inline-block;
+      font-size: 7.7pt;
+      font-weight: 600;
+      padding: 3px 9px;
+      border-radius: 14px;
+      margin: 2px 3px;
+      text-transform: uppercase;
+    }
+    .badge-alert   { background: #fee2e2; color: #991b1b; border: 1px solid #f87171; }
+    .badge-primary { background: #0b3c5d; color: #ffffff; border: 1px solid #0b3c5d; }
+    .badge-success { background: #dcfce7; color: #166534; border: 1px solid #86efac; }
+    .badge-cyan    { background: #e0f2fe; color: #0369a1; border: 1px solid #7dd3fc; }
+
+    h2 {
+      font-size: 13pt;
+      color: #0b3c5d;
+      margin-top: 24px;
+      margin-bottom: 10px;
+      border-bottom: 2px solid #cbd5e1;
+      padding-bottom: 5px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .ans-block {
+      border-left: 4px solid #16a34a;
+      background: #f8fafc;
+      padding: 10px 14px;
+      margin: 10px 0;
+      border-radius: 0 6px 6px 0;
+    }
+    .ans-title {
+      font-weight: 700;
+      color: #0b3c5d;
+      margin-bottom: 5px;
+      display: flex;
+      justify-content: space-between;
+    }
+    .pts {
+      color: #15803d;
+      font-weight: 700;
+      font-size: 0.9em;
+    }
+
+    code {
+      font-family: Consolas, monospace;
+      background: #e2e8f0;
+      color: #0f172a;
+      padding: 1px 5px;
+      border-radius: 4px;
+      font-size: 0.9em;
+    }
+
+    pre {
+      background: #0f172a;
+      color: #e2e8f0;
+      padding: 12px 15px;
+      border-radius: 6px;
+      font-family: Consolas, monospace;
+      font-size: 8.5pt;
+      line-height: 1.45;
+      overflow-x: auto;
+    }
+    pre code { background: transparent; color: inherit; padding: 0; }
+
+    table {
+      border-collapse: collapse;
+      width: 100%;
+      margin: 10px 0;
+      font-size: 8.8pt;
+    }
+    th, td {
+      border: 1px solid #cbd5e1;
+      padding: 6px 9px;
+      text-align: left;
+    }
+    th { background: #0b3c5d; color: #ffffff; }
+    tr:nth-child(even) td { background: #f1f5f9; }
+
+    .callout {
+      border-radius: 6px;
+      padding: 10px 14px;
+      margin: 12px 0;
+      font-size: 9pt;
+      border-left: 5px solid #0284c7;
+      background: #f0f7fc;
+      color: #0c4a6e;
+    }
+  </style>
+</head>
+<body>
+
+  <div class="btn-bar no-print">
+    <span style="font-weight: 700; color: #991b1b; font-size: 9.2pt;">CORRIGÉ PROFESSEUR — Exercice BLE Beacon (Adafruit Bluefruit nRF51822)</span>
+    <button class="btn" onclick="window.print()">Imprimer / Exporter PDF</button>
+  </div>
+
+  <header>
+    <div class="super-title">Document Enseignant — Corrigé Détaillé &amp; Barème (/20)</div>
+    <h1>Corrigé : Étude d'une Balise BLE Beacon (Adafruit Bluefruit nRF51822)</h1>
+    <div class="subtitle">Analyse de Firmware Embarqué, Bilan Énergétique CR2032 &amp; Décodage de Trame BLE + CRC</div>
+    <div>
+      <span class="meta-badge badge-alert">Corrigé Prof</span>
+      <span class="meta-badge badge-primary">Durée : 1h00 à 1h30</span>
+      <span class="meta-badge badge-success">Barème : 20 points</span>
+      <span class="meta-badge badge-cyan">BTS CIEL Option B</span>
+    </div>
+  </header>
+
+  <!-- ========================================================================= -->
+  <!-- CORRIGE PARTIE 1                                                          -->
+  <!-- ========================================================================= -->
+  <h2>
+    <span>Corrigé Partie 1 : Analyse &amp; Audit du Firmware BLE</span>
+    <span class="meta-badge badge-primary">6 points</span>
+  </h2>
+
+  <div class="ans-block">
+    <div class="ans-title"><span>Q1 — Rôle de <code>FACTORYRESET_ENABLE</code> [Repère 1]</span><span class="pts">0,75 pt</span></div>
+    <p>Cette directive conditionne l'appel à <code>ble.factoryReset()</code> qui efface la <strong>mémoire non volatile (NVM)</strong> du module Bluefruit et restaure les paramètres d'usine. En phase de mise au point, on l'active (<code>1</code>) au moins une fois pour partir d'un état sain. En <strong>déploiement final</strong>, on la fixe à <code>0</code> afin de <strong>conserver de manière persistante</strong> la configuration AT (et d'éventuelles clés d'appairage / bonding) après chaque redémarrage ou coupure d'alimentation.</p>
+  </div>
+
+  <div class="ans-block">
+    <div class="ans-title"><span>Q2 — Signification des 5 paramètres Beacon [Repère 2]</span><span class="pts">1,5 pt</span></div>
+    <ul>
+      <li><code>BEACON_MANUFACTURER_ID</code> (<code>0x0822</code> Adafruit ou <code>0x0059</code> Nordic) : Identifiant constructeur sur 16 bits attribué par le <strong>Bluetooth SIG</strong> (<em>Company Identifier</em>).</li>
+      <li><code>BEACON_UUID</code> : <em>Proximity UUID</em> de <strong>16 octets (128 bits)</strong> identifiant de manière unique le parc ou l'entreprise/application (permet au récepteur de filtrer ses propres balises).</li>
+      <li><code>BEACON_MAJOR</code> (16 bits) : Sous-identifiant de niveau 1 (ex. : numéro de <strong>bâtiment</strong> ou d'atelier).</li>
+      <li><code>BEACON_MINOR</code> (16 bits) : Sous-identifiant de niveau 2 (ex. : numéro de <strong>salle</strong> ou de machine précise).</li>
+      <li><code>BEACON_RSSI_1M</code> (<code>-54</code> dBm) : Puissance reçue calibrée à exactement <strong>1 mètre</strong> de la balise (<em>Measured Power</em>). Le smartphone/tablette compare le RSSI réellement reçu avec cette valeur de référence pour <strong>estimer la distance</strong> à la balise (proximité : immédiate, proche, lointaine).</li>
+    </ul>
+  </div>
+
+  <div class="ans-block">
+    <div class="ans-title"><span>Q3 — Bus matériel SPI et broches de contrôle [Repère 3]</span><span class="pts">1 pt</span></div>
+    <ul>
+      <li><strong>Bus utilisé :</strong> Bus série synchrone <strong>SPI matériel</strong> (<code>Adafruit_BluefruitLE_SPI</code>).</li>
+      <li><strong>3 signaux SPI matériels implicites :</strong> <code>SCK</code> (horloge), <code>MOSI</code> (Master Out Slave In) et <code>MISO</code> (Master In Slave Out).</li>
+      <li><strong>3 broches de contrôle :</strong>
+        <ul>
+          <li><code>CS</code> (<em>Chip Select</em>) : Sélectionne le module Bluefruit sur le bus SPI (actif à l'état bas).</li>
+          <li><code>IRQ</code> (<em>Interrupt Request</em>) : Signal d'interruption permettant au nRF51822 de prévenir le MCU hôte que des données/réponses AT sont prêtes à être lues.</li>
+          <li><code>RST</code> (<em>Reset</em>) : Réinitialisation matérielle du module radio.</li>
+        </ul>
+      </li>
+    </ul>
+  </div>
+
+  <div class="ans-block">
+    <div class="ans-title"><span>Q4 — Gestion d'erreur, macro <code>F()</code> et <code>ble.echo(false)</code> [Repères 4 &amp; 5]</span><span class="pts">1 pt</span></div>
+    <ul>
+      <li>En cas d'échec de <code>ble.begin()</code>, la fonction <code>error()</code> affiche le message sur le moniteur série puis <strong>bloque définitivement l'exécution</strong> dans une boucle infinie <code>while (1);</code> (arrêt sécurisé).</li>
+      <li>La macro <code>F("...")</code> place la chaîne de caractères constante en mémoire <strong>Flash (PROGMEM)</strong> au lieu de la copier en <strong>SRAM</strong> (très limitée sur AVR : 2 ko sur ATmega328P).</li>
+      <li><code>ble.echo(false)</code> désactive le renvoi en écho des commandes AT par le module : cela simplifie l'analyse (<em>parsing</em>) des réponses (<code>OK</code> / <code>ERROR</code>) et réduit le trafic inutile sur le bus SPI.</li>
+    </ul>
+  </div>
+
+  <div class="ans-block">
+    <div class="ans-title"><span>Q5 — Reconstitution de la commande AT, <code>ble.println()</code> et <code>ble.reset()</code> [Repère 6]</span><span class="pts">1 pt</span></div>
+    <p><strong>Commande complète envoyée :</strong></p>
+    <pre><code>AT+BLEBEACON=0x0822,01-12-23-34-45-56-67-78-89-9A-AB-BC-CD-DE-EF-F0,0x0000,0x0000,-54</code></pre>
+    <ul>
+      <li><code>ble.println()</code> envoie les caractères de fin de ligne (<code>\r\n</code> — CR/LF) qui <strong>déclenchent l'interprétation et l'exécution</strong> de la commande AT par le firmware du Bluefruit.</li>
+      <li><code>ble.reset()</code> (commande <code>ATZ</code>) redémarre le SoC nRF51822 pour qu'il <strong>recharge sa mémoire non volatile</strong> et applique la nouvelle trame d'Advertising radio.</li>
+    </ul>
+  </div>
+
+  <div class="ans-block">
+    <div class="ans-title"><span>Q6 — Critique énergétique de <code>loop()</code> [Repère 7]</span><span class="pts">0,75 pt</span></div>
+    <p>Une fois configuré, le nRF51822 émet ses trames Beacon de manière totalement autonome. La boucle <code>loop()</code> interroge inutilement <code>ble.read()</code> toutes les 100 ms et écrit sur l'UART USB (<code>Serial.println</code>), maintenant le microcontrôleur hôte actif en permanence (plusieurs dizaines de mA gaspillés).</p>
+    <p><strong>Amélioration :</strong> Soit <strong>supprimer la carte hôte</strong> après programmation NVM (alimenter uniquement le module nRF51822), soit placer le MCU hôte en mode <strong>Deep Sleep / Power-Down</strong> définitif à la fin de <code>setup()</code>.</p>
+  </div>
+
+  <!-- ========================================================================= -->
+  <!-- CORRIGE PARTIE 2                                                          -->
+  <!-- ========================================================================= -->
+  <div class="page-break"></div>
+  <h2>
+    <span>Corrigé Partie 2 : Bilan Énergétique &amp; Autonomie CR2032</span>
+    <span class="meta-badge badge-primary">7 points</span>
+  </h2>
+
+  <div class="ans-block">
+    <div class="ans-title"><span>Q7 — Calcul des intensités par phase (<i>R</i><sub>shunt</sub> = 10 &Omega;)</span><span class="pts">1 pt</span></div>
+    <ul>
+      <li><strong>Phase 1 (Réveil MCU) :</strong> <i>I</i><sub>1</sub> = 35 mV / 10 &Omega; = <strong>3,5 mA</strong> (3 500 &mu;A).</li>
+      <li><strong>Phase 2 (Émission TX) :</strong> <i>I</i><sub>TX</sub> = 120 mV / 10 &Omega; = <strong>12,0 mA</strong> (12 000 &mu;A).</li>
+      <li><strong>Phase 3 (Post-traitement) :</strong> <i>I</i><sub>3</sub> = 30 mV / 10 &Omega; = <strong>3,0 mA</strong> (3 000 &mu;A).</li>
+    </ul>
+  </div>
+
+  <div class="ans-block">
+    <div class="ans-title"><span>Q8 — Limite de mesure du courant de veille &amp; 3 canaux d'Advertising</span><span class="pts">1 pt</span></div>
+    <ul>
+      <li><strong>Tension de veille sur shunt :</strong> &Delta;<i>U</i><sub>sleep</sub> = <i>R</i><sub>shunt</sub> &times; <i>I</i><sub>sleep</sub> = 10 &Omega; &times; 5 &mu;A = <strong>50 &mu;V (0,05 mV)</strong>. Cette tension est inférieure à la résolution et au plancher de bruit d'un oscilloscope standard (même 14 bits sur calibre large) ; il faut un ampèremètre de précision (micro/picoampèremètre) ou un shunt commutable plus élevé.</li>
+      <li><strong>3 impulsions TX :</strong> En BLE, une balise diffuse systématiquement sa trame successivement sur les <strong>3 canaux primaires d'Advertising</strong> (<strong>Ch 37</strong> = 2 402 MHz, <strong>Ch 38</strong> = 2 426 MHz, <strong>Ch 39</strong> = 2 480 MHz), placés entre les canaux Wi-Fi 1, 6 et 11 pour résister aux interférences radio.</li>
+    </ul>
+  </div>
+
+  <div class="ans-block">
+    <div class="ans-title"><span>Q9 — Calcul du courant moyen <i>I</i><sub>moyen</sub> sur <i>T</i><sub>cycle</sub> = 1,0 s</span><span class="pts">2 pts</span></div>
+    <table>
+      <thead>
+        <tr><th>Phase</th><th>Courant <i>I</i><sub>k</sub></th><th>Durée <i>t</i><sub>k</sub></th><th>Produit <i>I</i><sub>k</sub> &times; <i>t</i><sub>k</sub> (&mu;A&middot;s)</th><th>Charge <i>Q</i><sub>k</sub> (nAh)</th></tr>
+      </thead>
+      <tbody>
+        <tr><td>1. Réveil MCU</td><td>3 500 &mu;A</td><td>1,5 ms (0,0015 s)</td><td><strong>5,25 &mu;A&middot;s</strong></td><td>1,458 nAh</td></tr>
+        <tr><td>2. Émission TX (3 ch.)</td><td>12 000 &mu;A</td><td>1,5 ms (0,0015 s)</td><td><strong>18,00 &mu;A&middot;s</strong></td><td>5,000 nAh</td></tr>
+        <tr><td>3. Post-TX</td><td>3 000 &mu;A</td><td>1,0 ms (0,0010 s)</td><td><strong>3,00 &mu;A&middot;s</strong></td><td>0,833 nAh</td></tr>
+        <tr><td><em>Sous-total Actif</em></td><td>—</td><td><em>4,0 ms</em></td><td><strong>26,25 &mu;A&middot;s</strong></td><td><em>7,292 nAh (0,00729 &mu;Ah)</em></td></tr>
+        <tr><td>4. Deep Sleep</td><td>5 &mu;A</td><td>996 ms (0,996 s)</td><td><strong>4,98 &mu;A&middot;s</strong></td><td>1,383 nAh</td></tr>
+        <tr><td><strong>TOTAL CYCLE</strong></td><td>—</td><td><strong>1,000 s</strong></td><td><strong>31,23 &mu;A&middot;s</strong></td><td><strong>8,675 nAh (0,00868 &mu;Ah)</strong></td></tr>
+      </tbody>
+    </table>
+    <p><strong>Courant moyen :</strong> <i>I</i><sub>moyen</sub> = 31,23 &mu;A&middot;s / 1,0 s = <strong>31,23 &mu;A = 0,03123 mA</strong>.</p>
+  </div>
+
+  <div class="ans-block">
+    <div class="ans-title"><span>Q10 — Autonomie prévisionnelle pour <i>T</i><sub>cycle</sub> = 1,0 s</span><span class="pts">1 pt</span></div>
+    <ul>
+      <li>Capacité utile : <i>C</i><sub>utile</sub> = 225 mAh &times; 0,80 = <strong>180 mAh</strong>.</li>
+      <li><i>T</i><sub>heures</sub> = 180 mAh / 0,03123 mA = <strong>5 763,7 heures</strong>.</li>
+      <li><i>T</i><sub>jours</sub> = 5 763,7 / 24 = <strong>240,2 jours</strong> &approx; <strong>7,9 mois</strong> (environ 8 mois).</li>
+    </ul>
+  </div>
+
+  <div class="ans-block">
+    <div class="ans-title"><span>Q11 — Optimisation avec <i>T</i><sub>cycle</sub> = 5,0 s (Exigence &ge; 18 mois)</span><span class="pts">1,25 pt</span></div>
+    <ul>
+      <li>Nouvelle durée de veille : <i>t</i><sub>sleep_5s</sub> = 5,0 &minus; 0,004 = <strong>4,996 s</strong>.</li>
+      <li>Contribution veille : 5 &mu;A &times; 4,996 s = <strong>24,98 &mu;A&middot;s</strong> (phase active inchangée : 26,25 &mu;A&middot;s).</li>
+      <li>Nouveau courant moyen : <i>I</i><sub>moyen_5s</sub> = (26,25 + 24,98) / 5,0 = 51,23 / 5,0 = <strong>10,25 &mu;A (0,01025 mA)</strong>.</li>
+      <li>Nouvelle autonomie : <i>T</i><sub>h_5s</sub> = 180 / 0,01025 = <strong>17 568 h</strong> = <strong>732 jours</strong> = <strong>2,01 ans (~24 mois)</strong>.</li>
+      <li><strong>Conclusion :</strong> 24 mois &ge; 18 mois &rarr; <strong>le cahier des charges est largement respecté</strong>.</li>
+    </ul>
+  </div>
+
+  <div class="ans-block">
+    <div class="ans-title"><span>Q12 — Chute de tension sur pile usée &amp; protection anti-BOR</span><span class="pts">0,75 pt</span></div>
+    <ul>
+      <li>Chute de tension : &Delta;<i>V</i> = <i>R</i><sub>i_usée</sub> &times; <i>I</i><sub>TX</sub> = 80 &Omega; &times; 0,012 A = <strong>0,96 V</strong> !</li>
+      <li>Sur une pile usée à ~2,7 V, la tension s'effondre à <strong>1,74 V</strong> (sous le seuil minimum de fonctionnement du nRF51822 = 1,8 V) &rarr; déclenchement d'un <strong>Brown-Out Reset (BOR)</strong> en boucle.</li>
+      <li><strong>Solution BE :</strong> Placer un <strong>condensateur réservoir / découplage Low-ESR de 47 &mu;F à 100 &mu;F</strong> (en parallèle d'un 100 nF céramique) au plus près des broches <code>VDD/GND</code> pour fournir localement l'impulsion de 12 mA pendant 1,5 ms.</li>
+    </ul>
+  </div>
+
+  <!-- ========================================================================= -->
+  <!-- CORRIGE PARTIE 3                                                          -->
+  <!-- ========================================================================= -->
+  <div class="page-break"></div>
+  <h2>
+    <span>Corrigé Partie 3 : Décodage de la Trame BLE Advertising &amp; CRC</span>
+    <span class="meta-badge badge-primary">7 points</span>
+  </h2>
+
+  <div class="ans-block">
+    <div class="ans-title"><span>Q13 — Décodage Couche Liaison BLE (octets 00 à 12)</span><span class="pts">1,5 pt</span></div>
+    <ul>
+      <li><strong>Préambule (octet 00) :</strong> <code>0xAA</code>.</li>
+      <li><strong>Access Address (octets 01..04) :</strong> reçus <code>D6 BE 89 8E</code> (Little Endian) &rArr; <strong><code>0x8E89BED6</code></strong> (adresse fixe réglementaire des canaux d'Advertising BLE).</li>
+      <li><strong>En-tête PDU (octets 05..06) :</strong> Type = <code>0x02</code> (<code>ADV_NONCONN_IND</code>, balise non connectable) ; Longueur = <code>0x24</code> = <strong>36 octets</strong>. Vérification : de l'octet 07 à l'octet 42 inclus, on compte (42 &minus; 7) + 1 = <strong>36 octets</strong> (6 octets AdvA + 30 octets AdvData).</li>
+      <li><strong>Adresse MAC BLE AdvA (octets 07..12) :</strong> reçus <code>D4 C3 B2 A1 F0 E5</code> (Little Endian) &rArr; inversés : <strong><code>E5:F0:A1:B2:C3:D4</code></strong>.</li>
+    </ul>
+  </div>
+
+  <div class="ans-block">
+    <div class="ans-title"><span>Q14 — Décodage applicatif iBeacon (octets 18 à 42)</span><span class="pts">2,5 pts</span></div>
+    <table>
+      <thead>
+        <tr><th>Champ iBeacon</th><th>Octets bruts relevés</th><th>Boutisme / Codage</th><th>Valeur décodée en clair</th></tr>
+      </thead>
+      <tbody>
+        <tr><td><strong>Company ID</strong> (o.18..19)</td><td><code>22 08</code></td><td>Little Endian (uint16)</td><td><code>0x0822</code> = <strong>Adafruit Industries</strong></td></tr>
+        <tr><td><strong>Proximity UUID</strong> (o.22..37)</td><td><code>01 12 23 34 ... EF F0</code></td><td>Big Endian (16 octets)</td><td><code>01-12-23-34-45-56-67-78-89-9A-AB-BC-CD-DE-EF-F0</code></td></tr>
+        <tr><td><strong>Major</strong> (o.38..39)</td><td><code>00 02</code></td><td>Big Endian (uint16)</td><td><code>0x0002</code> = <strong>2 (Bâtiment 2)</strong></td></tr>
+        <tr><td><strong>Minor</strong> (o.40..41)</td><td><code>00 1A</code></td><td>Big Endian (uint16)</td><td><code>0x001A</code> = 1&times;16 + 10 = <strong>26 (Salle 26)</strong></td></tr>
+        <tr><td><strong>TX Power @ 1 m</strong> (o.42)</td><td><code>C6</code></td><td>Complément à 2 (int8)</td><td>0xC6 = 198 &rArr; 198 &minus; 256 = <strong>&minus;58 dBm</strong></td></tr>
+      </tbody>
+    </table>
+  </div>
+
+  <div class="ans-block">
+    <div class="ans-title"><span>Q15 — Temps d'occupation radio (Time on Air)</span><span class="pts">0,75 pt</span></div>
+    <p>46 octets = 46 &times; 8 = <strong>368 bits</strong>. À 1 Mbit/s (1 &mu;s/bit) : <i>T</i><sub>air</sub> = <strong>368 &mu;s = 0,368 ms</strong>.</p>
+    <p>C'est parfaitement cohérent avec le pic TX de <strong>0,5 ms</strong> par canal observé en Partie 2 : la différence (~132 &mu;s) correspond au temps de démarrage du synthétiseur PLL / amplificateur PA avant et après l'émission des bits utiles.</p>
+  </div>
+
+  <div class="ans-block">
+    <div class="ans-title"><span>Q16 — Contrôle d'intégrité : CRC-24 BLE &amp; Calcul manuel CRC-4</span><span class="pts">2,25 pts</span></div>
+    <p><strong>a) CRC-24 BLE (0,75 pt) :</strong></p>
+    <ul>
+      <li>Octets 43..45 : <strong><code>4D 93 F1</code></strong> (<code>0x4D93F1</code>).</li>
+      <li>Champs protégés : l'<strong>En-tête PDU (2 octets) + le Payload PDU complet (36 octets : AdvA + AdvData)</strong>, soit 38 octets (octets 05 à 42).</li>
+      <li>En cas de corruption d'un seul bit sur <code>Minor</code>, le CRC-24 recalculé par le récepteur diffère de <code>0x4D93F1</code> : le contrôleur BLE <strong>rejette silencieusement la trame</strong> (aucune retransmission en mode Broadcast non connecté).</li>
+    </ul>
+
+    <p><strong>b) Calcul manuel du CRC-4 sur <code>0xC6</code> (<code>1100 0110</code>) avec <i>G</i>(<i>x</i>) = <i>x</i><sup>4</sup> + <i>x</i> + 1 (<code>10011</code>) (1,5 pt) :</strong></p>
+    <p>On ajoute 4 zéros à droite du message : <code>11000110 0000</code> (12 bits), puis on effectue la division polynomiale modulo 2 (XOR) :</p>
+    <pre><code>Message + 4 zéros :  110001100000
+XOR 10011 (pos 0) :  10011
+                     ------------
+                     010111100000
+XOR 10011 (pos 1) :   10011
+                     ------------
+                     000100100000
+XOR 10011 (pos 3) :     10011
+                     ------------
+                     000000010000
+XOR 10011 (pos 7) :         10011
+                     ------------
+Reste final (4 b) :         00011  &rArr;  CRC-4 = 0011 (0x3)</code></pre>
+    <p><strong>Résultat :</strong> Le reste sur 4 bits est <strong><code>0011</code><sub>2</sub> = <code>0x3</code></strong>.</p>
+  </div>
+
+  <div class="callout">
+    <strong>Script Python de vérification du CRC-24 BLE réel de la trame (annexe enseignant) :</strong>
+    <pre><code>pdu = [
+  0x02, 0x24,                                     # PDU Header (ADV_NONCONN_IND, Len=36)
+  0xD4, 0xC3, 0xB2, 0xA1, 0xF0, 0xE5,             # AdvA (MAC E5:F0:A1:B2:C3:D4)
+  0x02, 0x01, 0x06,                               # AD #1 : Flags
+  0x1A, 0xFF, 0x22, 0x08, 0x02, 0x15,             # AD #2 : Mfr Adafruit (0x0822), iBeacon
+  0x01, 0x12, 0x23, 0x34, 0x45, 0x56, 0x67, 0x78, # UUID (octets 0..7)
+  0x89, 0x9A, 0xAB, 0xBC, 0xCD, 0xDE, 0xEF, 0xF0, # UUID (octets 8..15)
+  0x00, 0x02, 0x00, 0x1A, 0xC6                    # Major=2, Minor=26, TX Power=-58 dBm
+]
+crc = 0x555555
+for byte in pdu:
+    for i in range(8):
+        bit = (byte >> i) & 1
+        msb = (crc >> 23) & 1
+        crc = (crc << 1) & 0xFFFFFF
+        if bit ^ msb:
+            crc ^= 0x00065B
+print(f"CRC-24 BLE = 0x{crc:06X}")  # Affiche : CRC-24 BLE = 0x4D93F1</code></pre>
+  </div>
+
+</body>
+</html>
